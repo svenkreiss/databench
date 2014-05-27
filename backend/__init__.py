@@ -1,3 +1,6 @@
-from example import myanalysis
+import example
 
-blueprints = [myanalysis]
+blueprints = [example.myanalysis]
+
+def wire_signals(socketio):
+	example.wire_signals(socketio)

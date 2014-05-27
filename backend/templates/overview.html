@@ -1,7 +1,26 @@
 {% extends "base.html" %}
-
 {% block title %}myanalysis{% endblock %}
 
+
+
 {% block content %}
-<h1>myanalysis</h1>
+	<h1>myanalysis</h1>
+	<pre id="log">bla<br /></pre>
+{% endblock %}
+
+
+
+
+{% block footerscripts %}
+	<script>
+	$(document).ready(function() {
+		namespace = '/myanalysis';
+
+		var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
+		socket.on('connect', function() {
+			$("#log").append("onconnect<br />");
+			socket.emit('my event', {data: 'connected'});
+		});
+	});
+	</script>
 {% endblock %}
