@@ -1,6 +1,6 @@
-import example
+import slowpi
 
-blueprints = [example.myanalysis]
+blueprints = [slowpi.slowpi]
 
 def wire_signals(socketio):
-	example.wire_signals(socketio)
+	slowpi.wire_signals(socketio)
