@@ -24,7 +24,7 @@ Create a project with this structure:
 
 ```
 - mydataproject
-    - interface
+    - templates
         - index.html
 
     - backend

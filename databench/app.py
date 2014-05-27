@@ -5,14 +5,23 @@ from flask.ext.socketio import SocketIO, emit
 
 
 flaskapp = Flask(__name__)
-flaskapp.config['SECRET_KEY'] = 'secret'
 flaskapp.debug = True
+try:
+	import backend
+	for bp in backend.blueprints:
+		print('Registering blueprint '+bp.name+'.')
+		flaskapp.register_blueprint(bp, url_prefix='/'+bp.name)
+except:
+	raise("Did not find backend.")
 socketio = SocketIO(flaskapp)
 
 
 @flaskapp.route('/')
 def index():
-	return render_template('index.html')
+	return render_template(
+		'index.html', 
+		analyses=[bp.name for bp in backend.blueprints]
+	)
 
 
 @socketio.on('my event')

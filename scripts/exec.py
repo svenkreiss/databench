@@ -11,7 +11,6 @@ import databench
 def main():
 	print("--- databench ---")
 	databench.run()
-	# databench.socketio(databench.flaskapp)
 
 if __name__ == "__main__":
 	main()
