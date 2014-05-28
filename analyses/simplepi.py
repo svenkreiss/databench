@@ -26,3 +26,4 @@ def calc():
 
 
 simplepi = databench.Analysis('simplepi', __name__, signals)
+simplepi.description = "Calculating \(\pi\) the simple way."

@@ -30,4 +30,4 @@ Create a project with this structure:
 	- myanalysis.py
 ```
 
-On the command line, all that should be necessary is `databench` and the url (ususally `http://localhost:5000`) will be shown that you can open in a browser.
+On the command line, all that should be necessary is `databench` and the url (usually `http://localhost:5000`) will be shown that you can open in a browser.
