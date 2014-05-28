@@ -31,7 +31,8 @@
 
 		socket.on('status', function(msg) {
 			$("#log").prepend(JSON.stringify(msg)+"<br />");
-			var uncertainty = 4.0*Math.sqrt(msg['inside'])/msg['draws'];
+			// var uncertaintyPoisson = 4.0*Math.sqrt(msg['inside'])/msg['draws'];
+			var uncertainty = 4.0*Math.sqrt(msg['draws']*msg['inside']/msg['draws']*(1.0 - msg['inside']/msg['draws'])) / msg['draws'];
 			$("#pi-estimate").text(msg['pi-estimate'].toFixed(3)+' ± '+uncertainty.toFixed(3));
 		});
 	});
