@@ -3,7 +3,14 @@ from flask import Blueprint, render_template
 listAll = []
 
 class Analysis:
-	def __init__(self, name, importName, signals, description=None, blueprint=None):
+	def __init__(
+			self, 
+			name, 
+			importName, 
+			signals, 
+			description=None, 
+			blueprint=None
+	):
 		"""
 		An optional flask blueprint can be dependency-injected.
 		"""

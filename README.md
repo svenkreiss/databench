@@ -23,13 +23,11 @@ pip install -e git+https://github.com/svenkreiss/databench.git#egg=databench
 Create a project with this structure:
 
 ```
-- mydataproject
+- analyses
     - templates
-        - index.html
-
-    - backend
-    	- __init__.py
-    	- mycomputemodule.py
+        - myanalysis.html
+	- __init__.py
+	- myanalysis.py
 ```
 
-On the command line, all that should be necessary is `databench` and the url will be shown that you can open in a browser.
+On the command line, all that should be necessary is `databench` and the url (ususally `http://localhost:5000`) will be shown that you can open in a browser.
