@@ -2,9 +2,8 @@
 {% block title %}slowpi{% endblock %}
 
 
-
 {% block content %}
-	<h1>slowpi: <i>π = <span id="pi-estimate">0.0 ± 1.0</span></i></h1>
+	<h1>slowpi <small><i>π = <span id="pi-estimate">0.0 ± 1.0</span></h1>
 
 	<p>This little demo uses two random numbers \(r_1\) and \(r_2\) and then does a comparison $$r_1^2 + r_2^2 < 1.0$$ to figure out whether the generated point is inside the first quadrant of the unit circle.</p>
 
@@ -12,29 +11,14 @@
 {% endblock %}
 
 
-
-
 {% block footerscripts %}
 	<script>
-	$(document).ready(function() {
-		namespace = '/slowpi';
-		var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
+		var databench = Databench('slowpi');
+		databench.genericElements.log = $('#log');
+		var signals = databench.signals;
 
-		socket.on('connect', function() {
-			$("#log").prepend("onconnect<br />");
-			socket.emit('start', {data: 'connected'});
+		signals.on('status', function(msg) {
+			$('#pi-estimate').text(msg['pi-estimate'].toFixed(3)+' ± '+msg['pi-uncertainty'].toFixed(3));
 		});
-
-		socket.on('log', function(msg) {
-			$("#log").prepend(JSON.stringify(msg)+"<br />");
-		});
-
-		socket.on('status', function(msg) {
-			$("#log").prepend(JSON.stringify(msg)+"<br />");
-			// var uncertaintyPoisson = 4.0*Math.sqrt(msg['inside'])/msg['draws'];
-			var uncertainty = 4.0*Math.sqrt(msg['draws']*msg['inside']/msg['draws']*(1.0 - msg['inside']/msg['draws'])) / msg['draws'];
-			$("#pi-estimate").text(msg['pi-estimate'].toFixed(3)+' ± '+uncertainty.toFixed(3));
-		});
-	});
 	</script>
 {% endblock %}
