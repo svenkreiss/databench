@@ -11,21 +11,21 @@ flaskapp = Flask(__name__)
 flaskapp.config['SECRET_KEY'] = 'secret!'
 # flaskapp.debug = True
 try:
-	import backend
-	for bp in backend.blueprints:
+	import analyses
+	for bp in analyses.blueprints:
 		print('Registering blueprint '+bp.name+'.')
 		flaskapp.register_blueprint(bp, url_prefix='/'+bp.name)
 except:
-	raise RuntimeError("Did not find backend.")
+	raise RuntimeError("Did not find analyses.")
 socketio = SocketIO(flaskapp)
-backend.wire_signals(socketio)
+analyses.wire_signals(socketio)
 
 
 @flaskapp.route('/')
 def index():
 	return render_template(
 		'index.html', 
-		analyses=[bp.name for bp in backend.blueprints]
+		analyses=[bp.name for bp in analyses.blueprints]
 	)
 
 

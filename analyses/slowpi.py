@@ -11,7 +11,7 @@ slowpi = Blueprint(
 
 @slowpi.route('/')
 def index():
-	return render_template('overview.html')
+	return render_template('slowpi.html')
 
 
 from time import sleep
