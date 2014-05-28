@@ -6,7 +6,7 @@ function Databench(name) {
 
 
 
-	var signals = {}
+	var signals = {};
 
 	signals.on = function(signalName, callback) {
 		socket.on(signalName, callback);
@@ -18,13 +18,24 @@ function Databench(name) {
 
 
 
-	var genericElements = {'log': null}
+	var genericElements = {};
 
-	socket.on('log', function(msg) {
-		if (genericElements.log) {
-			genericElements.log.prepend(JSON.stringify(msg)+'<br />');
-		}
-	});
+	genericElements.log = function(selector, limit) {
+		if (!limit) limit = 20;
+
+		var _selector = selector;
+		var _limit = limit;
+
+		var messages = [];
+
+		socket.on('log', function(msg) {
+			messages.push(JSON.stringify(msg));
+			if (messages.length > _limit) {
+				messages.shift();
+			}
+			_selector.html(messages.join('<br />'));
+		});
+	};
 
 
 
@@ -33,7 +44,6 @@ function Databench(name) {
 		'signals': signals, 
 		'genericElements': genericElements,
 	};
-
 
 	return publicFunctions;
 };

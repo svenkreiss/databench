@@ -8,7 +8,6 @@ slowpi = Blueprint(
 	template_folder='templates'
 )
 
-
 @slowpi.route('/')
 def index():
 	return render_template('slowpi.html')
@@ -25,20 +24,14 @@ def wire_signals(socketio):
 		inside = 0
 		for i in range(10000):
 			sleep(0.001)
-			r1 = random()
-			r2 = random()
+			r1, r2 = (random(), random())
 			if r1*r1 + r2*r2 < 1.0: inside += 1
 
 			if (i+1)%100 == 0:
 				draws = i+1
 				emit('log', {'draws':draws, 'inside':inside, 'r1':r1, 'r2':r2})
 
-				uncertainty = 4.0*math.sqrt(float(draws)*inside/draws*(1.0 - inside/draws)) / draws
+				uncertainty = 4.0*math.sqrt(draws*inside/draws*(1.0 - inside/draws)) / draws
 				emit('status', {'pi-estimate': 4.0*inside/draws, 'pi-uncertainty': uncertainty})
 
 		emit('log', {'action':'done'})
-
-	@socketio.on('disconnect', namespace='/slowpi')
-	def disconnect():
-		print('Client disconnected')
-

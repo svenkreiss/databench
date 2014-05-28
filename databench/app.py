@@ -9,7 +9,7 @@ from flask.ext.socketio import SocketIO, emit
 
 flaskapp = Flask(__name__)
 flaskapp.config['SECRET_KEY'] = 'secret!'
-# flaskapp.debug = True
+flaskapp.debug = True
 try:
 	import analyses
 	for bp in analyses.blueprints:
