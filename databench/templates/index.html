@@ -5,12 +5,12 @@
 {% block content %}
 <h1>List of Analyses</h1>
 <div class="row">
-    {% for item in analyses %}
-    <div class="col-lg-6">
-    	<a href="/{{item}}/">
+    {% for a in analyses %}
+    <div class="col-md-6">
+    	<a href="/{{a.name}}/">
     	<div class="panel panel-default">
 	    	<div class="panel-body">
-	    		{{item}}
+	    		{{a.name}}{% if a.description %}<span class="text-muted">: {{ a.description }}</span>{% endif %}
 	    	</div>
     	</div>
     	</a>

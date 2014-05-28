@@ -10,22 +10,24 @@ from flask.ext.socketio import SocketIO, emit
 flaskapp = Flask(__name__)
 flaskapp.config['SECRET_KEY'] = 'secret!'
 flaskapp.debug = True
-try:
-	import analyses
-	for bp in analyses.blueprints:
-		print('Registering blueprint '+bp.name+'.')
-		flaskapp.register_blueprint(bp, url_prefix='/'+bp.name)
-except:
-	raise RuntimeError("Did not find analyses.")
+
+import analyses
+from databench.analysis import listAll as allAnalyses
+for a in allAnalyses:
+	print('Registering analysis '+a.name+' as blueprint in flask.')
+	flaskapp.register_blueprint(a.blueprint, url_prefix='/'+a.name)
+
 socketio = SocketIO(flaskapp)
-analyses.wire_signals(socketio)
+for a in allAnalyses:
+	print('Connecting socket.io to '+a.name+'.')
+	a.signals.setSocketIO(socketio)
 
 
 @flaskapp.route('/')
 def index():
 	return render_template(
 		'index.html', 
-		analyses=[bp.name for bp in analyses.blueprints]
+		analyses=allAnalyses
 	)
 
 

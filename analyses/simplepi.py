@@ -5,7 +5,7 @@ from random import random
 import databench
 
 
-signals = databench.Signals('slowpi')
+signals = databench.Signals('simplepi')
 
 @signals.on('connect')
 def calc():
@@ -25,6 +25,4 @@ def calc():
 	signals.emit('log', {'action':'done'})
 
 
-slowpi = databench.Analysis('slowpi', __name__, signals)
-slowpi.description = "Calculating \(\pi\) the slow way."
-
+simplepi = databench.Analysis('simplepi', __name__, signals)
