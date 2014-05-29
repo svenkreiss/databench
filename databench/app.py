@@ -2,6 +2,7 @@ from gevent import monkey
 monkey.patch_all()
 
 import os
+import sys
 
 from flask import Flask, render_template, send_from_directory
 from flask.ext.socketio import SocketIO, emit
@@ -11,7 +12,13 @@ flaskapp = Flask(__name__)
 flaskapp.config['SECRET_KEY'] = 'secret!'
 flaskapp.debug = True
 
-import analyses
+
+sys.path.append('.')
+try:
+	import analyses
+except:
+	print("Did not find 'analyses' module. Using packaged analyses.")
+	import analyses_packaged
 from databench.analysis import listAll as allAnalyses
 for a in allAnalyses:
 	print('Registering analysis '+a.name+' as blueprint in flask.')
