@@ -95,7 +95,7 @@ simplepi = databench.Analysis('simplepi', __name__, signals)
 simplepi.description = "Calculating \(\pi\) the simple way."
 ```
 
-And on the frontend `simplepi.html` is a `jinja2` template math rendered with `MathJax` using `\( ... \)` for inline math and `$$ ... $$` for display math:
+And on the frontend `simplepi.html` is a `jinja2` template with math rendered with `MathJax` using `\( ... \)` for inline math and `$$ ... $$` for display math:
 
 ```html
 {% extends "base.html" %}
