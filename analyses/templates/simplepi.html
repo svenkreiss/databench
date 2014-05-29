@@ -3,34 +3,26 @@
 
 
 {% block content %}
-	<h1>
-        simplepi
-        <small><i>
-            π = <span id="pi-estimate">0.0 ± 1.0</span>
-        </i></small>
-    </h1>
+<h1>
+    simplepi
+    <small><i>π = <span id="pi">0.0 ± 1.0</span></i></small>
+</h1>
 
-	<p>This little demo uses two random numbers \(r_1\) and \(r_2\) 
-    and then does a comparison $$r_1^2 + r_2^2 < 1.0$$ to figure out 
-    whether the generated point is inside the first quadrant of the 
-    unit circle.</p>
+<p>This little demo uses two random numbers \(r_1\) and \(r_2\) and
+then does a comparison $$r_1^2 + r_2^2 < 1.0$$ to figure out whether
+the generated point is inside the first quadrant of the unit circle.</p>
 
-	<pre id="log"></pre>
+<pre id="log"></pre>
 {% endblock %}
 
 
 {% block footerscripts %}
-	<script>
-		var databench = Databench('simplepi');
-		databench.genericElements.log($('#log'));
-		var signals = databench.signals;
+<script>
+	var databench = Databench('simplepi');
+	databench.genericElements.log($('#log'));
 
-		signals.on('status', function(msg) {
-			$('#pi-estimate').text(
-                msg['pi-estimate'].toFixed(3)
-                +' ± '
-                +msg['pi-uncertainty'].toFixed(3)
-            );
-		});
-	</script>
+	databench.signals.on('status', function(msg) {
+		$('#pi').text(msg['pi-estimate'].toFixed(3)+' ± '+msg['pi-uncertainty'].toFixed(3));
+	});
+</script>
 {% endblock %}

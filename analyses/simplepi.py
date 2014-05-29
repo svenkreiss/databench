@@ -25,14 +25,14 @@ def onconnect():
 				'r2':r2
 			})
 
-			p = inside/draws
+			p = float(inside)/draws
 			uncertainty = 4.0*math.sqrt(draws*p*(1.0 - p)) / draws
 			signals.emit('status', {
 				'pi-estimate': 4.0*inside/draws,
 				'pi-uncertainty': uncertainty
 			})
 
-	signals.emit('log', {'action':'done'})
+	signals.emit('log', {'action': 'done'})
 
 
 simplepi = databench.Analysis('simplepi', __name__, signals)
