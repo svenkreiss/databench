@@ -14,5 +14,7 @@ install:
  - "pip install -r requirements_tests.txt"
  - "pip install -I Flask==$FLASK_VERSION"
  - "pip install -I redis==$REDIS_VERSION"
-before_script: "databench &"
+before_script: 
+ - "databench &"
+ - "sleep 10s"
 script: "nosetests tests"
