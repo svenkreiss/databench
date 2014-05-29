@@ -11,6 +11,7 @@ env:
  - FLASK_VERSION=0.10 REDIS_VERSION=2.7.4
 install:
  - "pip install -r requirements_analyses.txt"
+ - "pip install -r requirements_tests.txt"
  - "pip install -I Flask==$FLASK_VERSION"
  - "pip install -I redis==$REDIS_VERSION"
 before_script: "databench &"
