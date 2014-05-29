@@ -1,6 +1,8 @@
 # databench
 
-Data analysis tool using Flask, SocketIO and d3.js. Optional parallelization with Redis queue and datastore.
+> Data analysis tool using Flask, SocketIO and d3.js. Optional parallelization with Redis queue and datastore.
+
+[![Build Status](https://travis-ci.org/svenkreiss/databench.png?branch=master)](https://travis-ci.org/svenkreiss/databench)
 
 
 ## Environment
