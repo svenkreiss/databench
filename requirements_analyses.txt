@@ -3,7 +3,6 @@ Flask-SocketIO==0.3.7
 Jinja2==2.7.2
 MarkupSafe==0.23
 Werkzeug==0.9.4
--e git+https://github.com/svenkreiss/databench.git@73655925c7259cac8c9e3d9510a9760f53e57aff#egg=databench-master
 gevent==1.0.1
 gevent-socketio==0.3.6
 gevent-websocket==0.9.3
@@ -11,10 +10,9 @@ greenlet==0.4.2
 itsdangerous==0.24
 python-dateutil==2.2
 pytz==2014.3
-redis==2.9.1
-rq==0.4.6
-rq-dashboard==0.3.3
 simplejson==3.5.2
 six==1.6.1
 times==0.6.2
 wsgiref==0.1.2
+
+-e .

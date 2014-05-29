@@ -1,2 +1,1 @@
-import simplepi
-import slowpi
+import dummypi

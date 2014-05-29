@@ -5,7 +5,7 @@ from random import random
 import databench
 
 
-signals = databench.Signals('simplepi')
+signals = databench.Signals('dummypi')
 
 @signals.on('connect')
 def onconnect():
@@ -35,5 +35,6 @@ def onconnect():
 	signals.emit('log', {'action': 'done'})
 
 
-simplepi = databench.Analysis('simplepi', __name__, signals)
-simplepi.description = "Calculating \(\pi\) the simple way."
+dummypi = databench.Analysis('dummypi', __name__, signals)
+dummypi.description = """Calculating \(\pi\) the simple way, but this is called 
+dummypi to avoid conflict with simplepi in the databench_examples repo."""
