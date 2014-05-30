@@ -17,8 +17,11 @@ pip install git+https://github.com/svenkreiss/databench.git@v0.0.1
 
 Or installing in editable mode for development of databench itself (usually not required):
 
-```
+```bash
 git clone https://github.com/svenkreiss/databench.git .
+
+virtualenv venv
+source venv/bin/activate
 pip install -e .
 ```
 
