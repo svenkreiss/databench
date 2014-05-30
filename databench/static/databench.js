@@ -37,6 +37,17 @@ function Databench(name) {
 		});
 	};
 
+	genericElements.mpld3canvas = function(selector, signalName) {
+		if (!signalName) signalName = 'mpld3canvas';
+		
+		socket.on(signalName, function(msg) {
+			console.log("removing old figure");
+			selector.html('');
+			console.log("drawing mpld3 on element "+selector.attr('id'));
+			mpld3.draw_figure(selector.attr('id'), msg);
+		});
+	};
+
 
 
 
