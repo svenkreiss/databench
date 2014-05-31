@@ -44,7 +44,8 @@ def index():
 
 
 def run():
-	socketio.run(flaskapp)
+	port = int(os.environ.get('PORT', 5000))
+	socketio.run(flaskapp, port=port)
 	
 
 if __name__ == '__main__':
