@@ -19,7 +19,7 @@ try:
 except ImportError:
 	print("Did not find 'analyses' module.")
 	print("--- debug - sys.path: "+str(sys.path))
-	print("--- debug - os.path.dirname(os.path.realpath(__file__): "+os.path.dirname(os.path.realpath(__file__))
+	print("--- debug - os.path.dirname(os.path.realpath(__file__): "+os.path.dirname(os.path.realpath(__file__)))
 	print("--- debug - os.getcwd: "+os.getcwd())
 
 	print("Using packaged analyses.")
