@@ -6,7 +6,9 @@ import sys
 
 from flask import Flask, render_template, send_from_directory
 from flask.ext.socketio import SocketIO, emit
+
 import jinja2_highlight
+from jinja2 import Markup
 
 class MyFlask(Flask):
 	jinja_options = dict(Flask.jinja_options)
@@ -15,8 +17,8 @@ class MyFlask(Flask):
 		[]
 	).append('jinja2_highlight.HighlightExtension')
 
-
 flaskapp = MyFlask(__name__)
+flaskapp.jinja_env.globals['include_raw'] = lambda filename : Markup(flaskapp.jinja_loader.get_source(flaskapp.jinja_env, filename)[0])
 flaskapp.config['SECRET_KEY'] = 'secret!'
 flaskapp.debug = True
 
