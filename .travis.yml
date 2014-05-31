@@ -15,5 +15,5 @@ install:
  - "pip install -I redis==$REDIS_VERSION"
 before_script: 
  - "databench &"
- - "sleep 10s"
+ - "sleep 30s"
 script: "nosetests tests"

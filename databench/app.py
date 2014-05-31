@@ -16,8 +16,13 @@ flaskapp.debug = True
 sys.path.append('.')
 try:
 	import analyses
-except:
-	print("Did not find 'analyses' module. Using packaged analyses.")
+except ImportError:
+	print("Did not find 'analyses' module.")
+	print("--- debug - sys.path: "+str(sys.path))
+	print("--- debug - os.path.dirname(os.path.realpath(__file__): "+os.path.dirname(os.path.realpath(__file__))
+	print("--- debug - os.getcwd: "+os.getcwd())
+
+	print("Using packaged analyses.")
 	import analyses_packaged
 from databench.analysis import listAll as allAnalyses
 for a in allAnalyses:
