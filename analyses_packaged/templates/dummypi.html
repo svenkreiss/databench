@@ -13,6 +13,72 @@ then does a comparison $$r_1^2 + r_2^2 < 1.0$$ to figure out whether
 the generated point is inside the first quadrant of the unit circle.</p>
 
 <pre id="log"></pre>
+
+
+
+<br /><br />
+<hr />
+
+<h3>Source code</h3>
+
+<p>Frontend:</p>
+{% highlight 'html' %}
+<h1>
+    dummypi
+    <small><i>π = <span id="pi">0.0 ± 1.0</span></i></small>
+</h1>
+
+<p>This little demo uses two random numbers \(r_1\) and \(r_2\) and
+then does a comparison $$r_1^2 + r_2^2 < 1.0$$ to figure out whether
+the generated point is inside the first quadrant of the unit circle.</p>
+
+<pre id="log"></pre>
+{% endhighlight %}
+
+<p>Backend:</p>
+{% highlight 'python' %}
+import math
+from time import sleep
+from random import random
+
+import databench
+
+
+signals = databench.Signals('dummypi')
+
+@signals.on('connect')
+def onconnect():
+	inside = 0
+	for i in range(10000):
+		sleep(0.001)
+		r1, r2 = (random(), random())
+		if r1*r1 + r2*r2 < 1.0: 
+			inside += 1
+
+		if (i+1)%100 == 0:
+			draws = i+1
+			signals.emit('log', {
+				'draws':draws, 
+				'inside':inside, 
+				'r1':r1, 
+				'r2':r2
+			})
+
+			p = float(inside)/draws
+			uncertainty = 4.0*math.sqrt(draws*p*(1.0 - p)) / draws
+			signals.emit('status', {
+				'pi-estimate': 4.0*inside/draws,
+				'pi-uncertainty': uncertainty
+			})
+
+	signals.emit('log', {'action': 'done'})
+
+
+dummypi = databench.Analysis('dummypi', __name__, signals)
+dummypi.description = """Calculating \(\pi\) the simple way, but this is called 
+dummypi to avoid conflict with simplepi in the databench_examples repo."""
+{% endhighlight %}
+
 {% endblock %}
 
 

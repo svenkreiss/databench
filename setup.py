@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='databench',
-    version='0.1.2',
+    version='0.1.3',
     packages=['databench', 'scripts', 'analyses_packaged'],
     license='LICENSE',
     description='Data analysis tool using Flask, SocketIO and d3.js.',
@@ -18,12 +18,8 @@ setup(
         'Jinja2>=2.7.2',
         'MarkupSafe>=0.23',
         'Werkzeug>=0.9.4',
-        'gevent>=1.0.1',
         'gevent-socketio>=0.3.6',
-        'gevent-websocket>=0.9.3',
-        'greenlet>=0.4.2',
-        'itsdangerous>=0.24',
-        'wsgiref>=0.1.2',
+        'jinja2-highlight>=0.5.1',
     ],
 
     entry_points={
