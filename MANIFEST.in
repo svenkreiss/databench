@@ -1,0 +1,2 @@
+recursive-include databench/templates *
+recursive-include databench/static *
