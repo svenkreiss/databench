@@ -4,7 +4,7 @@ monkey.patch_all()
 import os
 import sys
 
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, render_template, send_from_directory, url_for
 from flask.ext.socketio import SocketIO, emit
 
 import jinja2_highlight
@@ -47,6 +47,7 @@ for a in allAnalyses:
 
 @flaskapp.route('/')
 def index():
+	print(url_for('static', filename='dummypi.png'))
 	return render_template(
 		'index.html', 
 		analyses=allAnalyses

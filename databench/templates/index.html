@@ -10,6 +10,9 @@
     	<a href="/{{a.name}}/">
     	<div class="panel panel-default">
 	    	<div class="panel-body">
+                {% if a.thumbnail %}
+                    <img src="/{{a.name}}/static/{{a.thumbnail}}" class="img-thumbnail analysis-thumbnail" />
+                {% endif %}
 	    		{{a.name}}{% if a.description %}<span class="text-muted">: {{ a.description }}</span>{% endif %}
 	    	</div>
     	</div>

@@ -25,7 +25,8 @@ class Analysis:
 			self.blueprint = Blueprint(
 				name, 
 				importName,
-				template_folder='templates'
+				template_folder='templates',
+				static_folder='static',
 			)
 		else:
 			self.blueprint = blueprint

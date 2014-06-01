@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='databench',
-    version='0.1.3',
+    version='0.1.4',
     packages=['databench', 'scripts', 'analyses_packaged'],
     license='LICENSE',
     description='Data analysis tool using Flask, SocketIO and d3.js.',

@@ -36,5 +36,6 @@ def onconnect():
 
 
 dummypi = databench.Analysis('dummypi', __name__, signals)
+dummypi.thumbnail = 'dummypi.png'
 dummypi.description = """Calculating \(\pi\) the simple way, but this is called 
 dummypi to avoid conflict with simplepi in the databench_examples repo."""

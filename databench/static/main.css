@@ -17,6 +17,12 @@ body {
 	border-top: 1px solid #e5e5e5;
 }
 
+.analysis-thumbnail {
+	float: left;
+	max-width: 100px;
+	max-height: 100px;
+	margin-right: 20px;
+}
 
 
 /* from pygments-css project: default.css */
