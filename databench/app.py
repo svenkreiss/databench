@@ -63,10 +63,10 @@ def init_app():
             analyses=allAnalyses
         )
 
-    return flaskapp
+    return (flaskapp, socketio)
 
 def run():
-    flaskapp = init_app()
+    flaskapp, socketio = init_app()
     port = int(os.environ.get('PORT', 5000))
     socketio.run(flaskapp, host='0.0.0.0', port=port)
 
