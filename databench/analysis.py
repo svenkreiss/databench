@@ -1,36 +1,45 @@
+"""Analysis class for Databench."""
+
 from flask import Blueprint, render_template
 
-listAll = []
+import databench.signals
 
-class Analysis:
-	def __init__(
-			self, 
-			name, 
-			importName, 
-			signals, 
-			description=None, 
-			blueprint=None
-	):
-		"""
-		An optional flask blueprint can be dependency-injected.
-		"""
 
-		listAll.append(self)
-		self.name = name
-		self.importName = importName
-		self.signals = signals
-		self.description = description
+LIST_ALL = []
 
-		if not blueprint:
-			self.blueprint = Blueprint(
-				name, 
-				importName,
-				template_folder='templates',
-				static_folder='static',
-			)
-		else:
-			self.blueprint = blueprint
+class Analysis(object):
+    """Databench's analysis class."""
 
-		@self.blueprint.route('/')
-		def render_index():
-			return render_template(self.name+'.html')
+    def __init__(
+            self,
+            name,
+            import_name,
+            signals=None,
+            blueprint=None
+    ):
+        """An optional Databench Signals object and Flask Blueprint can
+        be dependency-injected."""
+
+        LIST_ALL.append(self)
+        self.name = name
+        self.import_name = import_name
+
+        if not signals:
+            self.signals = databench.signals.Signals(name)
+        else:
+            self.signals = signals
+
+        if not blueprint:
+            self.blueprint = Blueprint(
+                name,
+                import_name,
+                template_folder='templates',
+                static_folder='static',
+            )
+        else:
+            self.blueprint = blueprint
+
+        @self.blueprint.route('/')
+        def render_index():
+            """Renders the main analysis frontend template."""
+            return render_template(self.name+'.html')

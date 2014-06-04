@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='databench',
-    version='0.1.4',
+    version='0.2.0',
     packages=['databench', 'scripts', 'analyses_packaged'],
     license='LICENSE',
     description='Data analysis tool using Flask, SocketIO and d3.js.',
@@ -10,7 +10,7 @@ setup(
     author='Sven Kreiss',
     author_email='sk@svenkreiss.com',
 
-    include_package_data = True,
+    include_package_data=True,
 
     install_requires=[
         'Flask>=0.10.1',
