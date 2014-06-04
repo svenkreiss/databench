@@ -1,31 +1,41 @@
+"""Databench Signals.
+
+Provides communication between frontend and backend via socket.io.
+"""
+
 from flask.ext.socketio import emit
 
-class Signals:
-	def __init__(self, namespace):
-		self.signalCache = []
-		self.socketio = None
-		self.namespace = namespace
 
-	def on(self, signal):
-		""" This is a decorator with an argument without a wrapper. """
+class Signals(object):
+    """Databench Signals."""
 
-		def decorator(callback):
-			if not self.socketio:
-				self.signalCache.append( (signal,callback) )
-			else:
-				@self.socketio.on(signal, namespace='/'+self.namespace)
-				def dummy():
-					callback()
+    def __init__(self, namespace):
+        self.signal_cache = []
+        self.socketio = None
+        self.namespace = namespace
 
-		return decorator
+    def on(self, signal):
+        """This is a decorator with an argument without a wrapper."""
 
-	def setSocketIO(self, socketio):
-		self.socketio = socketio
-		for sc in self.signalCache:
-			@self.socketio.on(sc[0], namespace='/'+self.namespace)
-			def dummy():
-				sc[1]()
-		self.signalCache = []
+        def decorator(callback):
+            if not self.socketio:
+                self.signal_cache.append((signal, callback))
+            else:
+                @self.socketio.on(signal, namespace='/'+self.namespace)
+                def dummy():
+                    callback()
 
-	def emit(self, signal, message):
-		emit(signal, message)
+        return decorator
+
+    def set_socket_io(self, socketio):
+        """Sets socket.io and applies all cached callbacks."""
+        self.socketio = socketio
+        for sc in self.signal_cache:
+            @self.socketio.on(sc[0], namespace='/'+self.namespace)
+            def dummy():
+                sc[1]()
+        self.signal_cache = []
+
+    def emit(self, signal, message):
+        """Emit signal to frontend."""
+        emit(signal, message, namespace='/'+self.namespace)

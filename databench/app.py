@@ -8,6 +8,7 @@ import sys
 
 from flask import Flask, render_template, url_for
 from flask.ext.socketio import SocketIO
+from flask.ext.markdown import Markdown
 
 import jinja2_highlight
 from jinja2 import Markup
@@ -26,12 +27,17 @@ def init_app():
     """Initialize Flask app."""
 
     flaskapp = MyFlask(__name__)
+    flaskapp.debug = True
+
+    # add include_raw capability
     flaskapp.jinja_env.globals['include_raw'] = lambda filename: \
         Markup(
             flaskapp.jinja_loader.get_source(flaskapp.jinja_env, filename)[0]
         )
     flaskapp.config['SECRET_KEY'] = 'secret!'
-    flaskapp.debug = True
+
+    # add markdown jinja extension
+    markdown = Markdown(flaskapp, extensions=['fenced_code'])
 
 
     sys.path.append('.')
@@ -53,7 +59,7 @@ def init_app():
     socketio = SocketIO(flaskapp)
     for a in allAnalyses:
         print 'Connecting socket.io to '+a.name+'.'
-        a.signals.setSocketIO(socketio)
+        a.signals.set_socket_io(socketio)
 
     @flaskapp.route('/')
     def index():
