@@ -10,6 +10,7 @@ from flask import Flask, render_template, url_for
 from flask.ext.socketio import SocketIO
 from flask.ext.markdown import Markdown
 
+import codecs
 import jinja2_highlight
 from jinja2 import Markup
 
@@ -28,13 +29,11 @@ def init_app():
 
     flaskapp = MyFlask(__name__)
     flaskapp.debug = True
+    flaskapp.config['SECRET_KEY'] = 'ajksdfjhkasdfj' # change
 
-    # add include_raw capability
-    flaskapp.jinja_env.globals['include_raw'] = lambda filename: \
-        Markup(
-            flaskapp.jinja_loader.get_source(flaskapp.jinja_env, filename)[0]
-        )
-    flaskapp.config['SECRET_KEY'] = 'secret!'
+    # add read_file capability
+    flaskapp.jinja_env.globals['read_file'] = lambda filename: \
+        codecs.open(os.getcwd()+'/analyses/'+filename, 'r', 'utf-8').readlines()
 
     # add markdown jinja extension
     markdown = Markdown(flaskapp, extensions=['fenced_code'])

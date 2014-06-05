@@ -1,0 +1,5 @@
+{% macro include_src(name, type='text') -%}
+	{% highlight type -%}
+	{{ read_file(name)|join }}
+	{%- endhighlight %}
+{%- endmacro %}
