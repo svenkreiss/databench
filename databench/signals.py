@@ -21,9 +21,7 @@ class Signals(object):
             if not self.socketio:
                 self.signal_cache.append((signal, callback))
             else:
-                @self.socketio.on(signal, namespace='/'+self.namespace)
-                def dummy():
-                    callback()
+                self.socketio.on_message(signal, callback, namespace='/'+self.namespace)
 
         return decorator
 
@@ -31,9 +29,7 @@ class Signals(object):
         """Sets socket.io and applies all cached callbacks."""
         self.socketio = socketio
         for sc in self.signal_cache:
-            @self.socketio.on(sc[0], namespace='/'+self.namespace)
-            def dummy():
-                sc[1]()
+            self.socketio.on_message(sc[0], sc[1], namespace='/'+self.namespace)
         self.signal_cache = []
 
     def emit(self, signal, message):
