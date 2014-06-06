@@ -25,21 +25,13 @@ source venv/bin/activate
 pip install -e .
 ```
 
-
-## Usage
-
-Create a project with this structure:
+Now you can run
+```python
+databench
 ```
-- analyses
-    - templates
-        - simplepi.html
-	- __init__.py
-	- simplepi.py
-```
-
-See the [databench_examples](https://github.com/svenkreiss/databench_examples) repository.
+and open `http://localhost:5000` in a web browser.
 
 
 ## More documentation
 
-Please have a look at the first blog post describing analyses with Databench: [www.svenkreiss.com/blog/databench-initial/](www.svenkreiss.com/blog/databench-initial/)
+Please have a look at the first blog post describing analyses with Databench [www.svenkreiss.com/blog/databench-initial/](www.svenkreiss.com/blog/databench-initial/) and have a look at the [databench_examples](https://github.com/svenkreiss/databench_examples) repository.
