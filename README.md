@@ -38,3 +38,8 @@ Create a project with this structure:
 ```
 
 See the [databench_examples](https://github.com/svenkreiss/databench_examples) repository.
+
+
+## More documentation
+
+Please have a look at the first blog post describing analyses with Databench: [www.svenkreiss.com/blog/databench-initial/](www.svenkreiss.com/blog/databench-initial/)
