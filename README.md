@@ -12,10 +12,10 @@ Setup your environment with
 ```bash
 virtualenv venv
 source venv/bin/activate
-pip install git+https://github.com/svenkreiss/databench.git@v0.0.1
+pip install -e git+https://github.com/svenkreiss/databench.git#egg=databench
 ```
 
-Or installing in editable mode for development of databench itself (usually not required):
+Or installing locally and in editable mode for development of databench itself (usually not required):
 
 ```bash
 git clone https://github.com/svenkreiss/databench.git .
