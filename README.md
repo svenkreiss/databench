@@ -1,6 +1,6 @@
 # Databench
 
-> Data analysis tool using Flask, SocketIO and d3.js. Optional parallelization with Redis queue and datastore.
+> Data analysis tool using Flask, SocketIO and d3.js. Optional parallelization with Redis queue and datastore. Live demos are at [databench-examples-viewer.svenkreiss.com](http://databench-examples-viewer.svenkreiss.com).
 
 [![Build Status](https://travis-ci.org/svenkreiss/databench.png?branch=master)](https://travis-ci.org/svenkreiss/databench)
 
@@ -34,4 +34,4 @@ and open `http://localhost:5000` in a web browser.
 
 ## More Documentation
 
-Please have a look at the first blog post describing analyses with Databench [www.svenkreiss.com/blog/databench-initial/](www.svenkreiss.com/blog/databench-initial/) and have a look at the [databench_examples](https://github.com/svenkreiss/databench_examples) repository. Live demos of some of these examples are at [http://databench-examples-viewer.svenkreiss.com](http://databench-examples-viewer.svenkreiss.com).
+Please have a look at the first blog post describing analyses with Databench [www.svenkreiss.com/blog/databench-initial/](www.svenkreiss.com/blog/databench-initial/) and have a look at the [databench_examples](https://github.com/svenkreiss/databench_examples) repository. Live demos are at [databench-examples-viewer.svenkreiss.com](http://databench-examples-viewer.svenkreiss.com).
