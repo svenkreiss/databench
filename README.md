@@ -34,4 +34,4 @@ and open `http://localhost:5000` in a web browser.
 
 ## More Documentation
 
-Please have a look at the first blog post describing analyses with Databench [www.svenkreiss.com/blog/databench-initial/](www.svenkreiss.com/blog/databench-initial/) and have a look at the [databench_examples](https://github.com/svenkreiss/databench_examples) repository. Live demos are at [databench-examples-viewer.svenkreiss.com](http://databench-examples-viewer.svenkreiss.com).
+Please have a look at the first blog post describing analyses with Databench [www.svenkreiss.com/blog/databench-initial/](http://www.svenkreiss.com/blog/databench-initial/) and have a look at the [databench_examples](https://github.com/svenkreiss/databench_examples) repository. Live demos are at [databench-examples-viewer.svenkreiss.com](http://databench-examples-viewer.svenkreiss.com).
