@@ -52,11 +52,13 @@
             
   <div class="section" id="overview">
 <h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
-<p>Databench is a Python package that you can install using</p>
-<div class="highlight-bash"><div class="highlight"><pre>pip install git+https://github.com/svenkreiss/databench.git
+<p>Databench is a Python package that you can install using <tt class="docutils literal"><span class="pre">pip</span></tt> inside a <tt class="docutils literal"><span class="pre">virtualenv</span></tt>:</p>
+<div class="highlight-bash"><div class="highlight"><pre>virtualenv venv
+<span class="nb">source </span>venv/bin/activate
+pip install git+https://github.com/svenkreiss/databench.git
 </pre></div>
 </div>
-<p>It provides an executable <tt class="docutils literal"><span class="pre">databench</span></tt> and the Python module <tt class="docutils literal"><span class="pre">databench</span></tt> as well as a JavaScript library for the frontend with the same name. A good way to start is to jump right into <a class="reference internal" href="quickstart.html#quickstart"><em>Quickstart</em></a>.</p>
+<p>It provides an executable <tt class="docutils literal"><span class="pre">databench</span></tt> and the Python module <tt class="docutils literal"><span class="pre">databench</span></tt> as well as a JavaScript library for the frontend with the same name. Running the executable creates a local web server which you can access at <a class="reference external" href="http://localhost:5000">http://localhost:5000</a>. A good way to start is to jump right into <a class="reference internal" href="quickstart.html#quickstart"><em>Quickstart</em></a>.</p>
 <p>Some features are shown in the <a class="reference external" href="http://databench-examples-viewer.svenkreiss.com/">live demos</a>. They do not include examples with parallelization or database interfaces (like asynchronously subscribing to a Redis channel) but those examples are available in the <a class="reference external" href="https://github.com/svenkreiss/databench_examples">databench_examples</a> repository.</p>
 <a class="reference internal image-reference" href="_images/mpld3pi_demo.png"><img alt="_images/mpld3pi_demo.png" src="_images/mpld3pi_demo.png" style="height: 270px;" /></a>
 <a class="reference internal image-reference" href="_images/mpld3_heart_path.png"><img alt="_images/mpld3_heart_path.png" src="_images/mpld3_heart_path.png" style="height: 270px;" /></a>
@@ -79,6 +81,7 @@
 <li class="toctree-l2"><a class="reference internal" href="frontend_api.html#generic-elements">Generic Elements</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="dev.html">Development</a></li>
 </ul>
 </div>
 </div>
@@ -127,6 +130,7 @@ Check out the <a href="http://databench-examples-viewer.svenkreiss.com/">live de
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backend_api.html">Backend API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="frontend_api.html">Frontend API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev.html">Development</a></li>
 </ul>
 
 
