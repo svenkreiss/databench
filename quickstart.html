@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Quickstart &mdash; Databench 0.2.4 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.2.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="top" title="Databench 0.2.4 documentation" href="index.html" />
+    <link rel="next" title="Backend API" href="backend_api.html" />
+    <link rel="prev" title="Overview" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="backend_api.html" title="Backend API"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Overview"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Databench 0.2.4 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="quickstart">
+<span id="id1"></span><h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h1>
+<p>Set up your environment inside a new folder</p>
+<div class="highlight-bash"><div class="highlight"><pre>virtualenv venv
+<span class="nb">source </span>venv/bin/activate
+pip install git+https://github.com/svenkreiss/databench.git
+</pre></div>
+</div>
+<p>and create the following file structure</p>
+<div class="highlight-bash"><div class="highlight"><pre>- workingDir
+    - analyses
+        - __init__.py
+        - helloworld.py
+        - templates
+            - helloworld.html
+</pre></div>
+</div>
+<p>First, tell the analyses module that we created a new analysis called <tt class="docutils literal"><span class="pre">helloworld</span></tt> in the <tt class="docutils literal"><span class="pre">__init__.py</span></tt> file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">analyses.helloworld</span>
+</pre></div>
+</div>
+<p>Next, create the helloworld backend in <tt class="docutils literal"><span class="pre">helloworld.py</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="sd">&quot;&quot;&quot;Hello World for Databench.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">databench</span>
+
+
+<span class="n">helloworld</span> <span class="o">=</span> <span class="n">databench</span><span class="o">.</span><span class="n">Analysis</span><span class="p">(</span><span class="s">&#39;helloworld&#39;</span><span class="p">,</span> <span class="n">__name__</span><span class="p">)</span>
+<span class="n">helloworld</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">__doc__</span>
+
+<span class="nd">@helloworld.signals.on</span><span class="p">(</span><span class="s">&#39;connect&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">onconnect</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Run as soon as a browser connects to this.&quot;&quot;&quot;</span>
+    <span class="n">helloworld</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&#39;status&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;message&#39;</span><span class="p">:</span> <span class="s">&#39;Hello World&#39;</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>And finally, create the frontend in <tt class="docutils literal"><span class="pre">helloworld.html</span></tt>:</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;head&gt;&lt;title&gt;</span>Hello World<span class="nt">&lt;/title&gt;&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;log&quot;</span><span class="nt">&gt;&lt;/p&gt;</span>
+
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/socket.io/socket.io.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/databench.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;script&gt;</span>
+        <span class="kd">var</span> <span class="nx">databench</span> <span class="o">=</span> <span class="nx">Databench</span><span class="p">(</span><span class="s1">&#39;helloworld&#39;</span><span class="p">);</span>
+        <span class="nx">databench</span><span class="p">.</span><span class="nx">signals</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">json</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">message</span><span class="p">;</span>
+        <span class="p">});</span>
+    <span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+</div>
+<p>Now you can run the executable <tt class="docutils literal"><span class="pre">databench</span></tt> in your <tt class="docutils literal"><span class="pre">workingDir</span></tt> folder (outside of analyses) which creates a webserver and you can open <a class="reference external" href="http://localhost:5000">http://localhost:5000</a> in your webbrowser. Here you can also create a <tt class="docutils literal"><span class="pre">requirements.txt</span></tt> file with other Python packages your analysis needs. An example of this setup is the <a class="reference external" href="https://github.com/svenkreiss/databench_examples">databench_examples</a> repository.</p>
+<p><strong>Using the</strong> <tt class="docutils literal"><span class="pre">base.html</span></tt> <strong>Template:</strong> To provide some basic header and footer for an analysis, the <tt class="docutils literal"><span class="pre">base.html</span></tt> template is available. It is not required to use it, but it includes a range of default libraries that might come in handy. To use it, change the <tt class="docutils literal"><span class="pre">helloworld.html</span></tt> to</p>
+<div class="highlight-html"><div class="highlight"><pre>{% extends &quot;base.html&quot; %}
+
+
+{% block title %}Hello World{% endblock %}
+
+
+{% block content %}
+<span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;log&quot;</span><span class="nt">&gt;&lt;/p&gt;</span>
+{% endblock %}
+
+
+{% block footerscripts %}
+<span class="nt">&lt;script&gt;</span>
+    <span class="kd">var</span> <span class="nx">databench</span> <span class="o">=</span> <span class="nx">Databench</span><span class="p">(</span><span class="s1">&#39;helloworld&#39;</span><span class="p">);</span>
+    <span class="nx">databench</span><span class="p">.</span><span class="nx">signals</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">json</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">message</span><span class="p">;</span>
+    <span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span>
+{% endblock %}
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Databench</a></h1>
+
+
+
+<p class="blurb">Databench is a data analysis tool using 
+<a href="http://flask.pocoo.org/">Flask</a>, 
+<a href="http://socket.io/">Socket.IO</a> and 
+<a href="http://d3js.org/">d3.js</a> with optional parallelization with 
+<a href="http://python-rq.org/">Redis Queue</a> and visualization with 
+<a href="http://mpld3.github.io/">mpld3</a>. 
+
+Check out the <a href="http://databench-examples-viewer.svenkreiss.com/">live demos</a>.</p>
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Overview</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend_api.html">Backend API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frontend_api.html">Frontend API</a></li>
+</ul>
+
+
+<hr />
+<ul>
+    
+    <li class="toctree-l1"><a href="http://databench-examples-viewer.svenkreiss.com">Live Demos</a></li>
+    
+    <li class="toctree-l1"><a href="https://github.com/svenkreiss/databench">GitHub</a></li>
+    
+    <li class="toctree-l1"><a href="https://github.com/svenkreiss/databench_examples">Examples Repository</a></li>
+    
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2014, Sven Kreiss.
+      
+    </div>
+
+    
+    <a href="https://github.com/svenkreiss/databench" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

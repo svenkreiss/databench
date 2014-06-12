@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Overview &mdash; Databench 0.2.4 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.2.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="top" title="Databench 0.2.4 documentation" href="#" />
+    <link rel="next" title="Quickstart" href="quickstart.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="quickstart.html" title="Quickstart"
+             accesskey="N">next</a> |</li>
+        <li><a href="#">Databench 0.2.4 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="overview">
+<h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
+<p>Databench is a Python package that you can install using</p>
+<div class="highlight-bash"><div class="highlight"><pre>pip install git+https://github.com/svenkreiss/databench.git
+</pre></div>
+</div>
+<p>It provides an executable <tt class="docutils literal"><span class="pre">databench</span></tt> and the Python module <tt class="docutils literal"><span class="pre">databench</span></tt> as well as a JavaScript library for the frontend with the same name. A good way to start is to jump right into <a class="reference internal" href="quickstart.html#quickstart"><em>Quickstart</em></a>.</p>
+<p>To look at some example analyses, there is a gallery of <a class="reference external" href="http://databench-examples-viewer.svenkreiss.com/">live demos</a>. The live demos do not include examples with parallelization or database interfaces (like asynchronously subscribing to a Redis channel) but those examples are available in the <a class="reference external" href="https://github.com/svenkreiss/databench_examples">databench_examples</a> repository.</p>
+<div class="section" id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend_api.html">Backend API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="backend_api.html#analysis">Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backend_api.html#signals">Signals</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="frontend_api.html">Frontend API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="frontend_api.html#databench">Databench</a></li>
+<li class="toctree-l2"><a class="reference internal" href="frontend_api.html#signals">Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="frontend_api.html#generic-elements">Generic Elements</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="feedback">
+<h2>Feedback<a class="headerlink" href="#feedback" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference external" href="https://github.com/svenkreiss/databench">GitHub page</a> provides a few ways for feedback in terms of <em>Issues</em> and <em>Pull Requests</em> and I am happy to receive and incorporate those. Or you can <a class="reference external" href="mailto:me&#37;&#52;&#48;svenkreiss&#46;com">send me an email</a>.</p>
+</div>
+<div class="section" id="contributors">
+<h2>Contributors<a class="headerlink" href="#contributors" title="Permalink to this headline">¶</a></h2>
+<p>This list will be created once there are contributors. So send pull requests :)</p>
+</div>
+<div class="section" id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<p>Databench was written by Sven Kreiss and made available under the
+<a class="reference external" href="https://github.com/svenkreiss/databench/blob/master/LICENSE">MIT license</a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">Databench</a></h1>
+
+
+
+<p class="blurb">Databench is a data analysis tool using 
+<a href="http://flask.pocoo.org/">Flask</a>, 
+<a href="http://socket.io/">Socket.IO</a> and 
+<a href="http://d3js.org/">d3.js</a> with optional parallelization with 
+<a href="http://python-rq.org/">Redis Queue</a> and visualization with 
+<a href="http://mpld3.github.io/">mpld3</a>. 
+
+Check out the <a href="http://databench-examples-viewer.svenkreiss.com/">live demos</a>.</p>
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend_api.html">Backend API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frontend_api.html">Frontend API</a></li>
+</ul>
+
+
+<hr />
+<ul>
+    
+    <li class="toctree-l1"><a href="http://databench-examples-viewer.svenkreiss.com">Live Demos</a></li>
+    
+    <li class="toctree-l1"><a href="https://github.com/svenkreiss/databench">GitHub</a></li>
+    
+    <li class="toctree-l1"><a href="https://github.com/svenkreiss/databench_examples">Examples Repository</a></li>
+    
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2014, Sven Kreiss.
+      
+    </div>
+
+    
+    <a href="https://github.com/svenkreiss/databench" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

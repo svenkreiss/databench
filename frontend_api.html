@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Frontend API &mdash; Databench 0.2.4 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.2.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="top" title="Databench 0.2.4 documentation" href="index.html" />
+    <link rel="prev" title="Backend API" href="backend_api.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="backend_api.html" title="Backend API"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Databench 0.2.4 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="frontend-api">
+<h1>Frontend API<a class="headerlink" href="#frontend-api" title="Permalink to this headline">¶</a></h1>
+<p>When using the <tt class="docutils literal"><span class="pre">base.html</span></tt> template, the databench library and a few more libraries are already loaded. When using your own html template, the frontend library with the Socket.IO dependency are loaded by including</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/socket.io/socket.io.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/databench.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</pre></div>
+</div>
+<p>in the html body tag.</p>
+<div class="section" id="databench">
+<h2>Databench<a class="headerlink" href="#databench" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="Databench">
+<em class="property">class </em><tt class="descname">Databench</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#Databench" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this databench analysis
+(used as Socket.IO namepsace and has to match the backend name)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Databench.signals">
+<tt class="descclassname">Databench.</tt><tt class="descname">signals</tt><a class="headerlink" href="#Databench.signals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Databench.genericElements">
+<tt class="descclassname">Databench.</tt><tt class="descname">genericElements</tt><a class="headerlink" href="#Databench.genericElements" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="signals">
+<h2>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="Databench.signals.emit">
+<tt class="descclassname">Databench.signals.</tt><tt class="descname">emit</tt><big>(</big><em>signalName</em>, <em>message</em><big>)</big><a class="headerlink" href="#Databench.signals.emit" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first last simple">
+<li><strong>signalName</strong> (<em>string</em>) &#8211; Name of the signal that is used to send the message.</li>
+<li><strong>message</strong> &#8211; Message to send.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Databench.signals.on">
+<tt class="descclassname">Databench.signals.</tt><tt class="descname">on</tt><big>(</big><em>signalName</em>, <em>callback</em><big>)</big><a class="headerlink" href="#Databench.signals.on" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first last simple">
+<li><strong>signalName</strong> (<em>string</em>) &#8211; Name of the signal to listen to from the backend.</li>
+<li><strong>callback</strong> (<em>function</em>) &#8211; Function that is called when a signal is received.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="generic-elements">
+<h2>Generic Elements<a class="headerlink" href="#generic-elements" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="Databench.genericElements.log">
+<tt class="descclassname">Databench.genericElements.</tt><tt class="descname">log</tt><big>(</big><em>selector</em>, <em>limit</em><big>)</big><a class="headerlink" href="#Databench.genericElements.log" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first last simple">
+<li><strong>selector</strong> &#8211; A jQuery selector.</li>
+<li><strong>limit</strong> (<em>int</em>) &#8211; Maximum number of lines to show.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Databench.genericElements.mpld3canvas">
+<tt class="descclassname">Databench.genericElements.</tt><tt class="descname">mpld3canvas</tt><big>(</big><em>selector</em>, <em>signalName</em><big>)</big><a class="headerlink" href="#Databench.genericElements.mpld3canvas" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first last simple">
+<li><strong>selector</strong> &#8211; A jQuery selector.</li>
+<li><strong>signalName</strong> (<em>string</em>) &#8211; Waiting for plots to be send on this signal.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Databench</a></h1>
+
+
+
+<p class="blurb">Databench is a data analysis tool using 
+<a href="http://flask.pocoo.org/">Flask</a>, 
+<a href="http://socket.io/">Socket.IO</a> and 
+<a href="http://d3js.org/">d3.js</a> with optional parallelization with 
+<a href="http://python-rq.org/">Redis Queue</a> and visualization with 
+<a href="http://mpld3.github.io/">mpld3</a>. 
+
+Check out the <a href="http://databench-examples-viewer.svenkreiss.com/">live demos</a>.</p>
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend_api.html">Backend API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Frontend API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#databench">Databench</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#signals">Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generic-elements">Generic Elements</a></li>
+</ul>
+</li>
+</ul>
+
+
+<hr />
+<ul>
+    
+    <li class="toctree-l1"><a href="http://databench-examples-viewer.svenkreiss.com">Live Demos</a></li>
+    
+    <li class="toctree-l1"><a href="https://github.com/svenkreiss/databench">GitHub</a></li>
+    
+    <li class="toctree-l1"><a href="https://github.com/svenkreiss/databench_examples">Examples Repository</a></li>
+    
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2014, Sven Kreiss.
+      
+    </div>
+
+    
+    <a href="https://github.com/svenkreiss/databench" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>
