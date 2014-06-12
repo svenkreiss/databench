@@ -1,3 +1,3 @@
-"""Dummy analysis. Just for testing purposes."""
+"""Dummy analysis `dummypi`. Just for testing purposes."""
 
 import dummypi
