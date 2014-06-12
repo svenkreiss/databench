@@ -39,8 +39,10 @@ def init_app():
 
 
     sys.path.append('.')
+    description = None
     try:
         import analyses
+        description = analyses.__doc__
     except ImportError:
         print "Did not find 'analyses' module."
         print "--- debug - sys.path: "+str(sys.path)
@@ -49,6 +51,7 @@ def init_app():
 
         print "Using packaged analyses."
         import analyses_packaged
+        description = analyses_packaged.__doc__
     from databench.analysis import LIST_ALL as allAnalyses
     for a in allAnalyses:
         print 'Registering analysis '+a.name+' as blueprint in flask.'
@@ -64,7 +67,8 @@ def init_app():
         print url_for('static', filename='dummypi.png')
         return render_template(
             'index.html',
-            analyses=allAnalyses
+            analyses=allAnalyses,
+            description=description
         )
 
     return (flaskapp, socketio)
