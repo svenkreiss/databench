@@ -14,10 +14,25 @@ Databench is a Python package that you can install using
 
 It provides an executable ``databench`` and the Python module ``databench`` as well as a JavaScript library for the frontend with the same name. A good way to start is to jump right into :ref:`quickstart`.
 
-To look at some example analyses, there is a gallery of `live demos`_. The live demos do not include examples with parallelization or database interfaces (like asynchronously subscribing to a Redis channel) but those examples are available in the `databench_examples`_ repository.
+Some features are shown in the `live demos`_. They do not include examples with parallelization or database interfaces (like asynchronously subscribing to a Redis channel) but those examples are available in the `databench_examples`_ repository.
+
+.. image:: images/mpld3pi_demo.png
+   :height: 270
+
+.. image:: images/mpld3_heart_path.png
+   :height: 270
+
+.. image:: images/bagofcharsd3.png
+   :height: 270
+
+The `live demos`_ and `databench_examples`_ also show seemless integration with markdown_ and MathJax_ as well as with `angular.js`_.
 
 .. _`live demos`: http://databench-examples-viewer.svenkreiss.com/
 .. _`databench_examples`: https://github.com/svenkreiss/databench_examples
+.. _markdown: http://daringfireball.net/projects/markdown/syntax
+.. _MathJax: http://www.mathjax.org/
+.. _`angular.js`: https://angularjs.org/
+
 
 
 Contents

@@ -16,8 +16,9 @@ Databench
 
 .. js:class:: Databench(name)
    
-    :param string name: The name of this databench analysis 
-        (used as Socket.IO namepsace and has to match the backend name)
+    :param string name: The name of this databench analysis (used as Socket.IO
+        namepsace and has to match the backend's :class:`databench.Analysis`
+        ``name``)
 
 .. js:attribute:: Databench.signals
 .. js:attribute:: Databench.genericElements

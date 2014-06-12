@@ -70,7 +70,9 @@ standard use cases.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>str</em>) &#8211; Name of this analysis.</li>
+<li><strong>name</strong> (<em>str</em>) &#8211; Name of this analysis. If <tt class="docutils literal"><span class="pre">signals</span></tt> is not specified, this
+also becomes the namespace for the Socket.IO connection and has
+to match the frontend&#8217;s <a class="reference internal" href="frontend_api.html#Databench" title="Databench"><tt class="xref js js-class docutils literal"><span class="pre">Databench()</span></tt></a> <tt class="docutils literal"><span class="pre">name</span></tt>.</li>
 <li><strong>import_name</strong> (<em>str</em>) &#8211; Usually the file name <tt class="docutils literal"><span class="pre">__name__</span></tt> where this
 analysis is instantiated.</li>
 <li><strong>signals</strong> (<em>optional</em>) &#8211; Inject an instance of <a class="reference internal" href="#databench.Signals" title="databench.Signals"><tt class="xref py py-class docutils literal"><span class="pre">databench.Signals</span></tt></a>.</li>
