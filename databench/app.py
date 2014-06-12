@@ -1,7 +1,6 @@
 """Executable for Databench."""
 
 from gevent import monkey
-monkey.patch_all()
 
 import os
 import sys
@@ -58,7 +57,7 @@ def init_app():
     socketio = SocketIO(flaskapp)
     for a in allAnalyses:
         print 'Connecting socket.io to '+a.name+'.'
-        a.signals.set_socket_io(socketio)
+        a.signals._set_socket_io(socketio)
 
     @flaskapp.route('/')
     def index():
@@ -71,6 +70,7 @@ def init_app():
     return (flaskapp, socketio)
 
 def run():
+    monkey.patch_all()
     flaskapp, socketio = init_app()
     port = int(os.environ.get('PORT', 5000))
     socketio.run(flaskapp, host='0.0.0.0', port=port)
