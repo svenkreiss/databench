@@ -1,8 +1,15 @@
 from distutils.core import setup
 
+import re
+
+# extract version from __init__.py
+with open('databench/__init__.py', 'r') as f:
+    INIT = f.read()
+    VERSION = re.finditer('__version__ = \"(.*?)\"', INIT).next().group(1)
+
 setup(
     name='databench',
-    version='0.2.3',
+    version=VERSION,
     packages=['databench', 'scripts', 'analyses_packaged'],
     license='LICENSE',
     description='Data analysis tool using Flask, SocketIO and d3.js.',
