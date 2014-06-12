@@ -1,37 +1,19 @@
 # Databench
 
-> Data analysis tool using Flask, SocketIO and d3.js. Optional parallelization with Redis queue and datastore. Live demos are at [databench-examples-viewer.svenkreiss.com](http://databench-examples-viewer.svenkreiss.com).
+> Data analysis tool using Flask, Socket.IO and d3.js. Optional parallelization with Redis Queue and visualizations with mpld3. Live demos are at [databench-examples-viewer.svenkreiss.com](http://databench-examples-viewer.svenkreiss.com).
 
 [![Build Status](https://travis-ci.org/svenkreiss/databench.png?branch=master)](https://travis-ci.org/svenkreiss/databench)
 
 
-## Environment and Install
+## Documentation
 
-Setup your environment with
+User guide and API documentation: [www.svenkreiss.com/databench/](http://www.svenkreiss.com/databench/)
 
-```bash
-virtualenv venv
-source venv/bin/activate
-pip install -e git+https://github.com/svenkreiss/databench.git#egg=databench
-```
-
-Or installing locally and in editable mode for development of databench itself (usually not required):
-
-```bash
-git clone https://github.com/svenkreiss/databench.git .
-
-virtualenv venv
-source venv/bin/activate
-pip install -e .
-```
-
-Now you can run
-```python
-databench
-```
-and open `http://localhost:5000` in a web browser.
+Live demos:  [databench-examples-viewer.svenkreiss.com](http://databench-examples-viewer.svenkreiss.com)  
+First blog post: [www.svenkreiss.com/blog/databench-initial/](http://www.svenkreiss.com/blog/databench-initial/)  
+Demo slides: [Hack and Tell NYC](https://speakerdeck.com/svenkreiss/databench)  
+Examples repository: [github/databench_examples](https://github.com/svenkreiss/databench_examples)  
 
 
-## More Documentation
-
-Please have a look at the first blog post describing analyses with Databench [www.svenkreiss.com/blog/databench-initial/](http://www.svenkreiss.com/blog/databench-initial/) and have a look at the [databench_examples](https://github.com/svenkreiss/databench_examples) repository. Live demos are at [databench-examples-viewer.svenkreiss.com](http://databench-examples-viewer.svenkreiss.com).
+## License
+Databench was written by Sven Kreiss and made available under the [MIT license](https://github.com/svenkreiss/databench/blob/master/LICENSE).
