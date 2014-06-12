@@ -6,13 +6,15 @@
 Overview
 ========
 
-Databench is a Python package that you can install using 
+Databench is a Python package that you can install using ``pip`` inside a ``virtualenv``:
 
 .. code-block:: bash
 	
+	virtualenv venv
+	source venv/bin/activate
 	pip install git+https://github.com/svenkreiss/databench.git
 
-It provides an executable ``databench`` and the Python module ``databench`` as well as a JavaScript library for the frontend with the same name. A good way to start is to jump right into :ref:`quickstart`.
+It provides an executable ``databench`` and the Python module ``databench`` as well as a JavaScript library for the frontend with the same name. Running the executable creates a local web server which you can access at http://localhost:5000. A good way to start is to jump right into :ref:`quickstart`.
 
 Some features are shown in the `live demos`_. They do not include examples with parallelization or database interfaces (like asynchronously subscribing to a Redis channel) but those examples are available in the `databench_examples`_ repository.
 
@@ -34,7 +36,6 @@ The `live demos`_ and `databench_examples`_ also show seemless integration with 
 .. _`angular.js`: https://angularjs.org/
 
 
-
 Contents
 --------
 
@@ -45,6 +46,7 @@ Contents
    quickstart
    backend_api
    frontend_api
+   dev
 
 
 Feedback
