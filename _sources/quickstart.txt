@@ -3,15 +3,7 @@
 Quickstart
 ==========
 
-Set up your environment inside a new folder
-
-.. code-block:: bash
-
-    virtualenv venv
-    source venv/bin/activate
-    pip install git+https://github.com/svenkreiss/databench.git
-
-and create the following file structure
+Install ``databench`` inside a new ``virtualenv`` (as shown at the top of the `Overview page <index.html#overview>`_) and create the following file structure
 
 .. code-block:: bash
 
