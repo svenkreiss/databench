@@ -1,6 +1,6 @@
 """Databench module."""
 
-__version__ = "0.2.5"
+__version__ = "0.2.6"
 
 
 from databench.analysis import LIST_ALL, Analysis

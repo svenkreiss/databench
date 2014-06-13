@@ -52,7 +52,7 @@ class Signals(object):
         return decorator
 
 
-    def _set_socket_io(self, socketio):
+    def set_socket_io(self, socketio):
         """Sets socket.io and applies all cached callbacks."""
 
         self.socketio = socketio
