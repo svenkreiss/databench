@@ -3,6 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+
+.. _overview:
+
 Overview
 ========
 
@@ -10,11 +13,11 @@ Databench is a Python package that you can install using ``pip`` inside a ``virt
 
 .. code-block:: bash
 	
-	virtualenv venv
-	source venv/bin/activate
-	pip install git+https://github.com/svenkreiss/databench.git
+	$ virtualenv venv
+	$ source venv/bin/activate
+	(venv)$ pip install git+https://github.com/svenkreiss/databench.git
 
-It provides an executable ``databench`` and the Python module ``databench`` as well as a JavaScript library for the frontend with the same name. Running the executable creates a local web server which you can access at http://localhost:5000. A good way to start is to jump right into :ref:`quickstart`.
+It provides an executable ``databench`` and the Python module ``databench`` as well as a JavaScript library for the frontend with the same name. Running the executable creates a local web server which you can access at http://localhost:5000. A good way to start is to jump right into :ref:quickstart.
 
 Some features are shown in the `live demos`_. They do not include examples with parallelization or database interfaces (like asynchronously subscribing to a Redis channel) but those examples are available in the `databench_examples`_ repository.
 
@@ -44,6 +47,7 @@ Contents
 
    self
    quickstart
+   deploy
    backend_api
    frontend_api
    dev
