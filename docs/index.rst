@@ -33,7 +33,7 @@ Some features are shown in the `live demos`_. They do not include examples with 
    :height: 270
    :target: http://databench-examples-viewer.svenkreiss.com/bagofcharsd3/
 
-The `live demos`_ and `databench_examples`_ also show seemless integration with markdown_ and MathJax_ as well as with `angular.js`_.
+The `live demos`_ and `databench_examples`_ also show seemless integration with *markdown* and *MathJax* as well as with *angular.js*.
 
 .. _`first blog post`: http://www.svenkreiss.com/blog/databench-initial/
 .. _`slides from Hack and Tell NY`: https://speakerdeck.com/svenkreiss/databench
