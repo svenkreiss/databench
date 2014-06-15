@@ -9,11 +9,6 @@
 
 User guide and API documentation: [www.svenkreiss.com/databench/](http://www.svenkreiss.com/databench/)
 
-Live demos:  [databench-examples-viewer.svenkreiss.com](http://databench-examples-viewer.svenkreiss.com)  
-First blog post: [www.svenkreiss.com/blog/databench-initial/](http://www.svenkreiss.com/blog/databench-initial/)  
-Demo slides: [Hack and Tell NYC](https://speakerdeck.com/svenkreiss/databench)  
-Examples repository: [github/databench_examples](https://github.com/svenkreiss/databench_examples)  
-
 
 ## License
 Databench was written by Sven Kreiss and made available under the [MIT license](https://github.com/svenkreiss/databench/blob/master/LICENSE).
