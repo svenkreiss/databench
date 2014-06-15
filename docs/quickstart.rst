@@ -3,7 +3,7 @@
 Quickstart
 ==========
 
-Install ``databench`` inside a new ``virtualenv`` (as shown at the top of the `Overview page <index.html#overview>`_) and create the following file structure
+Install ``databench`` inside a new ``virtualenv`` (as shown at the top of the :ref:`overview` page) and create the following file structure
 
 .. code-block:: bash
 
