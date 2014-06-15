@@ -8,7 +8,7 @@ import databench.signals
 LIST_ALL = []
 
 class Analysis(object):
-    """Databench's analysis class. 
+    """Databench's analysis class.
 
     An optional :class:`databench.Signals` instance and :class:`flask.Blueprint`
     can be dependency-injected, however that should not be necessary for
@@ -50,6 +50,8 @@ class Analysis(object):
             )
         else:
             self.blueprint = blueprint
+
+        self.show_in_index = True
 
         @self.blueprint.route('/')
         def render_index():
