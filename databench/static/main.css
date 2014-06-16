@@ -11,6 +11,10 @@ body {
 	margin: 40px 0;
 }
 
+p {
+	max-width: 60em;
+}
+
 .footer {
 	padding-top: 19px;
 	color: #777;

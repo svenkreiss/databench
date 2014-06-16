@@ -10,7 +10,8 @@ from flask.ext.socketio import SocketIO
 from flask.ext.markdown import Markdown
 
 import codecs
-import jinja2_highlight
+
+from databench import __version__ as databench_version
 
 
 def init_app():
@@ -35,9 +36,19 @@ def init_app():
 
     sys.path.append('.')
     description = None
+    analyses_author = None
+    analyses_version = None
     try:
         import analyses
         description = analyses.__doc__
+        try:
+            analyses_author = analyses.__author__
+        except AttributeError:
+            print 'Analyses module does not have an author string.'
+        try:
+            analyses_version = analyses.__version__
+        except AttributeError:
+            print 'Analyses module does not have a version string.'
     except ImportError:
         print "Did not find 'analyses' module."
         print "--- debug - sys.path: "+str(sys.path)
@@ -48,6 +59,14 @@ def init_app():
         print "Using packaged analyses."
         import analyses_packaged
         description = analyses_packaged.__doc__
+        try:
+            analyses_author = analyses_packaged.__author__
+        except AttributeError:
+            print 'Analyses module does not have an author string.'
+        try:
+            analyses_version = analyses_packaged.__version__
+        except AttributeError:
+            print 'Analyses module does not have a version string.'
     from databench.analysis import LIST_ALL as LIST_ALL_ANALYSES
     for a in LIST_ALL_ANALYSES:
         print 'Registering analysis '+a.name+' as blueprint in flask.'
@@ -64,7 +83,10 @@ def init_app():
         return render_template(
             'index.html',
             analyses=LIST_ALL_ANALYSES,
-            description=description
+            analyses_author=analyses_author,
+            analyses_version=analyses_version,
+            description=description,
+            databench_version=databench_version
         )
 
     return (flaskapp, socketio)

@@ -5,9 +5,13 @@
 
 
 {% block content %}
-{% filter markdown %}
-{{ description }}
-{% endfilter %}
+{{ description|markdown }}
+
+<!--
+    Analyses info:
+        Author: {{analyses_author}}
+        Version: {{analyses_version}}
+-->
 
 <br />
 <h1>List of Analyses</h1>
