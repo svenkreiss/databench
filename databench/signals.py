@@ -36,7 +36,8 @@ class Signals(object):
 
     def on(self, signal):
         """This is a decorator. Use for functions that listen to signals
-        from the frontend.
+        from the frontend. The function that is decorated should have a single
+        argument which is the message (a string).
 
         Args:
             signal (str): The name of the signal to listen for.
@@ -44,10 +45,48 @@ class Signals(object):
         """
 
         def decorator(callback):
+            """Inner decorator function."""
             if not self.socketio:
                 self.signal_cache.append((signal, callback))
             else:
-                self.socketio.on_message(signal, callback, namespace='/'+self.namespace)
+                self.socketio.on_message(
+                    signal,
+                    callback,
+                    namespace='/'+self.namespace
+                )
+
+        return decorator
+
+
+    def on_rpc(self, signal):
+        """This is a decorator. Use for functions that listen to signals
+        from the frontend. The "message" is expected to be a dictionary
+        which this decorator decodes to keyword arguments.
+
+        .. versionadded:: 0.2.9
+
+        Args:
+            signal (str): The name of the signal to listen for.
+
+        """
+
+        def decorator(callback):
+            """Inner decorator function."""
+
+            def decode_dictionary(message):
+                """Decodes a message containing a dictionary into keyword
+                arguments."""
+
+                callback(**message)
+
+            if not self.socketio:
+                self.signal_cache.append((signal, decode_dictionary))
+            else:
+                self.socketio.on_message(
+                    signal,
+                    decode_dictionary,
+                    namespace='/'+self.namespace
+                )
 
         return decorator
 
@@ -56,7 +95,10 @@ class Signals(object):
         """Sets socket.io and applies all cached callbacks."""
 
         self.socketio = socketio
-        for sc in self.signal_cache:
-            self.socketio.on_message(sc[0], sc[1], namespace='/'+self.namespace)
+        for cached_signal in self.signal_cache:
+            self.socketio.on_message(
+                cached_signal[0], cached_signal[1],
+                namespace='/'+self.namespace
+            )
         self.signal_cache = []
 
