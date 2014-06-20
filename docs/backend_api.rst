@@ -13,4 +13,4 @@ Signals
 -------
 
 .. autoclass:: databench.Signals
-   :members: emit, on
+   :members: emit, on, on_rpc
