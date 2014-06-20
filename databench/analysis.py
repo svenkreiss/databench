@@ -33,6 +33,8 @@ class Analysis(object):
             blueprint=None
     ):
         LIST_ALL.append(self)
+        self.show_in_index = True
+
         self.name = name
         self.import_name = import_name
 
@@ -51,9 +53,8 @@ class Analysis(object):
         else:
             self.blueprint = blueprint
 
-        self.show_in_index = True
+        self.blueprint.add_url_rule('/', 'render_index', self.render_index)
 
-        @self.blueprint.route('/')
-        def render_index():
-            """Renders the main analysis frontend template."""
-            return render_template(self.name+'.html')
+    def render_index(self):
+        """Renders the main analysis frontend template."""
+        return render_template(self.name+'.html')
