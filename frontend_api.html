@@ -137,11 +137,14 @@ message.</li>
 <h2>Generic Elements<a class="headerlink" href="#generic-elements" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="Databench.genericElements.log">
-<tt class="descclassname">Databench.genericElements.</tt><tt class="descname">log</tt><big>(</big><em>selector</em><span class="optional">[</span>, <em>signal_name</em>, <em>limit</em>, <em>console_fn_name</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Databench.genericElements.log" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function converts a generic <tt class="docutils literal"><span class="pre">&lt;pre&gt;</span></tt> element into a basic console. By
+<tt class="descclassname">Databench.genericElements.</tt><tt class="descname">log</tt><big>(</big><span class="optional">[</span><em>selector</em>, <em>signal_name</em>, <em>limit</em>, <em>console_fn_name</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Databench.genericElements.log" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function provides log message handling from the frontend and
+backend. If a selector is given, it converts a generic <tt class="docutils literal"><span class="pre">&lt;pre&gt;</span></tt> element
+into a basic console. By
 default, this looks at <tt class="docutils literal"><span class="pre">log</span></tt> messages from the backend and at
 <tt class="docutils literal"><span class="pre">console.log()</span></tt> calls on the frontend. All messages will be shown in the
-bound <tt class="docutils literal"><span class="pre">&lt;pre&gt;</span></tt> element and in the browser console.</p>
+bound <tt class="docutils literal"><span class="pre">&lt;pre&gt;</span></tt> element (if a <tt class="docutils literal"><span class="pre">selector</span></tt> is given) and in the browser
+console.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -150,7 +153,7 @@ bound <tt class="docutils literal"><span class="pre">&lt;pre&gt;</span></tt> ele
 <li><strong>selector</strong> &#8211; A jQuery selector.</li>
 <li><strong>signal_name</strong> (<em>string</em>) &#8211; The signal to listen for.</li>
 <li><strong>limit</strong> (<em>int</em>) &#8211; Maximum number of lines to show (default=20).</li>
-<li><strong>console_fn_name</strong> (<em>string</em>) &#8211; Name of a method of console, like
+<li><strong>console_fn_name</strong> (<em>string</em>) &#8211; Name of a method of <tt class="docutils literal"><span class="pre">console</span></tt>, like
 &#8216;log&#8217; (default).</li>
 </ul>
 </td>

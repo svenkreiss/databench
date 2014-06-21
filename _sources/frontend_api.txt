@@ -44,17 +44,20 @@ Signals
 Generic Elements
 ----------------
 
-.. js:function:: Databench.genericElements.log(selector[, signal_name, limit, console_fn_name])
+.. js:function:: Databench.genericElements.log([selector, signal_name, limit, console_fn_name])
 
-    This function converts a generic ``<pre>`` element into a basic console. By
+    This function provides log message handling from the frontend and
+    backend. If a selector is given, it converts a generic ``<pre>`` element
+    into a basic console. By
     default, this looks at ``log`` messages from the backend and at
     ``console.log()`` calls on the frontend. All messages will be shown in the
-    bound ``<pre>`` element and in the browser console.
+    bound ``<pre>`` element (if a ``selector`` is given) and in the browser
+    console.
 
     :param selector: A jQuery selector.
     :param string signal_name: The signal to listen for.
     :param int limit: Maximum number of lines to show (default=20).
-    :param string console_fn_name: Name of a method of console, like
+    :param string console_fn_name: Name of a method of ``console``, like
         'log' (default).
 
 .. js:function:: Databench.genericElements.mpld3canvas(selector[, signalName])
