@@ -56,7 +56,9 @@
             
   <div class="section" id="frontend-api">
 <h1>Frontend API<a class="headerlink" href="#frontend-api" title="Permalink to this headline">¶</a></h1>
-<p>When using the <tt class="docutils literal"><span class="pre">base.html</span></tt> template, the databench library and a few more libraries are already loaded. When using your own html template, the frontend library with the Socket.IO dependency are loaded by including</p>
+<p>When using the <tt class="docutils literal"><span class="pre">base.html</span></tt> template, the databench library and a few more
+libraries are already loaded. When using your own html template, the frontend
+library with the Socket.IO dependency are loaded by including</p>
 <div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/socket.io/socket.io.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
 <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/databench.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
 </pre></div>
@@ -103,7 +105,8 @@ namepsace and has to match the backend&#8217;s <a class="reference internal" hre
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first last simple">
-<li><strong>signalName</strong> (<em>string</em>) &#8211; Name of the signal that is used to send the message.</li>
+<li><strong>signalName</strong> (<em>string</em>) &#8211; Name of the signal that is used to send the
+message.</li>
 <li><strong>message</strong> &#8211; Message to send.</li>
 </ul>
 </td>
@@ -134,14 +137,21 @@ namepsace and has to match the backend&#8217;s <a class="reference internal" hre
 <h2>Generic Elements<a class="headerlink" href="#generic-elements" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="Databench.genericElements.log">
-<tt class="descclassname">Databench.genericElements.</tt><tt class="descname">log</tt><big>(</big><em>selector</em>, <em>limit</em><big>)</big><a class="headerlink" href="#Databench.genericElements.log" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<tt class="descclassname">Databench.genericElements.</tt><tt class="descname">log</tt><big>(</big><em>selector</em><span class="optional">[</span>, <em>signal_name</em>, <em>limit</em>, <em>console_fn_name</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Databench.genericElements.log" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function converts a generic <tt class="docutils literal"><span class="pre">&lt;pre&gt;</span></tt> element into a basic console. By
+default, this looks at <tt class="docutils literal"><span class="pre">log</span></tt> messages from the backend and at
+<tt class="docutils literal"><span class="pre">console.log()</span></tt> calls on the frontend. All messages will be shown in the
+bound <tt class="docutils literal"><span class="pre">&lt;pre&gt;</span></tt> element and in the browser console.</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first last simple">
 <li><strong>selector</strong> &#8211; A jQuery selector.</li>
-<li><strong>limit</strong> (<em>int</em>) &#8211; Maximum number of lines to show.</li>
+<li><strong>signal_name</strong> (<em>string</em>) &#8211; The signal to listen for.</li>
+<li><strong>limit</strong> (<em>int</em>) &#8211; Maximum number of lines to show (default=20).</li>
+<li><strong>console_fn_name</strong> (<em>string</em>) &#8211; Name of a method of console, like
+&#8216;log&#8217; (default).</li>
 </ul>
 </td>
 </tr>
@@ -151,14 +161,15 @@ namepsace and has to match the backend&#8217;s <a class="reference internal" hre
 
 <dl class="function">
 <dt id="Databench.genericElements.mpld3canvas">
-<tt class="descclassname">Databench.genericElements.</tt><tt class="descname">mpld3canvas</tt><big>(</big><em>selector</em>, <em>signalName</em><big>)</big><a class="headerlink" href="#Databench.genericElements.mpld3canvas" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">Databench.genericElements.</tt><tt class="descname">mpld3canvas</tt><big>(</big><em>selector</em><span class="optional">[</span>, <em>signalName</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Databench.genericElements.mpld3canvas" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first last simple">
 <li><strong>selector</strong> &#8211; A jQuery selector.</li>
-<li><strong>signalName</strong> (<em>string</em>) &#8211; Waiting for plots to be send on this signal.</li>
+<li><strong>signalName</strong> (<em>string</em>) &#8211; Waiting for plots to be send on this signal
+(default=&#8217;mpld3canvas&#8217;).</li>
 </ul>
 </td>
 </tr>
