@@ -32,7 +32,7 @@ function Databench(name) {
 			if (_messages.length > limit) {
 				_messages.shift();
 			}
-			selector.html(_messages.join('<br />'));
+			if (selector) selector.html(_messages.join('<br />'));
 		}
 
 		// capture events from frontend
@@ -60,7 +60,7 @@ function Databench(name) {
 
 		socket.on(signalName, function(msg) {
 			console.log("removing old figure");
-			selector.html('');
+			if (selector) selector.html('');
 			console.log("drawing mpld3 on element "+selector.attr('id'));
 			mpld3.draw_figure(selector.attr('id'), msg);
 		});
