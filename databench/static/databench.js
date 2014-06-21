@@ -20,26 +20,44 @@ function Databench(name) {
 
 	var genericElements = {};
 
-	genericElements.log = function(selector, limit) {
+	genericElements.log = function(selector, signal_name, limit, console_fn_name) {
+		if (!signal_name) signal_name = 'log';
 		if (!limit) limit = 20;
+		if (!console_fn_name) console_fn_name = 'log';
 
-		var _selector = selector;
-		var _limit = limit;
+		var _messages = [];
 
-		var messages = [];
-
-		socket.on('log', function(msg) {
-			messages.push(JSON.stringify(msg));
-			if (messages.length > _limit) {
-				messages.shift();
+		// update
+		function update() {
+			if (_messages.length > limit) {
+				_messages.shift();
 			}
-			_selector.html(messages.join('<br />'));
+			selector.html(_messages.join('<br />'));
+		}
+
+		// capture events from frontend
+		var _console_fn_original = console[console_fn_name];
+	    console[console_fn_name] = function(msg) {
+	        _console_fn_original.apply(console, ["frontend:", msg]);
+	        _messages.push("frontend: "+msg);
+
+	        update();
+	    }
+
+		// listen for _messages from backend
+		socket.on(signal_name, function(message) {
+			var msg = JSON.stringify(message);
+
+			_console_fn_original.apply(console, [" backend:", msg]);
+			_messages.push(" backend: "+msg);
+
+			update();
 		});
 	};
 
 	genericElements.mpld3canvas = function(selector, signalName) {
 		if (!signalName) signalName = 'mpld3canvas';
-		
+
 		socket.on(signalName, function(msg) {
 			console.log("removing old figure");
 			selector.html('');
@@ -52,7 +70,7 @@ function Databench(name) {
 
 
 	var publicFunctions = {
-		'signals': signals, 
+		'signals': signals,
 		'genericElements': genericElements,
 	};
 
