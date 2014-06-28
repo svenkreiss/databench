@@ -20,6 +20,7 @@ class Analysis(object):
             to match the frontend's :js:class:`Databench` ``name``.
         import_name (str): Usually the file name ``__name__`` where this
             analysis is instantiated.
+        description (str): Usually the ``__doc__`` string of the analysis.
         signals (optional): Inject an instance of :class:`databench.Signals`.
         blueprint (optional): Inject an instance of a :class:`flask.Blueprint`.
 
@@ -29,6 +30,7 @@ class Analysis(object):
             self,
             name,
             import_name,
+            description=None,
             signals=None,
             blueprint=None
     ):
@@ -37,6 +39,7 @@ class Analysis(object):
 
         self.name = name
         self.import_name = import_name
+        self.description = description
 
         if not signals:
             self.signals = databench.signals.Signals(name)
@@ -57,4 +60,7 @@ class Analysis(object):
 
     def render_index(self):
         """Renders the main analysis frontend template."""
-        return render_template(self.name+'.html')
+        return render_template(
+            self.name+'.html',
+            analysis_description=self.description
+        )

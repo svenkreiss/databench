@@ -12,6 +12,10 @@ library with the Socket.IO dependency are loaded by including
 
 in the html body tag.
 
+In the html template, ``{{ analysis_description }}`` returns the description
+string passed into :class:`databench.Analysis` which is usually the ``__doc__``
+string of your analysis python file.
+
 
 Databench
 ---------
