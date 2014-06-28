@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Quickstart &mdash; Databench 0.2.9 documentation</title>
+    <title>Quickstart &mdash; Databench 0.2.10 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.9',
+        VERSION:     '0.2.10',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="shortcut icon" href="_static/favicon.ico"/>
-    <link rel="top" title="Databench 0.2.9 documentation" href="index.html" />
+    <link rel="top" title="Databench 0.2.10 documentation" href="index.html" />
     <link rel="next" title="Deployment" href="deploy.html" />
     <link rel="prev" title="Overview" href="index.html" />
    
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="index.html" title="Overview"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">Databench 0.2.9 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Databench 0.2.10 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -89,21 +89,22 @@
 <span class="nt">&lt;html&gt;</span>
 <span class="nt">&lt;head&gt;&lt;title&gt;</span>Hello World<span class="nt">&lt;/title&gt;&lt;/head&gt;</span>
 <span class="nt">&lt;body&gt;</span>
-    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;log&quot;</span><span class="nt">&gt;&lt;/p&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;output&quot;</span><span class="nt">&gt;&lt;/p&gt;</span>
 
     <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/socket.io/socket.io.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
     <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/databench.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
     <span class="nt">&lt;script&gt;</span>
         <span class="kd">var</span> <span class="nx">databench</span> <span class="o">=</span> <span class="nx">Databench</span><span class="p">(</span><span class="s1">&#39;helloworld&#39;</span><span class="p">);</span>
         <span class="nx">databench</span><span class="p">.</span><span class="nx">signals</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">json</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">message</span><span class="p">;</span>
+            <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;output&#39;</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span>
+                <span class="nx">json</span><span class="p">.</span><span class="nx">message</span><span class="p">;</span>
         <span class="p">});</span>
     <span class="nt">&lt;/script&gt;</span>
 <span class="nt">&lt;/body&gt;</span>
 <span class="nt">&lt;/html&gt;</span>
 </pre></div>
 </div>
-<p>Now you can run the executable <tt class="docutils literal"><span class="pre">databench</span></tt> in your <tt class="docutils literal"><span class="pre">workingDir</span></tt> folder (outside of analyses) which creates a webserver and you can open <a class="reference external" href="http://localhost:5000">http://localhost:5000</a> in your webbrowser. Here you can also create a <tt class="docutils literal"><span class="pre">requirements.txt</span></tt> file with other Python packages your analysis needs. An example of this setup is the <a class="reference external" href="https://github.com/svenkreiss/databench_examples">databench_examples</a> repository.</p>
+<p>Now you can run the executable <tt class="docutils literal"><span class="pre">databench</span></tt> in your <tt class="docutils literal"><span class="pre">workingDir</span></tt> folder (outside of analyses) which creates a webserver and you can open <a class="reference external" href="http://localhost:5000">http://localhost:5000</a> in your webbrowser. The command line options <tt class="docutils literal"><span class="pre">--host</span></tt> and <tt class="docutils literal"><span class="pre">--port</span></tt> set the host and port of the webserver <tt class="docutils literal"><span class="pre">--log</span></tt> changes the loglevel. For example, calling <tt class="docutils literal"><span class="pre">databench</span> <span class="pre">--log=DEBUG</span></tt> enables all messages; the options are <tt class="docutils literal"><span class="pre">NOTSET</span></tt>, <tt class="docutils literal"><span class="pre">DEBUG</span></tt>, <tt class="docutils literal"><span class="pre">INFO</span></tt>, <tt class="docutils literal"><span class="pre">WARNING</span></tt>, <tt class="docutils literal"><span class="pre">ERROR</span></tt> and <tt class="docutils literal"><span class="pre">CRITICAL</span></tt>. You can also create a <tt class="docutils literal"><span class="pre">requirements.txt</span></tt> file containing other Python packages your analysis needs. An example of this setup is the <a class="reference external" href="https://github.com/svenkreiss/databench_examples">databench_examples</a> repository.</p>
 <p><strong>Using the</strong> <tt class="docutils literal"><span class="pre">base.html</span></tt> <strong>Template:</strong> To provide some basic header and footer for an analysis, the <tt class="docutils literal"><span class="pre">base.html</span></tt> template is available. It is not required to use it, but it includes a range of default libraries that might come in handy. To use it, change the <tt class="docutils literal"><span class="pre">helloworld.html</span></tt> to</p>
 <div class="highlight-html"><div class="highlight"><pre>{% extends &quot;base.html&quot; %}
 
@@ -112,7 +113,7 @@
 
 
 {% block content %}
-<span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;log&quot;</span><span class="nt">&gt;&lt;/p&gt;</span>
+<span class="nt">&lt;p</span> <span class="na">id=</span><span class="s">&quot;output&quot;</span><span class="nt">&gt;&lt;/p&gt;</span>
 {% endblock %}
 
 
@@ -120,7 +121,8 @@
 <span class="nt">&lt;script&gt;</span>
     <span class="kd">var</span> <span class="nx">databench</span> <span class="o">=</span> <span class="nx">Databench</span><span class="p">(</span><span class="s1">&#39;helloworld&#39;</span><span class="p">);</span>
     <span class="nx">databench</span><span class="p">.</span><span class="nx">signals</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">json</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">message</span><span class="p">;</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;output&#39;</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span>
+            <span class="nx">json</span><span class="p">.</span><span class="nx">message</span><span class="p">;</span>
     <span class="p">});</span>
 <span class="nt">&lt;/script&gt;</span>
 {% endblock %}

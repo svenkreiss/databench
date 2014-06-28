@@ -35,7 +35,7 @@ Next, create the helloworld backend in ``helloworld.py``:
 
     @helloworld.signals.on('connect')
     def onconnect():
-        """Run as soon as a browser connects to this."""    
+        """Run as soon as a browser connects to this."""
         helloworld.signals.emit('status', {'message': 'Hello World'})
 
 And finally, create the frontend in ``helloworld.html``:
@@ -46,20 +46,21 @@ And finally, create the frontend in ``helloworld.html``:
     <html>
     <head><title>Hello World</title></head>
     <body>
-        <p id="log"></p>
+        <p id="output"></p>
 
         <script src="/static/socket.io/socket.io.min.js"></script>
         <script src="/static/databench.js"></script>
         <script>
             var databench = Databench('helloworld');
             databench.signals.on('status', function(json) {
-                document.getElementById('log').innerHTML = json.message;
+                document.getElementById('output').innerHTML =
+                    json.message;
             });
         </script>
     </body>
     </html>
 
-Now you can run the executable ``databench`` in your ``workingDir`` folder (outside of analyses) which creates a webserver and you can open http://localhost:5000 in your webbrowser. Here you can also create a ``requirements.txt`` file with other Python packages your analysis needs. An example of this setup is the databench_examples_ repository.
+Now you can run the executable ``databench`` in your ``workingDir`` folder (outside of analyses) which creates a webserver and you can open http://localhost:5000 in your webbrowser. The command line options ``--host`` and ``--port`` set the host and port of the webserver ``--log`` changes the loglevel. For example, calling ``databench --log=DEBUG`` enables all messages; the options are ``NOTSET``, ``DEBUG``, ``INFO``, ``WARNING``, ``ERROR`` and ``CRITICAL``. You can also create a ``requirements.txt`` file containing other Python packages your analysis needs. An example of this setup is the databench_examples_ repository.
 
 .. _databench_examples: https://github.com/svenkreiss/databench_examples
 
@@ -75,7 +76,7 @@ Now you can run the executable ``databench`` in your ``workingDir`` folder (outs
 
 
     {% block content %}
-    <p id="log"></p>
+    <p id="output"></p>
     {% endblock %}
 
 
@@ -83,7 +84,8 @@ Now you can run the executable ``databench`` in your ``workingDir`` folder (outs
     <script>
         var databench = Databench('helloworld');
         databench.signals.on('status', function(json) {
-            document.getElementById('log').innerHTML = json.message;
+            document.getElementById('output').innerHTML =
+                json.message;
         });
     </script>
     {% endblock %}
