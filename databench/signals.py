@@ -33,7 +33,10 @@ class Signals(object):
         """
         logging.info(
             'backend (namespace='+self.namespace+', signal='+signal + \
-            '): ' + message
+            '): ' + (
+                (str(message)[:60] + '...') \
+                    if len(str(message)) > 65 else str(message)
+            )
         )
 
         emit(signal, message, namespace='/'+self.namespace)
