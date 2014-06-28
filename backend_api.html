@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Backend API &mdash; Databench 0.2.11 documentation</title>
+    <title>Backend API &mdash; Databench 0.2.12 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.11',
+        VERSION:     '0.2.12',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="shortcut icon" href="_static/favicon.ico"/>
-    <link rel="top" title="Databench 0.2.11 documentation" href="index.html" />
+    <link rel="top" title="Databench 0.2.12 documentation" href="index.html" />
     <link rel="next" title="Frontend API" href="frontend_api.html" />
     <link rel="prev" title="Deployment" href="deploy.html" />
    
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="deploy.html" title="Deployment"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">Databench 0.2.11 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Databench 0.2.12 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -60,11 +60,13 @@
 <h2>Analysis<a class="headerlink" href="#analysis" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="databench.Analysis">
-<em class="property">class </em><tt class="descclassname">databench.</tt><tt class="descname">Analysis</tt><big>(</big><em>name</em>, <em>import_name</em>, <em>description=None</em>, <em>signals=None</em>, <em>blueprint=None</em><big>)</big><a class="headerlink" href="#databench.Analysis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">databench.</tt><tt class="descname">Analysis</tt><big>(</big><em>name</em>, <em>import_name</em>, <em>description=None</em><big>)</big><a class="headerlink" href="#databench.Analysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Databench&#8217;s analysis class.</p>
-<p>An optional <a class="reference internal" href="#databench.Signals" title="databench.Signals"><tt class="xref py py-class docutils literal"><span class="pre">databench.Signals</span></tt></a> instance and <a class="reference external" href="http://flask.pocoo.org/docs/api/#flask.Blueprint" title="(in Flask v0.11-dev)"><tt class="xref py py-class docutils literal"><span class="pre">flask.Blueprint</span></tt></a>
-can be dependency-injected, however that should not be necessary for
-standard use cases.</p>
+<p>This class uses instances of <a class="reference internal" href="#databench.Signals" title="databench.Signals"><tt class="xref py py-class docutils literal"><span class="pre">databench.Signals</span></tt></a> and
+<a class="reference external" href="http://flask.pocoo.org/docs/api/#flask.Blueprint" title="(in Flask v0.11-dev)"><tt class="xref py py-class docutils literal"><span class="pre">flask.Blueprint</span></tt></a> with default configurations. For advanced use
+cases, you can change those settings (e.g. folder name for <tt class="docutils literal"><span class="pre">templates</span></tt>)
+by creating a new class with a modified constructor that inherits from
+this class.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -76,8 +78,6 @@ to match the frontend&#8217;s <a class="reference internal" href="frontend_api.h
 <li><strong>import_name</strong> (<em>str</em>) &#8211; Usually the file name <tt class="docutils literal"><span class="pre">__name__</span></tt> where this
 analysis is instantiated.</li>
 <li><strong>description</strong> (<em>str</em>) &#8211; Usually the <tt class="docutils literal"><span class="pre">__doc__</span></tt> string of the analysis.</li>
-<li><strong>signals</strong> (<em>optional</em>) &#8211; Inject an instance of <a class="reference internal" href="#databench.Signals" title="databench.Signals"><tt class="xref py py-class docutils literal"><span class="pre">databench.Signals</span></tt></a>.</li>
-<li><strong>blueprint</strong> (<em>optional</em>) &#8211; Inject an instance of a <a class="reference external" href="http://flask.pocoo.org/docs/api/#flask.Blueprint" title="(in Flask v0.11-dev)"><tt class="xref py py-class docutils literal"><span class="pre">flask.Blueprint</span></tt></a>.</li>
 </ul>
 </td>
 </tr>
