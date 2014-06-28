@@ -1,6 +1,6 @@
 """Databench module."""
 
-__version__ = "0.2.11"
+__version__ = "0.2.12"
 
 # Need to make sure monkey.patch_all() is applied before any 'import threading',
 # but cannot raise error because building the Sphinx documentation also suffers

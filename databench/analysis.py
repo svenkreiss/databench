@@ -10,9 +10,11 @@ LIST_ALL = []
 class Analysis(object):
     """Databench's analysis class.
 
-    An optional :class:`databench.Signals` instance and :class:`flask.Blueprint`
-    can be dependency-injected, however that should not be necessary for
-    standard use cases.
+    This class uses instances of :class:`databench.Signals` and
+    :class:`flask.Blueprint` with default configurations. For advanced use
+    cases, you can change those settings (e.g. folder name for ``templates``)
+    by creating a new class with a modified constructor that inherits from
+    this class.
 
     Args:
         name (str): Name of this analysis. If ``signals`` is not specified, this
@@ -21,8 +23,6 @@ class Analysis(object):
         import_name (str): Usually the file name ``__name__`` where this
             analysis is instantiated.
         description (str): Usually the ``__doc__`` string of the analysis.
-        signals (optional): Inject an instance of :class:`databench.Signals`.
-        blueprint (optional): Inject an instance of a :class:`flask.Blueprint`.
 
     """
 
@@ -30,9 +30,7 @@ class Analysis(object):
             self,
             name,
             import_name,
-            description=None,
-            signals=None,
-            blueprint=None
+            description=None
     ):
         LIST_ALL.append(self)
         self.show_in_index = True
@@ -41,20 +39,13 @@ class Analysis(object):
         self.import_name = import_name
         self.description = description
 
-        if not signals:
-            self.signals = databench.signals.Signals(name)
-        else:
-            self.signals = signals
-
-        if not blueprint:
-            self.blueprint = Blueprint(
-                name,
-                import_name,
-                template_folder='templates',
-                static_folder='static',
-            )
-        else:
-            self.blueprint = blueprint
+        self.signals = databench.signals.Signals(name)
+        self.blueprint = Blueprint(
+            name,
+            import_name,
+            template_folder='templates',
+            static_folder='static',
+        )
 
         self.blueprint.add_url_rule('/', 'render_index', self.render_index)
 
