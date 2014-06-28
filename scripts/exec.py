@@ -9,7 +9,6 @@ import databench
 
 
 def main():
-	print("--- databench ---")
 	databench.run()
 
 if __name__ == "__main__":

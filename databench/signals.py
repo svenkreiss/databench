@@ -3,6 +3,7 @@
 Provides communication between frontend and backend via socket.io.
 """
 
+import logging
 from flask.ext.socketio import emit
 
 
@@ -30,6 +31,10 @@ class Signals(object):
             message: Message to be sent.
 
         """
+        logging.info(
+            'backend (namespace='+self.namespace+', signal='+signal + \
+            '): ' + message
+        )
 
         emit(signal, message, namespace='/'+self.namespace)
 
@@ -93,6 +98,7 @@ class Signals(object):
 
     def set_socket_io(self, socketio):
         """Sets socket.io and applies all cached callbacks."""
+        logging.debug('set_socket_io()')
 
         self.socketio = socketio
         for cached_signal in self.signal_cache:

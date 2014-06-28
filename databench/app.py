@@ -1,10 +1,11 @@
-"""Executable for Databench."""
-
-from gevent import monkey
+"""Databench command line executable. Run to create a server that serves
+the analyses pages and runs the python backend."""
 
 import os
 import sys
 
+import logging
+import argparse
 from flask import Flask, render_template
 from flask.ext.socketio import SocketIO
 from flask.ext.markdown import Markdown
@@ -140,10 +141,28 @@ class App(object):
 
 def run():
     """Entry point to run databench."""
-    monkey.patch_all()
-    port = int(os.environ.get('PORT', 5000))
-    host = os.environ.get('HOST', '0.0.0.0')
-    app = App(__name__, host=host, port=port)
+
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        version=DATABENCH_VERSION
+    )
+    parser.add_argument('--log', dest='loglevel', default="NOTSET",
+                        help='set log level')
+    parser.add_argument('--host', dest='host',
+                        default=os.environ.get('HOST', 'localhost'),
+                        help='set host for webserver')
+    parser.add_argument('--port', dest='port', type=int,
+                        default=int(os.environ.get('PORT', 5000)),
+                        help='set port for webserver')
+    args = parser.parse_args()
+
+    # log
+    if args.loglevel != 'NOTSET':
+        print 'Setting loglevel to '+args.loglevel+'.'
+        logging.basicConfig(level=getattr(logging, args.loglevel))
+
+    print "--- databench ---"
+    app = App(__name__, host=args.host, port=args.port)
     app.run()
 
 
