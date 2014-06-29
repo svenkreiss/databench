@@ -36,6 +36,7 @@ class App(object):
 
         self.host = host
         self.port = port
+        self.heartbeat_timeout = 60*10000
 
         self.socketio = None
         self.description = None
@@ -56,7 +57,10 @@ class App(object):
 
     def run(self):
         """Entry point to run the app."""
-        self.socketio.run(self.flask_app, host=self.host, port=self.port)
+        self.socketio.run(self.flask_app, host=self.host, port=self.port,
+                          # transports=['websocket'],
+                          policy_server=False, # don't want to use Adobe Flash
+                          heartbeat_timeout=self.heartbeat_timeout)
 
     def add_jinja2_highlight(self):
         """Add jinja2 highlighting."""
@@ -151,9 +155,12 @@ def run():
     parser.add_argument('--host', dest='host',
                         default=os.environ.get('HOST', 'localhost'),
                         help='set host for webserver')
-    parser.add_argument('--port', dest='port', type=int,
-                        default=int(os.environ.get('PORT', 5000)),
+    parser.add_argument('--port', dest='port',
+                        type=int, default=int(os.environ.get('PORT', 5000)),
                         help='set port for webserver')
+    parser.add_argument('--heartbeat_timeout', dest='heartbeat_timeout',
+                        type=int, default=60*10000,
+                        help='set heartbeat_timeout for SocketIO')
     args = parser.parse_args()
 
     # log
@@ -163,6 +170,7 @@ def run():
 
     print "--- databench ---"
     app = App(__name__, host=args.host, port=args.port)
+    app.heartbeat_timeout = args.heartbeat_timeout
     app.run()
 
 
