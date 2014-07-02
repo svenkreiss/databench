@@ -17,17 +17,23 @@ from .analysis import LIST_ALL as LIST_ALL_ANALYSES
 
 
 class App(object):
-    """Similar to a flask.Flask app. The actual Flask instance is injected.
+    """Similar to a Flask app. The actual Flask instance is injected.
 
     Args:
         name (str): Name of the app.
         host (str): Host name.
         port (int): Port number.
         flask_app (flask.Flask, optional): An instance of flask.Flask.
+        delimiters (dict): Configuration option for the delimiters used for the
+            server-side templates. You can specify strings for
+            ``variable_start_string``, ``variable_end_string``,
+            ``block_start_string``, ``block_end_string``,
+            ``comment_start_string``, ``comment_end_string``.
 
     """
 
-    def __init__(self, import_name, host='0.0.0.0', port=5000, flask_app=None):
+    def __init__(self, import_name, host='0.0.0.0', port=5000, flask_app=None,
+                 delimiters=None):
 
         if flask_app is None:
             self.flask_app = Flask(import_name)
@@ -46,6 +52,8 @@ class App(object):
         self.flask_app.debug = True
         self.flask_app.config['SECRET_KEY'] = 'ajksdfjhkasdfj'  # change
 
+        if delimiters:
+            self.custom_delimiters(delimiters)
         self.add_jinja2_highlight()
         self.add_read_file()
         self.add_markdown()
@@ -60,6 +68,13 @@ class App(object):
                           # transports=['websocket'],
                           policy_server=False,  # don't want to use Adobe Flash
                           heartbeat_timeout=self.heartbeat_timeout)
+
+    def custom_delimiters(self, delimiters):
+        """Change the standard jinja2 delimiters to allow those delimiters be
+        used by frontend template engines."""
+        options = self.flask_app.jinja_options.copy()
+        options.update(delimiters)
+        self.flask_app.jinja_options = options
 
     def add_jinja2_highlight(self):
         """Add jinja2 highlighting."""
@@ -160,6 +175,19 @@ def run():
     parser.add_argument('--heartbeat_timeout', dest='heartbeat_timeout',
                         type=int, default=60*10000,
                         help='set heartbeat_timeout for SocketIO')
+    delimiter_args = parser.add_argument_group('delimiters')
+    delimiter_args.add_argument('--variable_start_string',
+                                help='delimiter for variable start')
+    delimiter_args.add_argument('--variable_end_string',
+                                help='delimiter for variable end')
+    delimiter_args.add_argument('--block_start_string',
+                                help='delimiter for block start')
+    delimiter_args.add_argument('--block_end_string',
+                                help='delimiter for block end')
+    delimiter_args.add_argument('--comment_start_string',
+                                help='delimiter for comment start')
+    delimiter_args.add_argument('--comment_end_string',
+                                help='delimiter for comment end')
     args = parser.parse_args()
 
     # log
@@ -167,8 +195,26 @@ def run():
         print 'Setting loglevel to '+args.loglevel+'.'
         logging.basicConfig(level=getattr(logging, args.loglevel))
 
+    # delimiters
+    delimiters = {
+        'variable_start_string': '[[',
+        'variable_end_string': ']]',
+    }
+    if args.variable_start_string:
+        delimiters['variable_start_string'] = args.variable_start_string
+    if args.variable_end_string:
+        delimiters['variable_end_string'] = args.variable_end_string
+    if args.block_start_string:
+        delimiters['block_start_string'] = args.block_start_string
+    if args.block_end_string:
+        delimiters['block_end_string'] = args.block_end_string
+    if args.comment_start_string:
+        delimiters['comment_start_string'] = args.comment_start_string
+    if args.comment_end_string:
+        delimiters['comment_end_string'] = args.comment_end_string
+
     print "--- databench ---"
-    app = App(__name__, host=args.host, port=args.port)
+    app = App(__name__, host=args.host, port=args.port, delimiters=delimiters)
     app.heartbeat_timeout = args.heartbeat_timeout
     app.run()
 
