@@ -10,12 +10,12 @@
         <meta name="description" content="{% block description %}{% endblock %}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <link rel="shortcut icon" href="[[ url_for('static', filename='favicon.ico') ]]">
 
         <link rel="stylesheet" href="/static/bootstrap-3.1.1-dist/css/bootstrap.min.css">
         <!-- <link rel="stylesheet" href="/static/bootstrap-3.1.1-dist/css/bootstrap-theme.min.css"> -->
 
-        <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}?version=014">
+        <link rel="stylesheet" href="[[ url_for('static', filename='main.css') ]]?version=014">
         {% block head %}{% endblock %}
     </head>
     <body>
@@ -37,7 +37,7 @@
 
             <div class="footer">
                 Databench is on <a href="https://github.com/svenkreiss/databench">GitHub</a>.
-                <!-- This is version {{databench_version}}. -->
+                <!-- This is version [[databench_version]]. -->
             </div>
         </div>
         {% endblock %}

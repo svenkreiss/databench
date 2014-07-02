@@ -1,5 +1,5 @@
 {% macro include_src(name, type='html+jinja') -%}
 	{% highlight type -%}
-	{{ read_file(name)|join }}
+	[[ read_file(name)|join ]]
 	{%- endhighlight %}
 {%- endmacro %}

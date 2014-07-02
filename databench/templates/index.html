@@ -5,12 +5,12 @@
 
 
 {% block content %}
-{{ description|markdown }}
+[[ description|markdown ]]
 
 <!--
     Analyses info:
-        Author: {{analyses_author}}
-        Version: {{analyses_version}}
+        Author: [[analyses_author]]
+        Version: [[analyses_version]]
 -->
 
 <br />
@@ -18,13 +18,13 @@
 <div class="row">
     {% for a in analyses if a.show_in_index %}
     <div class="col-md-6">
-    	<a href="/{{a.name}}/">
+    	<a href="/[[a.name]]/">
     	<div class="panel panel-default">
 	    	<div class="panel-body">
                 {% if a.thumbnail %}
-                    <img src="/{{a.name}}/static/{{a.thumbnail}}" class="img-thumbnail analysis-thumbnail" />
+                    <img src="/[[a.name]]/static/[[a.thumbnail]]" class="img-thumbnail analysis-thumbnail" />
                 {% endif %}
-	    		{{a.name}}{% if a.description %}<span class="text-muted">: {{ a.description }}</span>{% endif %}
+	    		[[a.name]]{% if a.description %}<span class="text-muted">: [[ a.description ]]</span>{% endif %}
 	    	</div>
     	</div>
     	</a>
