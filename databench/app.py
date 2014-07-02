@@ -12,8 +12,8 @@ from flask.ext.markdown import Markdown
 
 import codecs
 
-from databench import __version__ as DATABENCH_VERSION
-from databench.analysis import LIST_ALL as LIST_ALL_ANALYSES
+from . import __version__ as DATABENCH_VERSION
+from .analysis import LIST_ALL as LIST_ALL_ANALYSES
 
 
 class App(object):
@@ -29,7 +29,7 @@ class App(object):
 
     def __init__(self, import_name, host='0.0.0.0', port=5000, flask_app=None):
 
-        if flask_app == None:
+        if flask_app is None:
             self.flask_app = Flask(import_name)
         else:
             self.flask_app = flask_app
@@ -44,7 +44,7 @@ class App(object):
         self.analyses_version = None
 
         self.flask_app.debug = True
-        self.flask_app.config['SECRET_KEY'] = 'ajksdfjhkasdfj' # change
+        self.flask_app.config['SECRET_KEY'] = 'ajksdfjhkasdfj'  # change
 
         self.add_jinja2_highlight()
         self.add_read_file()
@@ -54,12 +54,11 @@ class App(object):
 
         self.flask_app.add_url_rule('/', 'render_index', self.render_index)
 
-
     def run(self):
         """Entry point to run the app."""
         self.socketio.run(self.flask_app, host=self.host, port=self.port,
                           # transports=['websocket'],
-                          policy_server=False, # don't want to use Adobe Flash
+                          policy_server=False,  # don't want to use Adobe Flash
                           heartbeat_timeout=self.heartbeat_timeout)
 
     def add_jinja2_highlight(self):
@@ -99,7 +98,7 @@ class App(object):
         except ImportError:
             print "Did not find 'analyses' module."
             print "--- debug - sys.path: "+str(sys.path)
-            print "--- debug - os.path.dirname(os.path.realpath(__file__): "+\
+            print "--- debug - os.path.dirname(os.path.realpath(__file__): " +\
                   os.path.dirname(os.path.realpath(__file__))
             print "--- debug - os.getcwd: "+os.getcwd()
 
@@ -176,4 +175,3 @@ def run():
 
 if __name__ == '__main__':
     run()
-

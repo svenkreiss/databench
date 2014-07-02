@@ -17,12 +17,10 @@ class Signals(object):
 
     """
 
-
     def __init__(self, namespace):
         self.signal_cache = []
         self.socketio = None
         self.namespace = namespace
-
 
     def emit(self, signal, message):
         """Emit signal to frontend.
@@ -33,10 +31,10 @@ class Signals(object):
 
         """
         logging.info(
-            'backend (namespace='+self.namespace+', signal='+signal + \
-            '): ' + (
-                (str(message)[:60] + '...') \
-                    if len(str(message)) > 65 else str(message)
+            'backend (namespace='+self.namespace+', signal='+signal + '): ' + (
+                (str(message)[:60] + '...')
+                if len(str(message)) > 65
+                else str(message)
             )
         )
 
@@ -46,7 +44,6 @@ class Signals(object):
         # by continuing execution of the main thread. This can be done with
         # the following sleep(0.0)
         time.sleep(0.0)
-
 
     def on(self, signal):
         """This is a decorator. Use for functions that listen to signals
@@ -70,7 +67,6 @@ class Signals(object):
                 )
 
         return decorator
-
 
     def on_rpc(self, signal):
         """This is a decorator. Use for functions that listen to signals
@@ -104,7 +100,6 @@ class Signals(object):
 
         return decorator
 
-
     def set_socket_io(self, socketio):
         """Sets socket.io and applies all cached callbacks."""
         logging.debug('set_socket_io()')
@@ -116,4 +111,3 @@ class Signals(object):
                 namespace='/'+self.namespace
             )
         self.signal_cache = []
-
