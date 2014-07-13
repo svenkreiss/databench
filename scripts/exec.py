@@ -1,15 +1,13 @@
 #!/usr/bin/env python
 
-"""
-The main databench entry point.
-"""
+"""The main databench entry point."""
 
 
 import databench
 
 
 def main():
-	databench.run()
+    databench.run()
 
 if __name__ == "__main__":
-	main()
+    main()

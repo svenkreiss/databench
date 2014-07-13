@@ -218,6 +218,8 @@ def run():
     app.heartbeat_timeout = args.heartbeat_timeout
     app.run()
 
+    return app
+
 
 if __name__ == '__main__':
     run()
