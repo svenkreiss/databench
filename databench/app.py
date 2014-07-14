@@ -160,10 +160,8 @@ class App(object):
 def run():
     """Entry point to run databench."""
 
-    parser = argparse.ArgumentParser(
-        description=__doc__,
-        version=DATABENCH_VERSION
-    )
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     version=DATABENCH_VERSION)
     parser.add_argument('--log', dest='loglevel', default="NOTSET",
                         help='set log level')
     parser.add_argument('--host', dest='host',
@@ -214,6 +212,8 @@ def run():
         delimiters['comment_end_string'] = args.comment_end_string
 
     print "--- databench ---"
+    logging.info('host='+str(args.host)+', port='+str(args.port))
+    logging.info('delimiters='+str(delimiters))
     app = App(__name__, host=args.host, port=args.port, delimiters=delimiters)
     app.heartbeat_timeout = args.heartbeat_timeout
     app.run()
