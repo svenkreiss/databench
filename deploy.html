@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Deployment &mdash; Databench 0.2.12 documentation</title>
+    <title>Deployment &mdash; Databench 0.2.15 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.12',
+        VERSION:     '0.2.15',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="shortcut icon" href="_static/favicon.ico"/>
-    <link rel="top" title="Databench 0.2.12 documentation" href="index.html" />
+    <link rel="top" title="Databench 0.2.15 documentation" href="index.html" />
     <link rel="next" title="Backend API" href="backend_api.html" />
     <link rel="prev" title="Quickstart" href="quickstart.html" />
    
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="quickstart.html" title="Quickstart"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">Databench 0.2.12 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Databench 0.2.15 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -88,6 +88,43 @@
 </div>
 <p>An example repository that is deployed on Heroku is <a class="reference external" href="https://github.com/svenkreiss/databench_examples_viewer">databench_examples_viewer</a>.</p>
 </div>
+<div class="section" id="aws-elastic-beanstalk">
+<h2>AWS Elastic Beanstalk<a class="headerlink" href="#aws-elastic-beanstalk" title="Permalink to this headline">¶</a></h2>
+<p>AWS Elastic Beanstalk builds a new Docker image from the Dockerfile. You can also run those images locally (see below), but this is not necessary for deploying to AWS.</p>
+<p>Get the AWS Elastic Beanstalk command line client <tt class="docutils literal"><span class="pre">eb</span></tt> here: <a class="reference external" href="http://aws.amazon.com/code/6752709412171743">http://aws.amazon.com/code/6752709412171743</a>
+or <tt class="docutils literal"><span class="pre">brew</span> <span class="pre">install</span> <span class="pre">aws-elasticbeanstalk</span></tt>. Its interface is oriented on git commands. So you can go to your project&#8217;s directory (which is a git repository) initialize the project with <tt class="docutils literal"><span class="pre">eb</span> <span class="pre">init</span></tt>. Answer a few questions. Once done, deploy the app with <tt class="docutils literal"><span class="pre">eb</span> <span class="pre">start</span></tt>. That creates the environment. Once an environment is created, deploy with <tt class="docutils literal"><span class="pre">eb</span> <span class="pre">push</span></tt>.</p>
+<p>Example <tt class="docutils literal"><span class="pre">eb</span> <span class="pre">init</span></tt> options:</p>
+<ul class="simple">
+<li>Access Key ID: xxxxxxx</li>
+<li>Secret Access Key: xxxxxxx</li>
+<li>region: <tt class="docutils literal"><span class="pre">1)</span> <span class="pre">US</span> <span class="pre">East</span> <span class="pre">(Virginia)</span></tt></li>
+<li>application name: <tt class="docutils literal"><span class="pre">databench_examples</span></tt></li>
+<li>env name: <tt class="docutils literal"><span class="pre">databenchexamples_env</span></tt></li>
+<li>environment tier: <tt class="docutils literal"><span class="pre">1)</span> <span class="pre">WebServer::Standard::1.0</span></tt></li>
+<li>solution stack: <tt class="docutils literal"><span class="pre">41)</span> <span class="pre">64bit</span> <span class="pre">Amazon</span> <span class="pre">Linux</span> <span class="pre">2014.03</span> <span class="pre">v1.0.1</span> <span class="pre">running</span> <span class="pre">Docker</span> <span class="pre">1.0.0</span></tt></li>
+<li>env type: <tt class="docutils literal"><span class="pre">2)</span> <span class="pre">SingleInstance</span></tt></li>
+<li>create RDS DB instance: no</li>
+<li>instance profile: pick one</li>
+</ul>
+<div class="section" id="trouble-shooting">
+<h3>Trouble Shooting<a class="headerlink" href="#trouble-shooting" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">no</span> <span class="pre">module</span> <span class="pre">named</span> <span class="pre">boto</span></tt>: do <tt class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">boto</span></tt> before <tt class="docutils literal"><span class="pre">eb</span> <span class="pre">start</span></tt>.</li>
+<li>the web console is at <tt class="docutils literal"><span class="pre">https://console.aws.amazon.com/elasticbeanstalk/</span></tt> and make sure you are looking at the right region which can be selected in the top-right corner</li>
+<li><tt class="docutils literal"><span class="pre">eb</span> <span class="pre">logs</span></tt> shows more details</li>
+<li>If deployments become even slower, check <tt class="docutils literal"><span class="pre">/var/log/docker-ps.log</span></tt> (part of the logs). It could be that some other docker image is still building in the background from a previous <tt class="docutils literal"><span class="pre">eb</span> <span class="pre">push</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">eb</span> <span class="pre">start</span></tt> might timeout in your terminal. The Web interface usually shows &#8220;updating&#8221; a bit longer and it should finish within 10 minutes. The timeout does not affect the underlying build process.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="local-docker">
+<h2>Local Docker<a class="headerlink" href="#local-docker" title="Permalink to this headline">¶</a></h2>
+<p>It is helpful to build and run the Docker image locally when developing. This is not necessary when you just want to deploy your analyses to AWS. On a Mac, make sure you run <tt class="docutils literal"><span class="pre">boot2docker</span> <span class="pre">up</span></tt> first. Then:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">docker</span> <span class="pre">build</span> <span class="pre">--tag=databench</span> <span class="pre">.</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">docker</span> <span class="pre">run</span> <span class="pre">--rm</span> <span class="pre">-p</span> <span class="pre">0.0.0.0:5000:5000</span> <span class="pre">-i</span> <span class="pre">-t</span> <span class="pre">databench</span></tt></li>
+</ul>
+</div>
 </div>
 
 
@@ -117,6 +154,8 @@ Check out the <a href="http://databench-examples-viewer.svenkreiss.com/">live de
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Deployment</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#heroku">Heroku</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#aws-elastic-beanstalk">AWS Elastic Beanstalk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#local-docker">Local Docker</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="backend_api.html">Backend API</a></li>
