@@ -12,7 +12,7 @@ Overview
 Databench is a Python package that you can install using ``pip`` inside a ``virtualenv``:
 
 .. code-block:: bash
-	
+
 	$ virtualenv venv
 	$ source venv/bin/activate
 	(venv)$ pip install git+https://github.com/svenkreiss/databench.git
@@ -48,7 +48,7 @@ Contents
 --------
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
 
    self
    quickstart
@@ -76,7 +76,7 @@ Contributors
 License
 -------
 
-Databench was written by Sven Kreiss and made available under the 
+Databench was written by Sven Kreiss and made available under the
 `MIT license`_.
 
 .. _`MIT license`: https://github.com/svenkreiss/databench/blob/master/LICENSE
