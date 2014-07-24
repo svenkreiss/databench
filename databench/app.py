@@ -105,17 +105,22 @@ class App(object):
             try:
                 self.analyses_author = analyses.__author__
             except AttributeError:
-                print 'Analyses module does not have an author string.'
+                logging.info('Analyses module does not have an author string.')
             try:
                 self.analyses_version = analyses.__version__
             except AttributeError:
-                print 'Analyses module does not have a version string.'
+                logging.info('Analyses module does not have a version string.')
         except ImportError:
+            # Check whether there are already some analyses registered and if
+            # so, don't register the prepackaged analyses.
+            if LIST_ALL_ANALYSES:
+                return
+
             print "Did not find 'analyses' module."
-            print "--- debug - sys.path: "+str(sys.path)
-            print "--- debug - os.path.dirname(os.path.realpath(__file__): " +\
-                  os.path.dirname(os.path.realpath(__file__))
-            print "--- debug - os.getcwd: "+os.getcwd()
+            logging.debug('sys.path: '+str(sys.path))
+            logging.debug('os.path.dirname(os.path.realpath(__file__): ' +
+                          os.path.dirname(os.path.realpath(__file__)))
+            logging.debug('os.getcwd: '+os.getcwd())
 
             print "Using packaged analyses."
             import analyses_packaged
@@ -123,11 +128,11 @@ class App(object):
             try:
                 self.analyses_author = analyses_packaged.__author__
             except AttributeError:
-                print 'Analyses module does not have an author string.'
+                logging.info('Analyses module does not have an author string.')
             try:
                 self.analyses_version = analyses_packaged.__version__
             except AttributeError:
-                print 'Analyses module does not have a version string.'
+                logging.info('Analyses module does not have a version string.')
 
     def register_analyses(self):
         """Register analyses (analyses need to be imported first)."""
@@ -211,7 +216,7 @@ def run():
     if args.comment_end_string:
         delimiters['comment_end_string'] = args.comment_end_string
 
-    print "--- databench ---"
+    print '--- databench v'+DATABENCH_VERSION+' ---'
     logging.info('host='+str(args.host)+', port='+str(args.port))
     logging.info('delimiters='+str(delimiters))
     app = App(__name__, host=args.host, port=args.port, delimiters=delimiters)
