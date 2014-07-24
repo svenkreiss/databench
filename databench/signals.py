@@ -5,7 +5,7 @@ Provides communication between frontend and backend via socket.io.
 
 import time
 import logging
-from flask.ext.socketio import emit
+from flask.ext import socketio
 
 
 class Signals(object):
@@ -38,7 +38,7 @@ class Signals(object):
             )
         )
 
-        emit(signal, message, namespace='/'+self.namespace)
+        socketio.emit(signal, message, namespace='/'+self.namespace)
 
         # Now need to be make sure this message gets send and is not blocked
         # by continuing execution of the main thread. This can be done with
