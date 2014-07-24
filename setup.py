@@ -10,7 +10,7 @@ with open('databench/__init__.py', 'r') as f:
 setup(
     name='databench',
     version=VERSION,
-    packages=['databench', 'scripts', 'analyses_packaged'],
+    packages=['databench', 'databench_py', 'scripts', 'analyses_packaged'],
     license='LICENSE',
     description='Data analysis tool using Flask, SocketIO and d3.js.',
     long_description=open('README.md').read(),
@@ -28,6 +28,7 @@ setup(
         'Werkzeug>=0.9.4',
         'gevent-socketio>=0.3.6',
         'jinja2-highlight>=0.5.1',
+        'pyzmq>=4.3.1',
     ],
 
     entry_points={

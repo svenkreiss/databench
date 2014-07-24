@@ -3,15 +3,20 @@ the analyses pages and runs the python backend."""
 
 import os
 import sys
-
+import glob
+import codecs
+import gevent
 import logging
 import argparse
-from flask import Flask, render_template
+import subprocess
+import zmq.green as zmq
+
 from flask.ext.socketio import SocketIO
 from flask.ext.markdown import Markdown
+from flask import copy_current_request_context
+from flask import Flask, Blueprint, render_template
 
-import codecs
-
+from .analysis import Analysis
 from . import __version__ as DATABENCH_VERSION
 from .analysis import LIST_ALL as LIST_ALL_ANALYSES
 
@@ -49,7 +54,10 @@ class App(object):
         self.analyses_author = None
         self.analyses_version = None
 
-        self.flask_app.debug = True
+        self.spawned_analyses = {}
+
+        self.flask_app.debug = False
+        self.flask_app.use_reloader = False
         self.flask_app.config['SECRET_KEY'] = 'ajksdfjhkasdfj'  # change
 
         if delimiters:
@@ -57,6 +65,7 @@ class App(object):
         self.add_jinja2_highlight()
         self.add_read_file()
         self.add_markdown()
+        self.register_analyses_pyspark()
         self.import_analyses()
         self.register_analyses()
 
@@ -94,6 +103,112 @@ class App(object):
     def add_markdown(self):
         """Add Markdown capability."""
         Markdown(self.flask_app, extensions=['fenced_code'])
+
+    def register_analyses_pyspark(self, port=8041):
+        """Spawn processes for pyspark analyses."""
+
+        self.zmq_socket_pub = zmq.Context().socket(zmq.PUB)
+        self.zmq_socket_pub.bind('tcp://127.0.0.1:'+str(port))
+
+        files = glob.glob('analyses_pyspark/*.py')
+        pub_port = port+1
+        for analysis_file in files:
+            name = analysis_file[17:-3]
+
+            # zmq subscription to listen for messages from backend
+            logging.debug('main listening on port: '+str(pub_port))
+            zmq_sub = zmq.Context().socket(zmq.SUB)
+            zmq_sub.connect('tcp://127.0.0.1:'+str(pub_port))
+            zmq_sub.setsockopt(zmq.SUBSCRIBE, '')
+
+            analysis = Analysis(name, __name__, "Pyspark wrapper analysis.")
+            analysis.blueprint = Blueprint(
+                name,
+                __name__,
+                template_folder=os.getcwd()+'/analyses_pyspark/templates',
+                static_folder=os.getcwd()+'/analyses_pyspark/static',
+            )
+            analysis.blueprint.add_url_rule('/', 'render_index',
+                                            analysis.render_index)
+            if name in self.spawned_analyses:
+                del self.spawned_analyses[name][0]
+                self.spawned_analyses[name][1].terminate()
+                self.spawned_analyses[name][3].close()
+                if self.spawned_analyses[name][4]:
+                    self.spawned_analyses[name][4].join()
+            self.spawned_analyses[name] = [
+                analysis,
+                subprocess.Popen(['pyspark', analysis_file], shell=False),
+                pub_port,
+                zmq_sub,
+                None
+            ]
+            analysis.signals.zmq_sub = zmq_sub
+            analysis.signals.pub_port = pub_port
+            analysis.signals.listeners = []
+
+            @analysis.signals.on('connect')
+            def onconnect():
+
+                # clean up possible old listeners
+                if self.spawned_analyses[analysis.name][4]:
+                    self.spawned_analyses[analysis.name][4].kill()
+
+                def process_message(json):
+                    if 'action' in json and json['action'] == 'emit':
+                        logging.debug('emitting to frontend: '+str(json))
+                        analysis.signals.emit(json['signal'], json['message'])
+                    elif 'action' in json and \
+                         json['action'] == 'listeners_list':
+                        analysis.signals.listeners_list = json['listeners']
+                        for listener in analysis.signals.listeners_list:
+                            logging.debug('----------'+listener)
+                            if listener == 'connect':
+                                logging.debug('Adding connect here would leed '
+                                              'to conflicts. Skipping.')
+                                continue
+                            if listener not in analysis.signals.listeners:
+                                analysis.signals.on(listener)(
+                                    lambda *args: self.zmq_socket_pub.send_json({
+                                        '__databench_namespace': analysis.name,
+                                        'action': 'event',
+                                        'event': listener,
+                                        'event_message': args,
+                                    })
+                                )
+                                analysis.signals.listeners.append(listener)
+
+                @copy_current_request_context
+                def zmq_listener():
+                    while True:
+                        msg = analysis.signals.zmq_sub.recv_json()
+                        logging.debug('main ('+analysis.name+') received '
+                                      'msg: '+str(msg))
+                        if '__databench_namespace' in msg:
+                            if analysis.name != msg['__databench_namespace']:
+                                logging.warn('__databench_namespace is not '
+                                             'equal to analysis name')
+                            del msg['__databench_namespace']
+                            process_message(msg)
+                self.spawned_analyses[analysis.name][4] = \
+                    gevent.Greenlet.spawn(zmq_listener)
+
+                logging.debug('init kernel '+analysis.name+' to publish on '
+                              'port '+str(analysis.signals.pub_port))
+                self.zmq_socket_pub.send_json({
+                    '__databench_namespace': analysis.name,
+                    'publish_on_port': analysis.signals.pub_port,
+                })
+
+                logging.debug('trigger on_connect on kernel')
+                self.zmq_socket_pub.send_json({
+                    '__databench_namespace': analysis.name,
+                    'action': 'event',
+                    'event': 'connect',
+                    'event_message': [],
+                })
+
+            pub_port += 1
 
     def import_analyses(self):
         """Add analyses from the analyses folder."""
