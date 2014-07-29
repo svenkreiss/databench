@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+
+
 {% block title %}dummypi{% endblock %}
 
 
@@ -13,24 +15,6 @@ then does a comparison $$r_1^2 + r_2^2 < 1.0$$ to figure out whether
 the generated point is inside the first quadrant of the unit circle.</p>
 
 <pre id="log"></pre>
-
-
-
-<br /><br />
-<hr />
-
-<h3>Source code</h3>
-
-<p>Frontend:</p>
-{% highlight 'html' %}
-{% include 'dummypi_raw.html' %}
-{% endhighlight %}
-
-<p>Backend:</p>
-{% highlight 'python' %}
-{% include 'dummypi_py_raw.html' %}
-{% endhighlight %}
-
 {% endblock %}
 
 
