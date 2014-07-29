@@ -110,7 +110,10 @@ class App(object):
                 self.analyses_version = analyses.__version__
             except AttributeError:
                 logging.info('Analyses module does not have a version string.')
-        except ImportError:
+        except ImportError, e:
+            if str(e) != 'No module named analyses':
+                raise e
+
             # Check whether there are already some analyses registered and if
             # so, don't register the prepackaged analyses.
             if LIST_ALL_ANALYSES:
