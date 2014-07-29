@@ -5,15 +5,10 @@
 
 
 {% block content %}
-{% if description %}[[ description|markdown ]]{% endif %}
-
-<!--
-    Analyses info:
-        Author: [[analyses_author]]
-        Version: [[analyses_version]]
--->
-
-<br />
+{% if description %}
+    [[ description|markdown ]]
+    <br />
+{% endif %}
 <h1>List of Analyses</h1>
 <div class="row">
     {% for a in analyses if a.show_in_index %}
@@ -31,4 +26,10 @@
     </div>
     {% endfor %}
 </div>
+<script>
+    console.log('--- databench v[[databench_version]] ---');
+    console.log('Analyses author: [[analyses_author]]');
+    console.log('Analyses version: [[analyses_version]]');
+    console.log('')
+</script>
 {% endblock %}
