@@ -3,29 +3,33 @@
 Quickstart
 ==========
 
-Install ``databench`` inside a new ``virtualenv`` (as shown at the top of the :ref:`overview` page) and create the following file structure
+Install ``databench`` (as shown at the top of the :ref:`overview` page) and create the following file structure
 
 .. code-block:: bash
 
-    - workingDir
-        - analyses
+    - workingDir/
+        - analyses/
             - __init__.py
-            - helloworld.py
-            - templates
-                - helloworld.html
+            - helloworld/
+                - __init__.py
+                - analysis.py
+                - index.html
+                - thumbnail.png (optional)
 
 
-First, tell the analyses module that we created a new analysis called ``helloworld`` in the ``__init__.py`` file:
+First, tell the analyses module that we created a new analysis called ``helloworld``. Add the following to the ``__init__.py`` file:
 
 .. code-block:: python
 
-    import analyses.helloworld
+    """A test setup showing 'Hello World' in Databench."""
+
+    import helloworld.analysis
 
 Next, create the helloworld backend in ``helloworld.py``:
 
 .. code-block:: python
 
-    """Hello World for Databench."""
+    """!!!outdated!!! TODO Hello World for Databench."""
 
     import databench
 
@@ -48,11 +52,10 @@ And finally, create the frontend in ``helloworld.html``:
     <body>
         <p id="output"></p>
 
-        <script src="/static/socket.io/socket.io.min.js"></script>
         <script src="/static/databench.js"></script>
         <script>
             var databench = Databench('helloworld');
-            databench.signals.on('status', function(json) {
+            databench.on('status', function(json) {
                 document.getElementById('output').innerHTML =
                     json.message;
             });
@@ -83,7 +86,7 @@ Now you can run the executable ``databench`` in your ``workingDir`` folder (outs
     {% block footerscripts %}
     <script>
         var databench = Databench('helloworld');
-        databench.signals.on('status', function(json) {
+        databench.on('status', function(json) {
             document.getElementById('output').innerHTML =
                 json.message;
         });

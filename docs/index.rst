@@ -9,13 +9,11 @@
 Overview
 ========
 
-Databench is a Python package that you can install using ``pip`` inside a ``virtualenv``:
+Databench is a Python package that you can install using ``pip``:
 
 .. code-block:: bash
 
-	$ virtualenv venv
-	$ source venv/bin/activate
-	(venv)$ pip install git+https://github.com/svenkreiss/databench.git
+	$ pip install git+https://github.com/svenkreiss/databench.git
 
 It provides an executable ``databench`` and the Python module ``databench`` as well as a JavaScript library for the frontend with the same name. Running the executable creates a local web server which you can access at http://localhost:5000. A good way to start is to jump right into :ref:`quickstart`. Other resources to get started are the `first blog post`_ and a short set of `slides from Hack and Tell NY`_.
 
@@ -39,8 +37,8 @@ The `live demos`_ and `databench_examples`_ also show seemless integration with 
 .. _`slides from Hack and Tell NY`: https://speakerdeck.com/svenkreiss/databench
 .. _`live demos`: http://databench-examples-viewer.svenkreiss.com/
 .. _`databench_examples`: https://github.com/svenkreiss/databench_examples
-.. _markdown: http://daringfireball.net/projects/markdown/syntax
-.. _MathJax: http://www.mathjax.org/
+.. _`markdown`: http://daringfireball.net/projects/markdown/syntax
+.. _`MathJax`: http://www.mathjax.org/
 .. _`angular.js`: https://angularjs.org/
 
 

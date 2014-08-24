@@ -15,7 +15,40 @@ LIST_ALL_META = []
 
 
 class Analysis(object):
-    """Databench's analysis class."""
+    """Databench's analysis class.
+
+    This contains the analysis code. Every browser connection corresponds to
+    and instance of this class.
+
+    **Incoming messages** are captured by specifying a class method starting
+    with ``on_`` followed by the signal name. To capture the frontend signal
+    ``run`` that is emitted with the JavaScript code
+
+    .. code-block:: js
+
+        // on the JavaScript frontend
+        databench.emit('run', {my_param:'helloworld'});
+
+    use
+
+    .. code-block:: python
+
+        # here in python
+        def on_run(self, my_param):
+
+    here.
+
+    **Outgoing messages** are send using ``emit(signalName, message)``.
+    For example, use
+
+    .. code-block:: python
+
+        self.emit('result', {'msg':'done'})
+
+    to send the signal ``result`` with the message
+    ``{'msg':'done'}`` to the frontend.
+
+    """
 
     def __init__(self):
         pass
@@ -47,13 +80,13 @@ class Meta(object):
 
     Args:
         name (str): Name of this analysis. If ``signals`` is not specified,
-            this also becomes the namespace for the Socket.IO connection and
+            this also becomes the namespace for the WebSocket connection and
             has to match the frontend's :js:class:`Databench` ``name``.
         import_name (str): Usually the file name ``__name__`` where this
             analysis is instantiated.
         description (str): Usually the ``__doc__`` string of the analysis.
-        analysis_class (Analysis): Object of analysis that should be
-            instantiated for every new websocket connection.
+        analysis_class (:class:`databench.Analysis`): Object
+            that should be instantiated for every new websocket connection.
 
     """
 

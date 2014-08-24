@@ -1,7 +1,7 @@
 Development
 -----------
 
-To contribute to Databench, fork the GitHub repository and clone it to your local machine. Then install your local version in editable mode into the ``virtualenv``:
+To contribute to Databench, fork the GitHub repository and clone it to your local machine. Then install your local version in editable mode into a ``virtualenv``:
 
 .. code-block:: bash
 

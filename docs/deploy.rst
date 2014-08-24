@@ -19,20 +19,21 @@ and a ``requirements.txt`` file
 .. code-block:: python
 
 	Flask==0.10.1
-	Flask-SocketIO==0.3.7
-	Jinja2==2.7.2
+	Flask-Sockets==0.1
+	Jinja2==2.7.3
 	MarkupSafe==0.23
-	Werkzeug==0.9.4
+	Werkzeug==0.9.6
 	gevent==1.0.1
-	gevent-socketio==0.3.6
 	gevent-websocket==0.9.3
-	greenlet==0.4.2
+	greenlet==0.4.3
 	itsdangerous==0.24
-	matplotlib==1.3.1
-	mpld3==0.2
+	python-dateutil==2.2
+	six==1.7.3
 	wsgiref==0.1.2
+	mpld3==0.2
+	matplotlib==1.3.1
 
-	git+https://github.com/svenkreiss/databench.git
+	git+https://github.com/svenkreiss/databench.git@dev-0.3
 
 which already includes the most common dependencies. Databench will pick up the environment variable ``PORT`` which will be used for Flask.
 
