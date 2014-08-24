@@ -5,16 +5,13 @@ import os
 import sys
 import glob
 import codecs
-import gevent
 import logging
 import argparse
-import subprocess
 import zmq.green as zmq
 
 import flask_sockets
 from flask.ext.markdown import Markdown
-from flask import copy_current_request_context
-from flask import Flask, Blueprint, render_template
+from flask import Flask, render_template
 
 from .analysis import MetaZMQ
 from . import __version__ as DATABENCH_VERSION
