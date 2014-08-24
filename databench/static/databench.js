@@ -35,10 +35,10 @@ function Databench(name) {
 
 	var genericElements = {};
 
-	genericElements.log = function(selector, signal_name, limit, console_fn_name) {
-		if (!signal_name) signal_name = 'log';
+	genericElements.log = function(selector, signalName, limit, consoleFnName) {
+		if (!signalName) signalName = 'log';
 		if (!limit) limit = 20;
-		if (!console_fn_name) console_fn_name = 'log';
+		if (!consoleFnName) consoleFnName = 'log';
 
 		var _selector = $('#'+selector);
 		var _messages = [];
@@ -52,19 +52,19 @@ function Databench(name) {
 		}
 
 		// capture events from frontend
-		var _console_fn_original = console[console_fn_name];
-	    console[console_fn_name] = function(msg) {
-	        _console_fn_original.apply(console, ["frontend:", msg]);
+		var _consoleFnOriginal = console[consoleFnName];
+	    console[consoleFnName] = function(msg) {
+	        _consoleFnOriginal.apply(console, ["frontend:", msg]);
 	        _messages.push("frontend: "+msg);
 
 	        update();
 	    }
 
 		// listen for _messages from backend
-		on(signal_name, function(message) {
+		on(signalName, function(message) {
 			var msg = JSON.stringify(message);
 
-			_console_fn_original.apply(console, [" backend:", msg]);
+			_consoleFnOriginal.apply(console, [" backend:", msg]);
 			_messages.push(" backend: "+msg);
 
 			update();
