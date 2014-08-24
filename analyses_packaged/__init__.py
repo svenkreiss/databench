@@ -1,3 +1,3 @@
 """Dummy analysis `dummypi`. Just for testing purposes."""
 
-import dummypi
+from dummypi.analysis import META

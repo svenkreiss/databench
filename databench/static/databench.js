@@ -1,19 +1,34 @@
 
 function Databench(name) {
 	var _name = name;
+	var on_callbacks = {};
 
-	var socket = io.connect('http://'+document.domain+':'+location.port+'/'+_name);
+	var socket = new WebSocket('ws://'+document.domain+':'+location.port+'/'+_name+'/ws');
+
+	socket.onmessage = function(event) {
+		var message_data = JSON.parse(event.data);
+		if(!(message_data.signal in on_callbacks)) return;
+
+		for(cb in on_callbacks[message_data.signal]) {
+			on_callbacks[message_data.signal][cb](message_data.message);
+		}
+	}
 
 
-
-	var signals = {};
-
-	signals.on = function(signalName, callback) {
-		socket.on(signalName, callback);
+	var on = function(signalName, callback) {
+		if(!(signalName in on_callbacks))
+			on_callbacks[signalName] = [];
+		on_callbacks[signalName].push(callback);
 	};
 
-	signals.emit = function(signalName, message) {
-		socket.emit(signalName, message);
+	var emit = function(signalName, message) {
+		if(socket.readyState != 1) {
+			setTimeout(function() {
+				emit(signalName, message);
+			}, 5);
+			return;
+		}
+		socket.send(JSON.stringify({'signal':signalName, 'message':message}));
 	};
 
 
@@ -25,6 +40,7 @@ function Databench(name) {
 		if (!limit) limit = 20;
 		if (!console_fn_name) console_fn_name = 'log';
 
+		var _selector = $('#'+selector);
 		var _messages = [];
 
 		// update
@@ -32,7 +48,7 @@ function Databench(name) {
 			if (_messages.length > limit) {
 				_messages.shift();
 			}
-			if (selector) selector.html(_messages.join('<br />'));
+			if (_selector) _selector.html(_messages.join('<br />'));
 		}
 
 		// capture events from frontend
@@ -45,7 +61,7 @@ function Databench(name) {
 	    }
 
 		// listen for _messages from backend
-		socket.on(signal_name, function(message) {
+		on(signal_name, function(message) {
 			var msg = JSON.stringify(message);
 
 			_console_fn_original.apply(console, [" backend:", msg]);
@@ -58,11 +74,11 @@ function Databench(name) {
 	genericElements.mpld3canvas = function(selector, signalName) {
 		if (!signalName) signalName = 'mpld3canvas';
 
-		socket.on(signalName, function(msg) {
-			console.log("removing old figure");
-			if (selector) selector.html('');
-			console.log("drawing mpld3 on element "+selector.attr('id'));
-			mpld3.draw_figure(selector.attr('id'), msg);
+		var _selector = $('#'+selector);
+
+		on(signalName, function(msg) {
+			if (_selector) _selector.html('');
+			mpld3.draw_figure(selector, msg);
 		});
 	};
 
@@ -70,7 +86,7 @@ function Databench(name) {
 
 
 	var publicFunctions = {
-		'signals': signals,
+		'on': on, 'emit': emit,
 		'genericElements': genericElements,
 	};
 

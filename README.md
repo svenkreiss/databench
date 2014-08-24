@@ -17,4 +17,9 @@ Databench was written by Sven Kreiss and made available under the [MIT license](
 ## Development
 
 * 0.3.0:
-    * Interface to other backends using `zmq`
+    * moved from socket.io to plain websockets
+    * one analysis instance per websocket connection
+    * restructured analyses directories
+    * signals are executed in separate co-routines
+    * interface to other backends using `zmq`
+    * frontend: genericElements take string ids instead of jquery selectors

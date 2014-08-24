@@ -12,6 +12,5 @@ if 'threading' in sys.modules:
 import gevent.monkey
 gevent.monkey.patch_all()
 
-from .analysis import LIST_ALL, Analysis
-from .signals import Signals
+from .analysis import LIST_ALL_META, Meta, Analysis, MetaZMQ, AnalysisZMQ
 from .app import run

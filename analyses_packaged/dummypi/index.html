@@ -21,10 +21,11 @@ the generated point is inside the first quadrant of the unit circle.</p>
 {% block footerscripts %}
 <script>
 	var databench = Databench('dummypi');
-	databench.genericElements.log($('#log'));
+	databench.genericElements.log('log');
 
-	databench.signals.on('status', function(msg) {
+	databench.on('status', function(msg) {
 		$('#pi').text(msg['pi-estimate'].toFixed(3)+' ± '+msg['pi-uncertainty'].toFixed(3));
 	});
+    databench.emit('run', {});
 </script>
 {% endblock %}
