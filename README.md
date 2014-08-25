@@ -14,7 +14,7 @@ User guide and API documentation: [www.svenkreiss.com/databench/](http://www.sve
 Databench was written by Sven Kreiss and made available under the [MIT license](https://github.com/svenkreiss/databench/blob/master/LICENSE).
 
 
-## Development
+## Changelog
 
 * 0.3.0:
     * moved from socket.io to plain websockets
