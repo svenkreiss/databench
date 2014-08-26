@@ -27,26 +27,26 @@ class Analysis(object):
     .. code-block:: js
 
         // on the JavaScript frontend
-        databench.emit('run', {my_param:'helloworld'});
+        databench.emit('run', {my_param: 'helloworld'});
 
     use
 
     .. code-block:: python
 
-        # here in python
+        # here in Python
         def on_run(self, my_param):
 
     here.
 
-    **Outgoing messages** are send using ``emit(signalName, message)``.
+    **Outgoing messages** are sent using ``emit(signal_name, message)``.
     For example, use
 
     .. code-block:: python
 
-        self.emit('result', {'msg':'done'})
+        self.emit('result', {'msg': 'done'})
 
-    to send the signal ``result`` with the message
-    ``{'msg':'done'}`` to the frontend.
+    to send the signal ``result`` with the message ``{'msg': 'done'}`` to
+    the frontend.
 
     """
 
