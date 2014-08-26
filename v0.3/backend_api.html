@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Backend API &mdash; Databench 0.3.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="top" title="Databench 0.3.0 documentation" href="index.html" />
+    <link rel="next" title="Frontend API" href="frontend_api.html" />
+    <link rel="prev" title="Deployment" href="deploy.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="frontend_api.html" title="Frontend API"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="deploy.html" title="Deployment"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Databench 0.3.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="backend-api">
+<h1>Backend API<a class="headerlink" href="#backend-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="analysis">
+<h2>Analysis<a class="headerlink" href="#analysis" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="databench.Analysis">
+<em class="property">class </em><tt class="descclassname">databench.</tt><tt class="descname">Analysis</tt><a class="headerlink" href="#databench.Analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Databench&#8217;s analysis class.</p>
+<p>This contains the analysis code. Every browser connection corresponds to
+and instance of this class.</p>
+<p><strong>Incoming messages</strong> are captured by specifying a class method starting
+with <tt class="docutils literal"><span class="pre">on_</span></tt> followed by the signal name. To capture the frontend signal
+<tt class="docutils literal"><span class="pre">run</span></tt> that is emitted with the JavaScript code</p>
+<div class="highlight-js"><div class="highlight"><pre><span class="c1">// on the JavaScript frontend</span>
+<span class="nx">databench</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;run&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">my_param</span><span class="o">:</span> <span class="s1">&#39;helloworld&#39;</span><span class="p">});</span>
+</pre></div>
+</div>
+<p>use</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># here in Python</span>
+<span class="k">def</span> <span class="nf">on_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">my_param</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>here.</p>
+<p><strong>Outgoing messages</strong> are sent using <tt class="docutils literal"><span class="pre">emit(signal_name,</span> <span class="pre">message)</span></tt>.
+For example, use</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&#39;result&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;msg&#39;</span><span class="p">:</span> <span class="s">&#39;done&#39;</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>to send the signal <tt class="docutils literal"><span class="pre">result</span></tt> with the message <tt class="docutils literal"><span class="pre">{'msg':</span> <span class="pre">'done'}</span></tt> to
+the frontend.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="meta">
+<h2>Meta<a class="headerlink" href="#meta" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="databench.Meta">
+<em class="property">class </em><tt class="descclassname">databench.</tt><tt class="descname">Meta</tt><big>(</big><em>name</em>, <em>import_name</em>, <em>description</em>, <em>analysis_class</em><big>)</big><a class="headerlink" href="#databench.Meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Databench&#8217;s Meta class.</p>
+<p>This class uses instances of <a class="reference internal" href="#databench.Analysis" title="databench.Analysis"><tt class="xref py py-class docutils literal"><span class="pre">databench.Analysis</span></tt></a> and
+<a class="reference external" href="http://flask.pocoo.org/docs/api/#flask.Blueprint" title="(in Flask v1.0-dev)"><tt class="xref py py-class docutils literal"><span class="pre">flask.Blueprint</span></tt></a> with default configurations. For advanced use
+cases, you can change those settings (e.g. folder name for <tt class="docutils literal"><span class="pre">templates</span></tt>)
+by creating a new class with a modified constructor that inherits from
+this class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>str</em>) &#8211; Name of this analysis. If <tt class="docutils literal"><span class="pre">signals</span></tt> is not specified,
+this also becomes the namespace for the WebSocket connection and
+has to match the frontend&#8217;s <a class="reference internal" href="frontend_api.html#Databench" title="Databench"><tt class="xref js js-class docutils literal"><span class="pre">Databench()</span></tt></a> <tt class="docutils literal"><span class="pre">name</span></tt>.</li>
+<li><strong>import_name</strong> (<em>str</em>) &#8211; Usually the file name <tt class="docutils literal"><span class="pre">__name__</span></tt> where this
+analysis is instantiated.</li>
+<li><strong>description</strong> (<em>str</em>) &#8211; Usually the <tt class="docutils literal"><span class="pre">__doc__</span></tt> string of the analysis.</li>
+<li><strong>analysis_class</strong> (<a class="reference internal" href="#databench.Analysis" title="databench.Analysis"><tt class="xref py py-class docutils literal"><span class="pre">databench.Analysis</span></tt></a>) &#8211; Object
+that should be instantiated for every new websocket connection.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="databench.Meta.render_index">
+<tt class="descname">render_index</tt><big>(</big><big>)</big><a class="headerlink" href="#databench.Meta.render_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renders the main analysis frontend template.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="databench.Meta.ws_serve">
+<tt class="descname">ws_serve</tt><big>(</big><em>ws</em><big>)</big><a class="headerlink" href="#databench.Meta.ws_serve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle a new websocket connection.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Databench</a></h1>
+
+
+
+<p class="blurb">Databench is a data analysis tool using
+<a href="http://flask.pocoo.org/">Flask</a>,
+WebSockets and
+<a href="http://d3js.org/">d3.js</a>.
+Check out the <a href="http://databench-examples-viewer.svenkreiss.com/">live demos</a>.</p>
+
+
+<p class="blurb">This is the documentation for version 0.3.0.</p>
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deploy.html">Deployment</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Backend API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#analysis">Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#meta">Meta</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="frontend_api.html">Frontend API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev.html">Development</a></li>
+</ul>
+
+
+<hr />
+<ul>
+    
+    <li class="toctree-l1"><a href="http://databench-examples-viewer.svenkreiss.com">Live Demos</a></li>
+    
+    <li class="toctree-l1"><a href="https://github.com/svenkreiss/databench">GitHub</a></li>
+    
+    <li class="toctree-l1"><a href="https://github.com/svenkreiss/databench_examples">Examples Repository</a></li>
+    
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy; 2014 Sven Kreiss and contributors.
+      
+    </div>
+
+    
+    <a href="https://github.com/svenkreiss/databench" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-4070485-2']);
+      _gaq.push(['_setDomainName', 'none']);
+      _gaq.push(['_setAllowLinker', true]);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+    
+  </body>
+</html>

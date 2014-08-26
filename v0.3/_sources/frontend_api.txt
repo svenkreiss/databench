@@ -1,0 +1,70 @@
+Frontend API
+============
+
+When using the ``base.html`` template, the databench library and a few more
+libraries are already loaded. When using your own html template, the frontend
+library needs to be loaded by including
+
+.. code-block:: html
+
+    <script src="/static/databench.js"></script>
+
+in the html body tag.
+
+In the html template, ``[[ analysis_description ]]`` returns the description
+string passed into :class:`databench.Analysis` which is usually the ``__doc__``
+string of your analysis python file.
+
+
+Databench
+---------
+
+.. js:class:: Databench(name)
+
+    :param string name: The name of this databench analysis (used as WebSocket
+        namespace and has to match the backend's :class:`databench.Analysis`
+        ``name``)
+
+.. js:attribute:: Databench.genericElements
+
+    :ref:`genericElements` are documented below.
+
+.. js:function:: Databench.emit(signalName, message)
+
+    :param string signalName: Name of the signal that is used to send the
+        message.
+    :param message: Message to send.
+
+.. js:function:: Databench.on(signalName, callback)
+
+    :param string signalName: Name of the signal to listen to from the backend.
+    :param function callback: Function that is called when a signal is received.
+
+
+.. _genericElements:
+
+Generic Elements
+----------------
+
+.. js:function:: Databench.genericElements.log([selector, signalName, limit, consoleFnName])
+
+    This function provides log message handling from the frontend and
+    backend. If a selector is given, it converts a generic ``<pre>`` element
+    into a basic console. By
+    default, this looks at ``log`` messages from the backend and at
+    ``console.log()`` calls on the frontend. All messages will be shown in the
+    bound ``<pre>`` element (if a ``selector`` is given) and in the browser
+    console.
+
+    :param selector: ``id`` of the element.
+    :param string signalName: The signal to listen for.
+    :param int limit: Maximum number of lines to show (default=20).
+    :param string consoleFnName: Name of a method of ``console``, like
+        'log' (default).
+
+.. js:function:: Databench.genericElements.mpld3canvas(selector[, signalName])
+
+    :param selector: ``id`` of the element.
+    :param string signalName: Waiting for plots to be send on this signal
+        (default='mpld3canvas').
+
