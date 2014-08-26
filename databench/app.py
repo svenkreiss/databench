@@ -65,9 +65,11 @@ class App(object):
 
         zmq_publish = zmq.Context().socket(zmq.PUB)
         zmq_publish.bind('tcp://127.0.0.1:'+str(port+3041))
+        logging.debug('main publishing to port '+str(port+3041))
 
         self.register_analyses_py(zmq_publish)
         self.register_analyses_pyspark(zmq_publish)
+        self.register_analyses_go(zmq_publish)
         self.import_analyses()
         self.register_analyses()
 
@@ -132,6 +134,21 @@ class App(object):
             logging.debug('creating MetaZMQ for '+name)
             MetaZMQ(name, __name__, "ZMQ Analysis py",
                     ['pyspark', analysis_folder+'/analysis.py'],
+                    zmq_publish, sub_port)
+            sub_port += 1
+
+    def register_analyses_go(self, zmq_publish, sub_port=8042):
+        analysis_folders = glob.glob('analyses/*_go')
+        if not analysis_folders:
+            analysis_folders = glob.glob('analyses_packaged/*_go')
+
+        for analysis_folder in analysis_folders:
+            name = analysis_folder[analysis_folder.find('/')+1:]
+            logging.info('installing '+name)
+            os.system('cd '+analysis_folder+'; go install')
+            logging.debug('creating MetaZMQ for '+name)
+            MetaZMQ(name, __name__, "ZMQ Analysis go",
+                    [name],
                     zmq_publish, sub_port)
             sub_port += 1
 
