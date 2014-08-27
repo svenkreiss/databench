@@ -26,3 +26,4 @@ Databench was written by Sven Kreiss and made available under the [MIT license](
     * frontend: Databench() does not require a name anymore
     * frontend: genericElements: added `button()`
     * backend handles `action`s: an `action` is the co-routine that is launched with a signal. `action`s can have `id`s in which case they signal their `start` and `end` (used to indicate state for genericElements.button()).
+    * frontend: genericElements: added `slider()`

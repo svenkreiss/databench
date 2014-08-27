@@ -187,9 +187,16 @@ class Meta(object):
                         if action_id_local:
                             emitAction(action_id_local, 'start')
 
-                        getattr(analysis_instance, fn_name)(
-                            *message_data['message']
-                        )
+                        # Check whether this is a list (positional arguments)
+                        # or a dictionary (keyword arguments).
+                        if isinstance(message_data['message'], list):
+                            getattr(analysis_instance, fn_name)(
+                                *message_data['message']
+                            )
+                        elif isinstance(message_data['message'], dict):
+                            getattr(analysis_instance, fn_name)(
+                                **message_data['message']
+                            )
 
                         if action_id_local:
                             emitAction(action_id_local, 'end')
@@ -197,9 +204,9 @@ class Meta(object):
                     # every 'on_' is processed in a separate greenlet
                     greenlets.append(gevent.Greenlet.spawn(spawn_action))
                 else:
-                    logging.info('frontend wants to call '
-                                 'on_'+message_data['signal']+' which is not '
-                                 'in the Analysis class.')
+                    logging.warning('frontend wants to call '
+                                    'on_'+message_data['signal']+' which is '
+                                    'not in the Analysis class.')
             else:
                 logging.info('message not processed: '+message)
 

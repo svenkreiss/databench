@@ -133,6 +133,23 @@ function Databench() {
 		});
 	}
 
+	genericElements.slider = function(selector, signalName) {
+		var _selector = selector;
+		if ($.type(_selector) == 'string')
+			_selector = $('#'+selector);
+		if (!signalName)
+			signalName = _selector.attr('data-signal-name');
+		if (!signalName)
+			signalName = _selector.attr('name');
+		if (!signalName)
+			signalName = selector;
+
+		_selector.on('input change', function() {
+			emit(signalName, [parseFloat(this.value)]);
+		});
+		_selector.trigger('input');
+	}
+
 
 	// initialize genericElements from ids found on the page
 	// mpld3canvas
@@ -146,6 +163,12 @@ function Databench() {
 		var name = $(this).attr('data-signal-name');
 		console.log('Initialize databench.genericElements.button() with signalName='+name+'.');
 		genericElements.button($(this));
+	});
+	// sliders (input[range])
+	$("input[type='range']").each(function() {
+		var name = $(this).attr('name');
+		console.log('Initialize databench.genericElements.slider() with signalName='+name+'.');
+		genericElements.slider($(this));
 	});
 	// log
 	$("pre[id^='log']").each(function() {
