@@ -14,18 +14,19 @@
 then does a comparison $$r_1^2 + r_2^2 < 1.0$$ to figure out whether
 the generated point is inside the first quadrant of the unit circle.</p>
 
+<button class="btn btn-primary" data-signal-name="run">Run</button>
+
+<hr />
 <pre id="log"></pre>
 {% endblock %}
 
 
 {% block footerscripts %}
 <script>
-	var databench = Databench('dummypi');
-	databench.genericElements.log('log');
+	var databench = Databench();
 
 	databench.on('status', function(msg) {
 		$('#pi').text(msg['pi-estimate'].toFixed(3)+' ± '+msg['pi-uncertainty'].toFixed(3));
 	});
-    databench.emit('run', {});
 </script>
 {% endblock %}

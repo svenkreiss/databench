@@ -19,11 +19,7 @@ string of your analysis python file.
 Databench
 ---------
 
-.. js:class:: Databench(name)
-
-    :param string name: The name of this databench analysis (used as WebSocket
-        namespace and has to match the backend's :class:`databench.Analysis`
-        ``name``)
+.. js:class:: Databench()
 
 .. js:attribute:: Databench.genericElements
 
@@ -46,25 +42,46 @@ Databench
 Generic Elements
 ----------------
 
-.. js:function:: Databench.genericElements.log([selector, signalName, limit, consoleFnName])
+Below is the list of genericElements. They all can be instantiated from JavaScript on the frontend. They are also created for the following elements on the page:
 
-    This function provides log message handling from the frontend and
-    backend. If a selector is given, it converts a generic ``<pre>`` element
-    into a basic console. By
-    default, this looks at ``log`` messages from the backend and at
-    ``console.log()`` calls on the frontend. All messages will be shown in the
-    bound ``<pre>`` element (if a ``selector`` is given) and in the browser
-    console.
+* :js:func:`Databench.genericElements.log`: a ``<pre>`` with an ``id`` starting with ``log``
+* :js:func:`Databench.genericElements.mpld3canvas`: a ``<div>`` with an ``id`` starting with ``mpld3canvas``. The exact ``id`` becomes the signal name.
+* :js:func:`Databench.genericElements.button`: a ``<button>`` with a ``data-signal-name`` attribute.
 
-    :param selector: ``id`` of the element.
+
+And here are the genericElements:
+
+.. js:function:: Databench.genericElements.log([id, signalName, limit, consoleFnName])
+
+    :param id: ``id`` of a ``<pre>`` element.
     :param string signalName: The signal to listen for.
     :param int limit: Maximum number of lines to show (default=20).
     :param string consoleFnName: Name of a method of ``console``, like
         'log' (default).
 
-.. js:function:: Databench.genericElements.mpld3canvas(selector[, signalName])
+    This function provides log message handling from the frontend and
+    backend. By default, this looks at ``log`` messages from the backend and at
+    ``console.log()`` calls on the frontend. All messages will be shown in the
+    bound ``<pre>`` element and in the browser console. When no ``id`` is given, it will only show the messages in the browser console.
 
-    :param selector: ``id`` of the element.
+.. js:function:: Databench.genericElements.mpld3canvas(id[, signalName])
+
+    :param id: ``id`` of the element.
     :param string signalName: Waiting for plots to be send on this signal
         (default='mpld3canvas').
 
+.. js:function:: Databench.genericElements.button(selector[, signalName])
+
+    :param selector: ``id`` or jQuery selector of a ``button`` element.
+    :param string signalName: if not provided, it is taken from a
+        ``data-signal-name`` attribute and if that is also not given then it
+        is set to the id.
+
+    The signalName can also be extracted from an attribute ``data-signal-name``
+    and an optional message can be provided in JSON format in ``data-message``.
+    The signalName and the message are used for a :js:func:`Databench.emit`.
+
+    This function adds actions to an HTML button. It adds a ``click`` event
+    handler and tracks the status of the action through the backend. The button
+    is set to active (the CSS class ``active`` is added) during the execution
+    in the backend.

@@ -1,6 +1,6 @@
 # Databench
 
-> Data analysis tool using Flask, Socket.IO and d3.js. Optional parallelization with Redis Queue and visualizations with mpld3. Live demos are at [databench-examples-viewer.svenkreiss.com](http://databench-examples-viewer.svenkreiss.com).
+> Data analysis tool using Flask, WebSockets and d3.js. Live demos are at [databench-examples.svenkreiss.com](http://databench-examples.svenkreiss.com).
 
 [![Build Status](https://travis-ci.org/svenkreiss/databench.png?branch=master)](https://travis-ci.org/svenkreiss/databench)
 
@@ -23,3 +23,6 @@ Databench was written by Sven Kreiss and made available under the [MIT license](
     * signals are executed in separate co-routines
     * interface to other backends using `zmq`
     * frontend: genericElements take string ids instead of jquery selectors
+    * frontend: Databench() does not require a name anymore
+    * frontend: genericElements: added `button()`
+    * backend handles `action`s: an `action` is the co-routine that is launched with a signal. `action`s can have `id`s in which case they signal their `start` and `end` (used to indicate state for genericElements.button()).

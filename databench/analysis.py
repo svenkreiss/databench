@@ -150,6 +150,13 @@ class Meta(object):
                 logging.info('websocket closed. could not send: '+signal +
                              ' -- '+str(message))
 
+        def emitAction(action_id, status):
+            try:
+                ws.send(json.dumps({'action_id': action_id, 'status': status}))
+            except geventwebsocket.WebSocketError, e:
+                logging.info('websocket could not send action: '+action_id +
+                             ' -- '+str(status))
+
         analysis_instance = self.instantiate_analysis_class()
         logging.debug("analysis instantiated")
         analysis_instance.set_emit_fn(emit)
@@ -167,12 +174,28 @@ class Meta(object):
                 fn_name = 'on_'+message_data['signal']
                 if hasattr(self.analysis_class, fn_name):
                     logging.debug('calling '+fn_name)
-                    # every 'on_' is processed in a separate greenlet
-                    greenlets.append(gevent.Greenlet.spawn(
-                        lambda: getattr(analysis_instance, fn_name)(
+
+                    # detect whether an action_id should be registered
+                    action_id = None
+                    if '__action_id' in message_data['message']:
+                        action_id = message_data['message']['__action_id']
+                        del message_data['message']['__action_id']
+
+                    # wrap the action
+                    def spawn_action():
+                        action_id_local = action_id
+                        if action_id_local:
+                            emitAction(action_id_local, 'start')
+
+                        getattr(analysis_instance, fn_name)(
                             *message_data['message']
                         )
-                    ))
+
+                        if action_id_local:
+                            emitAction(action_id_local, 'end')
+
+                    # every 'on_' is processed in a separate greenlet
+                    greenlets.append(gevent.Greenlet.spawn(spawn_action))
                 else:
                     logging.info('frontend wants to call '
                                  'on_'+message_data['signal']+' which is not '
