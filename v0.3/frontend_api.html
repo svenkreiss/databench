@@ -70,21 +70,8 @@ string of your analysis python file.</p>
 <h2>Databench<a class="headerlink" href="#databench" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="Databench">
-<em class="property">class </em><tt class="descname">Databench</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#Databench" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>string</em>) &#8211; The name of this databench analysis (used as WebSocket
-namespace and has to match the backend&#8217;s <a class="reference internal" href="backend_api.html#databench.Analysis" title="databench.Analysis"><tt class="xref py py-class docutils literal"><span class="pre">databench.Analysis</span></tt></a>
-<tt class="docutils literal"><span class="pre">name</span></tt>)</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<em class="property">class </em><tt class="descname">Databench</tt><big>(</big><big>)</big><a class="headerlink" href="#Databench" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="Databench.genericElements">
@@ -130,22 +117,22 @@ message.</li>
 </div>
 <div class="section" id="generic-elements">
 <span id="genericelements"></span><h2>Generic Elements<a class="headerlink" href="#generic-elements" title="Permalink to this headline">¶</a></h2>
+<p>Below is the list of genericElements. They all can be instantiated from JavaScript on the frontend. They are also created for the following elements on the page:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#Databench.genericElements.log" title="Databench.genericElements.log"><tt class="xref js js-func docutils literal"><span class="pre">Databench.genericElements.log()</span></tt></a>: a <tt class="docutils literal"><span class="pre">&lt;pre&gt;</span></tt> with an <tt class="docutils literal"><span class="pre">id</span></tt> starting with <tt class="docutils literal"><span class="pre">log</span></tt></li>
+<li><a class="reference internal" href="#Databench.genericElements.mpld3canvas" title="Databench.genericElements.mpld3canvas"><tt class="xref js js-func docutils literal"><span class="pre">Databench.genericElements.mpld3canvas()</span></tt></a>: a <tt class="docutils literal"><span class="pre">&lt;div&gt;</span></tt> with an <tt class="docutils literal"><span class="pre">id</span></tt> starting with <tt class="docutils literal"><span class="pre">mpld3canvas</span></tt>. The exact <tt class="docutils literal"><span class="pre">id</span></tt> becomes the signal name.</li>
+<li><a class="reference internal" href="#Databench.genericElements.button" title="Databench.genericElements.button"><tt class="xref js js-func docutils literal"><span class="pre">Databench.genericElements.button()</span></tt></a>: a <tt class="docutils literal"><span class="pre">&lt;button&gt;</span></tt> with a <tt class="docutils literal"><span class="pre">data-signal-name</span></tt> attribute.</li>
+</ul>
+<p>And here are the genericElements:</p>
 <dl class="function">
 <dt id="Databench.genericElements.log">
-<tt class="descclassname">Databench.genericElements.</tt><tt class="descname">log</tt><big>(</big><span class="optional">[</span><em>selector</em>, <em>signalName</em>, <em>limit</em>, <em>consoleFnName</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Databench.genericElements.log" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function provides log message handling from the frontend and
-backend. If a selector is given, it converts a generic <tt class="docutils literal"><span class="pre">&lt;pre&gt;</span></tt> element
-into a basic console. By
-default, this looks at <tt class="docutils literal"><span class="pre">log</span></tt> messages from the backend and at
-<tt class="docutils literal"><span class="pre">console.log()</span></tt> calls on the frontend. All messages will be shown in the
-bound <tt class="docutils literal"><span class="pre">&lt;pre&gt;</span></tt> element (if a <tt class="docutils literal"><span class="pre">selector</span></tt> is given) and in the browser
-console.</p>
-<table class="docutils field-list" frame="void" rules="none">
+<tt class="descclassname">Databench.genericElements.</tt><tt class="descname">log</tt><big>(</big><span class="optional">[</span><em>id</em>, <em>signalName</em>, <em>limit</em>, <em>consoleFnName</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Databench.genericElements.log" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first last simple">
-<li><strong>selector</strong> &#8211; <tt class="docutils literal"><span class="pre">id</span></tt> of the element.</li>
+<li><strong>id</strong> &#8211; <tt class="docutils literal"><span class="pre">id</span></tt> of a <tt class="docutils literal"><span class="pre">&lt;pre&gt;</span></tt> element.</li>
 <li><strong>signalName</strong> (<em>string</em>) &#8211; The signal to listen for.</li>
 <li><strong>limit</strong> (<em>int</em>) &#8211; Maximum number of lines to show (default=20).</li>
 <li><strong>consoleFnName</strong> (<em>string</em>) &#8211; Name of a method of <tt class="docutils literal"><span class="pre">console</span></tt>, like
@@ -155,17 +142,21 @@ console.</p>
 </tr>
 </tbody>
 </table>
+<p>This function provides log message handling from the frontend and
+backend. By default, this looks at <tt class="docutils literal"><span class="pre">log</span></tt> messages from the backend and at
+<tt class="docutils literal"><span class="pre">console.log()</span></tt> calls on the frontend. All messages will be shown in the
+bound <tt class="docutils literal"><span class="pre">&lt;pre&gt;</span></tt> element and in the browser console. When no <tt class="docutils literal"><span class="pre">id</span></tt> is given, it will only show the messages in the browser console.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="Databench.genericElements.mpld3canvas">
-<tt class="descclassname">Databench.genericElements.</tt><tt class="descname">mpld3canvas</tt><big>(</big><em>selector</em><span class="optional">[</span>, <em>signalName</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Databench.genericElements.mpld3canvas" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">Databench.genericElements.</tt><tt class="descname">mpld3canvas</tt><big>(</big><em>id</em><span class="optional">[</span>, <em>signalName</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Databench.genericElements.mpld3canvas" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first last simple">
-<li><strong>selector</strong> &#8211; <tt class="docutils literal"><span class="pre">id</span></tt> of the element.</li>
+<li><strong>id</strong> &#8211; <tt class="docutils literal"><span class="pre">id</span></tt> of the element.</li>
 <li><strong>signalName</strong> (<em>string</em>) &#8211; Waiting for plots to be send on this signal
 (default=&#8217;mpld3canvas&#8217;).</li>
 </ul>
@@ -173,6 +164,32 @@ console.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Databench.genericElements.button">
+<tt class="descclassname">Databench.genericElements.</tt><tt class="descname">button</tt><big>(</big><em>selector</em><span class="optional">[</span>, <em>signalName</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Databench.genericElements.button" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first last simple">
+<li><strong>selector</strong> &#8211; <tt class="docutils literal"><span class="pre">id</span></tt> or jQuery selector of a <tt class="docutils literal"><span class="pre">button</span></tt> element.</li>
+<li><strong>signalName</strong> (<em>string</em>) &#8211; if not provided, it is taken from a
+<tt class="docutils literal"><span class="pre">data-signal-name</span></tt> attribute and if that is also not given then it
+is set to the id.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The signalName can also be extracted from an attribute <tt class="docutils literal"><span class="pre">data-signal-name</span></tt>
+and an optional message can be provided in JSON format in <tt class="docutils literal"><span class="pre">data-message</span></tt>.
+The signalName and the message are used for a <a class="reference internal" href="#Databench.emit" title="Databench.emit"><tt class="xref js js-func docutils literal"><span class="pre">Databench.emit()</span></tt></a>.</p>
+<p>This function adds actions to an HTML button. It adds a <tt class="docutils literal"><span class="pre">click</span></tt> event
+handler and tracks the status of the action through the backend. The button
+is set to active (the CSS class <tt class="docutils literal"><span class="pre">active</span></tt> is added) during the execution
+in the backend.</p>
 </dd></dl>
 
 </div>
@@ -192,7 +209,8 @@ console.</p>
 <a href="http://flask.pocoo.org/">Flask</a>,
 WebSockets and
 <a href="http://d3js.org/">d3.js</a>.
-Check out the <a href="http://databench-examples-viewer.svenkreiss.com/">live demos</a>.</p>
+Check out the <a href="http://databench-examples.svenkreiss.com/">live demos</a>.
+</p>
 
 
 <p class="blurb">This is the documentation for version 0.3.0.</p>
