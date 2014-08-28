@@ -53,8 +53,8 @@ class App(object):
 
         self.spawned_analyses = {}
 
-        self.flask_app.debug = False
-        self.flask_app.use_reloader = False
+        self.flask_app.debug = True
+        self.flask_app.use_reloader = True
         self.flask_app.config['SECRET_KEY'] = 'ajksdfjhkasdfj'  # change
 
         if delimiters:

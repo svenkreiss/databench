@@ -160,7 +160,9 @@ class Meta(object):
         logging.debug("analysis instantiated")
         analysis_instance.set_emit_fn(emit)
         greenlets = []
-        analysis_instance.on_connect()
+        greenlets.append(gevent.Greenlet.spawn(
+            analysis_instance.on_connect
+        ))
 
         def process_message(message):
             if message is None:
