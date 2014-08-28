@@ -35,7 +35,7 @@ The `live demos`_ and `databench_examples`_ also show seemless integration with 
 
 .. _`first blog post`: http://www.svenkreiss.com/blog/databench-initial/
 .. _`slides from Hack and Tell NY`: https://speakerdeck.com/svenkreiss/databench
-.. _`live demos`: http://databench-examples-viewer.svenkreiss.com/
+.. _`live demos`: http://databench-examples.svenkreiss.com/
 .. _`databench_examples`: https://github.com/svenkreiss/databench_examples
 .. _`markdown`: http://daringfireball.net/projects/markdown/syntax
 .. _`MathJax`: http://www.mathjax.org/

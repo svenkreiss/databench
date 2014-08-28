@@ -17,7 +17,7 @@ Install ``databench`` (as shown at the top of the :ref:`overview` page) and crea
                 - thumbnail.png (optional)
 
 
-First, tell the analyses module that we created a new analysis called ``helloworld``. Add the following to the ``__init__.py`` file:
+First, tell the analyses module that we created a new analysis called ``helloworld``. Add the following to the ``analyses/__init__.py`` file:
 
 .. code-block:: python
 
@@ -25,24 +25,25 @@ First, tell the analyses module that we created a new analysis called ``hellowor
 
     import helloworld.analysis
 
-Next, create the helloworld backend in ``helloworld.py``:
+Next, create the helloworld backend in ``analysis.py``:
 
 .. code-block:: python
 
-    """!!!outdated!!! TODO Hello World for Databench."""
+    """Hello World for Databench."""
 
     import databench
 
 
-    helloworld = databench.Analysis('helloworld', __name__)
-    helloworld.description = __doc__
+    class Analysis(databench.Analysis):
 
-    @helloworld.signals.on('connect')
-    def onconnect():
-        """Run as soon as a browser connects to this."""
-        helloworld.signals.emit('status', {'message': 'Hello World'})
+        def on_connect(self):
+            """Run as soon as a browser connects to this."""
+            self.emit('status', {'message': 'Hello World'})
 
-And finally, create the frontend in ``helloworld.html``:
+
+    META = databench.Meta('helloworld', __name__, __doc__, Analysis)
+
+And finally, create the frontend in ``index.html``:
 
 .. code-block:: html
 
@@ -52,9 +53,10 @@ And finally, create the frontend in ``helloworld.html``:
     <body>
         <p id="output"></p>
 
+        <script src="/static/jquery/jquery-2.1.1.min.js"></script>
         <script src="/static/databench.js"></script>
         <script>
-            var databench = Databench('helloworld');
+            var databench = Databench();
             databench.on('status', function(json) {
                 document.getElementById('output').innerHTML =
                     json.message;
@@ -68,7 +70,7 @@ Now you can run the executable ``databench`` in your ``workingDir`` folder (outs
 .. _databench_examples: https://github.com/svenkreiss/databench_examples
 
 
-**Using the** ``base.html`` **Template:** To provide some basic header and footer for an analysis, the ``base.html`` template is available. It is not required to use it, but it includes a range of default libraries that might come in handy. To use it, change the ``helloworld.html`` to
+**Using the** ``base.html`` **Template:** To provide some basic header and footer for an analysis, the ``base.html`` template is available. It is not required to use it, but it includes a range of default libraries that might come in handy. To use it, change the ``index.html`` to
 
 .. code-block:: html
 
@@ -85,7 +87,7 @@ Now you can run the executable ``databench`` in your ``workingDir`` folder (outs
 
     {% block footerscripts %}
     <script>
-        var databench = Databench('helloworld');
+        var databench = Databench();
         databench.on('status', function(json) {
             document.getElementById('output').innerHTML =
                 json.message;
