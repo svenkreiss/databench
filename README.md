@@ -17,6 +17,7 @@ Databench was written by Sven Kreiss and made available under the [MIT license](
 ## Changelog
 
 * 0.3.0:
+    * new tool `scaffold-databench`
     * moved from socket.io to plain websockets
     * one analysis instance per websocket connection
     * restructured analyses directories
@@ -24,6 +25,5 @@ Databench was written by Sven Kreiss and made available under the [MIT license](
     * interface to other backends using `zmq`
     * frontend: genericElements take string ids instead of jquery selectors
     * frontend: Databench() does not require a name anymore
-    * frontend: genericElements: added `button()`
+    * frontend: genericElements: added `button()` and `slider()`
     * backend handles `action`s: an `action` is the co-routine that is launched with a signal. `action`s can have `id`s in which case they signal their `start` and `end` (used to indicate state for genericElements.button()).
-    * frontend: genericElements: added `slider()`

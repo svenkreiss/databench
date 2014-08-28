@@ -33,6 +33,7 @@ setup(
     entry_points={
         'console_scripts': [
             'databench = scripts.exec:main',
+            'scaffold-databench = scripts.scaffold:main',
         ]
     }
 )
