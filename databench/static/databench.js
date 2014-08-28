@@ -144,7 +144,19 @@ function Databench() {
 		if (!signalName)
 			signalName = selector;
 
+		var _label = $('label[for='+_selector.attr('name')+']')
+		var label = _label.html();
+		var addedValue = false;
+
 		_selector.on('input change', function() {
+			if (label) {
+				if (!addedValue) {
+					_label.html(label+' ('+this.value+')');
+					addedValue = true;
+				}else{
+					_label.html(label+' ('+this.value+')');
+				}
+			}
 			emit(signalName, [parseFloat(this.value)]);
 		});
 		_selector.trigger('input');
