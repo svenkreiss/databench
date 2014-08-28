@@ -70,14 +70,7 @@ class Analysis(object):
 
 
 class Meta(object):
-    """Databench's Meta class.
-
-    This class uses instances of :class:`databench.Analysis` and
-    :class:`flask.Blueprint` with default configurations. For advanced use
-    cases, you can change those settings (e.g. folder name for ``templates``)
-    by creating a new class with a modified constructor that inherits from
-    this class.
-
+    """
     Args:
         name (str): Name of this analysis. If ``signals`` is not specified,
             this also becomes the namespace for the WebSocket connection and
@@ -87,6 +80,12 @@ class Meta(object):
         description (str): Usually the ``__doc__`` string of the analysis.
         analysis_class (:class:`databench.Analysis`): Object
             that should be instantiated for every new websocket connection.
+
+    This class uses instances of :class:`databench.Analysis` and
+    :class:`flask.Blueprint` with default configurations. For advanced use
+    cases, you can change those settings (e.g. folder name for ``templates``)
+    by creating a new class with a modified constructor that inherits from
+    this class.
 
     """
 
