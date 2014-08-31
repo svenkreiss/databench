@@ -10,8 +10,11 @@ import argparse
 import zmq.green as zmq
 
 import flask_sockets
+import werkzeug.serving
+from gevent import pywsgi
 from flask.ext.markdown import Markdown
 from flask import Flask, render_template
+from geventwebsocket.handler import WebSocketHandler
 
 from .analysis import MetaZMQ
 from . import __version__ as DATABENCH_VERSION
@@ -78,8 +81,6 @@ class App(object):
     def run(self):
         """Entry point to run the app."""
         # self.flask_app.run(host=self.host, port=self.port)
-        from gevent import pywsgi
-        from geventwebsocket.handler import WebSocketHandler
         server = pywsgi.WSGIServer((self.host, self.port),
                                    self.flask_app,
                                    handler_class=WebSocketHandler)
@@ -111,46 +112,48 @@ class App(object):
         """Add Markdown capability."""
         Markdown(self.flask_app, extensions=['fenced_code'])
 
-    def register_analyses_py(self, zmq_publish, sub_port=8042):
+    def register_analyses_py(self, zmq_publish):
         analysis_folders = glob.glob('analyses/*_py')
         if not analysis_folders:
             analysis_folders = glob.glob('analyses_packaged/*_py')
 
         for analysis_folder in analysis_folders:
             name = analysis_folder[analysis_folder.find('/')+1:]
+            if name[0] in ['.', '_']:
+                continue
             logging.debug('creating MetaZMQ for '+name)
             MetaZMQ(name, __name__, "ZMQ Analysis py",
                     ['python', analysis_folder+'/analysis.py'],
-                    zmq_publish, sub_port)
-            sub_port += 1
+                    zmq_publish)
 
-    def register_analyses_pyspark(self, zmq_publish, sub_port=8142):
+    def register_analyses_pyspark(self, zmq_publish):
         analysis_folders = glob.glob('analyses/*_pyspark')
         if not analysis_folders:
             analysis_folders = glob.glob('analyses_packaged/*_pyspark')
 
         for analysis_folder in analysis_folders:
             name = analysis_folder[analysis_folder.find('/')+1:]
+            if name[0] in ['.', '_']:
+                continue
             logging.debug('creating MetaZMQ for '+name)
             MetaZMQ(name, __name__, "ZMQ Analysis py",
                     ['pyspark', analysis_folder+'/analysis.py'],
-                    zmq_publish, sub_port)
-            sub_port += 1
+                    zmq_publish)
 
-    def register_analyses_go(self, zmq_publish, sub_port=8042):
+    def register_analyses_go(self, zmq_publish):
         analysis_folders = glob.glob('analyses/*_go')
         if not analysis_folders:
             analysis_folders = glob.glob('analyses_packaged/*_go')
 
         for analysis_folder in analysis_folders:
             name = analysis_folder[analysis_folder.find('/')+1:]
+            if name[0] in ['.', '_']:
+                continue
             logging.info('installing '+name)
             os.system('cd '+analysis_folder+'; go install')
             logging.debug('creating MetaZMQ for '+name)
             MetaZMQ(name, __name__, "ZMQ Analysis go",
-                    [name],
-                    zmq_publish, sub_port)
-            sub_port += 1
+                    [name], zmq_publish)
 
     def import_analyses(self):
         """Add analyses from the analyses folder."""
@@ -269,10 +272,14 @@ def run():
     print '--- databench v'+DATABENCH_VERSION+' ---'
     logging.info('host='+str(args.host)+', port='+str(args.port))
     logging.info('delimiters='+str(delimiters))
-    app = App(__name__, host=args.host, port=args.port, delimiters=delimiters)
-    app.run()
 
-    return app
+    @werkzeug.serving.run_with_reloader
+    def reloader():
+        app = App(__name__, host=args.host, port=args.port,
+                  delimiters=delimiters)
+        app.run()
+        return app
+    return reloader()
 
 
 if __name__ == '__main__':

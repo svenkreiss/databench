@@ -276,7 +276,7 @@ class MetaZMQ(Meta):
 
             executable,
             zmq_publish,
-            port_subscribe
+            port_subscribe=None,
     ):
         Meta.__init__(self, name, import_name, description, AnalysisZMQ)
 
@@ -285,6 +285,16 @@ class MetaZMQ(Meta):
         self.zmq_analysis_id = 0
         self.zmq_analyses = {}
         self.zmq_confirmed = False
+
+        # check whether we have to determine port_subscribe ourselves first
+        if port_subscribe is None:
+            socket = zmq.Context().socket(zmq.PUB)
+            port_subscribe = socket.bind_to_random_port(
+                'tcp://127.0.0.1',
+                min_port=3000, max_port=9000,
+            )
+            socket.unbind('tcp://127.0.0.1:'+str(port_subscribe))
+            logging.debug('determined: port_subscribe='+str(port_subscribe))
 
         # zmq subscription to listen for messages from backend
         logging.debug('main listening on port: '+str(port_subscribe))
@@ -331,6 +341,10 @@ class MetaZMQ(Meta):
                 })
                 time.sleep(0.1)
         gevent.Greenlet.spawn(sending_init)
+
+    def __del__(self):
+        self.kernel_process.terminate()
+        self.kernel_process.kill()
 
     def instantiate_analysis_class(self):
         self.zmq_analysis_id += 1
