@@ -16,9 +16,8 @@ from flask.ext.markdown import Markdown
 from flask import Flask, render_template
 from geventwebsocket.handler import WebSocketHandler
 
-from .analysis import MetaZMQ
+from .analysis import Meta, MetaZMQ
 from . import __version__ as DATABENCH_VERSION
-from .analysis import LIST_ALL_META
 
 
 class App(object):
@@ -195,7 +194,7 @@ class App(object):
     def register_analyses(self):
         """Register analyses (analyses need to be imported first)."""
 
-        for meta in LIST_ALL_META:
+        for meta in Meta.all_instances:
             print 'Registering analysis meta information ' + meta.name + \
                   ' as blueprint in flask.'
             self.flask_app.register_blueprint(
@@ -210,7 +209,7 @@ class App(object):
         """Render the List-of-Analyses overview page."""
         return render_template(
             'index.html',
-            analyses=LIST_ALL_META,
+            analyses=Meta.all_instances,
             analyses_author=self.analyses_author,
             analyses_version=self.analyses_version,
             description=self.description,

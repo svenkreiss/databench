@@ -11,9 +11,6 @@ import zmq.green as zmq
 from flask import Blueprint, render_template
 
 
-LIST_ALL_META = []
-
-
 class Analysis(object):
     """Databench's analysis class.
 
@@ -89,6 +86,8 @@ class Meta(object):
 
     """
 
+    all_instances = []
+
     def __init__(
             self,
             name,
@@ -96,7 +95,7 @@ class Meta(object):
             description,
             analysis_class,
     ):
-        LIST_ALL_META.append(self)
+        Meta.all_instances.append(self)
         self.show_in_index = True
 
         self.name = name
