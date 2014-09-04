@@ -13,4 +13,3 @@ import gevent.monkey
 gevent.monkey.patch_all()
 
 from .analysis import Meta, Analysis, MetaZMQ, AnalysisZMQ
-from .app import run

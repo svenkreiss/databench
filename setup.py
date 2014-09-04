@@ -10,12 +10,13 @@ with open('databench/__init__.py', 'r') as f:
 setup(
     name='databench',
     version=VERSION,
-    packages=['databench', 'databench_py', 'scripts', 'analyses_packaged'],
+    packages=['databench', 'databench_py', 'analyses_packaged'],
     license='LICENSE',
     description='Data analysis tool using Flask, WebSockets and d3.js.',
     long_description=open('README.md').read(),
     author='Sven Kreiss',
     author_email='me@svenkreiss.com',
+    url='https://github.com/svenkreiss/databench',
 
     include_package_data=True,
 
@@ -32,8 +33,8 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'databench = scripts.exec:main',
-            'scaffold-databench = scripts.scaffold:main',
+            'databench = databench.cli:main',
+            'scaffold-databench = databench.scaffold:main',
         ]
     }
 )
