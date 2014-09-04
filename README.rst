@@ -1,20 +1,27 @@
-# Databench
+Databench
+=========
 
-> Data analysis tool using Flask, WebSockets and d3.js. Live demos are at [databench-examples.svenkreiss.com](http://databench-examples.svenkreiss.com).
+    Data analysis tool using Flask, WebSockets and d3.js. Live demos are at
+    `databench-examples.svenkreiss.com <http://databench-examples.svenkreiss.com>`_.
 
-[![Build Status](https://travis-ci.org/svenkreiss/databench.png?branch=master)](https://travis-ci.org/svenkreiss/databench)
-
-
-## Documentation
-
-User guide and API documentation: [www.svenkreiss.com/databench/](http://www.svenkreiss.com/databench/)
+.. image:: https://travis-ci.org/svenkreiss/databench.png?branch=master
+    :target: https://travis-ci.org/svenkreiss/databench
 
 
-## License
-Databench was written by Sven Kreiss and made available under the [MIT license](https://github.com/svenkreiss/databench/blob/master/LICENSE).
+Documentation
+-------------
+
+User guide and API documentation: `www.svenkreiss.com/databench/ <http://www.svenkreiss.com/databench/>`_
 
 
-## Changelog
+License
+-------
+
+Databench was written by Sven Kreiss and made available under the `MIT license <https://github.com/svenkreiss/databench/blob/master/LICENSE>`_.
+
+
+Changelog
+---------
 
 * 0.3.0:
     * new tool `scaffold-databench`

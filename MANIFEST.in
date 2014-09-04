@@ -1,2 +1,3 @@
+include README.rst AUTHORS.rst LICENSE
 recursive-include databench/templates *
 recursive-include databench/static *
