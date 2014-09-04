@@ -13,7 +13,7 @@ setup(
     packages=['databench', 'databench_py', 'analyses_packaged'],
     license='LICENSE',
     description='Data analysis tool using Flask, WebSockets and d3.js.',
-    long_description=open('README.md').read(),
+    long_description=open('README.rst').read(),
     author='Sven Kreiss',
     author_email='me@svenkreiss.com',
     url='https://github.com/svenkreiss/databench',
