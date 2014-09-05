@@ -24,7 +24,6 @@ Changelog
 ---------
 
 0.3.0
-+++++
 
 * new tool `scaffold-databench`
 * moved from socket.io to plain websockets
