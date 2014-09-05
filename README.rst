@@ -35,3 +35,5 @@ Changelog
     * frontend: Databench() does not require a name anymore
     * frontend: genericElements: added `button()` and `slider()`
     * backend handles `action`s: an `action` is the co-routine that is launched with a signal. `action`s can have `id`s in which case they signal their `start` and `end` (used to indicate state for genericElements.button()).
+
+* 0.2.0
