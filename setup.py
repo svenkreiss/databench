@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 
 import re
 
@@ -30,11 +30,25 @@ setup(
         'jinja2-highlight>=0.5.1',
         'pyzmq>=4.3.1',
     ],
-
     entry_points={
         'console_scripts': [
             'databench = databench.cli:main',
             'scaffold-databench = databench.scaffold:main',
         ]
-    }
+    },
+
+    tests_require=[
+        'nose',
+        'requests',
+    ],
+    test_suite='nose.collector',
+
+    classifiers=[
+        "Development Status :: 3 - Alpha",
+        "Intended Audience :: Developers",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
+    ]
 )
