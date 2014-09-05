@@ -23,7 +23,7 @@ Databench was written by Sven Kreiss and made available under the `MIT license <
 Changelog
 ---------
 
-* 0.3.0:
+* 0.3.0
 
     * new tool `scaffold-databench`
     * moved from socket.io to plain websockets
