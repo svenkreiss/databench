@@ -1,10 +1,6 @@
 language: python
 python:
  - "2.7"
-env:
- - FLASK_VERSION=0.10.1
 install:
  - "pip install -r requirements_analyses.txt"
- - "pip install -I Flask==$FLASK_VERSION"
- - "pip install -I redis==$REDIS_VERSION"
 script: "python setup.py test"
