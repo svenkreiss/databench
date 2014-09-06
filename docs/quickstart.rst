@@ -3,7 +3,7 @@
 Quickstart
 ==========
 
-Install ``databench`` (as shown at the top of the :ref:`overview` page) and create the following file structure
+Install ``databench`` as shown at the top of the :ref:`overview` page. To start a new analysis called *helloworld*, use ``scaffold-databench helloworld`` which creates a directory structure like this:
 
 .. code-block:: bash
 
@@ -16,16 +16,15 @@ Install ``databench`` (as shown at the top of the :ref:`overview` page) and crea
                 - index.html
                 - thumbnail.png (optional)
 
+At this point you can run ``databench`` and start modifying the analysis.
 
-First, tell the analyses module that we created a new analysis called ``helloworld``. Add the following to the ``analyses/__init__.py`` file:
+To understand the structure, this is a walk-through of the steps that just happened in ``scaffold-databench``. First, tell the analyses module that we created a new analysis called ``helloworld`` in the ``analyses/__init__.py`` file:
 
 .. code-block:: python
 
-    """A test setup showing 'Hello World' in Databench."""
-
     import helloworld.analysis
 
-Next, create the helloworld backend in ``analysis.py``:
+Next, create the helloworld backend in ``helloworld/analysis.py``:
 
 .. code-block:: python
 
@@ -43,7 +42,7 @@ Next, create the helloworld backend in ``analysis.py``:
 
     META = databench.Meta('helloworld', __name__, __doc__, Analysis)
 
-And finally, create the frontend in ``index.html``:
+And the frontend in ``helloworld/index.html``:
 
 .. code-block:: html
 
@@ -65,9 +64,9 @@ And finally, create the frontend in ``index.html``:
     </body>
     </html>
 
-Now you can run the executable ``databench`` in your ``workingDir`` folder (outside of analyses) which creates a webserver and you can open http://localhost:5000 in your webbrowser. The command line options ``--host`` and ``--port`` set the host and port of the webserver ``--log`` changes the loglevel. For example, calling ``databench --log=DEBUG`` enables all messages; the options are ``NOTSET``, ``DEBUG``, ``INFO``, ``WARNING``, ``ERROR`` and ``CRITICAL``. You can also create a ``requirements.txt`` file containing other Python packages your analysis needs. An example of this setup is the databench_examples_ repository.
+Now you can run the executable ``databench`` in your ``workingDir`` folder (outside of analyses) which creates a webserver and you can open http://localhost:5000 in your webbrowser. The command line options ``--host`` and ``--port`` set the host and port of the webserver ``--log`` changes the loglevel. For example, calling ``databench --log=DEBUG`` enables all messages; the options are ``NOTSET``, ``DEBUG``, ``INFO``, ``WARNING``, ``ERROR`` and ``CRITICAL``. You can also create a ``requirements.txt`` file containing other Python packages your analysis needs. An example of this setup is the `databench_examples`_ repository.
 
-.. _databench_examples: https://github.com/svenkreiss/databench_examples
+.. _`databench_examples`: https://github.com/svenkreiss/databench_examples
 
 
 **Using the** ``base.html`` **Template:** To provide some basic header and footer for an analysis, the ``base.html`` template is available. It is not required to use it, but it includes a range of default libraries that might come in handy. To use it, change the ``index.html`` to

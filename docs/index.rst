@@ -15,7 +15,7 @@ Databench is a Python package that you can install using ``pip``:
 
 	$ pip install git+https://github.com/svenkreiss/databench.git
 
-It provides an executable ``databench`` and the Python module ``databench`` as well as a JavaScript library for the frontend with the same name. Running the executable creates a local web server which you can access at http://localhost:5000. A good way to start is to jump right into :ref:`quickstart`. Other resources to get started are the `first blog post`_ and a short set of `slides from Hack and Tell NY`_.
+It provides the executables ``scaffold-databench`` and ``databench``, Python modules for the backend and a JavaScript library for the frontend. ``scaffold-databench helloworld`` creates an analysis template called *helloworld* in the current working directory. Running ``databench`` creates a local web server which you can access at http://localhost:5000. A good way to start is to jump right into :ref:`quickstart`.
 
 Some features are shown in the `live demos`_. They do not include examples with parallelization or database interfaces (like asynchronously subscribing to a Redis channel) but those examples are available in the `databench_examples`_ repository.
 
