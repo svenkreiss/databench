@@ -23,7 +23,7 @@ Databench was written by Sven Kreiss and made available under the `MIT license <
 Changelog
 ---------
 
-* `dev-0.3 <https://github.com/svenkreiss/databench/compare/v0.2.15...dev-0.3>`:
+* `dev-0.3 <https://github.com/svenkreiss/databench/compare/v0.2.15...dev-0.3>`_
     * new tool ``scaffold-databench``
     * moved from socket.io to plain websockets
     * one analysis instance per websocket connection
@@ -34,4 +34,4 @@ Changelog
     * frontend: Databench() does not require a name anymore
     * frontend: genericElements: added ``button()`` and ``slider()``
     * backend handles ``action``s: an ``action`` is the co-routine that is launched with a signal. ``action``s can have ``id``s in which case they signal their ``start`` and ``end`` (used to indicate state for genericElements.button()).
-* 0.2.15 (2014-09-06)
+* `0.2.15 <https://github.com/svenkreiss/databench/releases/tag/v0.2.15>`_ (2014-09-06)
