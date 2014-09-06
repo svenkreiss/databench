@@ -197,6 +197,10 @@ class Meta(object):
                             getattr(analysis_instance, fn_name)(
                                 **message_data['message']
                             )
+                        else:
+                            getattr(analysis_instance, fn_name)(
+                                message_data['message']
+                            )
 
                         if action_id_local:
                             emitAction(action_id_local, 'end')
