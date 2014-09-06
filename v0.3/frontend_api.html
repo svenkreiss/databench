@@ -122,6 +122,7 @@ message.</li>
 <li><a class="reference internal" href="#Databench.genericElements.log" title="Databench.genericElements.log"><tt class="xref js js-func docutils literal"><span class="pre">Databench.genericElements.log()</span></tt></a>: a <tt class="docutils literal"><span class="pre">&lt;pre&gt;</span></tt> with an <tt class="docutils literal"><span class="pre">id</span></tt> starting with <tt class="docutils literal"><span class="pre">log</span></tt></li>
 <li><a class="reference internal" href="#Databench.genericElements.mpld3canvas" title="Databench.genericElements.mpld3canvas"><tt class="xref js js-func docutils literal"><span class="pre">Databench.genericElements.mpld3canvas()</span></tt></a>: a <tt class="docutils literal"><span class="pre">&lt;div&gt;</span></tt> with an <tt class="docutils literal"><span class="pre">id</span></tt> starting with <tt class="docutils literal"><span class="pre">mpld3canvas</span></tt>. The exact <tt class="docutils literal"><span class="pre">id</span></tt> becomes the signal name.</li>
 <li><a class="reference internal" href="#Databench.genericElements.button" title="Databench.genericElements.button"><tt class="xref js js-func docutils literal"><span class="pre">Databench.genericElements.button()</span></tt></a>: a <tt class="docutils literal"><span class="pre">&lt;button&gt;</span></tt> with a <tt class="docutils literal"><span class="pre">data-signal-name</span></tt> attribute.</li>
+<li><a class="reference internal" href="#Databench.genericElements.slider" title="Databench.genericElements.slider"><tt class="xref js js-func docutils literal"><span class="pre">Databench.genericElements.slider()</span></tt></a>: any <tt class="docutils literal"><span class="pre">&lt;input[type='range']&gt;</span></tt> element. The <tt class="docutils literal"><span class="pre">name</span></tt> attribute is used as the signalName.</li>
 </ul>
 <p>And here are the genericElements:</p>
 <dl class="function">
@@ -183,13 +184,38 @@ is set to the id.</li>
 </tr>
 </tbody>
 </table>
-<p>The signalName can also be extracted from an attribute <tt class="docutils literal"><span class="pre">data-signal-name</span></tt>
+<p>The signalName can be extracted from an attribute <tt class="docutils literal"><span class="pre">data-signal-name</span></tt>
 and an optional message can be provided in JSON format in <tt class="docutils literal"><span class="pre">data-message</span></tt>.
 The signalName and the message are used for a <a class="reference internal" href="#Databench.emit" title="Databench.emit"><tt class="xref js js-func docutils literal"><span class="pre">Databench.emit()</span></tt></a>.</p>
 <p>This function adds actions to an HTML button. It adds a <tt class="docutils literal"><span class="pre">click</span></tt> event
 handler and tracks the status of the action through the backend. The button
 is set to active (the CSS class <tt class="docutils literal"><span class="pre">active</span></tt> is added) during the execution
 in the backend.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="Databench.genericElements.slider">
+<tt class="descclassname">Databench.genericElements.</tt><tt class="descname">slider</tt><big>(</big><em>selector</em><span class="optional">[</span>, <em>signalName</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Databench.genericElements.slider" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first last simple">
+<li><strong>selector</strong> &#8211; <tt class="docutils literal"><span class="pre">id</span></tt> or jQuery selector of an <tt class="docutils literal"><span class="pre">&lt;input[type='range']&gt;</span></tt>
+element.</li>
+<li><strong>signalName</strong> (<em>string</em>) &#8211; if not provided, it is taken from a
+<tt class="docutils literal"><span class="pre">data-signal-name</span></tt>, if that does not exist then from the <tt class="docutils literal"><span class="pre">name</span></tt>
+attribute and if that is also not given then it
+is set to the id.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The signalName can be extracted from an attribute <tt class="docutils literal"><span class="pre">data-signal-name</span></tt> or
+<tt class="docutils literal"><span class="pre">name</span></tt> (which is more natural for <tt class="docutils literal"><span class="pre">&lt;input&gt;</span></tt> elements).
+The signalName is used for <a class="reference internal" href="#Databench.emit" title="Databench.emit"><tt class="xref js js-func docutils literal"><span class="pre">Databench.emit()</span></tt></a> and the message is
+an array only containing the value of the slider.</p>
 </dd></dl>
 
 </div>
@@ -236,7 +262,7 @@ Check out the <a href="http://databench-examples.svenkreiss.com/">live demos</a>
 <hr />
 <ul>
     
-    <li class="toctree-l1"><a href="http://databench-examples-viewer.svenkreiss.com">Live Demos</a></li>
+    <li class="toctree-l1"><a href="http://databench-examples.svenkreiss.com">Live Demos</a></li>
     
     <li class="toctree-l1"><a href="https://github.com/svenkreiss/databench">GitHub</a></li>
     

@@ -47,6 +47,7 @@ Below is the list of genericElements. They all can be instantiated from JavaScri
 * :js:func:`Databench.genericElements.log`: a ``<pre>`` with an ``id`` starting with ``log``
 * :js:func:`Databench.genericElements.mpld3canvas`: a ``<div>`` with an ``id`` starting with ``mpld3canvas``. The exact ``id`` becomes the signal name.
 * :js:func:`Databench.genericElements.button`: a ``<button>`` with a ``data-signal-name`` attribute.
+* :js:func:`Databench.genericElements.slider`: any ``<input[type='range']>`` element. The ``name`` attribute is used as the signalName.
 
 
 And here are the genericElements:
@@ -77,7 +78,7 @@ And here are the genericElements:
         ``data-signal-name`` attribute and if that is also not given then it
         is set to the id.
 
-    The signalName can also be extracted from an attribute ``data-signal-name``
+    The signalName can be extracted from an attribute ``data-signal-name``
     and an optional message can be provided in JSON format in ``data-message``.
     The signalName and the message are used for a :js:func:`Databench.emit`.
 
@@ -85,3 +86,17 @@ And here are the genericElements:
     handler and tracks the status of the action through the backend. The button
     is set to active (the CSS class ``active`` is added) during the execution
     in the backend.
+
+.. js:function:: Databench.genericElements.slider(selector[, signalName])
+
+    :param selector: ``id`` or jQuery selector of an ``<input[type='range']>``
+        element.
+    :param string signalName: if not provided, it is taken from a
+        ``data-signal-name``, if that does not exist then from the ``name``
+        attribute and if that is also not given then it
+        is set to the id.
+
+    The signalName can be extracted from an attribute ``data-signal-name`` or
+    ``name`` (which is more natural for ``<input>`` elements).
+    The signalName is used for :js:func:`Databench.emit` and the message is
+    an array only containing the value of the slider.
