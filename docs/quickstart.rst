@@ -16,15 +16,19 @@ Install ``databench`` as shown at the top of the :ref:`overview` page. To start 
                 - index.html
                 - thumbnail.png (optional)
 
-At this point you can run ``databench`` and start modifying the analysis.
+At this point you can run ``databench``, view the analysis in a browser at http://localhost:5000 and start modifying the analysis source code.
 
-To understand the structure, this is a walk-through of the steps that just happened in ``scaffold-databench``. First, tell the analyses module that we created a new analysis called ``helloworld`` in the ``analyses/__init__.py`` file:
+
+Analysis Structure
+------------------
+
+To understand the structure, this is a walk-through of the steps that just happened in ``scaffold-databench``. First, tell the analyses module that we created a new analysis called *helloworld* in the ``analyses/__init__.py`` file:
 
 .. code-block:: python
 
     import helloworld.analysis
 
-Next, create the helloworld backend in ``helloworld/analysis.py``:
+Next, create the helloworld backend in ``analyses/helloworld/analysis.py``:
 
 .. code-block:: python
 
@@ -42,7 +46,7 @@ Next, create the helloworld backend in ``helloworld/analysis.py``:
 
     META = databench.Meta('helloworld', __name__, __doc__, Analysis)
 
-And the frontend in ``helloworld/index.html``:
+And the frontend in ``analyses/helloworld/index.html``:
 
 .. code-block:: html
 
