@@ -110,11 +110,23 @@ that should be instantiated for every new websocket connection.</li>
 </tr>
 </tbody>
 </table>
-<p>This class uses instances of <a class="reference internal" href="#databench.Analysis" title="databench.Analysis"><tt class="xref py py-class docutils literal"><span class="pre">databench.Analysis</span></tt></a> and
-<a class="reference external" href="http://flask.pocoo.org/docs/api/#flask.Blueprint" title="(in Flask v1.0-dev)"><tt class="xref py py-class docutils literal"><span class="pre">flask.Blueprint</span></tt></a> with default configurations. For advanced use
-cases, you can change those settings (e.g. folder name for <tt class="docutils literal"><span class="pre">templates</span></tt>)
-by creating a new class with a modified constructor that inherits from
-this class.</p>
+<p>For standard use cases, you don&#8217;t have to modify this class. However,
+If you want to serve more than the <tt class="docutils literal"><span class="pre">index.html</span></tt> page, say a
+<tt class="docutils literal"><span class="pre">details.html</span></tt> page, you can derive from this class and add this
+to the constructor</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">blueprint</span><span class="o">.</span><span class="n">add_url_rule</span><span class="p">(</span><span class="s">&#39;/details.html&#39;</span><span class="p">,</span> <span class="s">&#39;render_details&#39;</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">render_details</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>and add a new method to the class</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">render_details</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">+</span><span class="s">&#39;/details.html&#39;</span><span class="p">,</span>
+        <span class="n">analysis_description</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>and create the file <tt class="docutils literal"><span class="pre">details.html</span></tt> similar to <tt class="docutils literal"><span class="pre">index.html</span></tt>.</p>
 <dl class="method">
 <dt id="databench.Meta.render_index">
 <tt class="descname">render_index</tt><big>(</big><big>)</big><a class="headerlink" href="#databench.Meta.render_index" title="Permalink to this definition">¶</a></dt>
