@@ -33,5 +33,5 @@ Changelog
     * frontend: genericElements take string ids instead of jquery selectors
     * frontend: Databench() does not require a name anymore
     * frontend: genericElements: added ``button()`` and ``slider()``
-    * backend handles ``action``s: an ``action`` is the co-routine that is launched with a signal. ``action``s can have ``id``s in which case they signal their ``start`` and ``end`` (used to indicate state for genericElements.button()).
+    * backend handles ``action`` : an ``action`` is the co-routine that is launched with a signal. ``action`` can have ``id`` in which case they signal their ``start`` and ``end`` (used to indicate state for genericElements.button()).
 * `0.2.15 <https://github.com/svenkreiss/databench/releases/tag/v0.2.15>`_ (2014-09-06)
