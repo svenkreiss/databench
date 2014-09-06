@@ -42,9 +42,11 @@ def create_analyses(name, py_native):
     if not os.path.exists(os.getcwd()+'/analyses/__init__.py'):
         with open('analyses/__init__.py', 'w') as f:
             f.write('"""Analyses folder created by `scaffold-databench`. '
-                    'Modify me."""\n\n')
+                    'Modify me.\n\nSources: '
+                    '[github.com/username/project]'
+                    '(http://github.com/username/project)"""\n\n')
             f.write('__version__ = "0.0.1"\n')
-            f.write('__author__ = "Change Me Please <change@meplease.com>\n')
+            f.write('__author__ = "Change Me Please <change@meplease.com>"\n')
             f.write('\n')
 
     if py_native:
@@ -123,6 +125,7 @@ def main():
 
     create_analyses(args.name, py_native)
     create_analysis(args.name, py_native)
+    print("Done.")
 
 
 if __name__ == "__main__":
