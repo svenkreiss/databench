@@ -21,15 +21,15 @@ Some features are shown in the `live demos`_. They do not include examples with 
 
 .. image:: images/mpld3pi_demo.png
    :height: 270
-   :target: http://databench-examples-viewer.svenkreiss.com/mpld3pi/
+   :target: http://databench-examples.svenkreiss.com/mpld3pi/
 
 .. image:: images/mpld3_heart_path.png
    :height: 270
-   :target: http://databench-examples-viewer.svenkreiss.com/mpld3Drag/
+   :target: http://databench-examples.svenkreiss.com/mpld3Drag/
 
 .. image:: images/bagofcharsd3.png
    :height: 270
-   :target: http://databench-examples-viewer.svenkreiss.com/bagofcharsd3/
+   :target: http://databench-examples.svenkreiss.com/bagofcharsd3/
 
 The `live demos`_ and `databench_examples`_ also show seemless integration with *markdown* and *MathJax* as well as with *angular.js*.
 
