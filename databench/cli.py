@@ -15,8 +15,9 @@ from . import __version__ as DATABENCH_VERSION
 def main():
     """Entry point to run databench."""
 
-    parser = argparse.ArgumentParser(description=__doc__,
-                                     version=DATABENCH_VERSION)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--version', action='version',
+                        version='%(prog)s '+DATABENCH_VERSION)
     parser.add_argument('--log', dest='loglevel', default="NOTSET",
                         help='set log level')
     parser.add_argument('--host', dest='host',
