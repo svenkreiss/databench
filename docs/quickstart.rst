@@ -16,7 +16,7 @@ Install ``databench`` as shown at the top of the :ref:`overview` page. To start 
                 - index.html
                 - thumbnail.png (optional)
 
-At this point you can run ``databench``, view the analysis in a browser at http://localhost:5000 and start modifying the analysis source code.
+At this point you are all set-up and can run ``databench``, view the analysis in a browser at http://localhost:5000 and start modifying the analysis source code.
 
 
 Analysis Structure
