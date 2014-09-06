@@ -11,7 +11,7 @@ Databench
 Documentation
 -------------
 
-User guide and API documentation: `www.svenkreiss.com/databench/ <http://www.svenkreiss.com/databench/>`_
+User guide and API documentation: `www.svenkreiss.com/databench/v0.3/ <http://www.svenkreiss.com/databench/v0.3/>`_
 
 
 License
