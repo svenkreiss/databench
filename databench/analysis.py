@@ -78,11 +78,27 @@ class Meta(object):
         analysis_class (:class:`databench.Analysis`): Object
             that should be instantiated for every new websocket connection.
 
-    This class uses instances of :class:`databench.Analysis` and
-    :class:`flask.Blueprint` with default configurations. For advanced use
-    cases, you can change those settings (e.g. folder name for ``templates``)
-    by creating a new class with a modified constructor that inherits from
-    this class.
+    For standard use cases, you don't have to modify this class. However,
+    If you want to serve more than the ``index.html`` page, say a
+    ``details.html`` page, you can derive from this class and add this
+    to the constructor
+
+    .. code-block:: python
+
+        self.blueprint.add_url_rule('/details.html', 'render_details',
+                                    self.render_details)
+
+    and add a new method to the class
+
+    .. code-block:: python
+
+        def render_details(self):
+            return render_template(
+                self.name+'/details.html',
+                analysis_description=self.description
+            )
+
+    and create the file ``details.html`` similar to ``index.html``.
 
     """
 
