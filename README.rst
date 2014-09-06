@@ -24,6 +24,7 @@ Changelog
 ---------
 
 * `dev-0.3 <https://github.com/svenkreiss/databench/compare/v0.2.15...dev-0.3>`_
+    * python 2.6 support (in addition to 2.7)
     * new tool ``scaffold-databench``
     * moved from socket.io to plain websockets
     * one analysis instance per websocket connection
