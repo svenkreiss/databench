@@ -23,7 +23,7 @@ Databench was written by Sven Kreiss and made available under the `MIT license <
 Changelog
 ---------
 
-* `dev-0.3 <https://github.com/svenkreiss/databench/compare/v0.2.15...dev-0.3>`_
+* `master <https://github.com/svenkreiss/databench/compare/v0.2.15...master>`_ (for 0.3.0)
     * python 2.6 support (in addition to 2.7)
     * new tool ``scaffold-databench``
     * moved from socket.io to plain websockets
