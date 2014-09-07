@@ -55,6 +55,7 @@ ghpages:
 	$(MAKE) html
 	@echo "Copy index/"
 	cp version_index/* $(GHPAGESALL)/
+	cp version_index/.nojekyll $(GHPAGESALL)/
 	@echo "Pushing to gh-pages branch now."
 	ghp-import -b gh-pages $(GHPAGESALL)
 	git push origin gh-pages
