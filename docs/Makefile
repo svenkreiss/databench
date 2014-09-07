@@ -53,6 +53,8 @@ clean:
 
 ghpages:
 	$(MAKE) html
+	@echo "Copy index/"
+	cp version_index/* $(GHPAGESALL)/
 	@echo "Pushing to gh-pages branch now."
 	ghp-import -b gh-pages $(GHPAGESALL)
 	git push origin gh-pages
