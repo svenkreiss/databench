@@ -1,5 +1,6 @@
 Sphinx==1.2.2
 sphinxcontrib-napoleon==0.2.7
 sphinxcontrib-email==0.1
+ghp-import==0.4.1
 
 -e git+https://github.com/svenkreiss/alabaster.git#egg=alabaster-master

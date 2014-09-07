@@ -6,7 +6,8 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = _build
-GHPAGES       = ../../databench-ghpages/v0.3/
+GHPAGES       = _build/ghpages/v0.3
+GHPAGESALL    = _build/ghpages
 
 # User-friendly check for sphinx-build
 ifeq ($(shell which $(SPHINXBUILD) >/dev/null 2>&1; echo $$?), 1)
@@ -52,14 +53,18 @@ clean:
 
 ghpages:
 	$(MAKE) html
-	cp -r $(BUILDDIR)/html/ $(GHPAGES)
-	@echo
-	@echo "Copied to ghpages folder."
+	@echo "Pushing to gh-pages branch now."
+	ghp-import -b gh-pages $(GHPAGESALL)
+	git push origin gh-pages
 
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
+	mkdir -p $(GHPAGES)
+	cp -r $(BUILDDIR)/html/ $(GHPAGES)
+	@echo
+	@echo "Copied also to $(GHPAGES) ."
 
 dirhtml:
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml
