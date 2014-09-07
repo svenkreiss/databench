@@ -11,10 +11,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link rel="shortcut icon" href="[[ url_for('static', filename='favicon.ico') ]]">
-
         <link rel="stylesheet" href="/static/bootstrap-3.1.1-dist/css/bootstrap.min.css">
-        <!-- <link rel="stylesheet" href="/static/bootstrap-3.1.1-dist/css/bootstrap-theme.min.css"> -->
-
         <link rel="stylesheet" href="[[ url_for('static', filename='main.css') ]]?version=014">
         {% block head %}{% endblock %}
     </head>
@@ -44,11 +41,10 @@
 
         <script src="/static/jquery/jquery-2.1.1.min.js"></script>
         <script src="/static/bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
-        <script src="/static/socket.io/socket.io.min.js"></script>
         <script src="/static/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
         <script src="/static/d3/d3.v3.min.js"></script>
         <script src="/static/mpld3/mpld3.v0.2.js"></script>
-        <script src="/static/databench.js"></script>
+        <script src="/static/databench.js?version=6"></script>
         {% block footerscripts %}{% endblock %}
     </body>
 </html>

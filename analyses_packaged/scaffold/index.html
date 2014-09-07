@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+
+{% block title %}Scaffold{% endblock %}
+
+
+{% block content %}
+{% filter markdown %}
+# Scaffold
+
+Some explanation __is always good__. You can mention `technical details`, explain them with some fancy math $$r_1 = r_2$$ while mentioning inline what \\(r_1\\) and \\(r_2\\) are and [link to sources](http://www.wikipedia.com).
+{% endfilter %}
+
+<hr />
+<pre id="log"></pre>
+{% endblock %}
+
+
+{% block footerscripts %}
+<script>
+	var databench = Databench();
+</script>
+{% endblock %}

@@ -1,6 +1,6 @@
 """Databench module."""
 
-__version__ = "0.2.15"
+__version__ = "0.3.0"
 
 # Need to make sure monkey.patch_all() is applied before any
 # 'import threading', but cannot raise error because building the Sphinx
@@ -12,6 +12,4 @@ if 'threading' in sys.modules:
 import gevent.monkey
 gevent.monkey.patch_all()
 
-from .analysis import LIST_ALL, Analysis
-from .signals import Signals
-from .app import run
+from .analysis import Meta, Analysis, MetaZMQ, AnalysisZMQ

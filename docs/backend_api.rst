@@ -6,11 +6,10 @@ Analysis
 --------
 
 .. autoclass:: databench.Analysis
+
+
+Meta
+----
+
+.. autoclass:: databench.Meta
    :members:
-
-
-Signals
--------
-
-.. autoclass:: databench.Signals
-   :members: emit, on, on_rpc

@@ -1,19 +1,20 @@
-"""Databench command line executable. Run to create a server that serves
-the analyses pages and runs the python backend."""
+"""Main Flask App."""
 
 import os
 import sys
-
-import logging
-import argparse
-from flask import Flask, render_template
-from flask.ext.socketio import SocketIO
-from flask.ext.markdown import Markdown
-
+import glob
 import codecs
+import logging
+import zmq.green as zmq
 
+import flask_sockets
+from gevent import pywsgi
+from flask.ext.markdown import Markdown
+from flask import Flask, render_template
+from geventwebsocket.handler import WebSocketHandler
+
+from .analysis import Meta, MetaZMQ
 from . import __version__ as DATABENCH_VERSION
-from .analysis import LIST_ALL as LIST_ALL_ANALYSES
 
 
 class App(object):
@@ -42,14 +43,17 @@ class App(object):
 
         self.host = host
         self.port = port
-        self.heartbeat_timeout = 60*10000
 
-        self.socketio = None
+        self.sockets = flask_sockets.Sockets(self.flask_app)
+
         self.description = None
         self.analyses_author = None
         self.analyses_version = None
 
+        self.spawned_analyses = {}
+
         self.flask_app.debug = True
+        self.flask_app.use_reloader = True
         self.flask_app.config['SECRET_KEY'] = 'ajksdfjhkasdfj'  # change
 
         if delimiters:
@@ -57,6 +61,14 @@ class App(object):
         self.add_jinja2_highlight()
         self.add_read_file()
         self.add_markdown()
+
+        zmq_publish = zmq.Context().socket(zmq.PUB)
+        zmq_publish.bind('tcp://127.0.0.1:'+str(port+3041))
+        logging.debug('main publishing to port '+str(port+3041))
+
+        self.register_analyses_py(zmq_publish)
+        self.register_analyses_pyspark(zmq_publish)
+        self.register_analyses_go(zmq_publish)
         self.import_analyses()
         self.register_analyses()
 
@@ -64,10 +76,11 @@ class App(object):
 
     def run(self):
         """Entry point to run the app."""
-        self.socketio.run(self.flask_app, host=self.host, port=self.port,
-                          # transports=['websocket'],
-                          policy_server=False,  # don't want to use Adobe Flash
-                          heartbeat_timeout=self.heartbeat_timeout)
+        # self.flask_app.run(host=self.host, port=self.port)
+        server = pywsgi.WSGIServer((self.host, self.port),
+                                   self.flask_app,
+                                   handler_class=WebSocketHandler)
+        server.serve_forever()
 
     def custom_delimiters(self, delimiters):
         """Change the standard jinja2 delimiters to allow those delimiters be
@@ -95,6 +108,49 @@ class App(object):
         """Add Markdown capability."""
         Markdown(self.flask_app, extensions=['fenced_code'])
 
+    def register_analyses_py(self, zmq_publish):
+        analysis_folders = glob.glob('analyses/*_py')
+        if not analysis_folders:
+            analysis_folders = glob.glob('analyses_packaged/*_py')
+
+        for analysis_folder in analysis_folders:
+            name = analysis_folder[analysis_folder.find('/')+1:]
+            if name[0] in ['.', '_']:
+                continue
+            logging.debug('creating MetaZMQ for '+name)
+            MetaZMQ(name, __name__, "ZMQ Analysis py",
+                    ['python', analysis_folder+'/analysis.py'],
+                    zmq_publish)
+
+    def register_analyses_pyspark(self, zmq_publish):
+        analysis_folders = glob.glob('analyses/*_pyspark')
+        if not analysis_folders:
+            analysis_folders = glob.glob('analyses_packaged/*_pyspark')
+
+        for analysis_folder in analysis_folders:
+            name = analysis_folder[analysis_folder.find('/')+1:]
+            if name[0] in ['.', '_']:
+                continue
+            logging.debug('creating MetaZMQ for '+name)
+            MetaZMQ(name, __name__, "ZMQ Analysis py",
+                    ['pyspark', analysis_folder+'/analysis.py'],
+                    zmq_publish)
+
+    def register_analyses_go(self, zmq_publish):
+        analysis_folders = glob.glob('analyses/*_go')
+        if not analysis_folders:
+            analysis_folders = glob.glob('analyses_packaged/*_go')
+
+        for analysis_folder in analysis_folders:
+            name = analysis_folder[analysis_folder.find('/')+1:]
+            if name[0] in ['.', '_']:
+                continue
+            logging.info('installing '+name)
+            os.system('cd '+analysis_folder+'; go install')
+            logging.debug('creating MetaZMQ for '+name)
+            MetaZMQ(name, __name__, "ZMQ Analysis go",
+                    [name], zmq_publish)
+
     def import_analyses(self):
         """Add analyses from the analyses folder."""
 
@@ -114,14 +170,9 @@ class App(object):
             if str(e) != 'No module named analyses':
                 raise e
 
-            # Check whether there are already some analyses registered and if
-            # so, don't register the prepackaged analyses.
-            if LIST_ALL_ANALYSES:
-                return
-
             print "Did not find 'analyses' module."
             logging.debug('sys.path: '+str(sys.path))
-            logging.debug('os.path.dirname(os.path.realpath(__file__): ' +
+            logging.debug('os.path.dirname(os.path.realpath(__file__)): ' +
                           os.path.dirname(os.path.realpath(__file__)))
             logging.debug('os.getcwd: '+os.getcwd())
 
@@ -140,94 +191,24 @@ class App(object):
     def register_analyses(self):
         """Register analyses (analyses need to be imported first)."""
 
-        for analysis in LIST_ALL_ANALYSES:
-            print 'Registering analysis '+analysis.name+' as blueprint ' \
-                  'in flask.'
+        for meta in Meta.all_instances:
+            print 'Registering analysis meta information ' + meta.name + \
+                  ' as blueprint in flask.'
             self.flask_app.register_blueprint(
-                analysis.blueprint,
-                url_prefix='/'+analysis.name
+                meta.blueprint,
+                url_prefix='/'+meta.name
             )
 
-        self.socketio = SocketIO(self.flask_app)
-        for analysis in LIST_ALL_ANALYSES:
-            print 'Connecting socket.io to '+analysis.name+'.'
-            analysis.signals.set_socket_io(self.socketio)
+            print 'Connect websockets to '+meta.name+'.'
+            meta.wire_sockets(self.sockets, url_prefix='/'+meta.name)
 
     def render_index(self):
         """Render the List-of-Analyses overview page."""
         return render_template(
             'index.html',
-            analyses=LIST_ALL_ANALYSES,
+            analyses=Meta.all_instances,
             analyses_author=self.analyses_author,
             analyses_version=self.analyses_version,
             description=self.description,
             databench_version=DATABENCH_VERSION
         )
-
-
-def run():
-    """Entry point to run databench."""
-
-    parser = argparse.ArgumentParser(description=__doc__,
-                                     version=DATABENCH_VERSION)
-    parser.add_argument('--log', dest='loglevel', default="NOTSET",
-                        help='set log level')
-    parser.add_argument('--host', dest='host',
-                        default=os.environ.get('HOST', 'localhost'),
-                        help='set host for webserver')
-    parser.add_argument('--port', dest='port',
-                        type=int, default=int(os.environ.get('PORT', 5000)),
-                        help='set port for webserver')
-    parser.add_argument('--heartbeat_timeout', dest='heartbeat_timeout',
-                        type=int, default=60*10000,
-                        help='set heartbeat_timeout for SocketIO')
-    delimiter_args = parser.add_argument_group('delimiters')
-    delimiter_args.add_argument('--variable_start_string',
-                                help='delimiter for variable start')
-    delimiter_args.add_argument('--variable_end_string',
-                                help='delimiter for variable end')
-    delimiter_args.add_argument('--block_start_string',
-                                help='delimiter for block start')
-    delimiter_args.add_argument('--block_end_string',
-                                help='delimiter for block end')
-    delimiter_args.add_argument('--comment_start_string',
-                                help='delimiter for comment start')
-    delimiter_args.add_argument('--comment_end_string',
-                                help='delimiter for comment end')
-    args = parser.parse_args()
-
-    # log
-    if args.loglevel != 'NOTSET':
-        print 'Setting loglevel to '+args.loglevel+'.'
-        logging.basicConfig(level=getattr(logging, args.loglevel))
-
-    # delimiters
-    delimiters = {
-        'variable_start_string': '[[',
-        'variable_end_string': ']]',
-    }
-    if args.variable_start_string:
-        delimiters['variable_start_string'] = args.variable_start_string
-    if args.variable_end_string:
-        delimiters['variable_end_string'] = args.variable_end_string
-    if args.block_start_string:
-        delimiters['block_start_string'] = args.block_start_string
-    if args.block_end_string:
-        delimiters['block_end_string'] = args.block_end_string
-    if args.comment_start_string:
-        delimiters['comment_start_string'] = args.comment_start_string
-    if args.comment_end_string:
-        delimiters['comment_end_string'] = args.comment_end_string
-
-    print '--- databench v'+DATABENCH_VERSION+' ---'
-    logging.info('host='+str(args.host)+', port='+str(args.port))
-    logging.info('delimiters='+str(delimiters))
-    app = App(__name__, host=args.host, port=args.port, delimiters=delimiters)
-    app.heartbeat_timeout = args.heartbeat_timeout
-    app.run()
-
-    return app
-
-
-if __name__ == '__main__':
-    run()
