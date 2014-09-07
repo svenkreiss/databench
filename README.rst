@@ -1,4 +1,4 @@
-.. image:: logo/logo.svg
+.. image:: logo/logo.svg?raw=true
     :target: http://www.svenkreiss.com/databench/v0.3/
 
 Databench
