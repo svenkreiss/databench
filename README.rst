@@ -1,3 +1,6 @@
+.. image:: logo/logo.svg
+    :target: http://www.svenkreiss.com/databench/v0.3/
+
 Databench
 =========
 
