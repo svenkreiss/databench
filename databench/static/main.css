@@ -28,6 +28,19 @@ p {
 	margin-right: 20px;
 }
 
+@media (min-width: 768px) {
+    .text-right-sm { text-align: right; }
+    .text-center-sm { text-align: center; }
+}
+@media (min-width: 992px) {
+    .text-right-md { text-align: right; }
+    .text-center-md { text-align: center; }
+}
+@media (min-width: 1200px) {
+    .text-right-lg { text-align: right; }
+    .text-center-lg { text-align: center; }
+}
+
 
 /* from pygments-css project: default.css */
 

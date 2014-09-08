@@ -20,6 +20,7 @@ INSTALL_REQUIRES = [
     'Werkzeug>=0.9.4',
     'jinja2-highlight>=0.5.1',
     'pyzmq>=4.3.1',
+    'zipstream>=1.0.4',
 ]
 
 

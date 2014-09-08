@@ -5,10 +5,11 @@ import json
 import time
 import gevent
 import logging
+import zipstream
 import subprocess
 import geventwebsocket
 import zmq.green as zmq
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, Response
 
 
 class Analysis(object):
@@ -119,23 +120,25 @@ class Meta(object):
         self.description = description
         self.analysis_class = analysis_class
 
-        analyses_path = 'analyses'
-        if not os.path.exists(os.getcwd()+'/'+analyses_path):
-            analyses_path = 'analyses_packaged'
+        analyses_path = os.getcwd()+'/'+'analyses'
+        if not os.path.exists(analyses_path):
+            analyses_path = os.getcwd()+'/'+'analyses_packaged'
+        self.analyses_path = analyses_path
 
         # detect whether thumbnail.png is present
-        if os.path.isfile(os.getcwd()+'/'+analyses_path+'/' +
-                          self.name+'/thumbnail.png'):
+        if os.path.isfile(analyses_path+'/'+self.name+'/thumbnail.png'):
             self.thumbnail = 'thumbnail.png'
 
         self.blueprint = Blueprint(
             name,
             import_name,
-            template_folder=os.getcwd()+'/'+analyses_path,
-            static_folder=os.getcwd()+'/'+analyses_path+'/'+self.name,
+            template_folder=analyses_path,
+            static_folder=analyses_path+'/'+self.name,
             static_url_path='/static',
         )
         self.blueprint.add_url_rule('/', 'render_index', self.render_index)
+        self.blueprint.add_url_rule('/'+name+'.zip', 'zip_analysis',
+                                    self.zip_analysis, methods=['GET'])
 
         self.sockets = None
 
@@ -143,8 +146,43 @@ class Meta(object):
         """Renders the main analysis frontend template."""
         return render_template(
             self.name+'/index.html',
+            analysis_name=self.name,
             analysis_description=self.description
         )
+
+    def zip_analysis(self):
+        def generator():
+            z = zipstream.ZipFile(mode='w',
+                                  compression=zipstream.ZIP_DEFLATED)
+
+            # find all analysis files
+            folder = self.analyses_path+'/'+self.name
+            for root, dirnames, filenames in os.walk(folder):
+                invisible_dirs = [d for d in dirnames if d[0] == '.']
+                for d in invisible_dirs:
+                    dirnames.remove(d)
+                for filename in filenames:
+                    if filename[0] == '.':
+                        continue
+                    if filename[-4:] == '.pyc':
+                        continue
+
+                    # add the file to zipstream
+                    fullname = os.path.join(root, filename)
+                    arcname = fullname.replace(self.analyses_path+'/', '')
+                    z.write(fullname, arcname=arcname)
+
+            # add requirements.txt if present
+            if os.path.isfile(self.analyses_path+'/requirements.txt'):
+                z.write(self.analyses_path+'/requirements.txt')
+
+            for chunk in z:
+                yield chunk
+
+        response = Response(generator(), mimetype='application/zip')
+        response.headers['Content-Disposition'] = \
+            'attachment; filename={}'.format(self.name+'.zip')
+        return response
 
     def wire_sockets(self, sockets, url_prefix=''):
         self.sockets = sockets

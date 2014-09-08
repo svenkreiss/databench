@@ -36,8 +36,18 @@
             </div>
 
             <div class="footer">
-                Databench is on <a href="https://github.com/svenkreiss/databench">GitHub</a>.
-                <!-- This is version [[databench_version]]. -->
+                <div class="row">
+                    <div class="col-sm-6">
+                        {% if analysis_name %}
+                        <a href="[[ analysis_name ]].zip">Download .zip of analysis source</a>.
+                        {% endif %}
+                    </div>
+
+                    <div class="col-sm-6 text-right-sm">
+                        Databench is on <a href="https://github.com/svenkreiss/databench">GitHub</a>.
+                        <!-- This is version [[databench_version]]. -->
+                    </div>
+                </div>
             </div>
         </div>
         {% endblock %}
