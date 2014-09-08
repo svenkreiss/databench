@@ -27,6 +27,8 @@ Changelog
 ---------
 
 * `master <https://github.com/svenkreiss/databench/compare/v0.2.15...master>`_ (for 0.3.0)
+    * ``include_md()`` macro for frontend to include Markdown files
+    * ``Meta.src_url`` support
     * python 2.6 support (in addition to 2.7)
     * new tool ``scaffold-databench``
     * moved from socket.io to plain websockets
