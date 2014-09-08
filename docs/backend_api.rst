@@ -12,4 +12,4 @@ Meta
 ----
 
 .. autoclass:: databench.Meta
-   :members:
+   :members: render_index

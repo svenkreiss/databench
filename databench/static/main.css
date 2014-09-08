@@ -21,6 +21,11 @@ p {
 	border-top: 1px solid #e5e5e5;
 }
 
+.footer ul {
+	list-style-type: none;
+	padding: 0;
+}
+
 .analysis-thumbnail {
 	float: left;
 	max-width: 100px;

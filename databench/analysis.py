@@ -79,6 +79,15 @@ class Meta(object):
         analysis_class (:class:`databench.Analysis`): Object
             that should be instantiated for every new websocket connection.
 
+    A link to an online source code repository (for example on GitHub or
+    BitBucket) can be given to the attribute ``src_url`` and which will be
+    shown in the footer. For example, use::
+
+        META.src_url = 'https://github.com/_username_/_project_/tree/master/analyses/_my_analysis_'
+
+    to link to ``_my_analysis_`` inside the ``_project_``
+    on GitHub.
+
     For standard use cases, you don't have to modify this class. However,
     If you want to serve more than the ``index.html`` page, say a
     ``details.html`` page, you can derive from this class and add this
@@ -120,6 +129,8 @@ class Meta(object):
         self.description = description
         self.analysis_class = analysis_class
 
+        self.src_url = None
+
         analyses_path = os.getcwd()+'/'+'analyses'
         if not os.path.exists(analyses_path):
             analyses_path = os.getcwd()+'/'+'analyses_packaged'
@@ -147,7 +158,8 @@ class Meta(object):
         return render_template(
             self.name+'/index.html',
             analysis_name=self.name,
-            analysis_description=self.description
+            analysis_description=self.description,
+            src_url=self.src_url
         )
 
     def zip_analysis(self):

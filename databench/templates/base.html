@@ -38,9 +38,23 @@
             <div class="footer">
                 <div class="row">
                     <div class="col-sm-6">
+                    <ul>
                         {% if analysis_name %}
-                        <a href="[[ analysis_name ]].zip">Download .zip of analysis source</a>.
+                        <li><a href="[[ analysis_name ]].zip">Download .zip of analysis source</a>.</li>
                         {% endif %}
+
+                        {% if src_url %}
+                            <li><a href="[[ src_url ]]">
+                            {%- if "github.com" in src_url -%}
+                            Analysis on GitHub
+                            {%- elif "bitbucket.org" in src_url -%}
+                            Analysis on BitBucket
+                            {%- else -%}
+                            Source code online
+                            {%- endif -%}
+                            </a>.</li>
+                        {% endif %}
+                    </ul>
                     </div>
 
                     <div class="col-sm-6 text-right-sm">
