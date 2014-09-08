@@ -6,6 +6,9 @@ body {
 	margin-bottom: 30px;
 	border-bottom: 1px solid #e5e5e5;
 }
+.header a:hover {
+	text-decoration: none;
+}
 
 .content {
 	margin: 40px 0;
