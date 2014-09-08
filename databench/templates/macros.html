@@ -3,3 +3,9 @@
 	[[ read_file(name)|join ]]
 	{%- endhighlight %}
 {%- endmacro %}
+
+{% macro include_md(name) -%}
+    {% filter markdown -%}
+    [[ read_file(name)|join ]]
+    {%- endfilter %}
+{%- endmacro %}
