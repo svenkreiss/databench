@@ -106,7 +106,10 @@ class App(object):
 
     def add_markdown(self):
         """Add Markdown capability."""
-        Markdown(self.flask_app, extensions=['fenced_code'])
+        Markdown(self.flask_app,
+                 extensions=['fenced_code'],
+                 output_format='html5',
+                 safe_mode=False)
 
     def register_analyses_py(self, zmq_publish):
         analysis_folders = glob.glob('analyses/*_py')

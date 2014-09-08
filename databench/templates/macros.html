@@ -6,6 +6,6 @@
 
 {% macro include_md(name) -%}
     {% filter markdown -%}
-    [[ read_file(name)|join ]]
+    [[ read_file(name)|join|safe ]]
     {%- endfilter %}
 {%- endmacro %}
