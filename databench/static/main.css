@@ -31,7 +31,7 @@ p {
 
 .analysis-thumbnail {
 	float: left;
-	max-width: 100px;
+	max-width: 150px;
 	max-height: 100px;
 	margin-right: 20px;
 }
