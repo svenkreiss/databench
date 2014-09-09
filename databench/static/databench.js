@@ -5,6 +5,23 @@ function Databench() {
 
 	var socket = new WebSocket('ws://'+document.domain+':'+location.port+location.pathname+'ws');
 
+	// handle problems with websocket connection
+	setTimeout(function() {
+		if(socket.readyState != 1) {
+			$('<div class="alert alert-danger">Connection could not be opened. '+
+			  'Please <a href="javascript:location.reload(true);" '+
+			  'class="alert-link">reload</a> this page to try again.</div>'
+			).insertBefore(".content");
+		}
+	}, 2000);
+	socket.onclose = function () {
+		$('<div class="alert alert-danger">Connection closed. '+
+		  'Please <a href="javascript:location.reload(true);" '+
+		  'class="alert-link">reload</a> this page to reconnect.</div>'
+		).insertBefore(".content");
+	}
+
+	// process incoming websocket messages
 	socket.onmessage = function(event) {
 		var message_data = JSON.parse(event.data);
 
@@ -68,12 +85,12 @@ function Databench() {
 
 		// capture events from frontend
 		var _consoleFnOriginal = console[consoleFnName];
-	    console[consoleFnName] = function(msg) {
-	        _consoleFnOriginal.apply(console, ["frontend:", msg]);
-	        _messages.push("frontend: "+msg);
+		console[consoleFnName] = function(msg) {
+			_consoleFnOriginal.apply(console, ["frontend:", msg]);
+			_messages.push("frontend: "+msg);
 
-	        update();
-	    }
+			update();
+		}
 
 		// listen for _messages from backend
 		on(signalName, function(message) {
