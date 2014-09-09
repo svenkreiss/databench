@@ -142,14 +142,17 @@ html_theme_options = {
    'github_user': 'svenkreiss',
    'github_repo': 'databench',
    'github_banner': True,
-   'github_button': False,
+   'github_button': True,
    'travis_button': False,
    'analytics_id': 'UA-4070485-2',
-   'extra_nav_links': {
-    'GitHub': 'https://github.com/svenkreiss/databench',
-    'Live Demos': 'http://databench-examples.svenkreiss.com',
-    'Examples Repository': 'https://github.com/svenkreiss/databench_examples',
-   },
+   'extra_nav_links': [
+      ('Links', [
+        ('Live Demos', 'http://databench-examples.svenkreiss.com'),
+        ('Examples', 'https://github.com/svenkreiss/databench_examples'),
+        ('Databench on GitHub', 'https://github.com/svenkreiss/databench'),
+        ('Issue Tracker', 'https://github.com/svenkreiss/databench/issues'),
+      ]),
+   ],
    'show_powered_by': False,
    'description': open('description.txt', 'r').read(),
 }
