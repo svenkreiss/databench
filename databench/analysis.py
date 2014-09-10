@@ -39,7 +39,7 @@ class Analysis(object):
     the entries will be used as positional arguments in the function call.
     If the message is neither of type ``list`` nor ``dict`` (for example a
     plain ``string`` or ``float``), the function will be called with that
-    message as its first parameter.
+    as its first parameter.
 
     **Outgoing messages** are sent using ``emit(signal_name, message)``.
     For example, use
