@@ -50,9 +50,9 @@ Contents
 
    self
    quickstart
+   frontend
+   backend
    deploy
-   backend_api
-   frontend_api
    dev
 
 

@@ -1,5 +1,5 @@
-Frontend API
-============
+Frontend
+========
 
 When using the ``base.html`` template, the databench library and a few more
 libraries are already loaded:
