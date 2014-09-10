@@ -23,16 +23,14 @@ string of your analysis Python file.
 The frontend also renders math expressions enclosed in ``\\(`` and ``\\)`` as
 inline math and as block math when they are enclosed in ``$$`` and ``$$``. It
 also renders Markdown when it is enclosed in ``{% filter markdown %}`` and
-``{% endfilter %}``. You can also include an external Markdown file by
-importing the ``include_md`` macro with::
+``{% endfilter %}``. You can also include an external Markdown file with the
+``include_md(file)`` macro::
 
     {% from 'macros.html' import include_md %}
-
-and using it with::
-
     [[ include_md('helloworld/README.md') ]]
 
-To include an external source code file, use the ``include_src`` macro.
+To include an external source code file, use the ``include_src(file, type)``
+macro.
 
 `Twitter Bootstrap <http://getbootstrap.com/>`_ is
 included so that responsive layouts of the form
@@ -44,7 +42,7 @@ included so that responsive layouts of the form
         <div class="col-md-6">Second column</div>
     </div>
 
-and many more things work out of the box. For icons,
+and many more things work out of the box.
 `Font Awesome <http://fortawesome.github.io/Font-Awesome/>`_ is also
 included so that you can add icons to your documentation. This also works
 within Markdown rendered text. Therefore, you can link to your GitHub project
@@ -55,7 +53,7 @@ that hosts the analysis with
     <i class="fa fa-fw fa-github"></i>
     This [analysis is on GitHub](https://github.com/svenkreiss/databench_examples/tree/master/analyses/mpld3pi).
 
-which shows a GitHub icon and the Markdown rendered text with link.
+which shows a GitHub icon and the Markdown rendered text with a link.
 
 
 Databench JavaScript Class
