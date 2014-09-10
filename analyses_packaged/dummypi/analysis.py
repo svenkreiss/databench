@@ -17,7 +17,7 @@ class Analysis(databench.Analysis):
         """Run as soon as a browser connects to this."""
 
         inside = 0
-        for i in range(self.samples):
+        for i in xrange(self.samples):
             sleep(0.001)
             r1, r2 = (random(), random())
             if r1*r1 + r2*r2 < 1.0:
