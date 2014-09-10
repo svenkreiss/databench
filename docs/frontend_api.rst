@@ -2,22 +2,64 @@ Frontend API
 ============
 
 When using the ``base.html`` template, the databench library and a few more
-libraries are already loaded. When using your own html template, the frontend
-library needs to be loaded by including
+libraries are already loaded:
 
 .. code-block:: html
 
+    <script src="/static/jquery/jquery-2.1.1.min.js"></script>
+    <script src="/static/bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
+    <script src="/static/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+    <script src="/static/d3/d3.v3.min.js"></script>
+    <script src="/static/mpld3/mpld3.v0.2.js"></script>
     <script src="/static/databench.js"></script>
 
-in the html body tag.
+When using your own html template, you need to include at least ``jQuery``
+and ``databench.js``.
 
 In the html template, ``[[ analysis_description ]]`` returns the description
 string passed into :class:`databench.Analysis` which is usually the ``__doc__``
-string of your analysis python file.
+string of your analysis Python file.
+
+The frontend also renders math expressions enclosed in ``\\(`` and ``\\)`` as
+inline math and as block math when they are enclosed in ``$$`` and ``$$``. It
+also renders Markdown when it is enclosed in ``{% filter markdown %}`` and
+``{% endfilter %}``. You can also include an external Markdown file by
+importing the ``include_md`` macro with::
+
+    {% from 'macros.html' import include_md %}
+
+and using it with::
+
+    [[ include_md('helloworld/README.md') ]]
+
+To include an external source code file, use the ``include_src`` macro.
+
+`Twitter Bootstrap <http://getbootstrap.com/>`_ is
+included so that responsive layouts of the form
+
+.. code-block:: html
+
+    <div class="row">
+        <div class="col-md-6">First column</div>
+        <div class="col-md-6">Second column</div>
+    </div>
+
+and many more things work out of the box. For icons,
+`Font Awesome <http://fortawesome.github.io/Font-Awesome/>`_ is also
+included so that you can add icons to your documentation. This also works
+within Markdown rendered text. Therefore, you can link to your GitHub project
+that hosts the analysis with
+
+.. code-block:: html
+
+    <i class="fa fa-fw fa-github"></i>
+    This [analysis is on GitHub](https://github.com/svenkreiss/databench_examples/tree/master/analyses/mpld3pi).
+
+which shows a GitHub icon and the Markdown rendered text with link.
 
 
-Databench
----------
+Databench JavaScript Class
+--------------------------
 
 .. js:class:: Databench()
 
@@ -34,15 +76,18 @@ Databench
 .. js:function:: Databench.on(signalName, callback)
 
     :param string signalName: Name of the signal to listen to from the backend.
-    :param function callback: Function that is called when a signal is received.
+    :param function callback: Function that is called when a signal is
+        received.
 
 
 .. _genericElements:
 
-Generic Elements
-----------------
+Generic Elements in the Databench Class
+---------------------------------------
 
-Below is the list of genericElements. They all can be instantiated from JavaScript on the frontend. They are also created for the following elements on the page:
+Below is the list of genericElements. They all can be instantiated from
+JavaScript on the frontend. They are also created automatically for the
+following elements on the page:
 
 * :js:func:`Databench.genericElements.log`: a ``<pre>`` with an ``id`` starting with ``log``
 * :js:func:`Databench.genericElements.mpld3canvas`: a ``<div>`` with an ``id`` starting with ``mpld3canvas``. The exact ``id`` becomes the signal name.
