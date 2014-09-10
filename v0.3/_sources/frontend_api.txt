@@ -61,21 +61,25 @@ Databench JavaScript Class
 
 .. js:class:: Databench()
 
-.. js:attribute:: Databench.genericElements
+    The heart of this class are the :js:func:`Databench.emit` and
+    :js:func:`Databench.on`. Use them in your own JavaScript code to
+    communicate with the backend.
 
-    :ref:`genericElements` are documented below.
+    .. js:function:: Databench.emit(signalName, message)
 
-.. js:function:: Databench.emit(signalName, message)
+        :param string signalName: Name of the signal that is used to send the
+            message.
+        :param message: Message to send.
 
-    :param string signalName: Name of the signal that is used to send the
-        message.
-    :param message: Message to send.
+    .. js:function:: Databench.on(signalName, callback)
 
-.. js:function:: Databench.on(signalName, callback)
+        :param string signalName: Name of the signal to listen to from the backend.
+        :param function callback: Function that is called when a signal is
+            received.
 
-    :param string signalName: Name of the signal to listen to from the backend.
-    :param function callback: Function that is called when a signal is
-        received.
+    .. js:attribute:: Databench.genericElements
+
+        A set of generally useful elements that are documented right below.
 
 
 .. _genericElements:
