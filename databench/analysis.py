@@ -206,7 +206,7 @@ class Meta(object):
                 logging.info('websocket closed. could not send: '+signal +
                              ' -- '+str(message))
 
-        def emitAction(action_id, status):
+        def emit_action(action_id, status):
             try:
                 ws.send(json.dumps({'action_id': action_id, 'status': status}))
             except geventwebsocket.WebSocketError, e:
@@ -216,7 +216,7 @@ class Meta(object):
         analysis_instance = self.instantiate_analysis_class()
         logging.debug("analysis instantiated")
         analysis_instance.set_emit_fn(emit)
-        analysis_instance.set_emit_action_fn(emitAction)
+        analysis_instance.set_emit_action_fn(emit_action)
         greenlets = []
         greenlets.append(gevent.Greenlet.spawn(
             analysis_instance.on_connect
@@ -244,7 +244,7 @@ class Meta(object):
                     def spawn_action():
                         action_id_local = action_id
                         if action_id_local:
-                            emitAction(action_id_local, 'start')
+                            emit_action(action_id_local, 'start')
 
                         # Check whether this is a list (positional arguments)
                         # or a dictionary (keyword arguments).
@@ -262,7 +262,7 @@ class Meta(object):
                             )
 
                         if action_id_local:
-                            emitAction(action_id_local, 'end')
+                            emit_action(action_id_local, 'end')
 
                     # every 'on_' is processed in a separate greenlet
                     greenlets.append(gevent.Greenlet.spawn(spawn_action))
