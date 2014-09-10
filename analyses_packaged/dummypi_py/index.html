@@ -1,3 +1,4 @@
+{% from 'macros.html' import include_md %}
 {% extends "base.html" %}
 
 
@@ -9,11 +10,20 @@
     dummypi_py
     <small><i>π = <span id="pi">0.0 ± 1.0</span></i></small>
 </h1>
+[[ include_md('dummypi_py/README.md') ]]
 
-<p>This little demo uses two random numbers \(r_1\) and \(r_2\) and
-then does a comparison $$r_1^2 + r_2^2 < 1.0$$ to figure out whether
-the generated point is inside the first quadrant of the unit circle.</p>
+<hr />
+<div class="row">
+    <div class="col-md-3">
+        <label for="samples">Samples:</label>
+        <input type="range" name="samples" min="100" max="10000" step="100" />
+    </div>
+    <div class="col-md-9">
+        <button class="btn btn-primary" data-signal-name="run">Run</button>
+    </div>
+</div>
 
+<hr />
 <pre id="log"></pre>
 {% endblock %}
 
@@ -25,6 +35,5 @@ the generated point is inside the first quadrant of the unit circle.</p>
 	databench.on('status', function(msg) {
 		$('#pi').text(msg['pi-estimate'].toFixed(3)+' ± '+msg['pi-uncertainty'].toFixed(3));
 	});
-    databench.emit('run', {});
 </script>
 {% endblock %}

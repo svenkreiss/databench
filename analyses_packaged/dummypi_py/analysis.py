@@ -1,5 +1,6 @@
 """Calculating \\(\\pi\\) the simple way, but this is called
-dummypi to avoid conflict with simplepi in the databench_examples repo."""
+dummypi to avoid conflict with simplepi in the databench_examples repo.
+This is using a Python Language Kernel running in a separate process."""
 
 import math
 from time import sleep
@@ -13,11 +14,14 @@ import databench_py
 
 class Analysis(databench_py.Analysis):
 
+    def __init__(self):
+        self.samples = 500
+
     def on_run(self):
         """Run as soon as a browser connects to this."""
 
         inside = 0
-        for i in range(10000):
+        for i in xrange(self.samples):
             sleep(0.001)
             r1, r2 = (random(), random())
             if r1*r1 + r2*r2 < 1.0:
@@ -41,7 +45,11 @@ class Analysis(databench_py.Analysis):
 
         self.emit('log', {'action': 'done'})
 
+    def on_samples(self, value):
+        """Sets the number of samples to generate per run."""
+        self.samples = value
+
 
 if __name__ == "__main__":
-    analysis = databench_py.Meta('dummypi_py', __doc__, Analysis)
+    analysis = databench_py.Meta('dummypi_py', __name__, __doc__, Analysis)
     analysis.event_loop()
