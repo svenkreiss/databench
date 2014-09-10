@@ -1,0 +1,397 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Frontend &mdash; Databench 0.3.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="top" title="Databench 0.3.0 documentation" href="index.html" />
+    <link rel="next" title="Deployment" href="deploy.html" />
+    <link rel="prev" title="Backend" href="backend.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="deploy.html" title="Deployment"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="backend.html" title="Backend"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Databench 0.3.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="frontend">
+<h1>Frontend<a class="headerlink" href="#frontend" title="Permalink to this headline">¶</a></h1>
+<p>When using the <tt class="docutils literal"><span class="pre">base.html</span></tt> template, the databench library and a few more
+libraries are already loaded:</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/jquery/jquery-2.1.1.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/bootstrap-3.1.1-dist/js/bootstrap.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/MathJax/MathJax.js?config=TeX-AMS_HTML&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/d3/d3.v3.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/mpld3/mpld3.v0.2.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/databench.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</pre></div>
+</div>
+<p>When using your own html template, you need to include at least <tt class="docutils literal"><span class="pre">jQuery</span></tt>
+and <tt class="docutils literal"><span class="pre">databench.js</span></tt>.</p>
+<p>In the html template, <tt class="docutils literal"><span class="pre">[[</span> <span class="pre">analysis_description</span> <span class="pre">]]</span></tt> returns the description
+string passed into <a class="reference internal" href="backend.html#databench.Analysis" title="databench.Analysis"><tt class="xref py py-class docutils literal"><span class="pre">databench.Analysis</span></tt></a> which is usually the <tt class="docutils literal"><span class="pre">__doc__</span></tt>
+string of your analysis Python file.</p>
+<p>The frontend also renders math expressions enclosed in <tt class="docutils literal"><span class="pre">\\(</span></tt> and <tt class="docutils literal"><span class="pre">\\)</span></tt> as
+inline math and as block math when they are enclosed in <tt class="docutils literal"><span class="pre">$$</span></tt> and <tt class="docutils literal"><span class="pre">$$</span></tt>. It
+also renders Markdown when it is enclosed in <tt class="docutils literal"><span class="pre">{%</span> <span class="pre">filter</span> <span class="pre">markdown</span> <span class="pre">%}</span></tt> and
+<tt class="docutils literal"><span class="pre">{%</span> <span class="pre">endfilter</span> <span class="pre">%}</span></tt>. You can also include an external Markdown file with the
+<tt class="docutils literal"><span class="pre">include_md(file)</span></tt> macro:</p>
+<div class="highlight-python"><div class="highlight"><pre>{% from &#39;macros.html&#39; import include_md %}
+[[ include_md(&#39;helloworld/README.md&#39;) ]]
+</pre></div>
+</div>
+<p>To include an external source code file, use the <tt class="docutils literal"><span class="pre">include_src(file,</span> <span class="pre">type)</span></tt>
+macro.</p>
+<p><a class="reference external" href="http://getbootstrap.com/">Twitter Bootstrap</a> is
+included so that responsive layouts of the form</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;row&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;col-md-6&quot;</span><span class="nt">&gt;</span>First column<span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;col-md-6&quot;</span><span class="nt">&gt;</span>Second column<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre></div>
+</div>
+<p>and many more things work out of the box.
+<a class="reference external" href="http://fortawesome.github.io/Font-Awesome/">Font Awesome</a> is also
+included so that you can add icons to your documentation. This also works
+within Markdown rendered text. Therefore, you can link to your GitHub project
+that hosts the analysis with</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;i</span> <span class="na">class=</span><span class="s">&quot;fa fa-fw fa-github&quot;</span><span class="nt">&gt;&lt;/i&gt;</span>
+This [analysis is on GitHub](https://github.com/svenkreiss/databench_examples/tree/master/analyses/mpld3pi).
+</pre></div>
+</div>
+<p>which shows a GitHub icon and the Markdown rendered text with a link.</p>
+<div class="section" id="databench-javascript-frontend">
+<h2>Databench JavaScript Frontend<a class="headerlink" href="#databench-javascript-frontend" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="Databench">
+<tt class="descname">Databench</tt><big>(</big><big>)</big><a class="headerlink" href="#Databench" title="Permalink to this definition">¶</a></dt>
+<dd><p>At the heart of this closure are the <a class="reference internal" href="#Databench.emit" title="Databench.emit"><tt class="xref js js-func docutils literal"><span class="pre">Databench.emit()</span></tt></a> and
+<a class="reference internal" href="#Databench.on" title="Databench.on"><tt class="xref js js-func docutils literal"><span class="pre">Databench.on()</span></tt></a> functions. Use them in your own JavaScript
+code to communicate with the backend.</p>
+<dl class="function">
+<dt id="Databench.emit">
+<tt class="descclassname">Databench.</tt><tt class="descname">emit</tt><big>(</big><em>signalName</em>, <em>message</em><big>)</big><a class="headerlink" href="#Databench.emit" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first last simple">
+<li><strong>signalName</strong> (<em>string</em>) &#8211; Name of the signal that is used to send the
+message.</li>
+<li><strong>message</strong> &#8211; Message to send.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Databench.on">
+<tt class="descclassname">Databench.</tt><tt class="descname">on</tt><big>(</big><em>signalName</em>, <em>callback</em><big>)</big><a class="headerlink" href="#Databench.on" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first last simple">
+<li><strong>signalName</strong> (<em>string</em>) &#8211; Name of the signal to listen to from the backend.</li>
+<li><strong>callback</strong> (<em>function</em>) &#8211; Function that is called when a signal is
+received.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Databench.genericElements">
+<tt class="descclassname">Databench.</tt><tt class="descname">genericElements</tt><a class="headerlink" href="#Databench.genericElements" title="Permalink to this definition">¶</a></dt>
+<dd><p>A set of generally useful elements that are documented right below.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="generic-elements">
+<span id="genericelements"></span><h2>Generic Elements<a class="headerlink" href="#generic-elements" title="Permalink to this headline">¶</a></h2>
+<p>Below is the list of genericElements that are in <a class="reference internal" href="#Databench" title="Databench"><tt class="xref js js-func docutils literal"><span class="pre">Databench()</span></tt></a>.
+They all can be instantiated from
+JavaScript on the frontend. They are also created automatically for the
+following elements on the page:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#Databench.genericElements.log" title="Databench.genericElements.log"><tt class="xref js js-func docutils literal"><span class="pre">Databench.genericElements.log()</span></tt></a>: a <tt class="docutils literal"><span class="pre">&lt;pre&gt;</span></tt> with an <tt class="docutils literal"><span class="pre">id</span></tt> starting with <tt class="docutils literal"><span class="pre">log</span></tt></li>
+<li><a class="reference internal" href="#Databench.genericElements.mpld3canvas" title="Databench.genericElements.mpld3canvas"><tt class="xref js js-func docutils literal"><span class="pre">Databench.genericElements.mpld3canvas()</span></tt></a>: a <tt class="docutils literal"><span class="pre">&lt;div&gt;</span></tt> with an <tt class="docutils literal"><span class="pre">id</span></tt> starting with <tt class="docutils literal"><span class="pre">mpld3canvas</span></tt>. The exact <tt class="docutils literal"><span class="pre">id</span></tt> becomes the signal name.</li>
+<li><a class="reference internal" href="#Databench.genericElements.button" title="Databench.genericElements.button"><tt class="xref js js-func docutils literal"><span class="pre">Databench.genericElements.button()</span></tt></a>: a <tt class="docutils literal"><span class="pre">&lt;button&gt;</span></tt> with a <tt class="docutils literal"><span class="pre">data-signal-name</span></tt> attribute.</li>
+<li><a class="reference internal" href="#Databench.genericElements.slider" title="Databench.genericElements.slider"><tt class="xref js js-func docutils literal"><span class="pre">Databench.genericElements.slider()</span></tt></a>: any <tt class="docutils literal"><span class="pre">&lt;input[type='range']&gt;</span></tt> element. The <tt class="docutils literal"><span class="pre">name</span></tt> attribute is used as the signalName.</li>
+</ul>
+<p>And here are the genericElements:</p>
+<dl class="function">
+<dt id="Databench.genericElements.log">
+<tt class="descclassname">Databench.genericElements.</tt><tt class="descname">log</tt><big>(</big><span class="optional">[</span><em>id</em>, <em>signalName</em>, <em>limit</em>, <em>consoleFnName</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Databench.genericElements.log" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first last simple">
+<li><strong>id</strong> &#8211; <tt class="docutils literal"><span class="pre">id</span></tt> of a <tt class="docutils literal"><span class="pre">&lt;pre&gt;</span></tt> element.</li>
+<li><strong>signalName</strong> (<em>string</em>) &#8211; The signal to listen for.</li>
+<li><strong>limit</strong> (<em>int</em>) &#8211; Maximum number of lines to show (default=20).</li>
+<li><strong>consoleFnName</strong> (<em>string</em>) &#8211; Name of a method of <tt class="docutils literal"><span class="pre">console</span></tt>, like
+&#8216;log&#8217; (default).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This function provides log message handling from the frontend and
+backend. By default, this looks at <tt class="docutils literal"><span class="pre">log</span></tt> messages from the backend and at
+<tt class="docutils literal"><span class="pre">console.log()</span></tt> calls on the frontend. All messages will be shown in the
+bound <tt class="docutils literal"><span class="pre">&lt;pre&gt;</span></tt> element and in the browser console. When no <tt class="docutils literal"><span class="pre">id</span></tt> is given, it will only show the messages in the browser console.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="Databench.genericElements.mpld3canvas">
+<tt class="descclassname">Databench.genericElements.</tt><tt class="descname">mpld3canvas</tt><big>(</big><em>id</em><span class="optional">[</span>, <em>signalName</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Databench.genericElements.mpld3canvas" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first last simple">
+<li><strong>id</strong> &#8211; <tt class="docutils literal"><span class="pre">id</span></tt> of the element.</li>
+<li><strong>signalName</strong> (<em>string</em>) &#8211; Waiting for plots to be send on this signal
+(default=&#8217;mpld3canvas&#8217;).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Databench.genericElements.button">
+<tt class="descclassname">Databench.genericElements.</tt><tt class="descname">button</tt><big>(</big><em>selector</em><span class="optional">[</span>, <em>signalName</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Databench.genericElements.button" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first last simple">
+<li><strong>selector</strong> &#8211; <tt class="docutils literal"><span class="pre">id</span></tt> or jQuery selector of a <tt class="docutils literal"><span class="pre">button</span></tt> element.</li>
+<li><strong>signalName</strong> (<em>string</em>) &#8211; if not provided, it is taken from a
+<tt class="docutils literal"><span class="pre">data-signal-name</span></tt> attribute and if that is also not given then it
+is set to the id.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The signalName can be extracted from an attribute <tt class="docutils literal"><span class="pre">data-signal-name</span></tt>
+and an optional message can be provided in JSON format in <tt class="docutils literal"><span class="pre">data-message</span></tt>.
+The signalName and the message are used for a <a class="reference internal" href="#Databench.emit" title="Databench.emit"><tt class="xref js js-func docutils literal"><span class="pre">Databench.emit()</span></tt></a>.</p>
+<p>This function adds actions to an HTML button. It adds a <tt class="docutils literal"><span class="pre">click</span></tt> event
+handler and tracks the status of the action through the backend. The button
+is set to active (the CSS class <tt class="docutils literal"><span class="pre">active</span></tt> is added) during the execution
+in the backend.</p>
+<p><strong>Example</strong>: <tt class="docutils literal"><span class="pre">index.html</span></tt>:</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;button</span> <span class="na">class=</span><span class="s">&quot;btn btn-primary&quot;</span> <span class="na">data-signal-name=</span><span class="s">&quot;run&quot;</span><span class="nt">&gt;</span>Run<span class="nt">&lt;/button&gt;</span>
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">class=&quot;btn</span> <span class="pre">btn-primary&quot;</span></tt> is only added to make the button look
+nicer via <a class="reference external" href="http://getbootstrap.com/css/#buttons">Twitter Bootstrap Buttons</a>. In <tt class="docutils literal"><span class="pre">analysis.py</span></tt>, add</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">on_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Run when button is pressed.&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<p>to the <tt class="docutils literal"><span class="pre">Analysis</span></tt> class. In this form, Databench finds the button
+automatically and connects it to the backend. No additional JavaScript
+code is required.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="Databench.genericElements.slider">
+<tt class="descclassname">Databench.genericElements.</tt><tt class="descname">slider</tt><big>(</big><em>selector</em><span class="optional">[</span>, <em>signalName</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Databench.genericElements.slider" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Arguments:</th><td class="field-body"><ul class="first last simple">
+<li><strong>selector</strong> &#8211; <tt class="docutils literal"><span class="pre">id</span></tt> or jQuery selector of an <tt class="docutils literal"><span class="pre">&lt;input[type='range']&gt;</span></tt>
+element.</li>
+<li><strong>signalName</strong> (<em>string</em>) &#8211; if not provided, it is taken from a
+<tt class="docutils literal"><span class="pre">data-signal-name</span></tt>, if that does not exist then from the <tt class="docutils literal"><span class="pre">name</span></tt>
+attribute and if that is also not given then it
+is set to the id.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The signalName can be extracted from an attribute <tt class="docutils literal"><span class="pre">data-signal-name</span></tt> or
+<tt class="docutils literal"><span class="pre">name</span></tt> (which is more natural for <tt class="docutils literal"><span class="pre">&lt;input&gt;</span></tt> elements).
+The signalName is used for <a class="reference internal" href="#Databench.emit" title="Databench.emit"><tt class="xref js js-func docutils literal"><span class="pre">Databench.emit()</span></tt></a> and the message is
+an array only containing the value of the slider.</p>
+<p><strong>Example</strong>: <tt class="docutils literal"><span class="pre">index.html</span></tt>:</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;label</span> <span class="na">for=</span><span class="s">&quot;samples&quot;</span><span class="nt">&gt;</span>Samples:<span class="nt">&lt;/label&gt;</span>
+<span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;range&quot;</span> <span class="na">name=</span><span class="s">&quot;samples&quot;</span> <span class="na">value=</span><span class="s">&quot;1000&quot;</span>
+    <span class="na">min=</span><span class="s">&quot;100&quot;</span> <span class="na">max=</span><span class="s">&quot;10000&quot;</span> <span class="na">step=</span><span class="s">&quot;100&quot;</span> <span class="nt">/&gt;</span>
+</pre></div>
+</div>
+<p>In <tt class="docutils literal"><span class="pre">analysis.py</span></tt>, add</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">on_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sets the number of samples to generate per run.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">samples</span> <span class="o">=</span> <span class="n">value</span>
+</pre></div>
+</div>
+<p>to the <tt class="docutils literal"><span class="pre">Analysis</span></tt> class. In this form, Databench finds the slider
+automatically and connects it to the backend. No additional JavaScript
+code is required.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo.svg" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="index.html">Databench</a></h1>
+
+
+
+<p class="blurb">Databench is a data analysis tool using
+<a href="http://flask.pocoo.org/">Flask</a>,
+WebSockets and
+<a href="http://d3js.org/">d3.js</a>.
+Check out the <a href="http://databench-examples.svenkreiss.com/">live demos</a>.
+</p>
+
+
+<p class="blurb">
+  This is the documentation for version 0.3.0.
+  
+    Version 0.2 is
+    <a href="http://www.svenkreiss.com/databench/v0.2/">here</a>.
+  
+  
+</p>
+
+
+
+<p>
+<iframe src="http://ghbtns.com/github-btn.html?user=svenkreiss&amp;repo=databench&amp;type=watch&amp;count=true&amp;size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html">Backend</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Frontend</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#databench-javascript-frontend">Databench JavaScript Frontend</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generic-elements">Generic Elements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="deploy.html">Deployment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev.html">Development</a></li>
+</ul>
+
+
+
+
+<hr />
+<h3>Links</h3>
+<ul>
+    
+    <li class="toctree-l1"><a href="http://databench-examples.svenkreiss.com">Live Demos</a></li>
+    
+    <li class="toctree-l1"><a href="https://github.com/svenkreiss/databench_examples">Examples</a></li>
+    
+    <li class="toctree-l1"><a href="https://github.com/svenkreiss/databench">Databench on GitHub</a></li>
+    
+    <li class="toctree-l1"><a href="https://github.com/svenkreiss/databench/issues">Issue Tracker</a></li>
+    
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy; 2014 Sven Kreiss and contributors.
+      
+    </div>
+
+    
+    <a href="https://github.com/svenkreiss/databench" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-4070485-2']);
+      _gaq.push(['_setDomainName', 'none']);
+      _gaq.push(['_setAllowLinker', true]);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+    
+  </body>
+</html>
