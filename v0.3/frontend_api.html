@@ -100,14 +100,14 @@ This [analysis is on GitHub](https://github.com/svenkreiss/databench_examples/tr
 </pre></div>
 </div>
 <p>which shows a GitHub icon and the Markdown rendered text with a link.</p>
-<div class="section" id="databench-javascript-class">
-<h2>Databench JavaScript Class<a class="headerlink" href="#databench-javascript-class" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<div class="section" id="databench-javascript-frontend">
+<h2>Databench JavaScript Frontend<a class="headerlink" href="#databench-javascript-frontend" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
 <dt id="Databench">
-<em class="property">class </em><tt class="descname">Databench</tt><big>(</big><big>)</big><a class="headerlink" href="#Databench" title="Permalink to this definition">¶</a></dt>
-<dd><p>The heart of this class are the <a class="reference internal" href="#Databench.emit" title="Databench.emit"><tt class="xref js js-func docutils literal"><span class="pre">Databench.emit()</span></tt></a> and
-<a class="reference internal" href="#Databench.on" title="Databench.on"><tt class="xref js js-func docutils literal"><span class="pre">Databench.on()</span></tt></a>. Use them in your own JavaScript code to
-communicate with the backend.</p>
+<tt class="descname">Databench</tt><big>(</big><big>)</big><a class="headerlink" href="#Databench" title="Permalink to this definition">¶</a></dt>
+<dd><p>At the heart of this closure are the <a class="reference internal" href="#Databench.emit" title="Databench.emit"><tt class="xref js js-func docutils literal"><span class="pre">Databench.emit()</span></tt></a> and
+<a class="reference internal" href="#Databench.on" title="Databench.on"><tt class="xref js js-func docutils literal"><span class="pre">Databench.on()</span></tt></a> functions. Use them in your own JavaScript
+code to communicate with the backend.</p>
 <dl class="function">
 <dt id="Databench.emit">
 <tt class="descclassname">Databench.</tt><tt class="descname">emit</tt><big>(</big><em>signalName</em>, <em>message</em><big>)</big><a class="headerlink" href="#Databench.emit" title="Permalink to this definition">¶</a></dt>
@@ -153,9 +153,10 @@ received.</li>
 </dd></dl>
 
 </div>
-<div class="section" id="generic-elements-in-the-databench-class">
-<span id="genericelements"></span><h2>Generic Elements in the Databench Class<a class="headerlink" href="#generic-elements-in-the-databench-class" title="Permalink to this headline">¶</a></h2>
-<p>Below is the list of genericElements. They all can be instantiated from
+<div class="section" id="generic-elements">
+<span id="genericelements"></span><h2>Generic Elements<a class="headerlink" href="#generic-elements" title="Permalink to this headline">¶</a></h2>
+<p>Below is the list of genericElements that are in <a class="reference internal" href="#Databench" title="Databench"><tt class="xref js js-func docutils literal"><span class="pre">Databench()</span></tt></a>.
+They all can be instantiated from
 JavaScript on the frontend. They are also created automatically for the
 following elements on the page:</p>
 <ul class="simple">
@@ -306,8 +307,8 @@ Check out the <a href="http://databench-examples.svenkreiss.com/">live demos</a>
 <li class="toctree-l1"><a class="reference internal" href="deploy.html">Deployment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backend_api.html">Backend API</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Frontend API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#databench-javascript-class">Databench JavaScript Class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#generic-elements-in-the-databench-class">Generic Elements in the Databench Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#databench-javascript-frontend">Databench JavaScript Frontend</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generic-elements">Generic Elements</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="dev.html">Development</a></li>
