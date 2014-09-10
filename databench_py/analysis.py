@@ -95,7 +95,8 @@ class Meta(object):
 
                     # sending hello
                     self.zmq_publish.send_json({
-                        '__databench_namespace': self.name
+                        '__databench_namespace': self.name,
+                        'description': self.description,
                     })
 
                 # standard message

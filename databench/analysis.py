@@ -371,6 +371,10 @@ class MetaZMQ(Meta):
                 self.zmq_confirmed = True
                 logging.debug('main ('+') received '
                               'msg: '+str(msg))
+
+                if 'description' in msg:
+                    self.description = msg['description']
+
                 if '__analysis_id' in msg and \
                    msg['__analysis_id'] in self.zmq_analyses:
                     analysis = self.zmq_analyses[msg['__analysis_id']]
