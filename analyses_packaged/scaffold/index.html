@@ -1,3 +1,4 @@
+{% from 'macros.html' import include_md %}
 {% extends "base.html" %}
 
 
@@ -5,11 +6,7 @@
 
 
 {% block content %}
-{% filter markdown %}
-# Scaffold
-
-Some explanation __is always good__. You can mention `technical details`, explain them with some fancy math $$r_1 = r_2$$ while mentioning inline what \\(r_1\\) and \\(r_2\\) are and [link to sources](http://www.wikipedia.com).
-{% endfilter %}
+[[ include_md('scaffold/README.md') ]]
 
 <hr />
 <pre id="log"></pre>

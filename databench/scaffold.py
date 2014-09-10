@@ -94,21 +94,10 @@ def create_analysis(name, py_native):
     if py_native:
         os.system('touch '+folder+'/__init__.py')
 
-    # analysis.py
-    pyfile = analysis_src_file.replace('.pyc', '.py')
-    copy_scaffold_file(pyfile, folder+'/analysis.py', name)
-    # if os.path.exists(os.getcwd()+'/analyses/'+name+'/analysis.py'):
-    #     print 'WARNING: analysis.py exists already. Skipping.'
-    # else:
-    #     os.system('cp '+pyfile+' '+os.getcwd()+'/analyses/'+name+'/')
-
-    # index.html
-    htmlfile = analysis_src_file.replace('analysis.pyc', 'index.html')
-    copy_scaffold_file(htmlfile, folder+'/index.html', name)
-    # if os.path.exists(os.getcwd()+'/analyses/'+name+'/index.html'):
-    #     print 'WARNING: index.html exists already. Skipping.'
-    # else:
-    #     os.system('cp '+htmlfile+' '+os.getcwd()+'/analyses/'+name+'/')
+    # copy all other files
+    for f in ['analysis.py', 'index.html', 'README.md', 'thumbnail.png']:
+        src = analysis_src_file.replace('analysis.pyc', f)
+        copy_scaffold_file(src, folder+'/'+f, name)
 
 
 def main():
