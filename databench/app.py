@@ -97,12 +97,16 @@ class App(object):
 
     def add_read_file(self):
         """Add read_file capability."""
-        self.flask_app.jinja_env.globals['read_file'] = lambda filename: \
-            codecs.open(
-                os.getcwd()+'/analyses/'+filename,
+        def read_file(filename):
+            folder = os.getcwd()+'/analyses/'
+            if not os.path.isdir(folder):
+                folder = os.getcwd()+'/analyses_packaged/'
+            return codecs.open(
+                folder+filename,
                 'r',
                 'utf-8'
             ).readlines()
+        self.flask_app.jinja_env.globals['read_file'] = read_file
 
     def add_markdown(self):
         """Add Markdown capability."""
