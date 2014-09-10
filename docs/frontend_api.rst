@@ -56,14 +56,14 @@ that hosts the analysis with
 which shows a GitHub icon and the Markdown rendered text with a link.
 
 
-Databench JavaScript Class
---------------------------
+Databench JavaScript Frontend
+-----------------------------
 
-.. js:class:: Databench()
+.. js:function:: Databench()
 
-    The heart of this class are the :js:func:`Databench.emit` and
-    :js:func:`Databench.on`. Use them in your own JavaScript code to
-    communicate with the backend.
+    At the heart of this closure are the :js:func:`Databench.emit` and
+    :js:func:`Databench.on` functions. Use them in your own JavaScript
+    code to communicate with the backend.
 
     .. js:function:: Databench.emit(signalName, message)
 
@@ -84,10 +84,11 @@ Databench JavaScript Class
 
 .. _genericElements:
 
-Generic Elements in the Databench Class
----------------------------------------
+Generic Elements
+----------------
 
-Below is the list of genericElements. They all can be instantiated from
+Below is the list of genericElements that are in :js:func:`Databench`.
+They all can be instantiated from
 JavaScript on the frontend. They are also created automatically for the
 following elements on the page:
 
