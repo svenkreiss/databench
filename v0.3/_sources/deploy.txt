@@ -33,7 +33,7 @@ and a ``requirements.txt`` file
 	mpld3==0.2
 	matplotlib==1.3.1
 
-	git+https://github.com/svenkreiss/databench.git@dev-0.3
+	git+https://github.com/svenkreiss/databench.git
 
 which already includes the most common dependencies. Databench will pick up the environment variable ``PORT`` which will be used for Flask.
 
