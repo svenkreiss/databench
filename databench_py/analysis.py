@@ -30,16 +30,17 @@ class Meta(object):
     For Python kernels.
 
     Args:
-        name (str): Name of this analysis. If ``signals`` is not specified,
-            this also becomes the namespace for the Socket.IO connection and
-            has to match the frontend's :js:class:`Databench` ``name``.
+        name (str): Name of this analysis.
+        import_name (str): Usually the file name ``__name__`` where this
+            analysis is instantiated.
         description (str): Usually the ``__doc__`` string of the analysis.
-        analysis (Analysis): instance of the analysis.
+        analysis (Analysis): Analysis class.
 
     """
 
-    def __init__(self, name, description, analysis):
+    def __init__(self, name, import_name, description, analysis):
         self.name = name
+        self.import_name = import_name
         self.description = description
         self.analysis_class = analysis
         self.analysis_instances = {}
@@ -99,16 +100,42 @@ class Meta(object):
 
                 # standard message
                 if '__analysis_id' in msg:
-                    i = self.analysis_instances[msg['__analysis_id']]
+                    analysis_id = msg['__analysis_id']
+                    i = self.analysis_instances[analysis_id]
                     if 'message' in msg and \
                        'signal' in msg['message'] and \
                        'message' in msg['message'] and \
                        hasattr(i, 'on_'+msg['message']['signal']):
-                        logging.debug('kernel processing on_' +
-                                      msg['message']['signal'])
-                        getattr(i, 'on_'+msg['message']['signal'])(
-                            *msg['message']['message']
-                        )
+                        message_data = msg['message']
+                        fn_name = 'on_'+message_data['signal']
+                        logging.debug('kernel processing '+fn_name)
+
+                        # detect whether an action_id should be registered
+                        action_id = None
+                        if '__action_id' in message_data['message']:
+                            action_id = message_data['message']['__action_id']
+                            del message_data['message']['__action_id']
+
+                        if action_id:
+                            self.emit_action(action_id, 'start', analysis_id)
+
+                        # Check whether this is a list (positional arguments)
+                        # or a dictionary (keyword arguments).
+                        if isinstance(message_data['message'], list):
+                            getattr(i, fn_name)(
+                                *message_data['message']
+                            )
+                        elif isinstance(message_data['message'], dict):
+                            getattr(i, fn_name)(
+                                **message_data['message']
+                            )
+                        else:
+                            getattr(i, fn_name)(
+                                message_data['message']
+                            )
+
+                        if action_id:
+                            self.emit_action(action_id, 'end', analysis_id)
 
     def emit(self, signal, message, analysis_id):
         """Emit signal to main.
@@ -133,6 +160,17 @@ class Meta(object):
                 '__databench_namespace': self.name,
                 '__analysis_id': analysis_id,
                 'message': {'signal': signal, 'message': message},
+            })
+        else:
+            logging.debug('zmq_socket_pub not defined yet.')
+
+    def emit_action(self, action_id, status, analysis_id):
+        if self.zmq_publish:
+            self.zmq_publish.send_json({
+                '__databench_namespace': self.name,
+                '__analysis_id': analysis_id,
+                'action_id': action_id,
+                'status': status
             })
         else:
             logging.debug('zmq_socket_pub not defined yet.')

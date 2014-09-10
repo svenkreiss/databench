@@ -55,6 +55,10 @@ class Analysis(object):
         """Sets what the emit function for this analysis will be."""
         self.emit = emit_fn
 
+    def set_emit_action_fn(self, emit_action_fn):
+        """Sets what the emit action function for this analysis will be."""
+        self.emit_action = emit_action_fn
+
     """Events."""
 
     def onall(self, message_data):
@@ -212,6 +216,7 @@ class Meta(object):
         analysis_instance = self.instantiate_analysis_class()
         logging.debug("analysis instantiated")
         analysis_instance.set_emit_fn(emit)
+        analysis_instance.set_emit_action_fn(emitAction)
         greenlets = []
         greenlets.append(gevent.Greenlet.spawn(
             analysis_instance.on_connect
@@ -376,6 +381,10 @@ class MetaZMQ(Meta):
                        'message' in msg['message']:
                         analysis.emit(msg['message']['signal'],
                                       msg['message']['message'])
+                    elif 'action_id' in msg and \
+                         'status' in msg:
+                        analysis.emit_action(msg['action_id'],
+                                             msg['status'])
                     else:
                         logging.debug('dont understand this message: ' +
                                       str(msg))
