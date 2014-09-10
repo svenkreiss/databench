@@ -56,7 +56,7 @@ def main(fn):
     svg_document.save()
 
     # create a png
-    # os.system('svg2png logo.svg --width=128 --height=128')
+    os.system('svg2png logo.svg --width=100 --height=100')
 
 
 if __name__ == "__main__":
