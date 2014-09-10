@@ -81,7 +81,7 @@ function call; as in this example. If the emitted message is an array,
 the entries will be used as positional arguments in the function call.
 If the message is neither of type <tt class="docutils literal"><span class="pre">list</span></tt> nor <tt class="docutils literal"><span class="pre">dict</span></tt> (for example a
 plain <tt class="docutils literal"><span class="pre">string</span></tt> or <tt class="docutils literal"><span class="pre">float</span></tt>), the function will be called with that
-message as its first parameter.</p>
+as its first parameter.</p>
 <p><strong>Outgoing messages</strong> are sent using <tt class="docutils literal"><span class="pre">emit(signal_name,</span> <span class="pre">message)</span></tt>.
 For example, use</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&#39;result&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;msg&#39;</span><span class="p">:</span> <span class="s">&#39;done&#39;</span><span class="p">})</span>

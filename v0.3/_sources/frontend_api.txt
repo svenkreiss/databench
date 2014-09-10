@@ -135,6 +135,25 @@ And here are the genericElements:
     is set to active (the CSS class ``active`` is added) during the execution
     in the backend.
 
+    **Example**: ``index.html``:
+
+    .. code-block:: html
+
+        <button class="btn btn-primary" data-signal-name="run">Run</button>
+
+    where ``class="btn btn-primary"`` is only added to make the button look
+    nicer via `Twitter Bootstrap Buttons <http://getbootstrap.com/css/#buttons>`_. In ``analysis.py``, add
+
+    .. code-block:: python
+
+        def on_run(self):
+            """Run when button is pressed."""
+            pass
+
+    to the ``Analysis`` class. In this form, Databench finds the button
+    automatically and connects it to the backend. No additional JavaScript
+    code is required.
+
 .. js:function:: Databench.genericElements.slider(selector[, signalName])
 
     :param selector: ``id`` or jQuery selector of an ``<input[type='range']>``
@@ -148,3 +167,23 @@ And here are the genericElements:
     ``name`` (which is more natural for ``<input>`` elements).
     The signalName is used for :js:func:`Databench.emit` and the message is
     an array only containing the value of the slider.
+
+    **Example**: ``index.html``:
+
+    .. code-block:: html
+
+        <label for="samples">Samples:</label>
+        <input type="range" name="samples" value="1000"
+            min="100" max="10000" step="100" />
+
+    In ``analysis.py``, add
+
+    .. code-block:: python
+
+        def on_samples(self, value):
+            """Sets the number of samples to generate per run."""
+            self.samples = value
+
+    to the ``Analysis`` class. In this form, Databench finds the slider
+    automatically and connects it to the backend. No additional JavaScript
+    code is required.
