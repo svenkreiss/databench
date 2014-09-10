@@ -102,18 +102,19 @@ def create_analysis(name, py_native):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('name',
+    parser.add_argument('analysis_name',
                         help='Name of the analysis to be created.')
     args = parser.parse_args()
 
-    if not check_folders(args.name):
+    if not check_folders(args.analysis_name):
         return
 
-    py_native = args.name.split('_')[-1] not in ['py', 'pyspark', 'spark',
-                                                 'go', 'lua', 'julia', 'r']
+    py_native = args.analysis_name.split('_')[-1] not in [
+        'py', 'pyspark', 'spark', 'go', 'lua', 'julia', 'r'
+    ]
 
-    create_analyses(args.name, py_native)
-    create_analysis(args.name, py_native)
+    create_analyses(args.analysis_name, py_native)
+    create_analysis(args.analysis_name, py_native)
     print("Done.")
 
 
