@@ -34,7 +34,12 @@ class Analysis(object):
         # here in Python
         def on_run(self, my_param):
 
-    here.
+    here. The entries of a dictionary will be used as keyword arguments in the
+    function call; as in this example. If the emitted message is an array,
+    the entries will be used as positional arguments in the function call.
+    If the message is neither of type ``list`` nor ``dict`` (for example a
+    plain ``string`` or ``float``), the function will be called with that
+    message as its first parameter.
 
     **Outgoing messages** are sent using ``emit(signal_name, message)``.
     For example, use
