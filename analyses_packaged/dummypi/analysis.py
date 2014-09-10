@@ -14,7 +14,7 @@ class Analysis(databench.Analysis):
         self.samples = 500
 
     def on_run(self):
-        """Run as soon as a browser connects to this."""
+        """Run when button is pressed."""
 
         inside = 0
         for i in xrange(self.samples):
