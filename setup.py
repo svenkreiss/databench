@@ -18,7 +18,7 @@ INSTALL_REQUIRES = [
     'Jinja2>=2.7.2',
     'MarkupSafe>=0.23',
     'Werkzeug>=0.9.4',
-    'jinja2-highlight>=0.5.1',
+    'jinja2-highlight==0.5.1',  # pin for Python26 compatibility
     'pyzmq>=4.3.1',
     'zipstream>=1.0.4',
     'Markdown<2.5.0',     # pinned to <2.5 because it is Python26 incompatible
