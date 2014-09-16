@@ -58,8 +58,9 @@ setup(
     },
 
     tests_require=[
-        'nose',
-        'requests',
+        'nose>=1.3.4',
+        'requests>=2.4.1',
+        'websocket-client>=0.18.0',
     ],
     test_suite='nose.collector',
 

@@ -1,37 +1,51 @@
 """Simple test."""
 
 import os
-import nose
 import time
 import signal
 import requests
+import websocket
 import subprocess
 
+
 DAEMON = None
-DAEMON_CNT = 0
 
 
-def setup_func():
-    global DAEMON, DAEMON_CNT
-    if not DAEMON:
-        # call os.setsid so that all subprocesses terminate when the
-        # main process receives SIGTERM
-        DAEMON = subprocess.Popen(['databench'], preexec_fn=os.setsid)
+def setup_module():
+    global DAEMON
+
+    # call os.setsid so that all subprocesses terminate when the
+    # main process receives SIGTERM
+    DAEMON = subprocess.Popen(['databench'],
+                              close_fds=True,
+                              preexec_fn=os.setsid)
     time.sleep(1)
-    DAEMON_CNT += 1
 
 
-def teardown_func():
-    global DAEMON, DAEMON_CNT
-    DAEMON_CNT -= 1
-    if DAEMON_CNT <= 0 and DAEMON:
-        # simply DAEMON.terminate() would only terminate the main process,
-        # but the nested processes also need to be terminated
-        os.killpg(DAEMON.pid, signal.SIGTERM)
-        DAEMON_CNT = 0
+def teardown_module():
+    global DAEMON
+
+    # simply DAEMON.terminate() would only terminate the main process,
+    # but the nested processes also need to be terminated
+    os.killpg(DAEMON.pid, signal.SIGTERM)
 
 
-@nose.with_setup(setup_func, teardown_func)
 def test_get_dummypi():
     r = requests.get('http://127.0.0.1:5000/dummypi/')
     assert r.status_code == 200
+
+
+def test_ws_dummypi():
+    websocket.enableTrace(True)
+    ws = websocket.create_connection('ws://127.0.0.1:5000/dummypi/ws')
+    ws.send('{"signal":"run", "message":{"__action_id":123}}')
+    r = ws.recv()
+    print(r)
+    assert '{"status": "start", "action_id": 123}' == r
+    r = ws.recv()
+    print(r)
+    assert '{"signal": "log", "message": {"inside":' in r
+    r = ws.recv()
+    print(r)
+    assert '{"signal": "status", "message": {"pi-uncertainty":' in r
+    ws.close()
