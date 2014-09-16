@@ -41,7 +41,8 @@ def test_ws_dummypi():
     ws.send('{"signal":"run", "message":{"__action_id":123}}')
     r = ws.recv()
     print(r)
-    assert '{"status": "start", "action_id": 123}' == r
+    assert '{"signal": "__action", ' + \
+           '"message": {"status": "start", "id": 123}}' == r
     r = ws.recv()
     print(r)
     assert '{"signal": "log", "message": {"inside":' in r

@@ -32,9 +32,10 @@ function Databench() {
 			}
 		}
 
-		if (message_data.action_id in onAction_callbacks) {
-			for(cb in onAction_callbacks[message_data.action_id]) {
-				onAction_callbacks[message_data.action_id][cb](message_data.status);
+		if (message_data.signal == '__action') {
+			var id = message_data.message.id
+			for(cb in onAction_callbacks[id]) {
+				onAction_callbacks[id][cb](message_data.message.status);
 			}
 		}
 	}

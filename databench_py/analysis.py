@@ -118,7 +118,8 @@ class Meta(object):
                             del message_data['message']['__action_id']
 
                         if action_id:
-                            self.emit_action(action_id, 'start', analysis_id)
+                            self.emit('__action', {'id': action_id,
+                                                   'status': 'start'})
 
                         # Check whether this is a list (positional arguments)
                         # or a dictionary (keyword arguments).
@@ -136,7 +137,8 @@ class Meta(object):
                             )
 
                         if action_id:
-                            self.emit_action(action_id, 'end', analysis_id)
+                            self.emit('__action', {'id': action_id,
+                                                   'status': 'end'})
 
     def emit(self, signal, message, analysis_id):
         """Emit signal to main.

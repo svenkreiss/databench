@@ -60,10 +60,6 @@ class Analysis(object):
         """Sets what the emit function for this analysis will be."""
         self.emit = emit_fn
 
-    def set_emit_action_fn(self, emit_action_fn):
-        """Sets what the emit action function for this analysis will be."""
-        self.emit_action = emit_action_fn
-
     """Events."""
 
     def onall(self, message_data):
@@ -211,17 +207,9 @@ class Meta(object):
                 logging.info('websocket closed. could not send: '+signal +
                              ' -- '+str(message))
 
-        def emit_action(action_id, status):
-            try:
-                ws.send(json.dumps({'action_id': action_id, 'status': status}))
-            except geventwebsocket.WebSocketError, e:
-                logging.info('websocket could not send action: '+action_id +
-                             ' -- '+str(status))
-
         analysis_instance = self.instantiate_analysis_class()
         logging.debug("analysis instantiated")
         analysis_instance.set_emit_fn(emit)
-        analysis_instance.set_emit_action_fn(emit_action)
         greenlets = []
         greenlets.append(gevent.Greenlet.spawn(
             analysis_instance.on_connect
@@ -249,7 +237,8 @@ class Meta(object):
                     def spawn_action():
                         action_id_local = action_id
                         if action_id_local:
-                            emit_action(action_id_local, 'start')
+                            emit('__action', {'id': action_id_local,
+                                              'status': 'start'})
 
                         # Check whether this is a list (positional arguments)
                         # or a dictionary (keyword arguments).
@@ -267,7 +256,8 @@ class Meta(object):
                             )
 
                         if action_id_local:
-                            emit_action(action_id_local, 'end')
+                            emit('__action', {'id': action_id_local,
+                                              'status': 'end'})
 
                     # every 'on_' is processed in a separate greenlet
                     greenlets.append(gevent.Greenlet.spawn(spawn_action))
@@ -390,10 +380,6 @@ class MetaZMQ(Meta):
                        'message' in msg['message']:
                         analysis.emit(msg['message']['signal'],
                                       msg['message']['message'])
-                    elif 'action_id' in msg and \
-                         'status' in msg:
-                        analysis.emit_action(msg['action_id'],
-                                             msg['status'])
                     else:
                         logging.debug('dont understand this message: ' +
                                       str(msg))
