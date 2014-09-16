@@ -33,7 +33,8 @@ with open('databench/__init__.py', 'r') as f:
 # add argparse dependency for python < 2.7
 major, minor1, minor2, release, serial = sys.version_info
 if major <= 2 and minor1 < 7:
-    INSTALL_REQUIRES.append('argparse==1.2.1')
+    INSTALL_REQUIRES.append('argparse>=1.2.1')
+    INSTALL_REQUIRES.append('importlib>=1.0.3')
 
 
 setup(
