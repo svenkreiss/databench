@@ -21,6 +21,7 @@ INSTALL_REQUIRES = [
     'jinja2-highlight>=0.5.1',
     'pyzmq>=4.3.1',
     'zipstream>=1.0.4',
+    'Markdown<2.5.0',     # pinned to <2.5 because it is Python26 incompatible
 ]
 
 
@@ -34,7 +35,6 @@ with open('databench/__init__.py', 'r') as f:
 major, minor1, minor2, release, serial = sys.version_info
 if major <= 2 and minor1 < 7:
     INSTALL_REQUIRES.append('argparse>=1.2.1')
-    INSTALL_REQUIRES.append('importlib>=1.0.3')
 
 
 setup(
