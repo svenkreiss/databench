@@ -196,6 +196,37 @@ class Meta(object):
     def instantiate_analysis_class(self):
         return self.analysis_class()
 
+    @staticmethod
+    def run_action(analysis, fn_name, message):
+        """Executes an action in the analysis with the given message. It
+        also handles the start and stop signals in case an action_id
+        is given."""
+
+        # detect action_id
+        action_id = None
+        if '__action_id' in message:
+            action_id = message['__action_id']
+            del message['__action_id']
+
+        if action_id:
+            analysis.emit('__action', {'id': action_id,
+                                       'status': 'start'})
+
+        fn = getattr(analysis, fn_name)
+
+        # Check whether this is a list (positional arguments)
+        # or a dictionary (keyword arguments).
+        if isinstance(message, list):
+            fn(*message)
+        elif isinstance(message, dict):
+            fn(**message)
+        else:
+            fn(message)
+
+        if action_id:
+            analysis.emit('__action', {'id': action_id,
+                                       'status': 'end'})
+
     def ws_serve(self, ws):
         """Handle a new websocket connection."""
         logging.debug('ws_serve()')
@@ -222,51 +253,23 @@ class Meta(object):
 
             message_data = json.loads(message)
             analysis_instance.onall(message_data)
-            if 'signal' in message_data and 'message' in message_data:
-                fn_name = 'on_'+message_data['signal']
-                if hasattr(self.analysis_class, fn_name):
-                    logging.debug('calling '+fn_name)
-
-                    # detect whether an action_id should be registered
-                    action_id = None
-                    if '__action_id' in message_data['message']:
-                        action_id = message_data['message']['__action_id']
-                        del message_data['message']['__action_id']
-
-                    # wrap the action
-                    def spawn_action():
-                        action_id_local = action_id
-                        if action_id_local:
-                            emit('__action', {'id': action_id_local,
-                                              'status': 'start'})
-
-                        # Check whether this is a list (positional arguments)
-                        # or a dictionary (keyword arguments).
-                        if isinstance(message_data['message'], list):
-                            getattr(analysis_instance, fn_name)(
-                                *message_data['message']
-                            )
-                        elif isinstance(message_data['message'], dict):
-                            getattr(analysis_instance, fn_name)(
-                                **message_data['message']
-                            )
-                        else:
-                            getattr(analysis_instance, fn_name)(
-                                message_data['message']
-                            )
-
-                        if action_id_local:
-                            emit('__action', {'id': action_id_local,
-                                              'status': 'end'})
-
-                    # every 'on_' is processed in a separate greenlet
-                    greenlets.append(gevent.Greenlet.spawn(spawn_action))
-                else:
-                    logging.warning('frontend wants to call '
-                                    'on_'+message_data['signal']+' which is '
-                                    'not in the Analysis class.')
-            else:
+            if 'signal' not in message_data or 'message' not in message_data:
                 logging.info('message not processed: '+message)
+                return
+
+            fn_name = 'on_'+message_data['signal']
+            if not hasattr(self.analysis_class, fn_name):
+                logging.warning('frontend wants to call '
+                                'on_'+message_data['signal']+' which is '
+                                'not in the Analysis class.')
+                return
+
+            logging.debug('calling '+fn_name)
+            # every 'on_' is processed in a separate greenlet
+            greenlets.append(gevent.Greenlet.spawn(
+                Meta.run_action, analysis_instance,
+                fn_name, message_data['message']
+            ))
 
         while True:
             try:
