@@ -50,3 +50,25 @@ def test_ws_dummypi():
     print(r)
     assert '{"signal": "status", "message": {"pi-uncertainty":' in r
     ws.close()
+
+
+def test_get_dummypi_py():
+    r = requests.get('http://127.0.0.1:5000/dummypi_py/')
+    assert r.status_code == 200
+
+
+def test_ws_dummypi_py():
+    websocket.enableTrace(True)
+    ws = websocket.create_connection('ws://127.0.0.1:5000/dummypi_py/ws')
+    ws.send('{"signal":"run", "message":{"__action_id":123}}')
+    r = ws.recv()
+    print(r)
+    assert '{"signal": "__action", ' + \
+           '"message": {"status": "start", "id": 123}}' == r
+    r = ws.recv()
+    print(r)
+    assert '{"signal": "log", "message": {"inside":' in r
+    r = ws.recv()
+    print(r)
+    assert '{"signal": "status", "message": {"pi-uncertainty":' in r
+    ws.close()
