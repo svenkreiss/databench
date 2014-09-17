@@ -37,7 +37,8 @@ if major <= 2 and minor1 < 7:
     INSTALL_REQUIRES.append('jinja2-highlight==0.5.1')
     INSTALL_REQUIRES.append('Markdown<2.5.0')
 else:
-    INSTALL_REQUIRES.append('jinja2-highlight>=0.5.1')
+    # also pin this, because 0.6.1 seems broken
+    INSTALL_REQUIRES.append('jinja2-highlight==0.5.1')
 
 
 setup(
