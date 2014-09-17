@@ -11,6 +11,12 @@ except ImportError:
     pass
 
 
+# extract version from __init__.py
+with open('databench/__init__.py', 'r') as f:
+    INIT = f.read()
+    VERSION = re.finditer('__version__ = \"(.*?)\"', INIT).next().group(1)
+
+
 INSTALL_REQUIRES = [
     'Flask>=0.10.1',
     'Flask-Sockets>=0.1',
@@ -18,23 +24,20 @@ INSTALL_REQUIRES = [
     'Jinja2>=2.7.2',
     'MarkupSafe>=0.23',
     'Werkzeug>=0.9.4',
-    'jinja2-highlight==0.5.1',  # pin for Python26 compatibility
     'pyzmq>=4.3.1',
     'zipstream>=1.0.4',
-    'Markdown<2.5.0',     # pinned to <2.5 because it is Python26 incompatible
 ]
 
 
-# extract version from __init__.py
-with open('databench/__init__.py', 'r') as f:
-    INIT = f.read()
-    VERSION = re.finditer('__version__ = \"(.*?)\"', INIT).next().group(1)
-
-
-# add argparse dependency for python < 2.7
 major, minor1, minor2, release, serial = sys.version_info
 if major <= 2 and minor1 < 7:
+    # add argparse dependency for python < 2.7
     INSTALL_REQUIRES.append('argparse>=1.2.1')
+    # pin for Python 2.6 compatibility; later versions are not compatible
+    INSTALL_REQUIRES.append('jinja2-highlight==0.5.1')
+    INSTALL_REQUIRES.append('Markdown<2.5.0')
+else:
+    INSTALL_REQUIRES.append('jinja2-highlight>=0.5.1')
 
 
 setup(
