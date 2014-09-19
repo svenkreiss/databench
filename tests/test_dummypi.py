@@ -52,6 +52,14 @@ def test_ws_dummypi():
     ws.close()
 
 
+"""
+
+
+Python Language Kernel tests
+----------------------------
+"""
+
+
 def test_get_dummypi_py():
     r = requests.get('http://127.0.0.1:5000/dummypi_py/')
     assert r.status_code == 200
