@@ -100,7 +100,7 @@ class App(object):
         def read_file(filename):
             folder = os.getcwd()+'/analyses/'
             if not os.path.isdir(folder):
-                folder = os.getcwd()+'/analyses_packaged/'
+                folder = os.getcwd()+'/databench/analyses/'
             return codecs.open(
                 folder+filename,
                 'r',
@@ -118,10 +118,10 @@ class App(object):
     def register_analyses_py(self, zmq_publish):
         analysis_folders = glob.glob('analyses/*_py')
         if not analysis_folders:
-            analysis_folders = glob.glob('analyses_packaged/*_py')
+            analysis_folders = glob.glob('databench/analyses/*_py')
 
         for analysis_folder in analysis_folders:
-            name = analysis_folder[analysis_folder.find('/')+1:]
+            name = analysis_folder[analysis_folder.rfind('/')+1:]
             if name[0] in ['.', '_']:
                 continue
             logging.debug('creating MetaZMQ for '+name)
@@ -132,10 +132,10 @@ class App(object):
     def register_analyses_pyspark(self, zmq_publish):
         analysis_folders = glob.glob('analyses/*_pyspark')
         if not analysis_folders:
-            analysis_folders = glob.glob('analyses_packaged/*_pyspark')
+            analysis_folders = glob.glob('databench/analyses/*_pyspark')
 
         for analysis_folder in analysis_folders:
-            name = analysis_folder[analysis_folder.find('/')+1:]
+            name = analysis_folder[analysis_folder.rfind('/')+1:]
             if name[0] in ['.', '_']:
                 continue
             logging.debug('creating MetaZMQ for '+name)
@@ -146,10 +146,10 @@ class App(object):
     def register_analyses_go(self, zmq_publish):
         analysis_folders = glob.glob('analyses/*_go')
         if not analysis_folders:
-            analysis_folders = glob.glob('analyses_packaged/*_go')
+            analysis_folders = glob.glob('databench/analyses/*_go')
 
         for analysis_folder in analysis_folders:
-            name = analysis_folder[analysis_folder.find('/')+1:]
+            name = analysis_folder[analysis_folder.rfind('/')+1:]
             if name[0] in ['.', '_']:
                 continue
             logging.info('installing '+name)
@@ -164,15 +164,6 @@ class App(object):
         sys.path.append('.')
         try:
             import analyses
-            self.description = analyses.__doc__
-            try:
-                self.analyses_author = analyses.__author__
-            except AttributeError:
-                logging.info('Analyses module does not have an author string.')
-            try:
-                self.analyses_version = analyses.__version__
-            except AttributeError:
-                logging.info('Analyses module does not have a version string.')
         except ImportError, e:
             if str(e) != 'No module named analyses':
                 raise e
@@ -184,16 +175,17 @@ class App(object):
             logging.debug('os.getcwd: '+os.getcwd())
 
             print "Using packaged analyses."
-            import analyses_packaged
-            self.description = analyses_packaged.__doc__
-            try:
-                self.analyses_author = analyses_packaged.__author__
-            except AttributeError:
-                logging.info('Analyses module does not have an author string.')
-            try:
-                self.analyses_version = analyses_packaged.__version__
-            except AttributeError:
-                logging.info('Analyses module does not have a version string.')
+            from databench import analyses
+
+        self.description = analyses.__doc__
+        try:
+            self.analyses_author = analyses.__author__
+        except AttributeError:
+            logging.info('Analyses module does not have an author string.')
+        try:
+            self.analyses_version = analyses.__version__
+        except AttributeError:
+            logging.info('Analyses module does not have a version string.')
 
     def register_analyses(self):
         """Register analyses (analyses need to be imported first)."""
