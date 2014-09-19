@@ -75,8 +75,7 @@ class Meta(object):
             del message['__action_id']
 
         if action_id:
-            analysis.emit('__action', {'id': action_id,
-                                       'status': 'start'})
+            analysis.emit('__action', {'id': action_id, 'status': 'start'})
 
         fn = getattr(analysis, fn_name)
 
@@ -90,33 +89,32 @@ class Meta(object):
             fn(message)
 
         if action_id:
-            analysis.emit('__action', {'id': action_id,
-                                       'status': 'end'})
+            analysis.emit('__action', {'id': action_id, 'status': 'end'})
 
     def event_loop(self):
         """Event loop."""
         while True:
             msg = self.zmq_sub.recv_json()
             logging.debug('kernel msg: '+str(msg))
-            if '__databench_namespace' not in msg or \
-               msg['__databench_namespace'] != self.name:
+            if 'analysis' not in msg or \
+               msg['analysis'] != self.name:
                 continue
 
-            del msg['__databench_namespace']
+            del msg['analysis']
             logging.debug('kernel processing msg')
 
-            if '__analysis_id' in msg and \
-               msg['__analysis_id'] not in self.analysis_instances:
+            if 'instance_id' in msg and \
+               msg['instance_id'] not in self.analysis_instances:
                 # instance does not exist yet
                 logging.debug('kernel creating analysis instance ' +
-                              str(msg['__analysis_id']))
+                              str(msg['instance_id']))
                 i = self.analysis_class()
 
                 def emit(signal, message):
-                    self.emit(signal, message, msg['__analysis_id'])
+                    self.emit(signal, message, msg['instance_id'])
 
                 i.set_emit_fn(emit)
-                self.analysis_instances[msg['__analysis_id']] = i
+                self.analysis_instances[msg['instance_id']] = i
 
             # init message
             if 'publish_on_port' in msg and not self.zmq_publish:
@@ -131,37 +129,37 @@ class Meta(object):
 
                 # sending hello
                 self.zmq_publish.send_json({
-                    '__databench_namespace': self.name,
+                    'analysis': self.name,
                     'description': self.description,
                 })
 
-            if '__analysis_id' not in msg:
+            if 'instance_id' not in msg:
                 continue
 
-            analysis_id = msg['__analysis_id']
-            i = self.analysis_instances[analysis_id]
-            if 'message' not in msg or \
-               'signal' not in msg['message'] or \
-               'message' not in msg['message'] or \
-               not hasattr(i, 'on_'+msg['message']['signal']):
+            instance_id = msg['instance_id']
+            i = self.analysis_instances[instance_id]
+            if 'frame' not in msg or \
+               'signal' not in msg['frame'] or \
+               'load' not in msg['frame'] or \
+               not hasattr(i, 'on_'+msg['frame']['signal']):
                 continue
 
             # standard message
-            fn_name = 'on_'+msg['message']['signal']
+            fn_name = 'on_'+msg['frame']['signal']
             logging.debug('kernel processing '+fn_name)
-            Meta.run_action(i, fn_name, msg['message']['message'])
+            Meta.run_action(i, fn_name, msg['frame']['load'])
 
-    def emit(self, signal, message, analysis_id):
+    def emit(self, signal, message, instance_id):
         """Emit signal to main.
 
         Args:
             signal (str): Name of the signal to be emitted.
             message: Message to be sent.
-            analysis_id: Identifies the instance of this analysis.
+            instance_id: Identifies the instance of this analysis.
 
         """
         logging.debug(
-            'backend (namespace='+self.name+', analysis='+str(analysis_id) +
+            'backend (namespace='+self.name+', analysis='+str(instance_id) +
             ', signal='+signal + '): ' + (
                 (str(message)[:60] + '...')
                 if len(str(message)) > 65
@@ -171,9 +169,9 @@ class Meta(object):
 
         if self.zmq_publish:
             self.zmq_publish.send_json({
-                '__databench_namespace': self.name,
-                '__analysis_id': analysis_id,
-                'message': {'signal': signal, 'message': message},
+                'analysis': self.name,
+                'instance_id': instance_id,
+                'frame': {'signal': signal, 'load': message},
             })
         else:
             logging.debug('zmq_socket_pub not defined yet.')

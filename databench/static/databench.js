@@ -28,14 +28,14 @@ function Databench() {
 		// normal message
 		if (message_data.signal in on_callbacks) {
 			for(cb in on_callbacks[message_data.signal]) {
-				on_callbacks[message_data.signal][cb](message_data.message);
+				on_callbacks[message_data.signal][cb](message_data.load);
 			}
 		}
 
 		if (message_data.signal == '__action') {
-			var id = message_data.message.id
+			var id = message_data.load.id
 			for(cb in onAction_callbacks[id]) {
-				onAction_callbacks[id][cb](message_data.message.status);
+				onAction_callbacks[id][cb](message_data.load.status);
 			}
 		}
 	}
@@ -54,7 +54,7 @@ function Databench() {
 			}, 5);
 			return;
 		}
-		socket.send(JSON.stringify({'signal':signalName, 'message':message}));
+		socket.send(JSON.stringify({'signal':signalName, 'load':message}));
 	};
 
 	var onAction = function(actionID, callback) {

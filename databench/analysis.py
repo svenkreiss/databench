@@ -209,8 +209,7 @@ class Meta(object):
             del message['__action_id']
 
         if action_id:
-            analysis.emit('__action', {'id': action_id,
-                                       'status': 'start'})
+            analysis.emit('__action', {'id': action_id, 'status': 'start'})
 
         fn = getattr(analysis, fn_name)
 
@@ -224,8 +223,7 @@ class Meta(object):
             fn(message)
 
         if action_id:
-            analysis.emit('__action', {'id': action_id,
-                                       'status': 'end'})
+            analysis.emit('__action', {'id': action_id, 'status': 'end'})
 
     def ws_serve(self, ws):
         """Handle a new websocket connection."""
@@ -233,7 +231,7 @@ class Meta(object):
 
         def emit(signal, message):
             try:
-                ws.send(json.dumps({'signal': signal, 'message': message}))
+                ws.send(json.dumps({'signal': signal, 'load': message}))
             except geventwebsocket.WebSocketError, e:
                 logging.info('websocket closed. could not send: '+signal +
                              ' -- '+str(message))
@@ -253,22 +251,21 @@ class Meta(object):
 
             message_data = json.loads(message)
             analysis_instance.onall(message_data)
-            if 'signal' not in message_data or 'message' not in message_data:
+            if 'signal' not in message_data or 'load' not in message_data:
                 logging.info('message not processed: '+message)
                 return
 
             fn_name = 'on_'+message_data['signal']
             if not hasattr(self.analysis_class, fn_name):
-                logging.warning('frontend wants to call '
-                                'on_'+message_data['signal']+' which is '
-                                'not in the Analysis class.')
+                logging.warning('frontend wants to call '+fn_name +
+                                ' which is not in the Analysis class.')
                 return
 
             logging.debug('calling '+fn_name)
             # every 'on_' is processed in a separate greenlet
             greenlets.append(gevent.Greenlet.spawn(
                 Meta.run_action, analysis_instance,
-                fn_name, message_data['message']
+                fn_name, message_data['load']
             ))
 
         while True:
@@ -287,34 +284,34 @@ class Meta(object):
 
 class AnalysisZMQ(Analysis):
 
-    def __init__(self, namespace, analysis_id, zmq_publish):
+    def __init__(self, namespace, instance_id, zmq_publish):
         self.namespace = namespace
-        self.analysis_id = analysis_id
+        self.instance_id = instance_id
         self.zmq_publish = zmq_publish
 
     def onall(self, message_data):
         msg = {
-            '__analysis_id': self.analysis_id,
-            '__databench_namespace': self.namespace,
-            'message': message_data,
+            'analysis': self.namespace,
+            'instance_id': self.instance_id,
+            'frame': message_data,
         }
         self.zmq_publish.send_json(msg)
         logging.debug('onall called with: '+str(msg))
 
     def on_connect(self):
         msg = {
-            '__analysis_id': self.analysis_id,
-            '__databench_namespace': self.namespace,
-            'message': {'signal': 'connect', 'message': {}},
+            'analysis': self.namespace,
+            'instance_id': self.instance_id,
+            'frame': {'signal': 'connect', 'load': {}},
         }
         self.zmq_publish.send_json(msg)
         logging.debug('on_connect called')
 
     def on_disconnect(self):
         msg = {
-            '__analysis_id': self.analysis_id,
-            '__databench_namespace': self.namespace,
-            'message': {'signal': 'disconnect', 'message': {}},
+            'analysis': self.namespace,
+            'instance_id': self.instance_id,
+            'frame': {'signal': 'disconnect', 'load': {}},
         }
         self.zmq_publish.send_json(msg)
         logging.debug('on_disconnect called')
@@ -373,21 +370,21 @@ class MetaZMQ(Meta):
                 if 'description' in msg:
                     self.description = msg['description']
 
-                if '__analysis_id' in msg and \
-                   msg['__analysis_id'] in self.zmq_analyses:
-                    analysis = self.zmq_analyses[msg['__analysis_id']]
-                    del msg['__analysis_id']
+                if 'instance_id' in msg and \
+                   msg['instance_id'] in self.zmq_analyses:
+                    analysis = self.zmq_analyses[msg['instance_id']]
+                    del msg['instance_id']
 
-                    if 'message' in msg and \
-                       'signal' in msg['message'] and \
-                       'message' in msg['message']:
-                        analysis.emit(msg['message']['signal'],
-                                      msg['message']['message'])
+                    if 'frame' in msg and \
+                       'signal' in msg['frame'] and \
+                       'load' in msg['frame']:
+                        analysis.emit(msg['frame']['signal'],
+                                      msg['frame']['load'])
                     else:
                         logging.debug('dont understand this message: ' +
                                       str(msg))
                 else:
-                    logging.debug('__analysis_id not in message or '
+                    logging.debug('instance_id not in message or '
                                   'AnalysisZMQ with that id not found.')
         self.zmq_listener = gevent.Greenlet.spawn(zmq_listener)
 
@@ -400,7 +397,7 @@ class MetaZMQ(Meta):
                 logging.debug('init kernel '+self.name+' to publish on '
                               'port '+str(port_subscribe))
                 self.zmq_publish.send_json({
-                    '__databench_namespace': self.name,
+                    'analysis': self.name,
                     'publish_on_port': port_subscribe,
                 })
                 time.sleep(0.1)
