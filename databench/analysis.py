@@ -234,7 +234,7 @@ class Meta(object):
         def emit(signal, message):
             try:
                 ws.send(json.dumps({'signal': signal, 'load': message}))
-            except geventwebsocket.WebSocketError, e:
+            except geventwebsocket.WebSocketError:
                 logging.info('websocket closed. could not send: '+signal +
                              ' -- '+str(message))
 
@@ -275,7 +275,7 @@ class Meta(object):
                 message = ws.receive()
                 logging.debug('received message: '+str(message))
                 process_message(message)
-            except geventwebsocket.WebSocketError, e:
+            except geventwebsocket.WebSocketError:
                 break
 
         # disconnected
