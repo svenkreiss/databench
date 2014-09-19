@@ -8,6 +8,13 @@ import websocket
 import subprocess
 
 
+"""
+
+Starting and stopping 'databench'
+---------------------------------
+"""
+
+
 DAEMON = None
 
 
@@ -28,6 +35,13 @@ def teardown_module():
     # simply DAEMON.terminate() would only terminate the main process,
     # but the nested processes also need to be terminated
     os.killpg(DAEMON.pid, signal.SIGTERM)
+
+
+"""
+
+Testing a default Python analysis
+---------------------------------
+"""
 
 
 def test_get_dummypi():
@@ -55,7 +69,6 @@ def test_ws_dummypi():
 
 
 """
-
 
 Python Language Kernel tests
 ----------------------------
