@@ -127,9 +127,9 @@ class Meta(object):
 
         analyses_path = os.getcwd()+'/'+'analyses'
         if not os.path.exists(analyses_path):
-            analyses_path = os.getcwd()+'/'+'databench/analyses'
+            analyses_path = os.getcwd()+'/'+'databench/analyses_packaged'
         if not os.path.exists(analyses_path):
-            logging.warning('Folder for '+self.name+' not found.')
+            logging.info('Folder for '+self.name+' not found.')
         self.analyses_path = analyses_path
 
         # detect whether thumbnail.png is present

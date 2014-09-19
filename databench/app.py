@@ -100,7 +100,7 @@ class App(object):
         def read_file(filename):
             folder = os.getcwd()+'/analyses/'
             if not os.path.isdir(folder):
-                folder = os.getcwd()+'/databench/analyses/'
+                folder = os.getcwd()+'/databench/analyses_packaged/'
             return codecs.open(
                 folder+filename,
                 'r',
@@ -118,7 +118,7 @@ class App(object):
     def register_analyses_py(self, zmq_publish):
         analysis_folders = glob.glob('analyses/*_py')
         if not analysis_folders:
-            analysis_folders = glob.glob('databench/analyses/*_py')
+            analysis_folders = glob.glob('databench/analyses_packaged/*_py')
 
         for analysis_folder in analysis_folders:
             name = analysis_folder[analysis_folder.rfind('/')+1:]
@@ -132,7 +132,7 @@ class App(object):
     def register_analyses_pyspark(self, zmq_publish):
         analysis_folders = glob.glob('analyses/*_pyspark')
         if not analysis_folders:
-            analysis_folders = glob.glob('databench/analyses/*_pyspark')
+            analysis_folders = glob.glob('databench/analyses_packaged/*_pyspark')
 
         for analysis_folder in analysis_folders:
             name = analysis_folder[analysis_folder.rfind('/')+1:]
@@ -146,7 +146,7 @@ class App(object):
     def register_analyses_go(self, zmq_publish):
         analysis_folders = glob.glob('analyses/*_go')
         if not analysis_folders:
-            analysis_folders = glob.glob('databench/analyses/*_go')
+            analysis_folders = glob.glob('databench/analyses_packaged/*_go')
 
         for analysis_folder in analysis_folders:
             name = analysis_folder[analysis_folder.rfind('/')+1:]
@@ -175,7 +175,7 @@ class App(object):
             logging.debug('os.getcwd: '+os.getcwd())
 
             print "Using packaged analyses."
-            from databench import analyses
+            from databench import analyses_packaged as analyses
 
         self.description = analyses.__doc__
         try:

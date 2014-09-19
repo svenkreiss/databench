@@ -4,7 +4,8 @@
 
 import os
 import argparse
-from analyses_packaged.scaffold.analysis import __file__ as analysis_src_file
+from databench.analyses_packaged.scaffold.analysis \
+    import __file__ as analysis_src_file
 
 
 def check_folders(name):
