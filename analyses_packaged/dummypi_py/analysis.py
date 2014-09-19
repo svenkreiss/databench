@@ -7,6 +7,7 @@ from time import sleep
 from random import random
 
 import databench_py
+import databench_py.singlethread
 
 # import logging
 # logging.basicConfig(level='DEBUG')
@@ -51,5 +52,7 @@ class Analysis(databench_py.Analysis):
 
 
 if __name__ == "__main__":
-    analysis = databench_py.Meta('dummypi_py', __name__, __doc__, Analysis)
+    analysis = databench_py.singlethread.Meta(
+        'dummypi_py', __name__, __doc__, Analysis
+    )
     analysis.event_loop()

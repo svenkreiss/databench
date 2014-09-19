@@ -1,5 +1,5 @@
 """Databench Python kernel module."""
 
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 
-from .analysis import Analysis, Meta
+from .analysis import Analysis
