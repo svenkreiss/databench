@@ -43,7 +43,8 @@ def create_analyses(name, py_native):
     if not os.path.exists(os.getcwd()+'/analyses/__init__.py'):
         with open('analyses/__init__.py', 'w') as f:
             f.write('"""Analyses folder created by `scaffold-databench`. '
-                    'Modify me.\n\nSources: '
+                    'Modify me. This text is in `analyses/__init__.py`.'
+                    '\n\nSources: '
                     '[github.com/username/project]'
                     '(http://github.com/username/project)"""\n\n')
             f.write('__version__ = "0.0.1"\n')
