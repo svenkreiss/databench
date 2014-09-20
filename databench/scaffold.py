@@ -106,9 +106,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('analysis_name',
                         help='Name of the analysis to be created.')
+    parser.add_argument('-y', dest='yes', default=False, action='store_true',
+                        help='Answer all questions with yes. Be careful.')
     args = parser.parse_args()
 
-    if not check_folders(args.analysis_name):
+    if not (args.yes or check_folders(args.analysis_name)):
         return
 
     py_native = args.analysis_name.split('_')[-1] not in [
