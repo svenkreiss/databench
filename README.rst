@@ -13,16 +13,11 @@ Databench
     :target: https://coveralls.io/r/svenkreiss/databench
 
 
-Documentation
--------------
+Documentation and License
+-------------------------
 
-User guide and API documentation: `www.svenkreiss.com/databench/v0.3/ <http://www.svenkreiss.com/databench/v0.3/>`_
-
-
-License
--------
-
-Databench was written by Sven Kreiss and made available under the `MIT license <https://github.com/svenkreiss/databench/blob/master/LICENSE>`_.
+| User guide and API documentation: `www.svenkreiss.com/databench/v0.3/ <http://www.svenkreiss.com/databench/v0.3/>`_
+| Databench was written by Sven Kreiss and made available under the `MIT license <https://github.com/svenkreiss/databench/blob/master/LICENSE>`_.
 
 
 Changelog
