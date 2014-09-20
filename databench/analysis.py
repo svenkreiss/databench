@@ -405,10 +405,6 @@ class MetaZMQ(Meta):
                 time.sleep(0.1)
         gevent.Greenlet.spawn(sending_init)
 
-    def __del__(self):
-        self.kernel_process.terminate()
-        self.kernel_process.kill()
-
     def instantiate_analysis_class(self):
         self.zmq_analysis_id += 1
         i = self.analysis_class(self.name,
