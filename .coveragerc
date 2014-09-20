@@ -1,0 +1,8 @@
+[run]
+source = databench
+
+[report]
+omit =
+    databench/scaffold.py
+    databench/cli.py
+    databench/analyses_packaged/*
