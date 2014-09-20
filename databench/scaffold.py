@@ -4,8 +4,6 @@
 
 import os
 import argparse
-from databench.analyses_packaged.scaffold.analysis \
-    import __file__ as analysis_src_file
 
 
 def check_folders(name):
@@ -33,7 +31,7 @@ def check_folders(name):
     return True
 
 
-def create_analyses(name, py_native):
+def create_analyses(name, suffix):
     """If it does not exist already, it creates the top level analyses folder
     and it's __init__.py file."""
 
@@ -51,7 +49,7 @@ def create_analyses(name, py_native):
             f.write('__author__ = "Change Me Please <change@meplease.com>"\n')
             f.write('\n')
 
-    if py_native:
+    if not suffix:
         with open('analyses/__init__.py', 'r') as f:
             existing = f.readlines()
         if 'import '+name+'.analysis\n' in existing:
@@ -73,16 +71,20 @@ def copy_scaffold_file(src, dest, name):
         print 'FATAL: source '+src+' is empty.'
         raise
 
+    # scaffold name
+    scaffold_name = src[:src.rfind('/')]
+    scaffold_name = scaffold_name[scaffold_name.rfind('/')+1:]
+
     # replace
-    lines = [l.replace('scaffold', name) for l in lines]
-    lines = [l.replace('Scaffold', name.title()) for l in lines]
+    lines = [l.replace(scaffold_name, name) for l in lines]
+    lines = [l.replace(scaffold_name.title(), name.title()) for l in lines]
 
     with open(dest, 'w') as f:
         for l in lines:
             f.write(l)
 
 
-def create_analysis(name, py_native):
+def create_analysis(name, suffix, src_dir):
     """Create analysis files."""
 
     # analysis folder
@@ -93,13 +95,12 @@ def create_analysis(name, py_native):
         print 'WARNING: analysis folder '+folder+' already exists.'
 
     # __init__.py
-    if py_native:
+    if not suffix:
         os.system('touch '+folder+'/__init__.py')
 
     # copy all other files
     for f in ['analysis.py', 'index.html', 'README.md', 'thumbnail.png']:
-        src = analysis_src_file.replace('analysis.pyc', f)
-        copy_scaffold_file(src, folder+'/'+f, name)
+        copy_scaffold_file(src_dir+'/'+f, folder+'/'+f, name)
 
 
 def main():
@@ -113,12 +114,20 @@ def main():
     if not (args.yes or check_folders(args.analysis_name)):
         return
 
-    py_native = args.analysis_name.split('_')[-1] not in [
-        'py', 'pyspark', 'spark', 'go', 'lua', 'julia', 'r'
-    ]
+    suffix = args.analysis_name.split('_')[-1]
+    if suffix not in ['py', 'pyspark', 'spark', 'go', 'lua', 'julia', 'r']:
+        suffix = None
 
-    create_analyses(args.analysis_name, py_native)
-    create_analysis(args.analysis_name, py_native)
+    # this is a hack to obtain the src directory
+    import databench.analyses_packaged.scaffold.analysis
+    src_file = databench.analyses_packaged.scaffold.analysis.__file__
+    src_dir = src_file[:src_file.rfind('/')]
+
+    if suffix in ['py', 'pyspark']:
+        src_dir += '_py'
+
+    create_analyses(args.analysis_name, suffix)
+    create_analysis(args.analysis_name, suffix, src_dir)
     print("Done.")
 
 
