@@ -1,5 +1,9 @@
 include README.rst AUTHORS.rst LICENSE
 recursive-include databench/templates *
+recursive-exclude databench/templates *.pyc .DS_Store
 recursive-include databench/static *
+recursive-exclude databench/static *.pyc .DS_Store
 recursive-include databench/analyses_packaged *
+recursive-exclude databench/analyses_packaged *.pyc .DS_Store
 recursive-include tests *
+recursive-exclude tests *.pyc .DS_Store
