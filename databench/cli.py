@@ -56,7 +56,10 @@ def main():
     cov = None
     if args.with_coverage:
         import coverage
-        cov = coverage.coverage(data_suffix=str(int(random.random()*999999.0)))
+        cov = coverage.coverage(
+            data_suffix=str(int(random.random()*999999.0)),
+            include='databench/*.py'
+        )
         cov.start()
 
     # delimiters
