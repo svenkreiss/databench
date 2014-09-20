@@ -11,6 +11,8 @@ Databench
     :target: https://travis-ci.org/svenkreiss/databench
 .. image:: https://coveralls.io/repos/svenkreiss/databench/badge.png
     :target: https://coveralls.io/r/svenkreiss/databench
+.. image:: https://pypip.in/v/databench/badge.svg
+    :target: https://pypi.python.org/pypi/databench/
 
 
 Documentation and License
@@ -23,7 +25,8 @@ Documentation and License
 Changelog
 ---------
 
-* `master <https://github.com/svenkreiss/databench/compare/v0.2.15...master>`_ (for 0.3.0)
+* `master <https://github.com/svenkreiss/databench/compare/v0.3.0...master>`_
+* `0.3.0 <https://github.com/svenkreiss/databench/compare/v0.2.15...v0.3.0>`_ (2014-09-20)
     * ``include_md()`` macro for frontend to include Markdown files
     * python 2.6 support (in addition to 2.7)
     * new tool ``scaffold-databench``
