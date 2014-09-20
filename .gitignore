@@ -23,6 +23,7 @@ var/
 *.egg
 venv/
 venv26/
+.coverage*
 
 # Installer logs
 pip-log.txt

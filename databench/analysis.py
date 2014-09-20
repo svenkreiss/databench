@@ -188,7 +188,7 @@ class Meta(object):
 
         response = Response(generator(), mimetype='application/zip')
         response.headers['Content-Disposition'] = \
-            'attachment; filename={}'.format(self.name+'.zip')
+            'attachment; filename='+self.name+'.zip'
         return response
 
     def wire_sockets(self, sockets, url_prefix=''):
