@@ -71,6 +71,11 @@ def test_ws_dummypi():
     ws.close()
 
 
+def test_zip_dummypi():
+    r = requests.get('http://127.0.0.1:5000/dummypi/dummypi.zip')
+    assert r.status_code == 200
+
+
 """
 
 Python Language Kernel tests
