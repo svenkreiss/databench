@@ -11,7 +11,6 @@ import logging
 import argparse
 import werkzeug.serving
 
-from .app import App
 from . import __version__ as DATABENCH_VERSION
 
 
@@ -47,20 +46,23 @@ def main():
                                 help='delimiter for comment end')
     args = parser.parse_args()
 
-    # log
-    if args.loglevel != 'NOTSET':
-        print 'Setting loglevel to '+args.loglevel+'.'
-        logging.basicConfig(level=getattr(logging, args.loglevel))
-
     # coverage
     cov = None
     if args.with_coverage:
         import coverage
         cov = coverage.coverage(
             data_suffix=str(int(random.random()*999999.0)),
-            include='databench/*.py'
+            source=['databench'],
         )
         cov.start()
+
+    # this is included here so that is included in coverage
+    from .app import App
+
+    # log
+    if args.loglevel != 'NOTSET':
+        print 'Setting loglevel to '+args.loglevel+'.'
+        logging.basicConfig(level=getattr(logging, args.loglevel))
 
     # delimiters
     delimiters = {

@@ -5,6 +5,6 @@ python:
 install:
  - "pip install -r requirements_analyses.txt"
  - "pip install python-coveralls coverage"
-script: "travis_retry python setup.py nosetests --with-coverage --cover-package=databench --cover-erase"
+script: "travis_retry python setup.py nosetests --with-coverage --cover-erase"
 after_success:
   - coveralls
