@@ -64,6 +64,7 @@ setup(
 
     tests_require=[
         'nose>=1.3.4',
+        'coverage>=3.7.1',
         'requests>=2.4.1',
         'websocket-client>=0.18.0',
     ],

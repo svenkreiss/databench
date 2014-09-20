@@ -4,6 +4,9 @@ the analyses pages and runs the python backend."""
 
 
 import os
+import sys
+import signal
+import random
 import logging
 import argparse
 import werkzeug.serving
@@ -26,6 +29,9 @@ def main():
     parser.add_argument('--port', dest='port',
                         type=int, default=int(os.environ.get('PORT', 5000)),
                         help='set port for webserver')
+    parser.add_argument('--with-coverage', dest='with_coverage',
+                        default=False, action='store_true',
+                        help='create code coverage statistics')
     delimiter_args = parser.add_argument_group('delimiters')
     delimiter_args.add_argument('--variable_start_string',
                                 help='delimiter for variable start')
@@ -45,6 +51,13 @@ def main():
     if args.loglevel != 'NOTSET':
         print 'Setting loglevel to '+args.loglevel+'.'
         logging.basicConfig(level=getattr(logging, args.loglevel))
+
+    # coverage
+    cov = None
+    if args.with_coverage:
+        import coverage
+        cov = coverage.coverage(data_suffix=str(int(random.random()*999999.0)))
+        cov.start()
 
     # delimiters
     delimiters = {
@@ -67,6 +80,15 @@ def main():
     print '--- databench v'+DATABENCH_VERSION+' ---'
     logging.info('host='+str(args.host)+', port='+str(args.port))
     logging.info('delimiters='+str(delimiters))
+
+    # handle external signal to terminate nicely (used in tests)
+    def sigusr1_handler(signum, stack):
+        print('exit program')
+        if cov:
+            cov.stop()
+            cov.save()
+        sys.exit(0)
+    signal.signal(signal.SIGUSR1, sigusr1_handler)
 
     @werkzeug.serving.run_with_reloader
     def reloader():

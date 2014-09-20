@@ -23,8 +23,10 @@ def setup_module():
 
     # call os.setsid so that all subprocesses terminate when the
     # main process receives SIGTERM
-    DAEMON = subprocess.Popen(['databench'],
+    DAEMON = subprocess.Popen(['databench', '--with-coverage'],
                               close_fds=True,
+                              stdin=subprocess.PIPE,
+                              stdout=subprocess.PIPE,
                               preexec_fn=os.setsid)
     time.sleep(1)
 
@@ -34,7 +36,8 @@ def teardown_module():
 
     # simply DAEMON.terminate() would only terminate the main process,
     # but the nested processes also need to be terminated
-    os.killpg(DAEMON.pid, signal.SIGTERM)
+    os.killpg(DAEMON.pid, signal.SIGUSR1)
+    DAEMON.wait()
 
 
 """

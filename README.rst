@@ -9,6 +9,8 @@ Databench
 
 .. image:: https://travis-ci.org/svenkreiss/databench.png?branch=master
     :target: https://travis-ci.org/svenkreiss/databench
+.. image:: https://coveralls.io/repos/svenkreiss/databench/badge.png
+    :target: https://coveralls.io/r/svenkreiss/databench
 
 
 Documentation
