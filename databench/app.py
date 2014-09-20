@@ -132,7 +132,9 @@ class App(object):
     def register_analyses_pyspark(self, zmq_publish):
         analysis_folders = glob.glob('analyses/*_pyspark')
         if not analysis_folders:
-            analysis_folders = glob.glob('databench/analyses_packaged/*_pyspark')
+            analysis_folders = glob.glob(
+                'databench/analyses_packaged/*_pyspark'
+            )
 
         for analysis_folder in analysis_folders:
             name = analysis_folder[analysis_folder.rfind('/')+1:]
