@@ -95,6 +95,10 @@ div.sphinxsidebarwrapper p.logo {
     text-align: center;
 }
 
+div.sphinxsidebarwrapper img.logo {
+    max-width: 70%;
+}
+
 div.sphinxsidebarwrapper h1.logo {
     margin-top: -10px;
     text-align: center;
