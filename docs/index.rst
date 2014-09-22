@@ -20,14 +20,17 @@ It provides the executables ``scaffold-databench`` and ``databench``, Python mod
 Some features are shown in the `live demos`_. They do not include examples with parallelization or database interfaces (like asynchronously subscribing to a Redis channel) but those examples are available in the `databench_examples`_ repository.
 
 .. image:: images/mpld3pi_demo.png
+   :alt: Preview of mpld3pi demo.
    :height: 270
    :target: http://databench-examples.svenkreiss.com/mpld3pi/
 
 .. image:: images/mpld3_heart_path.png
+   :alt: Preview of mpld3Drag demo.
    :height: 270
    :target: http://databench-examples.svenkreiss.com/mpld3Drag/
 
 .. image:: images/bagofcharsd3.png
+   :alt: Preview of bag-of-chars demo.
    :height: 270
    :target: http://databench-examples.svenkreiss.com/bagofcharsd3/
 

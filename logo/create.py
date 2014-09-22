@@ -55,8 +55,9 @@ def main(fn):
     print(svg_document.tostring())
     svg_document.save()
 
-    # create a png
+    # create pngs
     os.system('svg2png logo.svg --width=100 --height=100')
+    os.system('svg2png logo.svg --width=600 --height=600')
 
 
 if __name__ == "__main__":
