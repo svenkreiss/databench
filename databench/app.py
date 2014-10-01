@@ -10,7 +10,7 @@ import zmq.green as zmq
 import flask_sockets
 from gevent import pywsgi
 from flask.ext.markdown import Markdown
-from flask import Flask, render_template
+from flask import Flask, render_template, send_from_directory
 from geventwebsocket.handler import WebSocketHandler
 
 from .analysis import Meta, MetaZMQ
@@ -197,6 +197,20 @@ class App(object):
             self.header['title'] = analyses.header_title
         except AttributeError:
             logging.info('Analyses module does not specify a header title.')
+
+        # if main analyses folder contains a 'static' folder, make it available
+        static_path = analyses.__file__.replace('__init__.pyc', 'static/')
+        if os.path.isdir(static_path):
+            logging.debug('making analyses/static/ available under '
+                          'analyses_static/.')
+
+            def analyses_static(filename):
+                return send_from_directory(static_path, filename)
+
+            self.flask_app.add_url_rule('/analyses_static/<path:filename>',
+                                        'analyses_static', analyses_static)
+        else:
+            logging.debug('did not find an analyses/static/ folder.')
 
     def register_analyses(self):
         """Register analyses (analyses need to be imported first)."""
