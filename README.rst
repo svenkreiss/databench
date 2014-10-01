@@ -25,7 +25,11 @@ Documentation and License
 Changelog
 ---------
 
-* `master <https://github.com/svenkreiss/databench/compare/v0.3.0...master>`_
+* `master <https://github.com/svenkreiss/databench/compare/v0.3.3...master>`_
+* `0.3.3 <https://github.com/svenkreiss/databench/compare/v0.3.0...v0.3.3>`_ (2014-10-01)
+    * clean up of Python source distribution
+    * customizable header
+    * serve static files at ``analyses/static/`` under ``analyses_static/``
 * `0.3.0 <https://github.com/svenkreiss/databench/compare/v0.2.15...v0.3.0>`_ (2014-09-20)
     * ``include_md()`` macro for frontend to include Markdown files
     * python 2.6 support (in addition to 2.7)
