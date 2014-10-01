@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Frontend &mdash; Databench 0.3.2 documentation</title>
+    <title>Frontend &mdash; Databench 0.3.3 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.3.2',
+        VERSION:     '0.3.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="shortcut icon" href="_static/favicon.ico"/>
-    <link rel="top" title="Databench 0.3.2 documentation" href="index.html" />
+    <link rel="top" title="Databench 0.3.3 documentation" href="index.html" />
     <link rel="next" title="Backend" href="backend.html" />
     <link rel="prev" title="Quickstart" href="quickstart.html" />
    
@@ -57,7 +57,7 @@
         <li class="right" >
           <a href="quickstart.html" title="Quickstart"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">Databench 0.3.2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Databench 0.3.3 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -80,6 +80,12 @@ libraries are already loaded:</p>
 </div>
 <p>When using your own html template, you need to include at least <tt class="docutils literal"><span class="pre">jQuery</span></tt>
 and <tt class="docutils literal"><span class="pre">databench.js</span></tt>.</p>
+<p>You can customize the header in <tt class="docutils literal"><span class="pre">analyses/__init__.py</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">header_logo</span> <span class="o">=</span> <span class="s">&#39;/analyses_static/logo-header.svg&#39;</span>
+<span class="n">header_title</span> <span class="o">=</span> <span class="s">&#39;My-awesome-project-or-company-name&#39;</span>
+</pre></div>
+</div>
+<p>Place the <tt class="docutils literal"><span class="pre">logo-header.svg</span></tt> file in <tt class="docutils literal"><span class="pre">analyses/static/</span></tt>. Any standard image format like <tt class="docutils literal"><span class="pre">.png</span></tt>, <tt class="docutils literal"><span class="pre">.jpeg</span></tt> and <tt class="docutils literal"><span class="pre">.svg</span></tt> is supported.</p>
 <p>In the html template, <tt class="docutils literal"><span class="pre">[[</span> <span class="pre">analysis_description</span> <span class="pre">]]</span></tt> returns the description
 string passed into <a class="reference internal" href="backend.html#databench.Analysis" title="databench.Analysis"><tt class="xref py py-class docutils literal"><span class="pre">databench.Analysis</span></tt></a> which is usually the <tt class="docutils literal"><span class="pre">__doc__</span></tt>
 string of your analysis Python file.</p>
@@ -324,7 +330,7 @@ Check out the <a href="http://databench-examples.svenkreiss.com/">live demos</a>
 
 
 <p class="blurb">
-  This is the documentation for version 0.3.2.
+  This is the documentation for version 0.3.3.
   
     Version 0.2 is
     <a href="http://www.svenkreiss.com/databench/v0.2/">here</a>.

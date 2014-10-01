@@ -16,6 +16,15 @@ libraries are already loaded:
 When using your own html template, you need to include at least ``jQuery``
 and ``databench.js``.
 
+You can customize the header in ``analyses/__init__.py``:
+
+.. code-block:: python
+
+    header_logo = '/analyses_static/logo-header.svg'
+    header_title = 'My-awesome-project-or-company-name'
+
+Place the ``logo-header.svg`` file in ``analyses/static/``. Any standard image format like ``.png``, ``.jpeg`` and ``.svg`` is supported.
+
 In the html template, ``[[ analysis_description ]]`` returns the description
 string passed into :class:`databench.Analysis` which is usually the ``__doc__``
 string of your analysis Python file.
