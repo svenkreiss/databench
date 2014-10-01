@@ -45,5 +45,13 @@ class Analysis(databench.Analysis):
         """Sets the number of samples to generate per run."""
         self.samples = value
 
+    def on_test_fn(self, first_param, second_param=100):
+        """Echo params."""
+        print(first_param, second_param)
+        self.emit('test_fn', {
+            'first_param': first_param,
+            'second_param': second_param,
+        })
+
 
 META = databench.Meta('dummypi', __name__, __doc__, Analysis)

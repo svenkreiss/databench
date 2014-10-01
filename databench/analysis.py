@@ -206,7 +206,7 @@ class Meta(object):
 
         # detect action_id
         action_id = None
-        if '__action_id' in message:
+        if isinstance(message, dict) and '__action_id' in message:
             action_id = message['__action_id']
             del message['__action_id']
 

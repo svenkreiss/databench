@@ -105,3 +105,68 @@ def test_ws_dummypi_py():
     assert '"signal": "status"' in r
     assert '"load": {"pi-uncertainty":' in r
     ws.close()
+
+
+"""
+
+Function Argument Tests
+-----------------------
+"""
+
+
+def _fn_call(name='dummypi'):
+    websocket.enableTrace(True)
+    ws = websocket.create_connection('ws://127.0.0.1:5000/'+name+'/ws')
+    ws.send('{"signal":"test_fn", "load": 1}')
+    r = ws.recv()
+    print(r)
+    assert '"signal": "test_fn"' in r
+    assert '"load": {"first_param": 1, "second_param": 100}' in r
+    ws.close()
+
+
+def _fn_call_array(name='dummypi'):
+    websocket.enableTrace(True)
+    ws = websocket.create_connection('ws://127.0.0.1:5000/'+name+'/ws')
+    ws.send('{"signal":"test_fn", "load": [1, 2]}')
+    r = ws.recv()
+    print(r)
+    assert '"signal": "test_fn"' in r
+    assert '"load": {"first_param": 1, "second_param": 2}' in r
+    ws.close()
+
+
+def _fn_call_dict(name='dummypi'):
+    websocket.enableTrace(True)
+    ws = websocket.create_connection('ws://127.0.0.1:5000/'+name+'/ws')
+    ws.send('{"signal":"test_fn", "load": '
+            '{"first_param": 1, "second_param": 2}}')
+    r = ws.recv()
+    print(r)
+    assert '"signal": "test_fn"' in r
+    assert '"load": {"first_param": 1, "second_param": 2}' in r
+    ws.close()
+
+
+def test_fn_call_dummypi():
+    _fn_call()
+
+
+def test_fn_call_dummypi_array():
+    _fn_call_array()
+
+
+def test_fn_call_dummypi_dict():
+    _fn_call_dict()
+
+
+def test_fn_call_dummypi_py():
+    _fn_call(name='dummypi_py')
+
+
+def test_fn_call_dummypi_py_array():
+    _fn_call_array(name='dummypi_py')
+
+
+def test_fn_call_dummypi_py_dict():
+    _fn_call_dict(name='dummypi_py')
