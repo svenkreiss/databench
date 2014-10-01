@@ -13,7 +13,7 @@
         <link rel="shortcut icon" href="[[ url_for('static', filename='favicon.ico') ]]">
         <link rel="stylesheet" href="/static/bootstrap-3.1.1-dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="/static/font-awesome/font-awesome.min.css">
-        <link rel="stylesheet" href="[[ url_for('static', filename='main.css') ]]?version=014">
+        <link rel="stylesheet" href="[[ url_for('static', filename='main.css') ]]?version=016">
         {% block head %}{% endblock %}
     </head>
     <body>
@@ -25,14 +25,14 @@
         <div class="container">
             <div class="header">
                 <h3><a href="/" class="text-muted">
-                    <img src="/static/logo.svg" height="26" style="vertical-align:baseline;" />
-                    Databench
+                    {% block headerlogo %}
+                    <img src="[[ header.logo ]]" /> [[ header.title ]]
+                    {% endblock %}
                 </a></h3>
             </div>
 
             <div class="content">
                 {% block content %}
-                    test
                 {% endblock %}
             </div>
 

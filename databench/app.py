@@ -46,6 +46,7 @@ class App(object):
 
         self.sockets = flask_sockets.Sockets(self.flask_app)
 
+        self.header = {'logo': '/static/logo.svg', 'title': 'Databench'}
         self.description = None
         self.analyses_author = None
         self.analyses_version = None
@@ -188,6 +189,14 @@ class App(object):
             self.analyses_version = analyses.__version__
         except AttributeError:
             logging.info('Analyses module does not have a version string.')
+        try:
+            self.header['logo'] = analyses.header_logo
+        except AttributeError:
+            logging.info('Analyses module does not specify a logo.')
+        try:
+            self.header['title'] = analyses.header_title
+        except AttributeError:
+            logging.info('Analyses module does not specify a header title.')
 
     def register_analyses(self):
         """Register analyses (analyses need to be imported first)."""
@@ -200,8 +209,10 @@ class App(object):
                 url_prefix='/'+meta.name
             )
 
-            print 'Connect websockets to '+meta.name+'.'
+            logging.debug('Connect websockets to '+meta.name+'.')
             meta.wire_sockets(self.sockets, url_prefix='/'+meta.name)
+            logging.debug('Set header information.')
+            meta.header = self.header
 
     def render_index(self):
         """Render the List-of-Analyses overview page."""
@@ -210,6 +221,7 @@ class App(object):
             analyses=Meta.all_instances,
             analyses_author=self.analyses_author,
             analyses_version=self.analyses_version,
+            header=self.header,
             description=self.description,
             databench_version=DATABENCH_VERSION
         )

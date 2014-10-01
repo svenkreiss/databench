@@ -2,3 +2,5 @@
 
 import dummypi.analysis
 import scaffold.analysis
+
+header_title = 'Databench - Packaged Analyses'

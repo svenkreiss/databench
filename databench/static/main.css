@@ -9,6 +9,10 @@ body {
 .header a:hover {
 	text-decoration: none;
 }
+.header img {
+    height: 26px;
+    vertical-align: baseline;
+}
 
 .content {
 	margin: 40px 0;

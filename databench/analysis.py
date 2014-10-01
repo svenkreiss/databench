@@ -122,6 +122,7 @@ class Meta(object):
 
         self.name = name
         self.import_name = import_name
+        self.header = {'logo': '/static/logo.svg', 'title': 'Databench'}
         self.description = description
         self.analysis_class = analysis_class
 
@@ -153,6 +154,7 @@ class Meta(object):
         """Renders the main analysis frontend template."""
         return render_template(
             self.name+'/index.html',
+            header=self.header,
             analysis_name=self.name,
             analysis_description=self.description,
         )
