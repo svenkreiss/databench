@@ -17,22 +17,22 @@ Databench is a Python package that you can install using ``pip``:
 
 It provides the executables ``scaffold-databench`` and ``databench``, Python modules for the backend and a JavaScript library for the frontend. ``scaffold-databench helloworld`` creates an analysis template called *helloworld* in the current working directory. Running ``databench`` creates a local web server which you can access at http://localhost:5000. A good way to start is to jump right into :ref:`quickstart`.
 
-Some features are shown in the `live demos`_. They do not include examples with parallelization or database interfaces (like asynchronously subscribing to a Redis channel) but those examples are available in the `databench_examples`_ repository.
+Some features are shown in the `live demos`_. They do not include examples with ``matplotlib``, parallelization or database interfaces (like asynchronously subscribing to a Redis channel) but those examples are available in the `databench_examples`_ repository.
 
-.. image:: images/mpld3pi_demo.png
-   :alt: Preview of mpld3pi demo.
+.. image:: images/flowers_demo.png
+   :alt: Preview of flowers demo.
    :height: 270
-   :target: http://databench-examples.svenkreiss.com/mpld3pi/
-
-.. image:: images/mpld3_heart_path.png
-   :alt: Preview of mpld3Drag demo.
-   :height: 270
-   :target: http://databench-examples.svenkreiss.com/mpld3Drag/
+   :target: http://databench-examples.svenkreiss.com/flowers/
 
 .. image:: images/bagofcharsd3.png
    :alt: Preview of bag-of-chars demo.
    :height: 270
    :target: http://databench-examples.svenkreiss.com/bagofcharsd3/
+
+.. image:: images/simplepi_demo.png
+   :alt: Preview of simplepi demo.
+   :height: 270
+   :target: http://databench-examples.svenkreiss.com/simplepi/
 
 The `live demos`_ and `databench_examples`_ also show seemless integration with *markdown* and *MathJax* as well as with *angular.js*.
 
