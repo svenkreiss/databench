@@ -171,7 +171,8 @@ of <tt class="docutils literal"><span class="pre">analysis.py</span></tt>:</p>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 </pre></div>
 </div>
-<p>That&#8217;s it.</p>
+<p>That&#8217;s it. For a working example, please see the
+<a class="reference external" href="https://github.com/svenkreiss/databench_examples/tree/master/analyses/mpld3pi">mpld3pi demo</a>.</p>
 <p>If you want to have multiple canvases, add a second <tt class="docutils literal"><span class="pre">&lt;div&gt;</span></tt> and
 append something to the <tt class="docutils literal"><span class="pre">id</span></tt>. The <tt class="docutils literal"><span class="pre">id</span></tt> only has to start with
 <tt class="docutils literal"><span class="pre">mpld3canvas</span></tt> to be automatically connected to the backend.
@@ -273,11 +274,40 @@ Databench. On the frontend, add</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>On the backend, ... coming soon ...</p>
+<p>On the backend, create some data and send it to the frontend with the
+<tt class="docutils literal"><span class="pre">update</span></tt> signal:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;x1&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s">&#39;y1&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s">&#39;x2&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s">&#39;y2&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+     <span class="s">&#39;width&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span> <span class="s">&#39;color&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;x1&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s">&#39;y1&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s">&#39;x2&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s">&#39;y2&#39;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span>
+     <span class="s">&#39;width&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span> <span class="s">&#39;color&#39;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s">&#39;x1&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s">&#39;y1&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s">&#39;x2&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s">&#39;y2&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+     <span class="s">&#39;width&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span> <span class="s">&#39;color&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">},</span>
+<span class="p">]</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&#39;update&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="c"># update with some new data after a short wait</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">data2</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;x1&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s">&#39;y1&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s">&#39;x2&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s">&#39;y2&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+     <span class="s">&#39;width&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s">&#39;color&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;x1&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s">&#39;y1&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s">&#39;x2&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s">&#39;y2&#39;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span>
+     <span class="s">&#39;width&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s">&#39;color&#39;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s">&#39;x1&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s">&#39;y1&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s">&#39;x2&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s">&#39;y2&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+     <span class="s">&#39;width&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s">&#39;color&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">},</span>
+<span class="p">]</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&#39;update&#39;</span><span class="p">,</span> <span class="n">data2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>That&#8217;s it.</p>
 </div>
 <div class="section" id="custom-api-endpoints">
 <h2>Custom API Endpoints<a class="headerlink" href="#custom-api-endpoints" title="Permalink to this headline">¶</a></h2>
 <p>Coming soon ...</p>
+<p>A working example of the analysis that you get from following all parts of this
+tutorial is available in the
+<a class="reference external" href="https://github.com/svenkreiss/databench_examples">Databench examples repository</a>
+under the name
+<a class="reference external" href="https://github.com/svenkreiss/databench_examples/tree/master/analyses/tutorial">tutorial</a>.</p>
 </div>
 </div>
 
