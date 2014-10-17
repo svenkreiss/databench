@@ -6,8 +6,7 @@ Tutorial
 This tutorial assumes you have read :ref:`quickstart` and know how to create
 an analysis using ``scaffold-databench``.
 This tutorial covers custom styling/branding, layouts with Bootstrap 3,
-the use of generic UI elements, matplotlib, basic d3.js and
-custom API endpoints.
+the use of generic UI elements, matplotlib and basic d3.js.
 
 Your input is very welcome. Please don't hesitate to
 `file a bug <https://github.com/svenkreiss/databench/issues>`_ or
@@ -275,14 +274,13 @@ On the backend, create some data and send it to the frontend with the
 That's it.
 
 
-Custom API Endpoints
---------------------
-
-Coming soon ...
-
+Wrapping Up
+-----------
 
 A working example of the analysis that you get from following all parts of this
 tutorial is available in the
 `Databench examples repository <https://github.com/svenkreiss/databench_examples>`_
 under the name
 `tutorial <https://github.com/svenkreiss/databench_examples/tree/master/analyses/tutorial>`_.
+
+As mentioned before, please feel free to send comments about this tutorial.
