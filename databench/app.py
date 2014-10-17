@@ -199,9 +199,10 @@ class App(object):
             logging.info('Analyses module does not specify a header title.')
 
         # if main analyses folder contains a 'static' folder, make it available
-        static_path = analyses.__file__.replace('__init__.pyc', 'static/')
+        static_path = (os.getcwd() + '/' +
+                       analyses.__file__.replace('__init__.pyc', 'static/'))
         if os.path.isdir(static_path):
-            logging.debug('making analyses/static/ available under '
+            logging.debug('Making '+static_path+' available under '
                           'analyses_static/.')
 
             def analyses_static(filename):
@@ -210,7 +211,8 @@ class App(object):
             self.flask_app.add_url_rule('/analyses_static/<path:filename>',
                                         'analyses_static', analyses_static)
         else:
-            logging.debug('did not find an analyses/static/ folder.')
+            logging.debug('Did not find an analyses/static/ folder. ' +
+                          'Checked: '+static_path)
 
     def register_analyses(self):
         """Register analyses (analyses need to be imported first)."""
