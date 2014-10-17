@@ -27,7 +27,11 @@ Documentation and License
 Changelog
 ---------
 
-* `master <https://github.com/svenkreiss/databench/compare/v0.3.3...master>`_
+* `master <https://github.com/svenkreiss/databench/compare/v0.3.4...master>`_
+* `0.3.4 <https://github.com/svenkreiss/databench/compare/v0.3.3...v0.3.4>`_ (2014-10-17)
+    * added a tutorial to the docs
+    * added comments and explanation to scaffold analysis
+    * friendlier logo
 * `0.3.3 <https://github.com/svenkreiss/databench/compare/v0.3.0...v0.3.3>`_ (2014-10-01)
     * clean up of Python source distribution
     * customizable header
