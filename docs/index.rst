@@ -53,6 +53,7 @@ Contents
 
    self
    quickstart
+   tutorial
    frontend
    backend
    deploy
