@@ -135,7 +135,9 @@ of ``analysis.py``:
     import mpld3
     import matplotlib.pyplot as plt
 
-That's it.
+That's it. For a working example, please see the
+`mpld3pi demo <https://github.com/svenkreiss/databench_examples/tree/master/analyses/mpld3pi>`_.
+
 
 If you want to have multiple canvases, add a second ``<div>`` and
 append something to the ``id``. The ``id`` only has to start with
@@ -244,7 +246,33 @@ which is just a SVG canvas in HTML with the id ``canvas``. Go to the
         };
     }
 
-On the backend, ... coming soon ...
+On the backend, create some data and send it to the frontend with the
+``update`` signal:
+
+.. code-block:: python
+
+    data = [
+        {'id': 1, 'x1': 0.1, 'y1': 0.1, 'x2': 0.8, 'y2': 0.5,
+         'width': 0.05, 'color': 0.5},
+        {'id': 2, 'x1': 0.1, 'y1': 0.3, 'x2': 0.8, 'y2': 0.7,
+         'width': 0.05, 'color': 0.7},
+        {'id': 3, 'x1': 0.1, 'y1': 0.5, 'x2': 0.8, 'y2': 0.9,
+         'width': 0.05, 'color': 0.9},
+    ]
+    self.emit('update', data)
+    # update with some new data after a short wait
+    time.sleep(1)
+    data2 = [
+        {'id': 1, 'x1': 0.1, 'y1': 0.1, 'x2': 0.8, 'y2': 0.5,
+         'width': 0.2, 'color': 0.5},
+        {'id': 2, 'x1': 0.1, 'y1': 0.3, 'x2': 0.8, 'y2': 0.7,
+         'width': 0.2, 'color': 0.7},
+        {'id': 3, 'x1': 0.1, 'y1': 0.5, 'x2': 0.8, 'y2': 0.9,
+         'width': 0.2, 'color': 0.9},
+    ]
+    self.emit('update', data2)
+
+That's it.
 
 
 Custom API Endpoints
@@ -253,3 +281,8 @@ Custom API Endpoints
 Coming soon ...
 
 
+A working example of the analysis that you get from following all parts of this
+tutorial is available in the
+`Databench examples repository <https://github.com/svenkreiss/databench_examples>`_
+under the name
+`tutorial <https://github.com/svenkreiss/databench_examples/tree/master/analyses/tutorial>`_.
