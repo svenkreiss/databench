@@ -18,8 +18,9 @@
 /* -- page layout ----------------------------------------------------------- */
 
 body {
-    font-family: serif;
-    font-size: 17px;
+    font-family: sans-serif;
+    font-size: 15px;
+    // font-size: 17px;
     background-color: white;
     color: #000;
     margin: 0;
@@ -57,7 +58,7 @@ div.body {
 div.footer {
     width: 940px;
     margin: 20px auto 30px auto;
-    font-size: 14px;
+    font-size: 0.8em;
     color: #888;
     text-align: right;
 }
@@ -81,7 +82,7 @@ div.sphinxsidebar a:hover {
 }
 
 div.sphinxsidebar {
-    font-size: 14px;
+    font-size: 0.8em;
     line-height: 1.5;
 }
 
@@ -116,16 +117,16 @@ div.sphinxsidebarwrapper p.blurb {
 
 div.sphinxsidebar h3,
 div.sphinxsidebar h4 {
-    font-family: serif;
+    // font-family: serif;
     color: #444;
-    font-size: 24px;
+    font-size: 140%;
     font-weight: normal;
     margin: 1.5em 0 5px 0;
     padding: 0;
 }
 
 div.sphinxsidebar h4 {
-    font-size: 20px;
+    font-size: 120%;
 }
 
 div.sphinxsidebar h3 a {
@@ -160,8 +161,8 @@ div.sphinxsidebar ul li.toctree-l2 > a {
 
 div.sphinxsidebar input {
     border: 1px solid #CCC;
-    font-family: serif;
-    font-size: 1em;
+    // font-family: serif;
+    // font-size: 1em;
 }
 
 div.sphinxsidebar hr {
@@ -193,9 +194,9 @@ div.body h3,
 div.body h4,
 div.body h5,
 div.body h6 {
-    font-family: serif;
+    // font-family: serif;
     font-weight: normal;
-    margin: 30px 0px 10px 0px;
+    margin: 2.5em 0px 10px 0px;
     padding: 0;
 }
 
@@ -236,9 +237,9 @@ dd div.admonition {
 }
 
 div.admonition p.admonition-title {
-    font-family: serif;
+    // font-family: serif;
     font-weight: normal;
-    font-size: 24px;
+    font-size: 140%;
     margin: 0 0 10px 0;
     padding: 0;
     line-height: 1;
@@ -278,9 +279,14 @@ p.admonition-title:after {
     content: ":";
 }
 
+tt {
+    font-size: 0.9em;
+}
+pre {
+    font-size: 0.8em;
+}
 pre, tt {
     font-family: 'Consolas', 'Menlo', 'Deja Vu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
-    font-size: 0.9em;
 }
 
 img.screenshot {

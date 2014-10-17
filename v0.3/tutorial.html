@@ -1,0 +1,391 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tutorial &mdash; Databench 0.3.4 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.3.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="top" title="Databench 0.3.4 documentation" href="index.html" />
+    <link rel="next" title="Frontend" href="frontend.html" />
+    <link rel="prev" title="Quickstart" href="quickstart.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:creator" content="@svenkreiss">
+  <meta name="twitter:title" content="Databench Docs">
+  <meta name="twitter:description" content="Databench is a data analysis tool using Flask, WebSockets and d3.js. Check out the live demos.">
+  <meta name="twitter:image:src" content="http://www.svenkreiss.com/databench/v0.3/_static/logo-w600.png">
+  <meta name="twitter:url" content="http://www.svenkreiss.com/databench/">
+
+  <meta property="og:title" content="Databench Docs" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="http://www.svenkreiss.com/databench/v0.3/_static/logo-w600.png" />
+  <meta property="og:url" content="http://www.svenkreiss.com/databench/" />
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="frontend.html" title="Frontend"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="quickstart.html" title="Quickstart"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Databench 0.3.4 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="tutorial">
+<span id="id1"></span><h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<p>This tutorial assumes you have read <a class="reference internal" href="quickstart.html#quickstart"><em>Quickstart</em></a> and know how to create
+an analysis using <tt class="docutils literal"><span class="pre">scaffold-databench</span></tt>.
+This tutorial covers custom styling/branding, layouts with Bootstrap 3,
+the use of generic UI elements, matplotlib, basic d3.js and
+custom API endpoints.</p>
+<p>Your input is very welcome. Please don&#8217;t hesitate to
+<a class="reference external" href="https://github.com/svenkreiss/databench/issues">file a bug</a> or
+<a class="reference external" href="https://github.com/svenkreiss/databench/">send pull requests</a>
+for typos, mistakes or improvements to this tutorial.</p>
+<div class="section" id="styling-branding">
+<h2>Styling/Branding<a class="headerlink" href="#styling-branding" title="Permalink to this headline">¶</a></h2>
+<p>Apply styling by adding</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">header_logo</span> <span class="o">=</span> <span class="s">&#39;/analyses_static/logo-header.svg&#39;</span>
+<span class="n">header_title</span> <span class="o">=</span> <span class="s">&quot;My Company&#39;s Data Science Experiments&quot;</span>
+</pre></div>
+</div>
+<p>in <tt class="docutils literal"><span class="pre">analyses/__init__.py</span></tt> and by adding the logo image file at
+<tt class="docutils literal"><span class="pre">analyses/static/logo-header.svg</span></tt> to the file system.</p>
+</div>
+<div class="section" id="layouts-with-bootstrap-3">
+<h2>Layouts with Bootstrap 3<a class="headerlink" href="#layouts-with-bootstrap-3" title="Permalink to this headline">¶</a></h2>
+<p>This is section is not Databench specific. Consult the
+<a class="reference external" href="http://getbootstrap.com/css/#grid">Twitter Bootstrap 3 documentation</a>
+for a more complete introduction.
+For this tutorial, we just focus on creating rows and columns:</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;row&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;col-md-6&quot;</span><span class="nt">&gt;</span>First column<span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;col-md-6&quot;</span><span class="nt">&gt;</span>Second column<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre></div>
+</div>
+<p>which creates one row and two columns. Rows are always 12 units wide.
+The two columns above are both six units wide.
+The <tt class="docutils literal"><span class="pre">md</span></tt> is short for medium and controls
+at what screen width the two columns are shown as rows: viewing this on
+a phone in portrait format for example, the second column will be shown
+below the first column. Replacing <tt class="docutils literal"><span class="pre">md</span></tt> with <tt class="docutils literal"><span class="pre">sm</span></tt> would show this
+content in columns even on small screens. The options are <tt class="docutils literal"><span class="pre">xs</span></tt>, <tt class="docutils literal"><span class="pre">sm</span></tt>,
+<tt class="docutils literal"><span class="pre">md</span></tt> and <tt class="docutils literal"><span class="pre">lg</span></tt>.</p>
+</div>
+<div class="section" id="generic-ui-elements">
+<h2>Generic UI Elements<a class="headerlink" href="#generic-ui-elements" title="Permalink to this headline">¶</a></h2>
+<p>Start from the <tt class="docutils literal"><span class="pre">helloworld</span></tt> project you created in <a class="reference internal" href="quickstart.html#quickstart"><em>Quickstart</em></a>.
+First, add a button to <tt class="docutils literal"><span class="pre">index.html</span></tt> by adding</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;button</span> <span class="na">class=</span><span class="s">&quot;btn btn-primary&quot;</span> <span class="na">data-signal-name=</span><span class="s">&quot;run&quot;</span><span class="nt">&gt;</span>Run<span class="nt">&lt;/button&gt;</span>
+</pre></div>
+</div>
+<p>which creates a <em>primary</em> button which is blue. For other colors, replace
+<tt class="docutils literal"><span class="pre">btn-primary</span></tt> with a class listed in the
+<a class="reference external" href="http://getbootstrap.com/css/#buttons">Bootstrap 3 documentation</a>. The
+signal name <tt class="docutils literal"><span class="pre">run</span></tt> is specified right inside the HTML tag as an attribute. In <tt class="docutils literal"><span class="pre">analysis.py</span></tt>, add a function <tt class="docutils literal"><span class="pre">on_run</span></tt> to your analysis class</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">on_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Run when button is pressed.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&#39;log&#39;</span><span class="p">,</span> <span class="s">&#39;Hi. The run button was pressed. Going to sleep.&#39;</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&#39;log&#39;</span><span class="p">,</span> <span class="s">&#39;Waking up again. Run is done.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>and add <tt class="docutils literal"><span class="pre">import</span> <span class="pre">time</span></tt> to the top of <tt class="docutils literal"><span class="pre">analysis.py</span></tt>. That&#8217;s it. Try it out.
+While <tt class="docutils literal"><span class="pre">on_run()</span></tt> is sleeping for five seconds, the button will look like it is
+pressed in (by temporarily adding the CSS class <tt class="docutils literal"><span class="pre">active</span></tt>) and it will
+automatically get released (<tt class="docutils literal"><span class="pre">active</span></tt> is removed) when <tt class="docutils literal"><span class="pre">on_run()</span></tt>
+finishes.</p>
+<p>Next, add a slider. Add to the frontend:</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;label</span> <span class="na">for=</span><span class="s">&quot;sleep_duration&quot;</span><span class="nt">&gt;</span>Duration of sleep<span class="nt">&lt;/label&gt;</span>
+<span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;range&quot;</span> <span class="na">name=</span><span class="s">&quot;sleep_duration&quot;</span> <span class="na">min=</span><span class="s">&quot;1&quot;</span> <span class="na">max=</span><span class="s">&quot;5&quot;</span> <span class="na">step=</span><span class="s">&quot;1&quot;</span> <span class="na">value=</span><span class="s">&quot;3&quot;</span> <span class="nt">/&gt;</span>
+</pre></div>
+</div>
+<p>where the signal name is picked up from the <tt class="docutils literal"><span class="pre">name</span></tt> attribute. The signal has
+to be processed by the backend with a function of the form <tt class="docutils literal"><span class="pre">on_&lt;signalname&gt;</span></tt>
+again. Add the following to the analysis class in the backend:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">sleep_duration</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="k">def</span> <span class="nf">on_sleep_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration_in_seconds</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">sleep_duration</span> <span class="o">=</span> <span class="n">duration_in_seconds</span>
+</pre></div>
+</div>
+<p>which initializes <tt class="docutils literal"><span class="pre">sleep_duration</span></tt> to make sure it is always a valid
+value and adds the listener function that reponds to changes in the slider
+value. Now go back to the <tt class="docutils literal"><span class="pre">on_run</span></tt> function and replace <tt class="docutils literal"><span class="pre">time.sleep(5)</span></tt>
+with <tt class="docutils literal"><span class="pre">time.sleep(self.sleep_duration)</span></tt>. That&#8217;s it.</p>
+</div>
+<div class="section" id="matplotlib">
+<h2>Matplotlib<a class="headerlink" href="#matplotlib" title="Permalink to this headline">¶</a></h2>
+<p>Output from <a class="reference external" href="http://matplotlib.org/">matplotlib</a> is integrated using
+<a class="reference external" href="http://mpld3.github.io/">mpld3</a>. On the frontend, add</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;mpld3canvas&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</pre></div>
+</div>
+<p>and on the backend, add</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="c"># draw something on fig</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&#39;mpld3canvas&#39;</span><span class="p">,</span> <span class="n">mpld3</span><span class="o">.</span><span class="n">fig_to_dict</span><span class="p">(</span><span class="n">fig</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>for which you will have to have <tt class="docutils literal"><span class="pre">matplotlib</span></tt> and <tt class="docutils literal"><span class="pre">mpld3</span></tt> installed
+using <tt class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">matplotlib</span> <span class="pre">mpld3</span></tt> have to have it included at the top
+of <tt class="docutils literal"><span class="pre">analysis.py</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">mpld3</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+<p>That&#8217;s it.</p>
+<p>If you want to have multiple canvases, add a second <tt class="docutils literal"><span class="pre">&lt;div&gt;</span></tt> and
+append something to the <tt class="docutils literal"><span class="pre">id</span></tt>. The <tt class="docutils literal"><span class="pre">id</span></tt> only has to start with
+<tt class="docutils literal"><span class="pre">mpld3canvas</span></tt> to be automatically connected to the backend.
+For example, add <tt class="docutils literal"><span class="pre">&lt;div</span> <span class="pre">id=&quot;mpld3canvas2&quot;&gt;&lt;/div&gt;</span></tt> and add a second
+emit <tt class="docutils literal"><span class="pre">self.emit('mpld3canvas2',</span> <span class="pre">mpld3.fig_to_dict(fig))</span></tt> which in this case
+would simply show the same <tt class="docutils literal"><span class="pre">fig</span></tt> on two canvases.</p>
+</div>
+<div class="section" id="basic-d3-js">
+<h2>Basic d3.js<a class="headerlink" href="#basic-d3-js" title="Permalink to this headline">¶</a></h2>
+<p>This is a minimal example showing best practices with <tt class="docutils literal"><span class="pre">d3.js</span></tt> for
+Databench. On the frontend, add</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;svg</span> <span class="na">id=</span><span class="s">&quot;canvas&quot;</span> <span class="na">width=</span><span class="s">&quot;300&quot;</span> <span class="na">height=</span><span class="s">&quot;300&quot;</span> <span class="nt">/&gt;</span>
+</pre></div>
+</div>
+<p>which is just a SVG canvas in HTML with the id <tt class="docutils literal"><span class="pre">canvas</span></tt>. Go to the
+<tt class="docutils literal"><span class="pre">&lt;script&gt;</span></tt> part of the frontend and add the following at the bottom:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="c1">// Initialize the VizLogic for our canvas element.</span>
+<span class="kd">var</span> <span class="nx">my_viz</span> <span class="o">=</span> <span class="nx">VizLogic</span><span class="p">(</span><span class="s1">&#39;canvas&#39;</span><span class="p">);</span>
+
+<span class="c1">// Listen for the &#39;update&#39; signal from the backend. This is the only</span>
+<span class="c1">// Databench specific code here.</span>
+<span class="nx">databench</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">json</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">my_viz</span><span class="p">(</span><span class="nx">json</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="c1">// Implement the drawing with d3.js.</span>
+<span class="kd">function</span> <span class="nx">VizLogic</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Initialize the d3 selector for the svg element and</span>
+    <span class="c1">// obtain height and width.</span>
+    <span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="o">+</span><span class="nx">id</span><span class="p">),</span>
+        <span class="nx">height</span> <span class="o">=</span> <span class="nb">parseFloat</span><span class="p">(</span><span class="nx">svg</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">)),</span>
+        <span class="nx">width</span> <span class="o">=</span> <span class="nb">parseFloat</span><span class="p">(</span><span class="nx">svg</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">));</span>
+
+    <span class="c1">// Return the function that is used to update the data</span>
+    <span class="c1">// of what is plotted. The data &#39;json&#39; has to be of the form:</span>
+    <span class="c1">// [</span>
+    <span class="c1">//     {&#39;id&#39;: 1, &#39;x1&#39;: 0.1, &#39;y1&#39;: 0.1, &#39;x2&#39;: 0.8, &#39;y2&#39;: 0.1,</span>
+    <span class="c1">//      &#39;width&#39;: 0.05, &#39;color&#39;: 0.1},</span>
+    <span class="c1">//     {&#39;id&#39;: 2, &#39;x1&#39;: 0.1, &#39;y1&#39;: 0.3, &#39;x2&#39;: 0.8, &#39;y2&#39;: 0.3,</span>
+    <span class="c1">//      &#39;width&#39;: 0.05, &#39;color&#39;: 0.2},</span>
+    <span class="c1">//     {&#39;id&#39;: 3, &#39;x1&#39;: 0.1, &#39;y1&#39;: 0.5, &#39;x2&#39;: 0.8, &#39;y2&#39;: 0.5,</span>
+    <span class="c1">//      &#39;width&#39;: 0.05, &#39;color&#39;: 0.3},</span>
+    <span class="c1">//     ...</span>
+    <span class="c1">// ]</span>
+    <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">json</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// The new &#39;json&#39; data (has to be an array) is compared to the</span>
+        <span class="c1">// existing elements with the class &#39;line&#39;. By default, d3.js</span>
+        <span class="c1">// uses the element index in the array as the key to associate</span>
+        <span class="c1">// elements from previous data calls with the new ones. This</span>
+        <span class="c1">// breaks when data is inserted in the middle of arrays.</span>
+        <span class="c1">// Therefore, a function that returns the &#39;key&#39; can be specified</span>
+        <span class="c1">// as the second argument to data(). Here, the key is the element</span>
+        <span class="c1">// with the name &#39;id&#39;.</span>
+        <span class="nx">lines</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">&quot;.line&quot;</span><span class="p">).</span><span class="nx">data</span><span class="p">(</span><span class="nx">json</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">d</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span> <span class="p">});</span>
+
+        <span class="c1">// Specify what happens how to initialize a new element. Note</span>
+        <span class="c1">// that lines.transition() is also applied to elements that just</span>
+        <span class="c1">// entered. Specify the initial attributes here (like width 0.0)</span>
+        <span class="c1">// and then set the actual attributes it should animate to in</span>
+        <span class="c1">// transition() below.</span>
+        <span class="c1">//</span>
+        <span class="c1">// Every attribute is given either a value (like for stroke-width)</span>
+        <span class="c1">// or the value is obtained by calling a function with the data</span>
+        <span class="c1">// element, in this example it could be</span>
+        <span class="c1">//    {&#39;id&#39;: 1, &#39;x1&#39;: 0.1, &#39;y1&#39;: 0.1, &#39;x2&#39;: 0.8, &#39;y2&#39;: 0.1,</span>
+        <span class="c1">//     &#39;width&#39;: 0.05, &#39;color&#39;: 0.1}</span>
+        <span class="c1">// and the function calculates the value. Below, the functions</span>
+        <span class="c1">// scale x1, y1, x2 and y2 from a range of [0,1] to [0,width]</span>
+        <span class="c1">// and [0,height] in pixels and convert a color in the range</span>
+        <span class="c1">// [0,1] to a color of the form #123456 by using the d3.hsl()</span>
+        <span class="c1">// function.</span>
+        <span class="nx">lines</span><span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+            <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">&quot;svg:line&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="s2">&quot;line&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">width</span><span class="o">*</span><span class="nx">d</span><span class="p">.</span><span class="nx">x1</span><span class="p">;</span> <span class="p">})</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;y1&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">height</span><span class="o">*</span><span class="nx">d</span><span class="p">.</span><span class="nx">y1</span><span class="p">;</span> <span class="p">})</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;x2&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">width</span><span class="o">*</span><span class="nx">d</span><span class="p">.</span><span class="nx">x2</span><span class="p">;</span> <span class="p">})</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;y2&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">height</span><span class="o">*</span><span class="nx">d</span><span class="p">.</span><span class="nx">y2</span><span class="p">;</span> <span class="p">})</span>
+            <span class="p">.</span><span class="nx">style</span><span class="p">(</span><span class="s2">&quot;stroke&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">hsl</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="nx">d</span><span class="p">.</span><span class="nx">color</span><span class="p">,</span><span class="nx">d</span><span class="p">.</span><span class="nx">color</span><span class="p">).</span><span class="nx">toString</span><span class="p">();</span>
+            <span class="p">})</span>
+            <span class="p">.</span><span class="nx">style</span><span class="p">(</span><span class="s2">&quot;stroke-width&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">);</span>
+
+        <span class="c1">// Specify what to do for changing attributes. Here, only the</span>
+        <span class="c1">// stroke-width is updated and all other attributes are</span>
+        <span class="c1">// assumed to stay constant after the element entered.</span>
+        <span class="c1">// The duration the animation takes to update the value is given</span>
+        <span class="c1">// with duration() in milliseconds.</span>
+        <span class="nx">lines</span><span class="p">.</span><span class="nx">transition</span><span class="p">()</span>
+            <span class="p">.</span><span class="nx">duration</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">style</span><span class="p">(</span><span class="s2">&quot;stroke-width&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">width</span><span class="o">*</span><span class="nx">d</span><span class="p">.</span><span class="nx">width</span><span class="p">;</span> <span class="p">});</span>
+
+        <span class="c1">// Specify what to do when an element is missing in the new</span>
+        <span class="c1">// data. Here, just remove it.</span>
+        <span class="nx">lines</span><span class="p">.</span><span class="nx">exit</span><span class="p">()</span>
+            <span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+
+    <span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>On the backend, ... coming soon ...</p>
+</div>
+<div class="section" id="custom-api-endpoints">
+<h2>Custom API Endpoints<a class="headerlink" href="#custom-api-endpoints" title="Permalink to this headline">¶</a></h2>
+<p>Coming soon ...</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo-w600.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo logo-name"><a href="index.html">Databench</a></h1>
+
+
+<p class="blurb">Databench is a data analysis tool using
+<a href="http://flask.pocoo.org/">Flask</a>,
+WebSockets and
+<a href="http://d3js.org/">d3.js</a>.
+Check out the <a href="http://databench-examples.svenkreiss.com/">live demos</a>.
+</p>
+
+
+<p class="blurb">
+  This is the documentation for version&nbsp;0.3.4.
+  
+    Version&nbsp;0.2 is
+    <a href="http://www.svenkreiss.com/databench/v0.2/">here</a>.
+  
+  
+</p>
+
+
+
+<p>
+<iframe src="http://ghbtns.com/github-btn.html?user=svenkreiss&amp;repo=databench&amp;type=watch&amp;count=true&amp;size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#styling-branding">Styling/Branding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#layouts-with-bootstrap-3">Layouts with Bootstrap 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generic-ui-elements">Generic UI Elements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#matplotlib">Matplotlib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-d3-js">Basic d3.js</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#custom-api-endpoints">Custom API Endpoints</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="frontend.html">Frontend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html">Backend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deploy.html">Deployment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev.html">Development</a></li>
+</ul>
+
+
+
+
+<hr />
+<h3>Links</h3>
+<ul>
+    
+    <li class="toctree-l1"><a href="http://databench-examples.svenkreiss.com">Live Demos</a></li>
+    
+    <li class="toctree-l1"><a href="https://github.com/svenkreiss/databench_examples">Examples</a></li>
+    
+    <li class="toctree-l1"><a href="https://github.com/svenkreiss/databench">Databench on GitHub</a></li>
+    
+    <li class="toctree-l1"><a href="https://github.com/svenkreiss/databench/issues">Issue Tracker</a></li>
+    
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy; 2014 Sven Kreiss and contributors.
+      
+    </div>
+
+    
+    <a href="https://github.com/svenkreiss/databench" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-4070485-2']);
+      _gaq.push(['_setDomainName', 'none']);
+      _gaq.push(['_setAllowLinker', true]);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+    
+  </body>
+</html>
