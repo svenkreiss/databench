@@ -384,7 +384,8 @@ Databench. On the frontend, add</p>
     <span class="c1">// packaged that takes a scale and turns it into a drawable element:</span>
     <span class="kd">var</span> <span class="nx">xAxis</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">svg</span><span class="p">.</span><span class="nx">axis</span><span class="p">()</span>
         <span class="p">.</span><span class="nx">scale</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
-        <span class="p">.</span><span class="nx">orient</span><span class="p">(</span><span class="s2">&quot;bottom&quot;</span><span class="p">);</span>
+        <span class="p">.</span><span class="nx">orient</span><span class="p">(</span><span class="s2">&quot;bottom&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">ticks</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
     <span class="c1">// Draw the x-axis. The y-position for drawing an x-axis is always 0.</span>
     <span class="c1">// So one has to apply a group element &#39;g&#39; first whose coordinates are</span>
     <span class="c1">// shifted such that y=0 is where we want to draw the x-axis. We can</span>
@@ -444,15 +445,28 @@ Databench. On the frontend, add</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>On the backend, create an array with five random numbers and send it to the
+<p>On the backend, create an array with five numbers and send it to the
 frontend. Then wait one second and send a different array with five random
-numbers to the frontend to demo the dynamically changing plot:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&#39;update_plot&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">5</span><span class="p">)])</span>
+numbers to the frontend to demo the dynamically changing plot. After that,
+use <a class="reference external" href="http://www.numpy.org/">numpy</a> to create a moving sin wave and send an
+update every 0.25s. To send numpy arrays with Databench, you need to convert
+them to lists using the <tt class="docutils literal"><span class="pre">tolist()</span></tt> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># create and send data for the d3.js plot</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&#39;update_plot&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">])</span>
 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&#39;update_plot&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">5</span><span class="p">)])</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="c"># Animation of a sin wave. Use numpy.</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">50</span><span class="p">):</span>
+    <span class="n">numpy_data</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="mf">0.4</span><span class="o">*</span><span class="n">numpy</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">t</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&#39;update_plot&#39;</span><span class="p">,</span> <span class="n">numpy_data</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>That&#8217;s it.</p>
+<p>For the last part, you will also have to add <tt class="docutils literal"><span class="pre">import</span> <span class="pre">numpy</span></tt>. Now try it out.
+At the end of <tt class="docutils literal"><span class="pre">run()</span></tt>, you should see an animated sine wave in this SVG
+canvas.</p>
 </div>
 <div class="section" id="wrapping-up">
 <h2>Wrapping Up<a class="headerlink" href="#wrapping-up" title="Permalink to this headline">¶</a></h2>
