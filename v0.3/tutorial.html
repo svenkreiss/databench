@@ -301,23 +301,16 @@ Databench. On the frontend, add</p>
 </div>
 <div class="section" id="a-plot-with-d3-js">
 <h2>A Plot with d3.js<a class="headerlink" href="#a-plot-with-d3-js" title="Permalink to this headline">¶</a></h2>
-<p>On the frontend add some styling for the axes to the page.</p>
-<div class="highlight-html"><div class="highlight"><pre>{% block head %}
-<span class="nt">&lt;style&gt;</span>
-<span class="nc">.axis</span> <span class="nt">path</span><span class="o">,</span> <span class="nc">.axis</span> <span class="nt">line</span> <span class="p">{</span>
-  <span class="n">fill</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
-  <span class="n">stroke</span><span class="o">:</span> <span class="m">#000</span><span class="p">;</span>
-  <span class="n">shape</span><span class="o">-</span><span class="n">rendering</span><span class="o">:</span> <span class="n">crispEdges</span><span class="p">;</span>
-<span class="p">}</span>
-<span class="nt">&lt;/style&gt;</span>
-{% endblock %}
-</pre></div>
-</div>
-<p>Then insert another canvas element:</p>
+<p>This example demos some fundamental principles of d3 without using <em>d3 layouts</em>.
+Layouts are powerful, but confuse a first exposure to d3.
+This example does not make use of d3 layouts, but it introduces d3 scales
+and axes. For a full example with d3 layouts, please see the
+<a class="reference external" href="http://bl.ocks.org/mbostock/3048450">histogram example by Mike Bostock</a>.</p>
+<p>Insert a new SVG canvas element:</p>
 <div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;svg</span> <span class="na">id=</span><span class="s">&quot;canvas_plot&quot;</span> <span class="na">width=</span><span class="s">&quot;300&quot;</span> <span class="na">height=</span><span class="s">&quot;300&quot;</span> <span class="nt">/&gt;</span>
 </pre></div>
 </div>
-<p>and again add this to the bottom of the <tt class="docutils literal"><span class="pre">&lt;script&gt;</span></tt> tag:</p>
+<p>and add this to the bottom of the <tt class="docutils literal"><span class="pre">&lt;script&gt;</span></tt> tag:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="c1">// Initialize the VizPlot for our canvas element.</span>
 <span class="kd">var</span> <span class="nx">viz_plot</span> <span class="o">=</span> <span class="nx">VizPlot</span><span class="p">(</span><span class="s1">&#39;canvas_plot&#39;</span><span class="p">);</span>
 
@@ -327,13 +320,7 @@ Databench. On the frontend, add</p>
     <span class="nx">viz_plot</span><span class="p">(</span><span class="nx">json</span><span class="p">);</span>
 <span class="p">});</span>
 
-<span class="c1">// Implement a basic plot with d3.js.</span>
-<span class="c1">//</span>
-<span class="c1">// This demos some fundamental principles of d3.js without using d3 layouts.</span>
-<span class="c1">// Layouts are extremely powerful, but confuse a first exposure to</span>
-<span class="c1">// d3.js. Here, no layout is used, but scales and axes are introduced. For</span>
-<span class="c1">// a full example with d3 layouts, please see the Histogram example from</span>
-<span class="c1">// Mike Bostock: http://bl.ocks.org/mbostock/3048450</span>
+<span class="c1">// Implement a basic plot with d3.js without d3 layouts.</span>
 <span class="kd">function</span> <span class="nx">VizPlot</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// Initialize the d3 selector for the svg element and</span>
     <span class="c1">// obtain height and width.</span>
@@ -445,12 +432,24 @@ Databench. On the frontend, add</p>
 <span class="p">}</span>
 </pre></div>
 </div>
+<p>Also, add some styling for the axes to the page:</p>
+<div class="highlight-html"><div class="highlight"><pre>{% block head %}
+<span class="nt">&lt;style&gt;</span>
+<span class="nc">.axis</span> <span class="nt">path</span><span class="o">,</span> <span class="nc">.axis</span> <span class="nt">line</span> <span class="p">{</span>
+  <span class="n">fill</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+  <span class="n">stroke</span><span class="o">:</span> <span class="m">#000</span><span class="p">;</span>
+  <span class="n">shape</span><span class="o">-</span><span class="n">rendering</span><span class="o">:</span> <span class="n">crispEdges</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nt">&lt;/style&gt;</span>
+{% endblock %}
+</pre></div>
+</div>
 <p>On the backend, create an array with five numbers and send it to the
 frontend. Then wait one second and send a different array with five random
 numbers to the frontend to demo the dynamically changing plot. After that,
 use <a class="reference external" href="http://www.numpy.org/">numpy</a> to create a moving sin wave and send an
 update every 0.25s. To send numpy arrays with Databench, you need to convert
-them to lists using the <tt class="docutils literal"><span class="pre">tolist()</span></tt> method:</p>
+them to lists first using the <tt class="docutils literal"><span class="pre">tolist()</span></tt> method:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c"># create and send data for the d3.js plot</span>
 <span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&#39;update_plot&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">])</span>
 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -464,9 +463,10 @@ them to lists using the <tt class="docutils literal"><span class="pre">tolist()<
     <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>For the last part, you will also have to add <tt class="docutils literal"><span class="pre">import</span> <span class="pre">numpy</span></tt>. Now try it out.
-At the end of <tt class="docutils literal"><span class="pre">run()</span></tt>, you should see an animated sine wave in this SVG
-canvas.</p>
+<p>For the last part, you will also have to add <tt class="docutils literal"><span class="pre">import</span> <span class="pre">numpy</span></tt> to the top of
+<tt class="docutils literal"><span class="pre">analysis.py</span></tt>. Now try it out.
+At the end of processing the <tt class="docutils literal"><span class="pre">run</span></tt> signal, you should see an animated sine
+wave in this SVG canvas.</p>
 </div>
 <div class="section" id="wrapping-up">
 <h2>Wrapping Up<a class="headerlink" href="#wrapping-up" title="Permalink to this headline">¶</a></h2>
