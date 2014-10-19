@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tutorial &mdash; Databench 0.3.4 documentation</title>
+    <title>Tutorial &mdash; Databench 0.3.5 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.3.4',
+        VERSION:     '0.3.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="shortcut icon" href="_static/favicon.ico"/>
-    <link rel="top" title="Databench 0.3.4 documentation" href="index.html" />
+    <link rel="top" title="Databench 0.3.5 documentation" href="index.html" />
     <link rel="next" title="Frontend" href="frontend.html" />
     <link rel="prev" title="Quickstart" href="quickstart.html" />
    
@@ -57,7 +57,7 @@
         <li class="right" >
           <a href="quickstart.html" title="Quickstart"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">Databench 0.3.4 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Databench 0.3.5 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -183,22 +183,22 @@ would simply show the same <tt class="docutils literal"><span class="pre">fig</s
 <h2>Basic d3.js<a class="headerlink" href="#basic-d3-js" title="Permalink to this headline">¶</a></h2>
 <p>This is a minimal example showing best practices with <tt class="docutils literal"><span class="pre">d3.js</span></tt> for
 Databench. On the frontend, add</p>
-<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;svg</span> <span class="na">id=</span><span class="s">&quot;canvas&quot;</span> <span class="na">width=</span><span class="s">&quot;300&quot;</span> <span class="na">height=</span><span class="s">&quot;300&quot;</span> <span class="nt">/&gt;</span>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;svg</span> <span class="na">id=</span><span class="s">&quot;canvas_basic&quot;</span> <span class="na">width=</span><span class="s">&quot;300&quot;</span> <span class="na">height=</span><span class="s">&quot;300&quot;</span> <span class="nt">/&gt;</span>
 </pre></div>
 </div>
 <p>which is just a SVG canvas in HTML with the id <tt class="docutils literal"><span class="pre">canvas</span></tt>. Go to the
 <tt class="docutils literal"><span class="pre">&lt;script&gt;</span></tt> part of the frontend and add the following at the bottom:</p>
-<div class="highlight-javascript"><div class="highlight"><pre><span class="c1">// Initialize the VizLogic for our canvas element.</span>
-<span class="kd">var</span> <span class="nx">my_viz</span> <span class="o">=</span> <span class="nx">VizLogic</span><span class="p">(</span><span class="s1">&#39;canvas&#39;</span><span class="p">);</span>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="c1">// Initialize the VizBasic for our canvas element.</span>
+<span class="kd">var</span> <span class="nx">viz_basic</span> <span class="o">=</span> <span class="nx">VizBasic</span><span class="p">(</span><span class="s1">&#39;canvas_basic&#39;</span><span class="p">);</span>
 
 <span class="c1">// Listen for the &#39;update&#39; signal from the backend. This is the only</span>
 <span class="c1">// Databench specific code here.</span>
-<span class="nx">databench</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">json</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">my_viz</span><span class="p">(</span><span class="nx">json</span><span class="p">);</span>
+<span class="nx">databench</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;update_basic&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">json</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">viz_basic</span><span class="p">(</span><span class="nx">json</span><span class="p">);</span>
 <span class="p">});</span>
 
 <span class="c1">// Implement the drawing with d3.js.</span>
-<span class="kd">function</span> <span class="nx">VizLogic</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">function</span> <span class="nx">VizBasic</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// Initialize the d3 selector for the svg element and</span>
     <span class="c1">// obtain height and width.</span>
     <span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="o">+</span><span class="nx">id</span><span class="p">),</span>
@@ -274,7 +274,7 @@ Databench. On the frontend, add</p>
 </pre></div>
 </div>
 <p>On the backend, create some data and send it to the frontend with the
-<tt class="docutils literal"><span class="pre">update</span></tt> signal:</p>
+<tt class="docutils literal"><span class="pre">update_basic</span></tt> signal:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;x1&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s">&#39;y1&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s">&#39;x2&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s">&#39;y2&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
      <span class="s">&#39;width&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span> <span class="s">&#39;color&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
@@ -283,7 +283,7 @@ Databench. On the frontend, add</p>
     <span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s">&#39;x1&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s">&#39;y1&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s">&#39;x2&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s">&#39;y2&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
      <span class="s">&#39;width&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span> <span class="s">&#39;color&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">},</span>
 <span class="p">]</span>
-<span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&#39;update&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&#39;update_basic&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 <span class="c"># update with some new data after a short wait</span>
 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">data2</span> <span class="o">=</span> <span class="p">[</span>
@@ -294,7 +294,162 @@ Databench. On the frontend, add</p>
     <span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s">&#39;x1&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s">&#39;y1&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s">&#39;x2&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s">&#39;y2&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
      <span class="s">&#39;width&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s">&#39;color&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">},</span>
 <span class="p">]</span>
-<span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&#39;update&#39;</span><span class="p">,</span> <span class="n">data2</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&#39;update_basic&#39;</span><span class="p">,</span> <span class="n">data2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>That&#8217;s it.</p>
+</div>
+<div class="section" id="a-plot-with-d3-js">
+<h2>A Plot with d3.js<a class="headerlink" href="#a-plot-with-d3-js" title="Permalink to this headline">¶</a></h2>
+<p>On the frontend add some styling for the axes to the page.</p>
+<div class="highlight-html"><div class="highlight"><pre>{% block head %}
+<span class="nt">&lt;style&gt;</span>
+<span class="nc">.axis</span> <span class="nt">path</span><span class="o">,</span> <span class="nc">.axis</span> <span class="nt">line</span> <span class="p">{</span>
+  <span class="n">fill</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+  <span class="n">stroke</span><span class="o">:</span> <span class="m">#000</span><span class="p">;</span>
+  <span class="n">shape</span><span class="o">-</span><span class="n">rendering</span><span class="o">:</span> <span class="n">crispEdges</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nt">&lt;/style&gt;</span>
+{% endblock %}
+</pre></div>
+</div>
+<p>Then insert another canvas element:</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;svg</span> <span class="na">id=</span><span class="s">&quot;canvas_plot&quot;</span> <span class="na">width=</span><span class="s">&quot;300&quot;</span> <span class="na">height=</span><span class="s">&quot;300&quot;</span> <span class="nt">/&gt;</span>
+</pre></div>
+</div>
+<p>and again add this to the bottom of the <tt class="docutils literal"><span class="pre">&lt;script&gt;</span></tt> tag:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="c1">// Initialize the VizPlot for our canvas element.</span>
+<span class="kd">var</span> <span class="nx">viz_plot</span> <span class="o">=</span> <span class="nx">VizPlot</span><span class="p">(</span><span class="s1">&#39;canvas_plot&#39;</span><span class="p">);</span>
+
+<span class="c1">// Listen for the &#39;update&#39; signal from the backend. This is the only</span>
+<span class="c1">// Databench specific code here.</span>
+<span class="nx">databench</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;update_plot&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">json</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">viz_plot</span><span class="p">(</span><span class="nx">json</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="c1">// Implement a basic plot with d3.js.</span>
+<span class="c1">//</span>
+<span class="c1">// This demos some fundamental principles of d3.js without using d3 layouts.</span>
+<span class="c1">// Layouts are extremely powerful, but confuse a first exposure to</span>
+<span class="c1">// d3.js. Here, no layout is used, but scales and axes are introduced. For</span>
+<span class="c1">// a full example with d3 layouts, please see the Histogram example from</span>
+<span class="c1">// Mike Bostock: http://bl.ocks.org/mbostock/3048450</span>
+<span class="kd">function</span> <span class="nx">VizPlot</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Initialize the d3 selector for the svg element and</span>
+    <span class="c1">// obtain height and width.</span>
+    <span class="kd">var</span> <span class="nx">svg</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="o">+</span><span class="nx">id</span><span class="p">),</span>
+        <span class="nx">height</span> <span class="o">=</span> <span class="nb">parseFloat</span><span class="p">(</span><span class="nx">svg</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">)),</span>
+        <span class="nx">width</span> <span class="o">=</span> <span class="nb">parseFloat</span><span class="p">(</span><span class="nx">svg</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">));</span>
+
+    <span class="c1">// Specify margins of the plot within the svg element in pixels.</span>
+    <span class="kd">var</span> <span class="nx">margin</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;left&#39;</span><span class="o">:</span> <span class="mi">40</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="o">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;top&#39;</span><span class="o">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;bottom&#39;</span><span class="o">:</span> <span class="mi">20</span><span class="p">}</span>
+
+    <span class="c1">// Setup scales. &#39;domain()&#39; specifies the range of the variables is in</span>
+    <span class="c1">// the data and &#39;range()&#39; specifies the range of the coordinate on the</span>
+    <span class="c1">// screen in pixels. The funcitons &#39;x&#39; and &#39;y&#39; are a variable</span>
+    <span class="c1">// transformation from input data to pixels.</span>
+    <span class="c1">//</span>
+    <span class="c1">// Note that the range for x is 20 to 280 pixels. The range for y is</span>
+    <span class="c1">// 280 to 20 pixels with the larger number first. This is because the</span>
+    <span class="c1">// number of pixels are counted from the top of the SVG, but we want our</span>
+    <span class="c1">// y axis to start at the bottom.</span>
+    <span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">()</span>
+                <span class="p">.</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+                <span class="p">.</span><span class="nx">range</span><span class="p">([</span><span class="nx">margin</span><span class="p">.</span><span class="nx">left</span><span class="p">,</span> <span class="nx">width</span><span class="o">-</span><span class="nx">margin</span><span class="p">.</span><span class="nx">right</span><span class="p">]);</span>
+    <span class="kd">var</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">scale</span><span class="p">.</span><span class="nx">linear</span><span class="p">()</span>
+                <span class="p">.</span><span class="nx">domain</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">])</span>
+                <span class="p">.</span><span class="nx">range</span><span class="p">([</span><span class="nx">height</span><span class="o">-</span><span class="nx">margin</span><span class="p">.</span><span class="nx">bottom</span><span class="p">,</span> <span class="nx">margin</span><span class="p">.</span><span class="nx">top</span><span class="p">]);</span>
+    <span class="c1">// Now we are just going to test the variable transformations. The</span>
+    <span class="c1">// output will appear in the browser JavaScript console, but also in</span>
+    <span class="c1">// the log window in this analysis.</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Testing the transformations x() and y(). Output in pixels:&#39;</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">(</span><span class="mi">4</span><span class="p">));</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">y</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">y</span><span class="p">(</span><span class="mf">0.5</span><span class="p">));</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">y</span><span class="p">(</span><span class="mf">1.0</span><span class="p">));</span>
+
+    <span class="c1">// Elements inside of SVG are drawn in the order they are added. Below</span>
+    <span class="c1">// we are going to add the axes, but we want the axes to stay in front</span>
+    <span class="c1">// of the content of the plot. So technically, we need to add the</span>
+    <span class="c1">// content of the plot (the bars of the histogram) now and only then we</span>
+    <span class="c1">// can add the axes. We cannot add the content now, but we can add a</span>
+    <span class="c1">// group &#39;g&#39; here for the content and later we will not draw the bars</span>
+    <span class="c1">// into &#39;svg&#39; but into &#39;g&#39;.</span>
+    <span class="kd">var</span> <span class="nx">plot_content</span> <span class="o">=</span> <span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;g&#39;</span><span class="p">);</span>
+
+    <span class="c1">// The x-axis, is effectively a visual representation of the</span>
+    <span class="c1">// transformation defined with x(). So d3 has an &#39;axis()&#39; function</span>
+    <span class="c1">// packaged that takes a scale and turns it into a drawable element:</span>
+    <span class="kd">var</span> <span class="nx">xAxis</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">svg</span><span class="p">.</span><span class="nx">axis</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">scale</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">orient</span><span class="p">(</span><span class="s2">&quot;bottom&quot;</span><span class="p">);</span>
+    <span class="c1">// Draw the x-axis. The y-position for drawing an x-axis is always 0.</span>
+    <span class="c1">// So one has to apply a group element &#39;g&#39; first whose coordinates are</span>
+    <span class="c1">// shifted such that y=0 is where we want to draw the x-axis. We can</span>
+    <span class="c1">// either use &#39;height-margin.bottom&#39; as the position in pixels, or</span>
+    <span class="c1">// we can use the transformation y(0) to get the same result, but in a</span>
+    <span class="c1">// cleaner way.</span>
+    <span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;g&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;x axis&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;transform&#39;</span><span class="p">,</span> <span class="s1">&#39;translate(0,&#39;</span><span class="o">+</span><span class="nx">y</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;)&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">xAxis</span><span class="p">);</span>
+    <span class="c1">// And the same for the y-axis:</span>
+    <span class="kd">var</span> <span class="nx">yAxis</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">svg</span><span class="p">.</span><span class="nx">axis</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">scale</span><span class="p">(</span><span class="nx">y</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">orient</span><span class="p">(</span><span class="s2">&quot;left&quot;</span><span class="p">);</span>
+    <span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;g&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;y axis&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;transform&#39;</span><span class="p">,</span> <span class="s1">&#39;translate(&#39;</span><span class="o">+</span><span class="nx">x</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;,0)&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">yAxis</span><span class="p">);</span>
+
+    <span class="c1">// Return the function that is used to update the data</span>
+    <span class="c1">// of what is plotted. The data &#39;json&#39; has to be an array/list numbers.</span>
+    <span class="c1">// For example: [0.4, 0.5, 0.3, 0.2, 0.1]</span>
+    <span class="c1">//</span>
+    <span class="c1">// Please see the &#39;basic d3.js&#39; example above for comments on the data</span>
+    <span class="c1">// flow. Here, only the new parts are commented.</span>
+    <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">json</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">lines</span> <span class="o">=</span> <span class="nx">plot_content</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="s2">&quot;.line&quot;</span><span class="p">).</span><span class="nx">data</span><span class="p">(</span><span class="nx">json</span><span class="p">);</span>
+
+        <span class="c1">// The x-coordinates are derived from the index of the data element.</span>
+        <span class="c1">// So for any attribute where the value is dynamically calculated</span>
+        <span class="c1">// with a function, the arguments d and i of the function are the</span>
+        <span class="c1">// element d of the data array and the index i. For the histogram,</span>
+        <span class="c1">// drawing the box for x=[0,1) is done with a line centered at 0.5.</span>
+        <span class="c1">// So in general, we take the index plus 0.5 and transform it into</span>
+        <span class="c1">// pixels: x(i+0.5).</span>
+        <span class="c1">//</span>
+        <span class="c1">// The width of that line in pixels is calculated by the position</span>
+        <span class="c1">// in pixels of at x=1 minus x=0: x(1)-x(0).</span>
+        <span class="nx">lines</span><span class="p">.</span><span class="nx">enter</span><span class="p">()</span>
+            <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s2">&quot;svg:line&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="s2">&quot;line&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">x</span><span class="p">(</span><span class="nx">i</span><span class="o">+</span><span class="mf">0.5</span><span class="p">);</span> <span class="p">})</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;y1&quot;</span><span class="p">,</span> <span class="nx">y</span><span class="p">(</span><span class="mf">0.0</span><span class="p">))</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;x2&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">x</span><span class="p">(</span><span class="nx">i</span><span class="o">+</span><span class="mf">0.5</span><span class="p">);</span> <span class="p">})</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;y2&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">y</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span> <span class="p">})</span>
+            <span class="p">.</span><span class="nx">style</span><span class="p">(</span><span class="s2">&quot;stroke&quot;</span><span class="p">,</span> <span class="s2">&quot;#55aa55&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">style</span><span class="p">(</span><span class="s2">&quot;stroke-width&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">x</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="nx">x</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="p">});</span>
+
+        <span class="nx">lines</span><span class="p">.</span><span class="nx">transition</span><span class="p">()</span>
+            <span class="p">.</span><span class="nx">duration</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;y2&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">y</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span> <span class="p">});</span>
+
+        <span class="nx">lines</span><span class="p">.</span><span class="nx">exit</span><span class="p">()</span>
+            <span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+
+    <span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>On the backend, create an array with five random numbers and send it to the
+frontend. Then wait one second and send a different array with five random
+numbers to the frontend to demo the dynamically changing plot:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&#39;update_plot&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">5</span><span class="p">)])</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&#39;update_plot&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">5</span><span class="p">)])</span>
 </pre></div>
 </div>
 <p>That&#8217;s it.</p>
@@ -331,10 +486,7 @@ Check out the <a href="http://databench-examples.svenkreiss.com/">live demos</a>
 
 
 <p class="blurb">
-  This is the documentation for version&nbsp;0.3.4.
-  
-    Version&nbsp;0.2 is
-    <a href="http://www.svenkreiss.com/databench/v0.2/">here</a>.
+  This is the documentation for version&nbsp;0.3.5.
   
   
 </p>
@@ -357,6 +509,7 @@ Check out the <a href="http://databench-examples.svenkreiss.com/">live demos</a>
 <li class="toctree-l2"><a class="reference internal" href="#generic-ui-elements">Generic UI Elements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#matplotlib">Matplotlib</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#basic-d3-js">Basic d3.js</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#a-plot-with-d3-js">A Plot with d3.js</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#wrapping-up">Wrapping Up</a></li>
 </ul>
 </li>

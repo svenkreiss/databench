@@ -154,24 +154,24 @@ Databench. On the frontend, add
 
 .. code-block:: html
 
-    <svg id="canvas" width="300" height="300" />
+    <svg id="canvas_basic" width="300" height="300" />
 
 which is just a SVG canvas in HTML with the id ``canvas``. Go to the
 ``<script>`` part of the frontend and add the following at the bottom:
 
 .. code-block:: javascript
 
-    // Initialize the VizLogic for our canvas element.
-    var my_viz = VizLogic('canvas');
+    // Initialize the VizBasic for our canvas element.
+    var viz_basic = VizBasic('canvas_basic');
 
     // Listen for the 'update' signal from the backend. This is the only
     // Databench specific code here.
-    databench.on('update', function(json) {
-        my_viz(json);
+    databench.on('update_basic', function(json) {
+        viz_basic(json);
     });
 
     // Implement the drawing with d3.js.
-    function VizLogic(id) {
+    function VizBasic(id) {
         // Initialize the d3 selector for the svg element and
         // obtain height and width.
         var svg = d3.select('#'+id),
@@ -246,7 +246,7 @@ which is just a SVG canvas in HTML with the id ``canvas``. Go to the
     }
 
 On the backend, create some data and send it to the frontend with the
-``update`` signal:
+``update_basic`` signal:
 
 .. code-block:: python
 
@@ -258,7 +258,7 @@ On the backend, create some data and send it to the frontend with the
         {'id': 3, 'x1': 0.1, 'y1': 0.5, 'x2': 0.8, 'y2': 0.9,
          'width': 0.05, 'color': 0.9},
     ]
-    self.emit('update', data)
+    self.emit('update_basic', data)
     # update with some new data after a short wait
     time.sleep(1)
     data2 = [
@@ -269,7 +269,172 @@ On the backend, create some data and send it to the frontend with the
         {'id': 3, 'x1': 0.1, 'y1': 0.5, 'x2': 0.8, 'y2': 0.9,
          'width': 0.2, 'color': 0.9},
     ]
-    self.emit('update', data2)
+    self.emit('update_basic', data2)
+
+That's it.
+
+
+A Plot with d3.js
+-----------------
+
+On the frontend add some styling for the axes to the page.
+
+.. code-block:: html
+
+    {% block head %}
+    <style>
+    .axis path, .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+    </style>
+    {% endblock %}
+
+Then insert another canvas element:
+
+.. code-block:: html
+
+    <svg id="canvas_plot" width="300" height="300" />
+
+and again add this to the bottom of the ``<script>`` tag:
+
+.. code-block:: javascript
+
+    // Initialize the VizPlot for our canvas element.
+    var viz_plot = VizPlot('canvas_plot');
+
+    // Listen for the 'update' signal from the backend. This is the only
+    // Databench specific code here.
+    databench.on('update_plot', function(json) {
+        viz_plot(json);
+    });
+
+    // Implement a basic plot with d3.js.
+    //
+    // This demos some fundamental principles of d3.js without using d3 layouts.
+    // Layouts are extremely powerful, but confuse a first exposure to
+    // d3.js. Here, no layout is used, but scales and axes are introduced. For
+    // a full example with d3 layouts, please see the Histogram example from
+    // Mike Bostock: http://bl.ocks.org/mbostock/3048450
+    function VizPlot(id) {
+        // Initialize the d3 selector for the svg element and
+        // obtain height and width.
+        var svg = d3.select('#'+id),
+            height = parseFloat(svg.attr('height')),
+            width = parseFloat(svg.attr('width'));
+
+        // Specify margins of the plot within the svg element in pixels.
+        var margin = {'left': 40, 'right': 20, 'top': 20, 'bottom': 20}
+
+        // Setup scales. 'domain()' specifies the range of the variables is in
+        // the data and 'range()' specifies the range of the coordinate on the
+        // screen in pixels. The funcitons 'x' and 'y' are a variable
+        // transformation from input data to pixels.
+        //
+        // Note that the range for x is 20 to 280 pixels. The range for y is
+        // 280 to 20 pixels with the larger number first. This is because the
+        // number of pixels are counted from the top of the SVG, but we want our
+        // y axis to start at the bottom.
+        var x = d3.scale.linear()
+                    .domain([0, 5])
+                    .range([margin.left, width-margin.right]);
+        var y = d3.scale.linear()
+                    .domain([0, 1.5])
+                    .range([height-margin.bottom, margin.top]);
+        // Now we are just going to test the variable transformations. The
+        // output will appear in the browser JavaScript console, but also in
+        // the log window in this analysis.
+        console.log('Testing the transformations x() and y(). Output in pixels:');
+        console.log(x(0));
+        console.log(x(2));
+        console.log(x(4));
+        console.log(y(0));
+        console.log(y(0.5));
+        console.log(y(1.0));
+
+        // Elements inside of SVG are drawn in the order they are added. Below
+        // we are going to add the axes, but we want the axes to stay in front
+        // of the content of the plot. So technically, we need to add the
+        // content of the plot (the bars of the histogram) now and only then we
+        // can add the axes. We cannot add the content now, but we can add a
+        // group 'g' here for the content and later we will not draw the bars
+        // into 'svg' but into 'g'.
+        var plot_content = svg.append('g');
+
+        // The x-axis, is effectively a visual representation of the
+        // transformation defined with x(). So d3 has an 'axis()' function
+        // packaged that takes a scale and turns it into a drawable element:
+        var xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom");
+        // Draw the x-axis. The y-position for drawing an x-axis is always 0.
+        // So one has to apply a group element 'g' first whose coordinates are
+        // shifted such that y=0 is where we want to draw the x-axis. We can
+        // either use 'height-margin.bottom' as the position in pixels, or
+        // we can use the transformation y(0) to get the same result, but in a
+        // cleaner way.
+        svg.append('g')
+            .attr('class', 'x axis')
+            .attr('transform', 'translate(0,'+y(0)+')')
+            .call(xAxis);
+        // And the same for the y-axis:
+        var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left");
+        svg.append('g')
+            .attr('class', 'y axis')
+            .attr('transform', 'translate('+x(0)+',0)')
+            .call(yAxis);
+
+        // Return the function that is used to update the data
+        // of what is plotted. The data 'json' has to be an array/list numbers.
+        // For example: [0.4, 0.5, 0.3, 0.2, 0.1]
+        //
+        // Please see the 'basic d3.js' example above for comments on the data
+        // flow. Here, only the new parts are commented.
+        return function(json) {
+            lines = plot_content.selectAll(".line").data(json);
+
+            // The x-coordinates are derived from the index of the data element.
+            // So for any attribute where the value is dynamically calculated
+            // with a function, the arguments d and i of the function are the
+            // element d of the data array and the index i. For the histogram,
+            // drawing the box for x=[0,1) is done with a line centered at 0.5.
+            // So in general, we take the index plus 0.5 and transform it into
+            // pixels: x(i+0.5).
+            //
+            // The width of that line in pixels is calculated by the position
+            // in pixels of at x=1 minus x=0: x(1)-x(0).
+            lines.enter()
+                .append("svg:line")
+                .attr("class", "line")
+                .attr("x1", function(d, i) { return x(i+0.5); })
+                .attr("y1", y(0.0))
+                .attr("x2", function(d, i) { return x(i+0.5); })
+                .attr("y2", function(d) { return y(d); })
+                .style("stroke", "#55aa55")
+                .style("stroke-width", function(d) { return x(1)-x(0); });
+
+            lines.transition()
+                .duration(250)
+                .attr("y2", function(d) { return y(d); });
+
+            lines.exit()
+                .remove();
+
+        };
+    }
+
+On the backend, create an array with five random numbers and send it to the
+frontend. Then wait one second and send a different array with five random
+numbers to the frontend to demo the dynamically changing plot:
+
+.. code-block:: python
+
+    self.emit('update_plot', [random.random() for i in xrange(5)])
+    time.sleep(1)
+    self.emit('update_plot', [random.random() for i in xrange(5)])
 
 That's it.
 
