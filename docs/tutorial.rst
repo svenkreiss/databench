@@ -367,7 +367,8 @@ and again add this to the bottom of the ``<script>`` tag:
         // packaged that takes a scale and turns it into a drawable element:
         var xAxis = d3.svg.axis()
             .scale(x)
-            .orient("bottom");
+            .orient("bottom")
+            .ticks(5);
         // Draw the x-axis. The y-position for drawing an x-axis is always 0.
         // So one has to apply a group element 'g' first whose coordinates are
         // shifted such that y=0 is where we want to draw the x-axis. We can
@@ -426,17 +427,30 @@ and again add this to the bottom of the ``<script>`` tag:
         };
     }
 
-On the backend, create an array with five random numbers and send it to the
+On the backend, create an array with five numbers and send it to the
 frontend. Then wait one second and send a different array with five random
-numbers to the frontend to demo the dynamically changing plot:
+numbers to the frontend to demo the dynamically changing plot. After that,
+use `numpy <http://www.numpy.org/>`_ to create a moving sin wave and send an
+update every 0.25s. To send numpy arrays with Databench, you need to convert
+them to lists using the ``tolist()`` method:
 
 .. code-block:: python
 
-    self.emit('update_plot', [random.random() for i in xrange(5)])
+    # create and send data for the d3.js plot
+    self.emit('update_plot', [0.1, 0.3, 0.5, 0.7, 0.9])
     time.sleep(1)
     self.emit('update_plot', [random.random() for i in xrange(5)])
+    time.sleep(1)
+    # Animation of a sin wave. Use numpy.
+    x = numpy.linspace(0, numpy.pi, 5)
+    for t in xrange(50):
+        numpy_data = 0.5 + 0.4*numpy.sin(x + t/3.0)
+        self.emit('update_plot', numpy_data.tolist())
+        time.sleep(0.25)
 
-That's it.
+For the last part, you will also have to add ``import numpy``. Now try it out.
+At the end of ``run()``, you should see an animated sine wave in this SVG
+canvas.
 
 
 Wrapping Up
