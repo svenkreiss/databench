@@ -1,20 +1,16 @@
 Frontend
 ========
 
-When using the ``base.html`` template, the databench library and a few more
-libraries are already loaded:
 
-.. code-block:: html
+Overview
+--------
 
-    <script src="/static/jquery/jquery-2.1.1.min.js"></script>
-    <script src="/static/bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
-    <script src="/static/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
-    <script src="/static/d3/d3.v3.min.js"></script>
-    <script src="/static/mpld3/mpld3.v0.2.js"></script>
-    <script src="/static/databench.js"></script>
+This is an overview of techniques and best practices that can be used on the
+frontend.
 
-When using your own html template, you need to include at least ``jQuery``
-and ``databench.js``.
+
+Customization
++++++++++++++
 
 You can customize the header in ``analyses/__init__.py``:
 
@@ -29,6 +25,10 @@ In the html template, ``[[ analysis_description ]]`` returns the description
 string passed into :class:`databench.Analysis` which is usually the ``__doc__``
 string of your analysis Python file.
 
+
+Formatting: Math, Markdown and src Files
+++++++++++++++++++++++++++++++++++++++++
+
 The frontend also renders math expressions enclosed in ``\\(`` and ``\\)`` as
 inline math and as block math when they are enclosed in ``$$`` and ``$$``. It
 also renders Markdown when it is enclosed in ``{% filter markdown %}`` and
@@ -40,6 +40,10 @@ also renders Markdown when it is enclosed in ``{% filter markdown %}`` and
 
 To include an external source code file, use the ``include_src(file, type)``
 macro.
+
+
+Twitter Bootstrap and Font Awesome
+++++++++++++++++++++++++++++++++++
 
 `Twitter Bootstrap <http://getbootstrap.com/>`_ is
 included so that responsive layouts of the form
@@ -65,8 +69,45 @@ that hosts the analysis with
 which shows a GitHub icon and the Markdown rendered text with a link.
 
 
+Static Files
+++++++++++++
+
+To add a static file to an analysis, place it in the analysis folder. Static
+files in this folder are exposed at the ``/<some_analysis/static/`` url.
+For example, to add ``angular.js`` to an analysis of the name *angular*
+(see for example the `angular analysis in the Databench examples <https://github.com/svenkreiss/databench_examples/tree/master/analyses/angular>`_), add the
+file ``angular.js`` to the folder ``analyses/angular/`` and include it in
+``index.html`` with:
+
+.. code-block:: html
+
+    <script src="/angular/static/angular.js"></script>
+
+
+Including Databench's JavaScript Library
+++++++++++++++++++++++++++++++++++++++++
+
+When using the ``base.html`` template, the databench library and a few more
+libraries are already loaded:
+
+.. code-block:: html
+
+    <script src="/static/jquery/jquery-2.1.1.min.js"></script>
+    <script src="/static/bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
+    <script src="/static/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+    <script src="/static/d3/d3.v3.min.js"></script>
+    <script src="/static/mpld3/mpld3.v0.2.js"></script>
+    <script src="/static/databench.js"></script>
+
+When using your own html template, you need to include at least ``jQuery``
+and ``databench.js``.
+
+
+
 Databench JavaScript Frontend
 -----------------------------
+
+This is the API documentation for the Databench JavaScript library.
 
 .. js:function:: Databench()
 
