@@ -277,27 +277,19 @@ That's it.
 A Plot with d3.js
 -----------------
 
-On the frontend add some styling for the axes to the page.
+This example demos some fundamental principles of d3 without using *d3 layouts*.
+Layouts are powerful, but confuse a first exposure to d3.
+This example does not make use of d3 layouts, but it introduces d3 scales
+and axes. For a full example with d3 layouts, please see the
+`histogram example by Mike Bostock <http://bl.ocks.org/mbostock/3048450>`_.
 
-.. code-block:: html
-
-    {% block head %}
-    <style>
-    .axis path, .axis line {
-      fill: none;
-      stroke: #000;
-      shape-rendering: crispEdges;
-    }
-    </style>
-    {% endblock %}
-
-Then insert another canvas element:
+Insert a new SVG canvas element:
 
 .. code-block:: html
 
     <svg id="canvas_plot" width="300" height="300" />
 
-and again add this to the bottom of the ``<script>`` tag:
+and add this to the bottom of the ``<script>`` tag:
 
 .. code-block:: javascript
 
@@ -310,13 +302,7 @@ and again add this to the bottom of the ``<script>`` tag:
         viz_plot(json);
     });
 
-    // Implement a basic plot with d3.js.
-    //
-    // This demos some fundamental principles of d3.js without using d3 layouts.
-    // Layouts are extremely powerful, but confuse a first exposure to
-    // d3.js. Here, no layout is used, but scales and axes are introduced. For
-    // a full example with d3 layouts, please see the Histogram example from
-    // Mike Bostock: http://bl.ocks.org/mbostock/3048450
+    // Implement a basic plot with d3.js without d3 layouts.
     function VizPlot(id) {
         // Initialize the d3 selector for the svg element and
         // obtain height and width.
@@ -427,12 +413,26 @@ and again add this to the bottom of the ``<script>`` tag:
         };
     }
 
+Also, add some styling for the axes to the page:
+
+.. code-block:: html
+
+    {% block head %}
+    <style>
+    .axis path, .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+    </style>
+    {% endblock %}
+
 On the backend, create an array with five numbers and send it to the
 frontend. Then wait one second and send a different array with five random
 numbers to the frontend to demo the dynamically changing plot. After that,
 use `numpy <http://www.numpy.org/>`_ to create a moving sin wave and send an
 update every 0.25s. To send numpy arrays with Databench, you need to convert
-them to lists using the ``tolist()`` method:
+them to lists first using the ``tolist()`` method:
 
 .. code-block:: python
 
@@ -448,9 +448,10 @@ them to lists using the ``tolist()`` method:
         self.emit('update_plot', numpy_data.tolist())
         time.sleep(0.25)
 
-For the last part, you will also have to add ``import numpy``. Now try it out.
-At the end of ``run()``, you should see an animated sine wave in this SVG
-canvas.
+For the last part, you will also have to add ``import numpy`` to the top of
+``analysis.py``. Now try it out.
+At the end of processing the ``run`` signal, you should see an animated sine
+wave in this SVG canvas.
 
 
 Wrapping Up
