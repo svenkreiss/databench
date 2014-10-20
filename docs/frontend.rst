@@ -1,13 +1,13 @@
 Frontend
 ========
 
+This is section contains an overview of techniques and best practices that can
+be used on the frontend, followed by a short overview of the frontend API and
+a subsection on generic UI elements (buttons, sliders, etc).
+
 
 Overview
 --------
-
-This is an overview of techniques and best practices that can be used on the
-frontend.
-
 
 Customization
 +++++++++++++
