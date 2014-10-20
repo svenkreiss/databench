@@ -68,18 +68,12 @@
             
   <div class="section" id="frontend">
 <h1>Frontend<a class="headerlink" href="#frontend" title="Permalink to this headline">¶</a></h1>
-<p>When using the <tt class="docutils literal"><span class="pre">base.html</span></tt> template, the databench library and a few more
-libraries are already loaded:</p>
-<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/jquery/jquery-2.1.1.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
-<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/bootstrap-3.1.1-dist/js/bootstrap.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
-<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/MathJax/MathJax.js?config=TeX-AMS_HTML&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
-<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/d3/d3.v3.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
-<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/mpld3/mpld3.v0.2.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
-<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/databench.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
-</pre></div>
-</div>
-<p>When using your own html template, you need to include at least <tt class="docutils literal"><span class="pre">jQuery</span></tt>
-and <tt class="docutils literal"><span class="pre">databench.js</span></tt>.</p>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>This is an overview of techniques and best practices that can be used on the
+frontend.</p>
+<div class="section" id="customization">
+<h3>Customization<a class="headerlink" href="#customization" title="Permalink to this headline">¶</a></h3>
 <p>You can customize the header in <tt class="docutils literal"><span class="pre">analyses/__init__.py</span></tt>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">header_logo</span> <span class="o">=</span> <span class="s">&#39;/analyses_static/logo-header.svg&#39;</span>
 <span class="n">header_title</span> <span class="o">=</span> <span class="s">&#39;My-awesome-project-or-company-name&#39;</span>
@@ -89,6 +83,9 @@ and <tt class="docutils literal"><span class="pre">databench.js</span></tt>.</p>
 <p>In the html template, <tt class="docutils literal"><span class="pre">[[</span> <span class="pre">analysis_description</span> <span class="pre">]]</span></tt> returns the description
 string passed into <a class="reference internal" href="backend.html#databench.Analysis" title="databench.Analysis"><tt class="xref py py-class docutils literal"><span class="pre">databench.Analysis</span></tt></a> which is usually the <tt class="docutils literal"><span class="pre">__doc__</span></tt>
 string of your analysis Python file.</p>
+</div>
+<div class="section" id="formatting-math-markdown-and-src-files">
+<h3>Formatting: Math, Markdown and src Files<a class="headerlink" href="#formatting-math-markdown-and-src-files" title="Permalink to this headline">¶</a></h3>
 <p>The frontend also renders math expressions enclosed in <tt class="docutils literal"><span class="pre">\\(</span></tt> and <tt class="docutils literal"><span class="pre">\\)</span></tt> as
 inline math and as block math when they are enclosed in <tt class="docutils literal"><span class="pre">$$</span></tt> and <tt class="docutils literal"><span class="pre">$$</span></tt>. It
 also renders Markdown when it is enclosed in <tt class="docutils literal"><span class="pre">{%</span> <span class="pre">filter</span> <span class="pre">markdown</span> <span class="pre">%}</span></tt> and
@@ -100,6 +97,9 @@ also renders Markdown when it is enclosed in <tt class="docutils literal"><span 
 </div>
 <p>To include an external source code file, use the <tt class="docutils literal"><span class="pre">include_src(file,</span> <span class="pre">type)</span></tt>
 macro.</p>
+</div>
+<div class="section" id="twitter-bootstrap-and-font-awesome">
+<h3>Twitter Bootstrap and Font Awesome<a class="headerlink" href="#twitter-bootstrap-and-font-awesome" title="Permalink to this headline">¶</a></h3>
 <p><a class="reference external" href="http://getbootstrap.com/">Twitter Bootstrap</a> is
 included so that responsive layouts of the form</p>
 <div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;row&quot;</span><span class="nt">&gt;</span>
@@ -118,8 +118,38 @@ This [analysis is on GitHub](https://github.com/svenkreiss/databench_examples/tr
 </pre></div>
 </div>
 <p>which shows a GitHub icon and the Markdown rendered text with a link.</p>
+</div>
+<div class="section" id="static-files">
+<h3>Static Files<a class="headerlink" href="#static-files" title="Permalink to this headline">¶</a></h3>
+<p>To add a static file to an analysis, place it in the analysis folder. Static
+files in this folder are exposed at the <tt class="docutils literal"><span class="pre">/&lt;some_analysis/static/</span></tt> url.
+For example, to add <tt class="docutils literal"><span class="pre">angular.js</span></tt> to an analysis of the name <em>angular</em>
+(see for example the <a class="reference external" href="https://github.com/svenkreiss/databench_examples/tree/master/analyses/angular">angular analysis in the Databench examples</a>), add the
+file <tt class="docutils literal"><span class="pre">angular.js</span></tt> to the folder <tt class="docutils literal"><span class="pre">analyses/angular/</span></tt> and include it in
+<tt class="docutils literal"><span class="pre">index.html</span></tt> with:</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/angular/static/angular.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="including-databench-s-javascript-library">
+<h3>Including Databench&#8217;s JavaScript Library<a class="headerlink" href="#including-databench-s-javascript-library" title="Permalink to this headline">¶</a></h3>
+<p>When using the <tt class="docutils literal"><span class="pre">base.html</span></tt> template, the databench library and a few more
+libraries are already loaded:</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/jquery/jquery-2.1.1.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/bootstrap-3.1.1-dist/js/bootstrap.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/MathJax/MathJax.js?config=TeX-AMS_HTML&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/d3/d3.v3.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/mpld3/mpld3.v0.2.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/static/databench.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</pre></div>
+</div>
+<p>When using your own html template, you need to include at least <tt class="docutils literal"><span class="pre">jQuery</span></tt>
+and <tt class="docutils literal"><span class="pre">databench.js</span></tt>.</p>
+</div>
+</div>
 <div class="section" id="databench-javascript-frontend">
 <h2>Databench JavaScript Frontend<a class="headerlink" href="#databench-javascript-frontend" title="Permalink to this headline">¶</a></h2>
+<p>This is the API documentation for the Databench JavaScript library.</p>
 <dl class="function">
 <dt id="Databench">
 <tt class="descname">Databench</tt><big>(</big><big>)</big><a class="headerlink" href="#Databench" title="Permalink to this definition">¶</a></dt>
@@ -349,6 +379,7 @@ Check out the <a href="http://databench-examples.svenkreiss.com/">live demos</a>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Frontend</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#databench-javascript-frontend">Databench JavaScript Frontend</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#generic-elements">Generic Elements</a></li>
 </ul>
