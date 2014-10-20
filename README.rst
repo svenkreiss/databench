@@ -20,7 +20,7 @@ Databench
 Documentation and License
 -------------------------
 
-| `Tutorial, user guide and API documentation <http://www.svenkreiss.com/databench/v0.3/>`_
+| `Tutorial, user guide and API documentation <http://www.svenkreiss.com/databench/v0.3/>`_.
 | Databench was written by Sven Kreiss and made available under the `MIT license <https://github.com/svenkreiss/databench/blob/master/LICENSE>`_.
 
 
