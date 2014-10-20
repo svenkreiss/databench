@@ -467,5 +467,7 @@ tutorial is available in the
 `Databench examples repository <https://github.com/svenkreiss/databench_examples>`_
 under the name
 `tutorial <https://github.com/svenkreiss/databench_examples/tree/master/analyses/tutorial>`_.
+For further information on Databench's capabilities, have a look at the
+:ref:`frontend-overview` section under *Frontend*.
 
 As mentioned before, please feel free to send comments about this tutorial.

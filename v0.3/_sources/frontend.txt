@@ -6,6 +6,8 @@ be used on the frontend, followed by a short overview of the frontend API and
 a subsection on generic UI elements (buttons, sliders, etc).
 
 
+.. _frontend-overview:
+
 Overview
 --------
 
