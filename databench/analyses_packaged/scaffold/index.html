@@ -6,6 +6,24 @@ Everything outside these commands is just plain HTML. -->
 {% extends "base.html" %}
 
 
+{% block head %}
+<!-- CHANGEME. This block is inserted into the page head. -->
+<!--
+    Add inline CSS to the page:
+    <style>p { font-family: serif; }</style>
+
+    Add a css file (put my-style.css into analyses/scaffold/):
+    <link rel="stylesheet" type="text/css" href="/scaffold/static/my-style.css">
+
+    Add a js library (put my-library.js into analyses/scaffold/):
+    <script src="/scaffold/static/my-library.js"></script>
+
+    You can also add a js library to footerscripts (see below) to have it load
+    after the page content.
+-->
+{% endblock %}
+
+
 <!-- CHANGEME. This sets the content of the HTML <title> element. -->
 {% block title %}Scaffold{% endblock %}
 
@@ -25,19 +43,23 @@ pulls that description in and converts it to html to be shown also here. -->
 
 <hr />
 <!-- This log output below is just nice to have when starting to design an
-analysis. Feel free to just delete the line below now or later. -->
+analysis. Feel free to delete the line below. -->
 <pre id="log"></pre>
 {% endblock content %}
 
 
 
 {% block footerscripts %}
+<!-- CHANGEME.
+    Add a js library (put my-library.js into analyses/scaffold/):
+    <script src="/scaffold/static/my-library.js"></script>
+-->
 <script>
     // Initialize Databench's frontend library.
 	var databench = Databench();
 
     // CHANGEME. Customize the code below.
-    // Interact with the backend. Listen for signals like this:
+    // Interact with the backend. Listen for the 'ready' signal like this:
     databench.on('ready', function(data) {
         $('#backend_ready_msg').text(data);
         console.log('Ready message received and set as the text of element '+
