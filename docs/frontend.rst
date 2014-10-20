@@ -9,6 +9,8 @@ a subsection on generic UI elements (buttons, sliders, etc).
 Overview
 --------
 
+.. _customization:
+
 Customization
 +++++++++++++
 
@@ -73,7 +75,7 @@ Static Files
 ++++++++++++
 
 To add a static file to an analysis, place it in the analysis folder. Static
-files in this folder are exposed at the ``/<some_analysis/static/`` url.
+files in this folder are exposed at the ``/<some_analysis>/static/`` url.
 For example, to add ``angular.js`` to an analysis of the name *angular*
 (see for example the `angular analysis in the Databench examples <https://github.com/svenkreiss/databench_examples/tree/master/analyses/angular>`_), add the
 file ``angular.js`` to the folder ``analyses/angular/`` and include it in
@@ -82,6 +84,12 @@ file ``angular.js`` to the folder ``analyses/angular/`` and include it in
 .. code-block:: html
 
     <script src="/angular/static/angular.js"></script>
+
+You can also add static files to *all* analyses by creating a folder
+``analyses/static`` and placing the static file in this folder. The URL
+to access the files is ``/analyses_static/my_static_file.png``. This is
+the same folder that is used for a custom header logo;
+see :ref:`customization`.
 
 
 Including Databench's JavaScript Library
