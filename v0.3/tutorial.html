@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tutorial &mdash; Databench 0.3.5 documentation</title>
+    <title>Tutorial &mdash; Databench 0.3.6 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.3.5',
+        VERSION:     '0.3.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="shortcut icon" href="_static/favicon.ico"/>
-    <link rel="top" title="Databench 0.3.5 documentation" href="index.html" />
+    <link rel="top" title="Databench 0.3.6 documentation" href="index.html" />
     <link rel="next" title="Frontend" href="frontend.html" />
     <link rel="prev" title="Quickstart" href="quickstart.html" />
    
@@ -57,7 +57,7 @@
         <li class="right" >
           <a href="quickstart.html" title="Quickstart"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">Databench 0.3.5 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Databench 0.3.6 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -182,11 +182,15 @@ would simply show the same <tt class="docutils literal"><span class="pre">fig</s
 <div class="section" id="basic-d3-js">
 <h2>Basic d3.js<a class="headerlink" href="#basic-d3-js" title="Permalink to this headline">¶</a></h2>
 <p>This is a minimal example showing best practices with <tt class="docutils literal"><span class="pre">d3.js</span></tt> for
-Databench. On the frontend, add</p>
+Databench. This section only focuses on the data flow from Python backend
+to JavaScript frontend, how d3 adds and removes elements and how it
+updates their attributes. The use of more visual d3 elements like <em>d3 scales</em>
+and <em>d3 axes</em> to create a plot is the subject of the next section.
+On the frontend, add</p>
 <div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;svg</span> <span class="na">id=</span><span class="s">&quot;canvas_basic&quot;</span> <span class="na">width=</span><span class="s">&quot;300&quot;</span> <span class="na">height=</span><span class="s">&quot;300&quot;</span> <span class="nt">/&gt;</span>
 </pre></div>
 </div>
-<p>which is just a SVG canvas in HTML with the id <tt class="docutils literal"><span class="pre">canvas</span></tt>. Go to the
+<p>which is just a SVG canvas in HTML with the id <tt class="docutils literal"><span class="pre">canvas_basic</span></tt>. Go to the
 <tt class="docutils literal"><span class="pre">&lt;script&gt;</span></tt> part of the frontend and add the following at the bottom:</p>
 <div class="highlight-javascript"><div class="highlight"><pre><span class="c1">// Initialize the VizBasic for our canvas element.</span>
 <span class="kd">var</span> <span class="nx">viz_basic</span> <span class="o">=</span> <span class="nx">VizBasic</span><span class="p">(</span><span class="s1">&#39;canvas_basic&#39;</span><span class="p">);</span>
@@ -303,8 +307,9 @@ Databench. On the frontend, add</p>
 <h2>A Plot with d3.js<a class="headerlink" href="#a-plot-with-d3-js" title="Permalink to this headline">¶</a></h2>
 <p>This example demos some fundamental principles of d3 without using <em>d3 layouts</em>.
 Layouts are powerful, but confuse a first exposure to d3.
-This example does not make use of d3 layouts, but it introduces d3 scales
-and axes. For a full example with d3 layouts, please see the
+This section introduces <em>d3 scales</em> and <em>axes</em> and will produce a fully
+working plot. For an example with d3 layouts (but without functionality to
+update the data), please see the
 <a class="reference external" href="http://bl.ocks.org/mbostock/3048450">histogram example by Mike Bostock</a>.</p>
 <p>Insert a new SVG canvas element:</p>
 <div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;svg</span> <span class="na">id=</span><span class="s">&quot;canvas_plot&quot;</span> <span class="na">width=</span><span class="s">&quot;300&quot;</span> <span class="na">height=</span><span class="s">&quot;300&quot;</span> <span class="nt">/&gt;</span>
@@ -500,7 +505,7 @@ Check out the <a href="http://databench-examples.svenkreiss.com/">live demos</a>
 
 
 <p class="blurb">
-  This is the documentation for version&nbsp;0.3.5.
+  This is the documentation for version&nbsp;0.3.6.
   
   
 </p>

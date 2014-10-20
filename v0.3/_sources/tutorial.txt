@@ -150,13 +150,17 @@ Basic d3.js
 -----------
 
 This is a minimal example showing best practices with ``d3.js`` for
-Databench. On the frontend, add
+Databench. This section only focuses on the data flow from Python backend
+to JavaScript frontend, how d3 adds and removes elements and how it
+updates their attributes. The use of more visual d3 elements like *d3 scales*
+and *d3 axes* to create a plot is the subject of the next section.
+On the frontend, add
 
 .. code-block:: html
 
     <svg id="canvas_basic" width="300" height="300" />
 
-which is just a SVG canvas in HTML with the id ``canvas``. Go to the
+which is just a SVG canvas in HTML with the id ``canvas_basic``. Go to the
 ``<script>`` part of the frontend and add the following at the bottom:
 
 .. code-block:: javascript
@@ -279,8 +283,9 @@ A Plot with d3.js
 
 This example demos some fundamental principles of d3 without using *d3 layouts*.
 Layouts are powerful, but confuse a first exposure to d3.
-This example does not make use of d3 layouts, but it introduces d3 scales
-and axes. For a full example with d3 layouts, please see the
+This section introduces *d3 scales* and *axes* and will produce a fully
+working plot. For an example with d3 layouts (but without functionality to
+update the data), please see the
 `histogram example by Mike Bostock <http://bl.ocks.org/mbostock/3048450>`_.
 
 Insert a new SVG canvas element:

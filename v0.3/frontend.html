@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Frontend &mdash; Databench 0.3.5 documentation</title>
+    <title>Frontend &mdash; Databench 0.3.6 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.3.5',
+        VERSION:     '0.3.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="shortcut icon" href="_static/favicon.ico"/>
-    <link rel="top" title="Databench 0.3.5 documentation" href="index.html" />
+    <link rel="top" title="Databench 0.3.6 documentation" href="index.html" />
     <link rel="next" title="Backend" href="backend.html" />
     <link rel="prev" title="Tutorial" href="tutorial.html" />
    
@@ -57,7 +57,7 @@
         <li class="right" >
           <a href="tutorial.html" title="Tutorial"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">Databench 0.3.5 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Databench 0.3.6 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -74,7 +74,7 @@ a subsection on generic UI elements (buttons, sliders, etc).</p>
 <div class="section" id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="customization">
-<h3>Customization<a class="headerlink" href="#customization" title="Permalink to this headline">¶</a></h3>
+<span id="id1"></span><h3>Customization<a class="headerlink" href="#customization" title="Permalink to this headline">¶</a></h3>
 <p>You can customize the header in <tt class="docutils literal"><span class="pre">analyses/__init__.py</span></tt>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">header_logo</span> <span class="o">=</span> <span class="s">&#39;/analyses_static/logo-header.svg&#39;</span>
 <span class="n">header_title</span> <span class="o">=</span> <span class="s">&#39;My-awesome-project-or-company-name&#39;</span>
@@ -123,7 +123,7 @@ This [analysis is on GitHub](https://github.com/svenkreiss/databench_examples/tr
 <div class="section" id="static-files">
 <h3>Static Files<a class="headerlink" href="#static-files" title="Permalink to this headline">¶</a></h3>
 <p>To add a static file to an analysis, place it in the analysis folder. Static
-files in this folder are exposed at the <tt class="docutils literal"><span class="pre">/&lt;some_analysis/static/</span></tt> url.
+files in this folder are exposed at the <tt class="docutils literal"><span class="pre">/&lt;some_analysis&gt;/static/</span></tt> url.
 For example, to add <tt class="docutils literal"><span class="pre">angular.js</span></tt> to an analysis of the name <em>angular</em>
 (see for example the <a class="reference external" href="https://github.com/svenkreiss/databench_examples/tree/master/analyses/angular">angular analysis in the Databench examples</a>), add the
 file <tt class="docutils literal"><span class="pre">angular.js</span></tt> to the folder <tt class="docutils literal"><span class="pre">analyses/angular/</span></tt> and include it in
@@ -131,6 +131,11 @@ file <tt class="docutils literal"><span class="pre">angular.js</span></tt> to th
 <div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/angular/static/angular.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
 </pre></div>
 </div>
+<p>You can also add static files to <em>all</em> analyses by creating a folder
+<tt class="docutils literal"><span class="pre">analyses/static</span></tt> and placing the static file in this folder. The URL
+to access the files is <tt class="docutils literal"><span class="pre">/analyses_static/my_static_file.png</span></tt>. This is
+the same folder that is used for a custom header logo;
+see <a class="reference internal" href="#customization"><em>Customization</em></a>.</p>
 </div>
 <div class="section" id="including-databench-s-javascript-library">
 <h3>Including Databench&#8217;s JavaScript Library<a class="headerlink" href="#including-databench-s-javascript-library" title="Permalink to this headline">¶</a></h3>
@@ -361,7 +366,7 @@ Check out the <a href="http://databench-examples.svenkreiss.com/">live demos</a>
 
 
 <p class="blurb">
-  This is the documentation for version&nbsp;0.3.5.
+  This is the documentation for version&nbsp;0.3.6.
   
   
 </p>
