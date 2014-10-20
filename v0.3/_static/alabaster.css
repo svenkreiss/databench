@@ -196,16 +196,16 @@ div.body h5,
 div.body h6 {
     // font-family: serif;
     font-weight: normal;
-    margin: 2.5em 0px 10px 0px;
+    margin: 2.0em 0px 10px 0px;
     padding: 0;
 }
 
 div.body h1 { margin-top: 0; padding-top: 0; font-size: 240%; }
 div.body h2 { font-size: 180%; }
-div.body h3 { font-size: 150%; }
-div.body h4 { font-size: 130%; }
-div.body h5 { font-size: 100%; }
-div.body h6 { font-size: 100%; }
+div.body h3 { font-size: 130%; font-style: italic; }
+div.body h4 { font-size: 110%; font-style: italic; }
+div.body h5 { font-size: 100%; font-style: italic; }
+div.body h6 { font-size: 100%; font-style: italic; }
 
 a.headerlink {
     color: #DDD;
