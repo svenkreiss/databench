@@ -27,7 +27,11 @@ Documentation and License
 Changelog
 ---------
 
-* `master <https://github.com/svenkreiss/databench/compare/v0.3.4...master>`_
+* `master <https://github.com/svenkreiss/databench/compare/v0.3.6...master>`_
+* `0.3.6 <https://github.com/svenkreiss/databench/compare/v0.3.4...v0.3.6>`_ (2014-10-17)
+    * add section on making a plot with d3.js to tutorial
+    * improve doc section on frontend
+    * add more comments to scaffold
 * `0.3.4 <https://github.com/svenkreiss/databench/compare/v0.3.3...v0.3.4>`_ (2014-10-17)
     * added a tutorial to the docs
     * added comments and explanation to scaffold analysis
