@@ -46,7 +46,11 @@ class App(object):
 
         self.sockets = flask_sockets.Sockets(self.flask_app)
 
-        self.header = {'logo': '/static/logo.svg', 'title': 'Databench'}
+        self.header = {
+            'logo': '/static/logo.svg',
+            'title': 'Databench',
+            'databench_version': DATABENCH_VERSION,
+        }
         self.description = None
         self.analyses_author = None
         self.analyses_version = None
@@ -239,5 +243,4 @@ class App(object):
             analyses_version=self.analyses_version,
             header=self.header,
             description=self.description,
-            databench_version=DATABENCH_VERSION
         )

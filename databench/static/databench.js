@@ -1,9 +1,14 @@
 
-function Databench() {
+function Databench(opts) {
+	opts = $.extend({
+		ws_url: 'ws://'+document.domain+':'+location.port+location.pathname+'ws',
+		content_class_name: 'content',
+	}, opts);
+
 	var on_callbacks = {};
 	var onAction_callbacks = {};
 
-	var socket = new WebSocket('ws://'+document.domain+':'+location.port+location.pathname+'ws');
+	var socket = new WebSocket(opts.ws_url);
 
 	// handle problems with websocket connection
 	setTimeout(function() {
@@ -11,14 +16,14 @@ function Databench() {
 			$('<div class="alert alert-danger">Connection could not be opened. '+
 			  'Please <a href="javascript:location.reload(true);" '+
 			  'class="alert-link">reload</a> this page to try again.</div>'
-			).insertBefore(".content");
+			).insertBefore('.'+opts.content_class_name);
 		}
 	}, 2000);
 	socket.onclose = function () {
 		$('<div class="alert alert-danger">Connection closed. '+
 		  'Please <a href="javascript:location.reload(true);" '+
 		  'class="alert-link">reload</a> this page to reconnect.</div>'
-		).insertBefore(".content");
+		).insertBefore('.'+opts.content_class_name);
 	}
 
 	// process incoming websocket messages
