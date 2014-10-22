@@ -115,7 +115,7 @@ When using your own html template, you need to include at least ``jQuery``
 and ``databench.js``.
 
 
-Running the backend at a non-standard location
+Running the Backend at a Custom Location
 ++++++++++++++++++++++++++++++++++++++++++++++
 
 You can also include Databench in websites. For that, you need the
@@ -149,11 +149,16 @@ Databench JavaScript Frontend
 
 This is the API documentation for the Databench JavaScript library.
 
-.. js:function:: Databench()
+.. js:function:: Databench(opts)
 
     At the heart of this closure are the :js:func:`Databench.emit` and
     :js:func:`Databench.on` functions. Use them in your own JavaScript
     code to communicate with the backend.
+
+    :param opts: Options to customize Databench. `ws_url` changes the
+        default url for connecting to the backend. `content_class_name` is
+        the CSS class name of the object that wraps the content which is
+        used to insert pop-up notifications into the page.
 
     .. js:function:: Databench.emit(signalName, message)
 
