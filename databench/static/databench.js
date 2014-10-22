@@ -1,7 +1,14 @@
 
 function Databench(opts) {
 	opts = $.extend({
-		ws_url: 'ws://'+document.domain+':'+location.port+location.pathname+'ws',
+		ws_url:
+			'ws://'+document.domain+':'+
+			location.port+
+			location.pathname.substring(
+				0,
+				location.pathname.lastIndexOf("/")
+			)+
+			'/ws',
 		content_class_name: 'content',
 	}, opts);
 

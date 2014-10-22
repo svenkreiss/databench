@@ -6,6 +6,9 @@ analysis. Add your frontend code to `index.html` as documented in the
 and similarly add your backend code to `analysis.py` as documented in the
 [Backend section](http://www.svenkreiss.com/databench/v0.3/backend.html).
 
+You can also create alternative frontends for your analysis. One example is the
+included [log-only](log.html) view in `log.html`.
+
 Some explanation __is always good__. You can mention `technical details`,
 explain them with some _fancy_ math $$r_1 = r_2$$ while mentioning
 inline what \\(r_1\\) and \\(r_2\\) are.

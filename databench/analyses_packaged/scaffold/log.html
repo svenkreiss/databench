@@ -1,0 +1,30 @@
+{% from 'macros.html' import include_md %}
+{% extends "base.html" %}
+
+{% block title %}Scaffold - Alternative View: Log only{% endblock %}
+
+
+
+{% block content %}
+<h3>Log</h3>
+<pre id="log"></pre>
+{% endblock content %}
+
+
+
+{% block footerscripts %}
+<script>
+    // Initialize Databench's frontend library.
+    var databench = Databench();
+
+    // Interact with the backend. Listen for the 'ready' signal like this:
+    databench.on('ready', function(data) {
+        $('#backend_ready_msg').text(data);
+        console.log('Ready message received and set as the text of element '+
+                    '#backend_ready_msg. Now sending message back to backend.')
+
+        // Send something to the backend in return:
+        databench.emit('got_ready_signal', 'thanks for sending ready signal');
+    });
+</script>
+{% endblock footerscripts %}
