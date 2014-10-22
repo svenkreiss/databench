@@ -94,6 +94,8 @@ the same folder that is used for a custom header logo;
 see :ref:`customization`.
 
 
+.. _include-databench-js:
+
 Including Databench's JavaScript Library
 ++++++++++++++++++++++++++++++++++++++++
 
@@ -111,6 +113,34 @@ libraries are already loaded:
 
 When using your own html template, you need to include at least ``jQuery``
 and ``databench.js``.
+
+
+Running the backend at a non-standard location
+++++++++++++++++++++++++++++++++++++++++++++++
+
+You can also include Databench in websites. For that, you need the
+Databench JavaScript library (explained above at :ref:`include-databench-js`)
+and you need to tell the frontend the location of your Databench backend:
+
+.. code-block:: javascript
+
+    var databench = Databench({
+        ws_url: 'ws://databench-examples.svenkreiss.com/simplepi/ws',
+    });
+
+which connects to the backend of the
+`public and live example of simplepi <http://databench-examples.svenkreiss.com/simplepi/>`_.
+When you connect to your own backend, you will have to invoke databench with
+
+.. code-block:: bash
+
+    databench --host=0.0.0.0
+
+to allow non-local access.
+
+WARNING: Databench was developed for deployment in trusted environments.
+You need to handle security yourself, e.g. by running Databench on an
+isolated server.
 
 
 
