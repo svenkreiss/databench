@@ -36,7 +36,7 @@ def teardown_module():
 
     # simply DAEMON.terminate() would only terminate the main process,
     # but the nested processes also need to be terminated
-    os.killpg(DAEMON.pid, signal.SIGUSR1)
+    os.killpg(DAEMON.pid, signal.SIGTERM)
     DAEMON.wait()
 
 
