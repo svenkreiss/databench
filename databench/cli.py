@@ -87,13 +87,16 @@ def main():
     logging.info('delimiters='+str(delimiters))
 
     # handle external signal to terminate nicely (used in tests)
-    def sigterm_handler(signum, stack):
+    def sig_handler(signum, stack):
         print('exit program')
         if cov:
             cov.stop()
             cov.save()
         sys.exit(0)
-    signal.signal(signal.SIGTERM, sigterm_handler)
+    signal.signal(signal.SIGTERM, sig_handler)
+    # not supported on Windows:
+    if hasattr(signal, 'SIGUSR1'):
+        signal.signal(signal.SIGUSR1, sig_handler)
 
     @werkzeug.serving.run_with_reloader
     def reloader():
