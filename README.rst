@@ -27,7 +27,15 @@ Documentation and License
 Changelog
 ---------
 
-* `master <https://github.com/svenkreiss/databench/compare/v0.3.6...master>`_
+* `master <https://github.com/svenkreiss/databench/compare/v0.3.7...master>`_
+* `0.3.7 <https://github.com/svenkreiss/databench/compare/v0.3.6...v0.3.7>`_ (2014-10-24)
+    * improved scaffold with more comments
+    * alternative frontends: apart from index.html, now you can also create anything.html and it will be rendered
+    * frontend options: connect to a non-standard backend location
+    * fix for Windows compatibility
+    * wider zeromq compatibility (not using unbind() anymore)
+    * CircleCI tests now running
+    * docs updated with new features
 * `0.3.6 <https://github.com/svenkreiss/databench/compare/v0.3.4...v0.3.6>`_ (2014-10-20)
     * add section on making a plot with d3.js to tutorial
     * improve doc section on frontend
