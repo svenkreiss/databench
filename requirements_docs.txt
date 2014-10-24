@@ -1,4 +1,4 @@
-Sphinx==1.2.2
+Sphinx==1.3b1
 sphinxcontrib-napoleon==0.2.7
 sphinxcontrib-email==0.1
 ghp-import==0.4.1
