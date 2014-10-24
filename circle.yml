@@ -1,6 +1,6 @@
 dependencies:
   pre:
-    - sudo apt-get update; sudo apt-get install libzmq-dev
+    - sudo apt-get update; sudo apt-get install libzmq3-dev
     - "pip install -r requirements_analyses.txt"
     - "pip install python-coveralls coverage"
 test:
