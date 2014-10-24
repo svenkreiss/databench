@@ -353,12 +353,13 @@ class MetaZMQ(Meta):
 
         # check whether we have to determine port_subscribe ourselves first
         if port_subscribe is None:
-            socket = zmq.Context().socket(zmq.PUB)
+            context = zmq.Context()
+            socket = context.socket(zmq.PUB)
             port_subscribe = socket.bind_to_random_port(
                 'tcp://127.0.0.1',
                 min_port=3000, max_port=9000,
             )
-            socket.unbind('tcp://127.0.0.1:'+str(port_subscribe))
+            context.destroy()
             logging.debug('determined: port_subscribe='+str(port_subscribe))
 
         # zmq subscription to listen for messages from backend
