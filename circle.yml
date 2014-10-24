@@ -1,0 +1,10 @@
+dependencies:
+  pre:
+    - "pip install -r requirements_analyses.txt"
+    - "pip install python-coveralls coverage"
+test:
+  override:
+    - "pyenv global 2.7.6 && python setup.py nosetests --with-coverage --cover-package=databench --cover-erase"
+    - "pyenv global 2.6 && python setup.py nosetests --with-coverage --cover-package=databench --cover-erase"
+  post:
+    - coveralls
