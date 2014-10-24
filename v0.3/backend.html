@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Backend &mdash; Databench 0.3.6 documentation</title>
+    <title>Backend &mdash; Databench 0.3.7 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.3.6',
+        VERSION:     '0.3.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="shortcut icon" href="_static/favicon.ico"/>
-    <link rel="top" title="Databench 0.3.6 documentation" href="index.html" />
+    <link rel="top" title="Databench 0.3.7 documentation" href="index.html" />
     <link rel="next" title="Deployment" href="deploy.html" />
     <link rel="prev" title="Frontend" href="frontend.html" />
    
@@ -44,8 +44,8 @@
   <meta property="og:url" content="http://www.svenkreiss.com/databench/" />
 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -57,14 +57,14 @@
         <li class="right" >
           <a href="frontend.html" title="Frontend"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">Databench 0.3.6 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Databench 0.3.7 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="backend">
 <h1>Backend<a class="headerlink" href="#backend" title="Permalink to this headline">¶</a></h1>
@@ -72,13 +72,13 @@
 <h2>Analysis<a class="headerlink" href="#analysis" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="databench.Analysis">
-<em class="property">class </em><tt class="descclassname">databench.</tt><tt class="descname">Analysis</tt><a class="headerlink" href="#databench.Analysis" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">databench.</code><code class="descname">Analysis</code><a class="headerlink" href="#databench.Analysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Databench&#8217;s analysis class.</p>
 <p>This contains the analysis code. Every browser connection corresponds to
 and instance of this class.</p>
 <p><strong>Incoming messages</strong> are captured by specifying a class method starting
-with <tt class="docutils literal"><span class="pre">on_</span></tt> followed by the signal name. To capture the frontend signal
-<tt class="docutils literal"><span class="pre">run</span></tt> that is emitted with the JavaScript code</p>
+with <code class="docutils literal"><span class="pre">on_</span></code> followed by the signal name. To capture the frontend signal
+<code class="docutils literal"><span class="pre">run</span></code> that is emitted with the JavaScript code</p>
 <div class="highlight-js"><div class="highlight"><pre><span class="c1">// on the JavaScript frontend</span>
 <span class="nx">databench</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;run&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">my_param</span><span class="o">:</span> <span class="s1">&#39;helloworld&#39;</span><span class="p">});</span>
 </pre></div>
@@ -91,15 +91,15 @@ with <tt class="docutils literal"><span class="pre">on_</span></tt> followed by 
 <p>here. The entries of a dictionary will be used as keyword arguments in the
 function call; as in this example. If the emitted message is an array,
 the entries will be used as positional arguments in the function call.
-If the message is neither of type <tt class="docutils literal"><span class="pre">list</span></tt> nor <tt class="docutils literal"><span class="pre">dict</span></tt> (for example a
-plain <tt class="docutils literal"><span class="pre">string</span></tt> or <tt class="docutils literal"><span class="pre">float</span></tt>), the function will be called with that
+If the message is neither of type <code class="docutils literal"><span class="pre">list</span></code> nor <code class="docutils literal"><span class="pre">dict</span></code> (for example a
+plain <code class="docutils literal"><span class="pre">string</span></code> or <code class="docutils literal"><span class="pre">float</span></code>), the function will be called with that
 as its first parameter.</p>
-<p><strong>Outgoing messages</strong> are sent using <tt class="docutils literal"><span class="pre">emit(signal_name,</span> <span class="pre">message)</span></tt>.
+<p><strong>Outgoing messages</strong> are sent using <code class="docutils literal"><span class="pre">emit(signal_name,</span> <span class="pre">message)</span></code>.
 For example, use</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&#39;result&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;msg&#39;</span><span class="p">:</span> <span class="s">&#39;done&#39;</span><span class="p">})</span>
 </pre></div>
 </div>
-<p>to send the signal <tt class="docutils literal"><span class="pre">result</span></tt> with the message <tt class="docutils literal"><span class="pre">{'msg':</span> <span class="pre">'done'}</span></tt> to
+<p>to send the signal <code class="docutils literal"><span class="pre">result</span></code> with the message <code class="docutils literal"><span class="pre">{'msg':</span> <span class="pre">'done'}</span></code> to
 the frontend.</p>
 </dd></dl>
 
@@ -108,19 +108,19 @@ the frontend.</p>
 <h2>Meta<a class="headerlink" href="#meta" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="databench.Meta">
-<em class="property">class </em><tt class="descclassname">databench.</tt><tt class="descname">Meta</tt><big>(</big><em>name</em>, <em>import_name</em>, <em>description</em>, <em>analysis_class</em><big>)</big><a class="headerlink" href="#databench.Meta" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">databench.</code><code class="descname">Meta</code><span class="sig-paren">(</span><em>name</em>, <em>import_name</em>, <em>description</em>, <em>analysis_class</em><span class="sig-paren">)</span><a class="headerlink" href="#databench.Meta" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>str</em>) &#8211; Name of this analysis. If <tt class="docutils literal"><span class="pre">signals</span></tt> is not specified,
+<li><strong>name</strong> (<em>str</em>) &#8211; Name of this analysis. If <code class="docutils literal"><span class="pre">signals</span></code> is not specified,
 this also becomes the namespace for the WebSocket connection and
-has to match the frontend&#8217;s <a class="reference internal" href="frontend.html#Databench" title="Databench"><tt class="xref js js-class docutils literal"><span class="pre">Databench()</span></tt></a> <tt class="docutils literal"><span class="pre">name</span></tt>.</li>
-<li><strong>import_name</strong> (<em>str</em>) &#8211; Usually the file name <tt class="docutils literal"><span class="pre">__name__</span></tt> where this
+has to match the frontend&#8217;s <a class="reference internal" href="frontend.html#Databench" title="Databench"><code class="xref js js-class docutils literal"><span class="pre">Databench()</span></code></a> <code class="docutils literal"><span class="pre">name</span></code>.</li>
+<li><strong>import_name</strong> (<em>str</em>) &#8211; Usually the file name <code class="docutils literal"><span class="pre">__name__</span></code> where this
 analysis is instantiated.</li>
-<li><strong>description</strong> (<em>str</em>) &#8211; Usually the <tt class="docutils literal"><span class="pre">__doc__</span></tt> string of the analysis.</li>
-<li><strong>analysis_class</strong> (<a class="reference internal" href="#databench.Analysis" title="databench.Analysis"><tt class="xref py py-class docutils literal"><span class="pre">databench.Analysis</span></tt></a>) &#8211; Object
+<li><strong>description</strong> (<em>str</em>) &#8211; Usually the <code class="docutils literal"><span class="pre">__doc__</span></code> string of the analysis.</li>
+<li><strong>analysis_class</strong> (<a class="reference internal" href="#databench.Analysis" title="databench.Analysis"><code class="xref py py-class docutils literal"><span class="pre">databench.Analysis</span></code></a>) &#8211; Object
 that should be instantiated for every new websocket connection.</li>
 </ul>
 </td>
@@ -128,8 +128,8 @@ that should be instantiated for every new websocket connection.</li>
 </tbody>
 </table>
 <p>For standard use cases, you don&#8217;t have to modify this class. However,
-If you want to serve more than the <tt class="docutils literal"><span class="pre">index.html</span></tt> page, say a
-<tt class="docutils literal"><span class="pre">details.html</span></tt> page, you can derive from this class and add this
+If you want to serve more than the <code class="docutils literal"><span class="pre">index.html</span></code> page, say a
+<code class="docutils literal"><span class="pre">details.html</span></code> page, you can derive from this class and add this
 to the constructor</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">blueprint</span><span class="o">.</span><span class="n">add_url_rule</span><span class="p">(</span><span class="s">&#39;/details.html&#39;</span><span class="p">,</span> <span class="s">&#39;render_details&#39;</span><span class="p">,</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">render_details</span><span class="p">)</span>
@@ -143,13 +143,7 @@ to the constructor</p>
     <span class="p">)</span>
 </pre></div>
 </div>
-<p>and create the file <tt class="docutils literal"><span class="pre">details.html</span></tt> similar to <tt class="docutils literal"><span class="pre">index.html</span></tt>.</p>
-<dl class="method">
-<dt id="databench.Meta.render_index">
-<tt class="descname">render_index</tt><big>(</big><big>)</big><a class="headerlink" href="#databench.Meta.render_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Renders the main analysis frontend template.</p>
-</dd></dl>
-
+<p>and create the file <code class="docutils literal"><span class="pre">details.html</span></code> similar to <code class="docutils literal"><span class="pre">index.html</span></code>.</p>
 </dd></dl>
 
 </div>
@@ -159,7 +153,7 @@ to the constructor</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/logo-w600.png" alt="Logo"/>
@@ -176,7 +170,7 @@ Check out the <a href="http://databench-examples.svenkreiss.com/">live demos</a>
 
 
 <p class="blurb">
-  This is the documentation for version&nbsp;0.3.6.
+  This is the documentation for version&nbsp;0.3.7.
   
   
 </p>
@@ -185,7 +179,7 @@ Check out the <a href="http://databench-examples.svenkreiss.com/">live demos</a>
 
 <p>
 <iframe src="http://ghbtns.com/github-btn.html?user=svenkreiss&amp;repo=databench&amp;type=watch&amp;count=true&amp;size=large"
-  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+  width="200" height="35"></iframe>
 </p>
 
 
@@ -195,11 +189,7 @@ Check out the <a href="http://databench-examples.svenkreiss.com/">live demos</a>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="frontend.html">Frontend</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Backend</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#analysis">Analysis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#meta">Meta</a></li>
-</ul>
-</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Backend</a></li>
 <li class="toctree-l1"><a class="reference internal" href="deploy.html">Deployment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dev.html">Development</a></li>
 </ul>
