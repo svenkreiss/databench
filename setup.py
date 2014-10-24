@@ -44,7 +44,7 @@ else:
 setup(
     name='databench',
     version=VERSION,
-    packages=['databench', 'databench_py'],
+    packages=['databench', 'databench_py', 'databench_py.singlethread'],
     license='MIT',
     description='Data analysis tool using Flask, WebSockets and d3.js.',
     long_description=open('README.rst').read(),
