@@ -27,7 +27,9 @@ Documentation and License
 Changelog
 ---------
 
-* `master <https://github.com/svenkreiss/databench/compare/v0.3.7...master>`_
+* `master <https://github.com/svenkreiss/databench/compare/v0.3.8...master>`_
+* `0.3.8 <https://github.com/svenkreiss/databench/compare/v0.3.7...v0.3.8>`_ (2014-10-30)
+    * fix included font-awesome
 * `0.3.7 <https://github.com/svenkreiss/databench/compare/v0.3.6...v0.3.7>`_ (2014-10-24)
     * improved scaffold with more comments
     * alternative frontends: apart from index.html, now you can also create anything.html and it will be rendered
