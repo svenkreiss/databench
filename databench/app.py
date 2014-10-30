@@ -203,8 +203,9 @@ class App(object):
             logging.info('Analyses module does not specify a header title.')
 
         # if main analyses folder contains a 'static' folder, make it available
-        static_path = (os.getcwd() + '/' +
-                       analyses.__file__.replace('__init__.pyc', 'static/'))
+        static_path = analyses.__file__
+        static_path = static_path.replace('__init__.pyc', 'static/')
+        static_path = static_path.replace('__init__.py', 'static/')
         if os.path.isdir(static_path):
             logging.debug('Making '+static_path+' available under '
                           'analyses_static/.')
