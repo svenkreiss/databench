@@ -90,17 +90,22 @@ function Databench(opts) {
 
 		// update
 		function update() {
-			if (_messages.length > limit) {
+			while(_messages.length > limit) {
 				_messages.shift();
 			}
-			if (_selector) _selector.html(_messages.join('<br />'));
+			if (_selector) {
+				// for HTML output, json-stringify messages and join with <br>
+				_selector.html(_messages.map(function(m) {
+					return m[0] + JSON.stringify(m[1]);
+				}).join('<br />'));
+			}
 		}
 
 		// capture events from frontend
 		var _consoleFnOriginal = console[consoleFnName];
 		console[consoleFnName] = function(msg) {
 			_consoleFnOriginal.apply(console, ["frontend:", msg]);
-			_messages.push("frontend: "+msg);
+			_messages.push(["frontend:", msg]);
 
 			update();
 		}
@@ -110,7 +115,7 @@ function Databench(opts) {
 			var msg = JSON.stringify(message);
 
 			_consoleFnOriginal.apply(console, [" backend:", msg]);
-			_messages.push(" backend: "+msg);
+			_messages.push([" backend:", msg]);
 
 			update();
 		});
