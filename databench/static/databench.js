@@ -96,8 +96,8 @@ function Databench(opts) {
 			if (_selector) {
 				// for HTML output, json-stringify messages and join with <br>
 				_selector.text(_messages.map(function(m) {
-					return m[0] + JSON.stringify(m[1]);
-				}).join('<br />'));
+					return m[0] + m[1];
+				}).join('\n'));
 			}
 		}
 
