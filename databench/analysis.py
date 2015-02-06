@@ -398,6 +398,7 @@ class MetaZMQ(Meta):
         self.zmq_listener = gevent.Greenlet.spawn(zmq_listener)
 
         # launch the language kernel process
+        logging.debug('launching: '+str(executable))
         self.kernel_process = subprocess.Popen(executable, shell=False)
 
         # init language kernel
