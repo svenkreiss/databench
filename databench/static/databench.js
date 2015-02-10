@@ -1,8 +1,10 @@
 
 function Databench(opts) {
+	var ws_protocol = 'ws';
+	if (location.origin.indexOf("https://") !== -1) ws_protocol = 'wss';
 	opts = $.extend({
 		ws_url:
-			'ws://'+document.domain+':'+
+			ws_protocol+'://'+document.domain+':'+
 			location.port+
 			location.pathname.substring(
 				0,
