@@ -20,13 +20,17 @@ function Databench(opts) {
 	var socket = new WebSocket(opts.ws_url);
 
 	// handle problems with websocket connection
-	setTimeout(function() {
-		if(socket.readyState != 1) {
+	var check_open = setInterval(function() {
+		if (socket.readyState == WebSocket.CONNECTING) {
+			return;
+		}
+		if (socket.readyState != WebSocket.OPEN) {
 			$('<div class="alert alert-danger">Connection could not be opened. '+
 			  'Please <a href="javascript:location.reload(true);" '+
 			  'class="alert-link">reload</a> this page to try again.</div>'
 			).insertBefore('.'+opts.content_class_name);
 		}
+		window.clearInterval(check_open);
 	}, 2000);
 	socket.onclose = function () {
 		$('<div class="alert alert-danger">Connection closed. '+
