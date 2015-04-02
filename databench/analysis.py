@@ -237,7 +237,26 @@ class Meta(object):
         """Handle a new websocket connection."""
         logging.debug('ws_serve()')
 
+        def sanitize_message(m):
+            if m != m:
+                m = 'NaN'
+            elif m == float('inf'):
+                m = 'inf'
+            elif m == float('-inf'):
+                m = '-inf'
+            elif isinstance(m, list):
+                for i in range(len(m)):
+                    m[i] = sanitize_message(m[i])
+            elif isinstance(m, dict):
+                for i in m.iterkeys():
+                    m[i] = sanitize_message(m[i])
+            return m
+
         def emit(signal, message):
+            # JavaScripts JSON.parse() cannot handle Infinity and NaN.
+            # To prevent the entire message from failing, this casts them to
+            # strings.
+            message = sanitize_message(message)
             try:
                 ws.send(json.dumps({'signal': signal, 'load': message}))
             except geventwebsocket.WebSocketError:
