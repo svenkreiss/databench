@@ -118,6 +118,13 @@ def main():
     if suffix not in ['py', 'pyspark', 'spark', 'go', 'lua', 'julia', 'r']:
         suffix = None
 
+    # sanitize analysis name
+    if '-' in args.analysis_name:
+        print('Analysis names with dashes are not supported '
+              '(because they are not supported in Python module names). '
+              'Abort.')
+        return
+
     # this is a hack to obtain the src directory
     import databench.analyses_packaged.scaffold.analysis
     src_file = databench.analyses_packaged.scaffold.analysis.__file__
