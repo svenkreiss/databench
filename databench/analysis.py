@@ -4,12 +4,13 @@ import os
 import json
 import time
 import gevent
+import inspect
 import logging
 import zipstream
 import subprocess
 import geventwebsocket
 import zmq.green as zmq
-from flask import Blueprint, render_template, Response
+from flask import Blueprint, render_template, Response, request
 
 
 class Analysis(object):
@@ -152,10 +153,12 @@ class Meta(object):
                                     self.zip_analysis, methods=['GET'])
 
         self.sockets = None
+        self.request_args = None
 
     def render_template(self, templatename='index.html'):
         """Renders the main analysis frontend template."""
         logging.debug('Rendering '+templatename)
+        self.request_args = dict((k, v) for k, v in request.args.iteritems())
         return render_template(
             self.name+'/'+templatename,
             header=self.header,
@@ -267,9 +270,17 @@ class Meta(object):
         logging.debug("analysis instantiated")
         analysis_instance.set_emit_fn(emit)
         greenlets = []
-        greenlets.append(gevent.Greenlet.spawn(
-            analysis_instance.on_connect
-        ))
+
+        # call on_connect (optionally with request_args)
+        on_connect_args = inspect.getargspec(analysis_instance.on_connect).args
+        if 'request_args' in on_connect_args:
+            greenlets.append(gevent.Greenlet.spawn(
+                analysis_instance.on_connect, request_args=self.request_args
+            ))
+        else:
+            greenlets.append(gevent.Greenlet.spawn(
+                analysis_instance.on_connect
+            ))
 
         def process_message(message):
             if message is None:
