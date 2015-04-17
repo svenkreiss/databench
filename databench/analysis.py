@@ -19,6 +19,11 @@ class Analysis(object):
     This contains the analysis code. Every browser connection corresponds to
     and instance of this class.
 
+    **Initialize:** add an ``on_connect(self)`` or
+    ``on_connect(self, request_args)`` method to your analysis class. The
+    optional argument ``request_args`` contains a dictionary of parameters
+    from the request url.
+
     **Incoming messages** are captured by specifying a class method starting
     with ``on_`` followed by the signal name. To capture the frontend signal
     ``run`` that is emitted with the JavaScript code
