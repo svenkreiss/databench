@@ -246,18 +246,23 @@ class Meta(object):
         logging.debug('ws_serve()')
 
         def sanitize_message(m):
-            if m != m:
-                m = 'NaN'
-            elif m == float('inf'):
-                m = 'inf'
-            elif m == float('-inf'):
-                m = '-inf'
-            elif isinstance(m, list):
-                for i in range(len(m)):
-                    m[i] = sanitize_message(m[i])
-            elif isinstance(m, dict):
-                for i in m.iterkeys():
-                    m[i] = sanitize_message(m[i])
+            try:
+                if m != m:
+                    m = 'NaN'
+                elif m == float('inf'):
+                    m = 'inf'
+                elif m == float('-inf'):
+                    m = '-inf'
+                elif isinstance(m, list):
+                    for i in range(len(m)):
+                        m[i] = sanitize_message(m[i])
+                elif isinstance(m, dict):
+                    for i in m.iterkeys():
+                        m[i] = sanitize_message(m[i])
+            except:
+                # Some types cannot be compared (like numpy arrays).
+                # Just skip those.
+                return m
             return m
 
         def emit(signal, message):
