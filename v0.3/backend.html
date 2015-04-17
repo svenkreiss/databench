@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Backend &mdash; Databench 0.3.9 documentation</title>
+    <title>Backend &mdash; Databench 0.3.15 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.3.9',
+        VERSION:     '0.3.15',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="shortcut icon" href="_static/favicon.ico"/>
-    <link rel="top" title="Databench 0.3.9 documentation" href="index.html" />
+    <link rel="top" title="Databench 0.3.15 documentation" href="index.html" />
     <link rel="next" title="Deployment" href="deploy.html" />
     <link rel="prev" title="Frontend" href="frontend.html" />
    
@@ -57,7 +57,7 @@
         <li class="right" >
           <a href="frontend.html" title="Frontend"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">Databench 0.3.9 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Databench 0.3.15 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -76,6 +76,10 @@
 <dd><p>Databench&#8217;s analysis class.</p>
 <p>This contains the analysis code. Every browser connection corresponds to
 and instance of this class.</p>
+<p><strong>Initialize:</strong> add an <code class="docutils literal"><span class="pre">on_connect(self)</span></code> or
+<code class="docutils literal"><span class="pre">on_connect(self,</span> <span class="pre">request_args)</span></code> method to your analysis class. The
+optional argument <code class="docutils literal"><span class="pre">request_args</span></code> contains a dictionary of parameters
+from the request url.</p>
 <p><strong>Incoming messages</strong> are captured by specifying a class method starting
 with <code class="docutils literal"><span class="pre">on_</span></code> followed by the signal name. To capture the frontend signal
 <code class="docutils literal"><span class="pre">run</span></code> that is emitted with the JavaScript code</p>
@@ -170,7 +174,7 @@ Check out the <a href="http://databench-examples.svenkreiss.com/">live demos</a>
 
 
 <p class="blurb">
-  This is the documentation for version&nbsp;0.3.9.
+  This is the documentation for version&nbsp;0.3.15.
   
   
 </p>
@@ -217,7 +221,7 @@ Check out the <a href="http://databench-examples.svenkreiss.com/">live demos</a>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy; 2014 Sven Kreiss and contributors.
+      &copy; 2014-2015 Sven Kreiss and contributors.
       
     </div>
 
