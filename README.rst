@@ -27,7 +27,12 @@ Documentation and License
 Changelog
 ---------
 
-* `master <https://github.com/svenkreiss/databench/compare/v0.3.9...master>`_
+* `master <https://github.com/svenkreiss/databench/compare/v0.3.14...master>`_
+* `0.3.14 <https://github.com/svenkreiss/databench/compare/v0.3.9...v0.3.14>`_ (2015-05-17)
+    * introduce optional ``request_args`` parameter to ``Analysis.on_connect()`` function
+    * use wss when used over https
+    * scaffolding: check analysis names for dashes and warn
+    * workaround different JSON specs: convert nan, +inf and -inf to strings
 * `0.3.9 <https://github.com/svenkreiss/databench/compare/v0.3.7...v0.3.9>`_ (2014-10-30)
     * fix analyses/static search path
     * fix included font-awesome
