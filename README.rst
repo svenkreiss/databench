@@ -27,8 +27,8 @@ Documentation and License
 Changelog
 ---------
 
-* `master <https://github.com/svenkreiss/databench/compare/v0.3.14...master>`_
-* `0.3.14 <https://github.com/svenkreiss/databench/compare/v0.3.9...v0.3.14>`_ (2015-04-17)
+* `master <https://github.com/svenkreiss/databench/compare/v0.3.15...master>`_
+* `0.3.15 <https://github.com/svenkreiss/databench/compare/v0.3.9...v0.3.15>`_ (2015-04-17)
     * introduce optional ``request_args`` parameter to ``Analysis.on_connect()`` function
     * use wss when used over https
     * scaffolding: check analysis names for dashes and warn
