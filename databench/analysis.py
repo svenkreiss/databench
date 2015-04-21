@@ -119,7 +119,8 @@ class Meta(object):
     ):
         Meta.all_instances.append(self)
         self.show_in_index = True
-
+        self.show_footer = True
+        
         self.name = name
         self.import_name = import_name
         self.header = {'logo': '/static/logo.svg', 'title': 'Databench'}
@@ -161,6 +162,7 @@ class Meta(object):
             header=self.header,
             analysis_name=self.name,
             analysis_description=self.description,
+            show_footer=self.show_footer,
         )
 
     def zip_analysis(self):
