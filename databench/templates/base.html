@@ -36,22 +36,21 @@
                 {% endblock %}
             </div>
 
-            <!--div class="footer">
+            <div class="footer">
+                {% if analysis_name %}
                 <div class="row">
                     <div class="col-sm-6">
                     <ul>
-                        {% if analysis_name %}
                         <li><a href="[[ analysis_name ]].zip">Download .zip</a> of analysis source.</li>
-                        {% endif %}
                     </ul>
                     </div>
-
                     <div class="col-sm-6 text-right-sm">
                         Read the <a href="http://www.svenkreiss.com/databench/v0.3/">Databench Docs</a>.
                         This is version [[databench_version]].
                     </div>
                 </div>
-            </div-->
+                {% endif %}
+            </div>
         </div>
         {% endblock %}
 
