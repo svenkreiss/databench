@@ -27,7 +27,10 @@ Documentation and License
 Changelog
 ---------
 
-* `master <https://github.com/svenkreiss/databench/compare/v0.3.15...master>`_
+* `master <https://github.com/svenkreiss/databench/compare/v0.3.16...master>`_
+* `0.3.16 <https://github.com/svenkreiss/databench/compare/v0.3.15...v0.3.16>`_ (2015-04-27)
+    * add auto-reconnect for WebSocket connections (three attempts with exponential and randomized back-off)
+    * add full stacktrace to some situations where it was suppressed before (especially for import bugs)
 * `0.3.15 <https://github.com/svenkreiss/databench/compare/v0.3.9...v0.3.15>`_ (2015-04-17)
     * introduce optional ``request_args`` parameter to ``Analysis.on_connect()`` function
     * use wss when used over https
