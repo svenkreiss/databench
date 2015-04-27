@@ -5,6 +5,7 @@ import sys
 import glob
 import codecs
 import logging
+import traceback
 import zmq.green as zmq
 
 import flask_sockets
@@ -173,6 +174,7 @@ class App(object):
             import analyses
         except ImportError, e:
             if str(e) != 'No module named analyses':
+                traceback.print_exc(file=sys.stdout)
                 raise e
 
             print "Did not find 'analyses' module."
