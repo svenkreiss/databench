@@ -11,52 +11,78 @@ function Databench(opts) {
 				location.pathname.lastIndexOf("/")
 			)+
 			'/ws',
-		content_class_name: 'content',
+		content_id: 'databench_content',
 	}, opts);
 
 	var on_callbacks = {};
 	var onAction_callbacks = {};
 
-	var socket = new WebSocket(opts.ws_url);
+	var ws_reconnect_attempt = 0;
+	var ws_reconnect_delay = 100.0;
 
-	// handle problems with websocket connection
-	var check_open = setInterval(function() {
-		if (socket.readyState == WebSocket.CONNECTING) {
-			return;
+	var socket = null;
+	function create_websocket_connection() {
+		socket = new WebSocket(opts.ws_url);
+
+		// handle problems with websocket connection
+		var check_open = setInterval(function() {
+			if (socket.readyState == WebSocket.CONNECTING) {
+				return;
+			}
+			if (socket.readyState != WebSocket.OPEN) {
+				$('<div class="ws-connection-alert alert alert-danger">Connection could not be opened. '+
+				  'Please <a href="javascript:location.reload(true);" '+
+				  'class="alert-link">reload</a> this page to try again.</div>'
+				).insertBefore('#'+opts.content_id);
+			}
+			window.clearInterval(check_open);
+		}, 2000);
+		socket.onopen = function() {
+			ws_reconnect_attempt = 0;
+			ws_reconnect_delay = 100.0;
+			$('.ws-connection-alert').remove();
 		}
-		if (socket.readyState != WebSocket.OPEN) {
-			$('<div class="alert alert-danger">Connection could not be opened. '+
-			  'Please <a href="javascript:location.reload(true);" '+
-			  'class="alert-link">reload</a> this page to try again.</div>'
-			).insertBefore('.'+opts.content_class_name);
+		socket.onclose = function () {
+			window.clearInterval(check_open);
+
+			ws_reconnect_attempt += 1;
+			ws_reconnect_delay *= 2;
+
+			if (ws_reconnect_attempt > 3) {
+				$('<div class="ws-connection-alert alert alert-danger">Connection closed. '+
+				  'Please <a href="javascript:location.reload(true);" '+
+				  'class="alert-link">reload</a> this page to reconnect.</div>'
+				).insertBefore('#'+opts.content_id);
+				return;
+			}
+
+			var actual_delay = 0.7 * ws_reconnect_delay + 0.3 * Math.random() * ws_reconnect_delay;
+			console.log('WebSocket connection broke. Attempting reconnect number '+ws_reconnect_attempt+' in '+actual_delay+'ms.');
+			setTimeout(function() {
+				create_websocket_connection();
+			}, actual_delay);
 		}
-		window.clearInterval(check_open);
-	}, 2000);
-	socket.onclose = function () {
-		$('<div class="alert alert-danger">Connection closed. '+
-		  'Please <a href="javascript:location.reload(true);" '+
-		  'class="alert-link">reload</a> this page to reconnect.</div>'
-		).insertBefore('.'+opts.content_class_name);
-	}
 
-	// process incoming websocket messages
-	socket.onmessage = function(event) {
-		var message_data = JSON.parse(event.data);
+		// process incoming websocket messages
+		socket.onmessage = function(event) {
+			var message_data = JSON.parse(event.data);
 
-		// normal message
-		if (message_data.signal in on_callbacks) {
-			for(cb in on_callbacks[message_data.signal]) {
-				on_callbacks[message_data.signal][cb](message_data.load);
+			// normal message
+			if (message_data.signal in on_callbacks) {
+				for(cb in on_callbacks[message_data.signal]) {
+					on_callbacks[message_data.signal][cb](message_data.load);
+				}
+			}
+
+			if (message_data.signal == '__action') {
+				var id = message_data.load.id
+				for(cb in onAction_callbacks[id]) {
+					onAction_callbacks[id][cb](message_data.load.status);
+				}
 			}
 		}
-
-		if (message_data.signal == '__action') {
-			var id = message_data.load.id
-			for(cb in onAction_callbacks[id]) {
-				onAction_callbacks[id][cb](message_data.load.status);
-			}
-		}
 	}
+	create_websocket_connection();
 
 
 	var on = function(signalName, callback) {
