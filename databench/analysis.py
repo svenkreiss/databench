@@ -271,7 +271,9 @@ class Meta(object):
             # strings.
             message = sanitize_message(message)
             try:
-                ws.send(json.dumps({'signal': signal, 'load': message}))
+                ws.send(json.dumps(
+                    {'signal': signal, 'load': message}
+                ).encode('utf-8'))
             except geventwebsocket.WebSocketError:
                 logging.info('websocket closed. could not send: '+signal +
                              ' -- '+str(message))

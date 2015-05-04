@@ -27,7 +27,9 @@ Documentation and License
 Changelog
 ---------
 
-* `master <https://github.com/svenkreiss/databench/compare/v0.3.16...master>`_
+* `master <https://github.com/svenkreiss/databench/compare/v0.3.17...master>`_
+* `0.3.17 <https://github.com/svenkreiss/databench/compare/v0.3.16...v0.3.17>`_ (2015-05-04)
+    * make sure messages to frontend are utf-8 encoded on the python side
 * `0.3.16 <https://github.com/svenkreiss/databench/compare/v0.3.15...v0.3.16>`_ (2015-04-27)
     * add auto-reconnect for WebSocket connections (three attempts with exponential and randomized back-off)
     * add full stacktrace to some situations where it was suppressed before (especially for import bugs)
