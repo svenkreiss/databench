@@ -145,12 +145,14 @@ class Meta(object):
             static_folder=analyses_path+'/'+self.name,
             static_url_path='/static',
         )
+
         self.blueprint.add_url_rule('/', 'render_template',
                                     self.render_template)
         self.blueprint.add_url_rule('/<templatename>', 'render_template',
                                     self.render_template)
-        self.blueprint.add_url_rule('/'+name+'.zip', 'zip_analysis',
-                                    self.zip_analysis, methods=['GET'])
+        if self.show_footer and self.show_in_index:
+            self.blueprint.add_url_rule('/'+name+'.zip', 'zip_analysis',
+                                        self.zip_analysis, methods=['GET'])
 
         self.sockets = None
 
