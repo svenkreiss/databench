@@ -9,13 +9,12 @@ Databench
 
 .. image:: https://travis-ci.org/svenkreiss/databench.svg
     :target: https://travis-ci.org/svenkreiss/databench
+.. image:: https://coveralls.io/repos/svenkreiss/databench/badge.svg
+    :target: https://coveralls.io/r/svenkreiss/databench
 .. image:: https://pypip.in/v/databench/badge.svg
     :target: https://pypi.python.org/pypi/databench/
 .. image:: https://pypip.in/d/databench/badge.svg
     :target: https://pypi.python.org/pypi/databench/
-
-.. https://coveralls.io/repos/svenkreiss/databench/badge.svg
-.. https://coveralls.io/r/svenkreiss/databench
 
 
 Documentation and License
