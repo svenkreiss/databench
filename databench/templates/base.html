@@ -16,7 +16,7 @@
         <link rel="stylesheet" href="[[ url_for('static', filename='main.css') ]]?version=[[ header.databench_version ]]">
         {% block head %}{% endblock %}
     </head>
-    <body>
+    <body> 
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
@@ -36,21 +36,20 @@
                 {% endblock %}
             </div>
 
-            <div class="footer">
+            <div class="footer"> 
+                {% if show_footer %}
                 <div class="row">
                     <div class="col-sm-6">
                     <ul>
-                        {% if analysis_name %}
                         <li><a href="[[ analysis_name ]].zip">Download .zip</a> of analysis source.</li>
-                        {% endif %}
                     </ul>
                     </div>
-
                     <div class="col-sm-6 text-right-sm">
                         Read the <a href="http://www.svenkreiss.com/databench/v0.3/">Databench Docs</a>.
-                        <!-- This is version [[databench_version]]. -->
+                        This is version [[databench_version]].
                     </div>
                 </div>
+                {% endif %}
             </div>
         </div>
         {% endblock %}

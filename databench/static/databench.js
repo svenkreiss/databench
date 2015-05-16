@@ -235,7 +235,7 @@ function Databench(opts) {
 	$("div[id^='mpld3canvas']").each(function() {
 		var name = $(this).attr('id');
 		console.log('Initialize databench.genericElements.mpld3canvas(id='+name+').');
-		genericElements.mpld3canvas(name);
+		genericElements.mpld3canvas(name, name);
 	});
 	// button
 	$("button[data-signal-name]").each(function() {
