@@ -2,6 +2,7 @@
 
 import zmq
 import time
+import inspect
 import logging
 
 
@@ -59,6 +60,11 @@ class Meta(object):
             analysis.emit('__action', {'id': action_id, 'status': 'start'})
 
         fn = getattr(analysis, fn_name)
+
+        if fn_name == 'on_connect' and 'request_args' in message:
+            on_connect_args = inspect.getargspec(analysis.on_connect).args
+            if 'request_args' not in on_connect_args:
+                del message['request_args']
 
         # Check whether this is a list (positional arguments)
         # or a dictionary (keyword arguments).

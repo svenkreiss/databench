@@ -348,11 +348,13 @@ class AnalysisZMQ(Analysis):
         self.zmq_publish.send_json(msg)
         logging.debug('onall called with: '+str(msg))
 
-    def on_connect(self):
+    def on_connect(self, request_args=None):
         msg = {
             'analysis': self.namespace,
             'instance_id': self.instance_id,
-            'frame': {'signal': 'connect', 'load': {}},
+            'frame': {'signal': 'connect', 'load': {
+                'request_args': request_args,
+            }},
         }
         self.zmq_publish.send_json(msg)
         logging.debug('on_connect called')
