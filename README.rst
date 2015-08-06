@@ -11,9 +11,9 @@ Databench
     :target: https://travis-ci.org/svenkreiss/databench
 .. image:: https://coveralls.io/repos/svenkreiss/databench/badge.svg
     :target: https://coveralls.io/r/svenkreiss/databench
-.. image:: https://pypip.in/v/databench/badge.svg
+.. image:: https://badge.fury.io/py/databench.svg
     :target: https://pypi.python.org/pypi/databench/
-.. image:: https://pypip.in/d/databench/badge.svg
+.. image:: https://img.shields.io/pypi/dm/databench.svg
     :target: https://pypi.python.org/pypi/databench/
 
 
