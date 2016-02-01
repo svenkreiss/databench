@@ -130,7 +130,7 @@ class App(object):
         try:
             import analyses
         except ImportError as e:
-            if str(e) != 'No module named \'analyses\'':
+            if str(e).replace("'", "") != 'No module named analyses':
                 traceback.print_exc(file=sys.stdout)
                 raise e
 
