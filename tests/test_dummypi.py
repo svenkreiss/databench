@@ -1,18 +1,12 @@
 """Simple test."""
 
 import os
+import json
 import time
 import signal
 import requests
 import websocket
 import subprocess
-
-
-"""
-
-Starting and stopping 'databench'
----------------------------------
-"""
 
 
 DAEMON = None
@@ -61,24 +55,19 @@ def test_ws_dummypi():
     websocket.enableTrace(True)
     ws = websocket.create_connection('ws://127.0.0.1:5000/dummypi/ws')
     ws.send('{"signal":"run", "load":{"__action_id":123}}')
-    r = ws.recv()
+    r = json.loads(ws.recv())
     print(r)
-    assert '"load": {"status": "start", "id": 123}' in r
-    assert '"signal": "__action"' in r
-    r = ws.recv()
+    assert r['signal'] == '__action'
+    assert r['load']['id'] == 123
+    r = json.loads(ws.recv())
     print(r)
-    assert '"signal": "log"' in r
-    assert '"load": {"inside":' in r
-    r = ws.recv()
+    assert r['signal'] == 'log'
+    assert 'inside' in r['load']
+    r = json.loads(ws.recv())
     print(r)
-    assert '"signal": "status"' in r
-    assert '"load": {"pi-uncertainty":' in r
+    assert r['signal'] == 'status'
+    assert 'pi-uncertainty' in r['load']
     ws.close()
-
-
-def test_zip_dummypi():
-    r = requests.get('http://127.0.0.1:5000/dummypi/dummypi.zip')
-    assert r.status_code == 200
 
 
 """
@@ -97,18 +86,18 @@ def test_ws_dummypi_py():
     websocket.enableTrace(True)
     ws = websocket.create_connection('ws://127.0.0.1:5000/dummypi_py/ws')
     ws.send('{"signal":"run", "load":{"__action_id":123}}')
-    r = ws.recv()
+    r = json.loads(ws.recv())
     print(r)
-    assert '"load": {"status": "start", "id": 123}' in r
-    assert '"signal": "__action"' in r
-    r = ws.recv()
+    assert r['signal'] == '__action'
+    assert r['load']['id'] == 123
+    r = json.loads(ws.recv())
     print(r)
-    assert '"signal": "log"' in r
-    assert '"load": {"inside":' in r
-    r = ws.recv()
+    assert r['signal'] == 'log'
+    assert 'inside' in r['load']
+    r = json.loads(ws.recv())
     print(r)
-    assert '"signal": "status"' in r
-    assert '"load": {"pi-uncertainty":' in r
+    assert r['signal'] == 'status'
+    assert 'pi-uncertainty' in r['load']
     ws.close()
 
 
@@ -123,10 +112,11 @@ def _fn_call(name='dummypi'):
     websocket.enableTrace(True)
     ws = websocket.create_connection('ws://127.0.0.1:5000/'+name+'/ws')
     ws.send('{"signal":"test_fn", "load": 1}')
-    r = ws.recv()
+    r = json.loads(ws.recv())
     print(r)
-    assert '"signal": "test_fn"' in r
-    assert '"load": {"first_param": 1, "second_param": 100}' in r
+    assert r['signal'] == 'test_fn'
+    assert r['load']['first_param'] == 1
+    assert r['load']['second_param'] == 100
     ws.close()
 
 
@@ -134,10 +124,11 @@ def _fn_call_array(name='dummypi'):
     websocket.enableTrace(True)
     ws = websocket.create_connection('ws://127.0.0.1:5000/'+name+'/ws')
     ws.send('{"signal":"test_fn", "load": [1, 2]}')
-    r = ws.recv()
+    r = json.loads(ws.recv())
     print(r)
-    assert '"signal": "test_fn"' in r
-    assert '"load": {"first_param": 1, "second_param": 2}' in r
+    assert r['signal'] == 'test_fn'
+    assert r['load']['first_param'] == 1
+    assert r['load']['second_param'] == 2
     ws.close()
 
 
@@ -146,10 +137,11 @@ def _fn_call_dict(name='dummypi'):
     ws = websocket.create_connection('ws://127.0.0.1:5000/'+name+'/ws')
     ws.send('{"signal":"test_fn", "load": '
             '{"first_param": 1, "second_param": 2}}')
-    r = ws.recv()
+    r = json.loads(ws.recv())
     print(r)
-    assert '"signal": "test_fn"' in r
-    assert '"load": {"first_param": 1, "second_param": 2}' in r
+    assert r['signal'] == 'test_fn'
+    assert r['load']['first_param'] == 1
+    assert r['load']['second_param'] == 2
     ws.close()
 
 
