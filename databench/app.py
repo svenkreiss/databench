@@ -13,6 +13,8 @@ from .analysis import Meta
 from .analysis_zmq import MetaZMQ
 from . import __version__ as DATABENCH_VERSION
 
+log = logging.getLogger(__name__)
+
 
 class App(object):
     """Databench app. The Tornado app is either injected or created.
@@ -87,7 +89,7 @@ class App(object):
             name = analysis_folder[analysis_folder.rfind('/')+1:]
             if name[0] in ['.', '_']:
                 continue
-            logging.debug('creating MetaZMQ for {}'.format(name))
+            log.debug('creating MetaZMQ for {}'.format(name))
             MetaZMQ(name, __name__, "ZMQ Analysis py",
                     ['python', analysis_folder+'/analysis.py'],
                     zmq_publish)
@@ -103,7 +105,7 @@ class App(object):
             name = analysis_folder[analysis_folder.rfind('/')+1:]
             if name[0] in ['.', '_']:
                 continue
-            logging.debug('creating MetaZMQ for '+name)
+            log.debug('creating MetaZMQ for '+name)
             MetaZMQ(name, __name__, "ZMQ Analysis py",
                     ['pyspark', analysis_folder+'/analysis.py'],
                     zmq_publish)
@@ -117,9 +119,9 @@ class App(object):
             name = analysis_folder[analysis_folder.rfind('/')+1:]
             if name[0] in ['.', '_']:
                 continue
-            logging.info('installing '+name)
+            log.info('installing '+name)
             os.system('cd '+analysis_folder+'; go install')
-            logging.debug('creating MetaZMQ for '+name)
+            log.debug('creating MetaZMQ for '+name)
             MetaZMQ(name, __name__, "ZMQ Analysis go",
                     [name], zmq_publish)
 
@@ -141,19 +143,19 @@ class App(object):
         try:
             self.info['author'] = analyses.__author__
         except AttributeError:
-            logging.info('Analyses module does not have an author string.')
+            log.info('Analyses module does not have an author string.')
         try:
             self.info['version'] = analyses.__version__
         except AttributeError:
-            logging.info('Analyses module does not have a version string.')
+            log.info('Analyses module does not have a version string.')
         try:
             self.info['logo_url'] = analyses.logo_url
         except AttributeError:
-            logging.info('Analyses module does not specify a logo url.')
+            log.info('Analyses module does not specify a logo url.')
         try:
             self.info['title'] = analyses.title
         except AttributeError:
-            logging.info('Analyses module does not specify a title.')
+            log.info('Analyses module does not specify a title.')
 
         # if main analyses folder contains a 'static' folder, make it available
         static_path = os.path.join(os.getcwd(), 'analyses', 'static')
@@ -162,7 +164,7 @@ class App(object):
                 os.getcwd(), 'databench', 'analyses_packaged', 'static',
             )
         if os.path.isdir(static_path):
-            logging.debug('Making {} available under analyses_static/.'
+            log.debug('Making {} available under analyses_static/.'
                           ''.format(static_path))
 
             self.routes.append((
@@ -171,7 +173,7 @@ class App(object):
                 {'path': static_path},
             ))
         else:
-            logging.debug('Did not find an analyses/static/ folder. ' +
+            log.debug('Did not find an analyses/static/ folder. ' +
                           'Checked: {}'.format(static_path))
 
     def register_analyses(self):
@@ -183,7 +185,7 @@ class App(object):
 
             meta.info = self.info
 
-            # logging.debug('Connect websockets to '+meta.name+'.')
+            # log.debug('Connect websockets to '+meta.name+'.')
             # meta.wire_sockets(self.sockets, url_prefix='/'+meta.name)
 
 
