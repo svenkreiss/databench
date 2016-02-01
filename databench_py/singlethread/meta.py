@@ -5,6 +5,8 @@ import time
 import inspect
 import logging
 
+log = logging.getLogger(__name__)
+
 
 class Meta(object):
     """Class providing Meta information about analyses.
@@ -82,19 +84,19 @@ class Meta(object):
         """Event loop."""
         while True:
             msg = self.zmq_sub.recv_json()
-            logging.debug('kernel msg: '+str(msg))
+            log.debug('kernel msg: '+str(msg))
             if 'analysis' not in msg or \
                msg['analysis'] != self.name:
                 continue
 
             del msg['analysis']
-            logging.debug('kernel processing msg')
+            log.debug('kernel processing msg')
 
             if 'instance_id' in msg and \
                msg['instance_id'] not in self.analysis_instances:
                 # instance does not exist yet
-                logging.debug('kernel creating analysis instance ' +
-                              str(msg['instance_id']))
+                log.debug('kernel creating analysis instance {}'
+                          ''.format(msg['instance_id']))
                 i = self.analysis_class()
 
                 def emit(signal, message):
@@ -133,7 +135,7 @@ class Meta(object):
 
             # standard message
             fn_name = 'on_'+msg['frame']['signal']
-            logging.debug('kernel processing '+fn_name)
+            log.debug('kernel processing '+fn_name)
             Meta.run_action(i, fn_name, msg['frame']['load'])
 
     def emit(self, signal, message, instance_id):
@@ -145,7 +147,7 @@ class Meta(object):
             instance_id: Identifies the instance of this analysis.
 
         """
-        logging.debug(
+        log.debug(
             'backend (namespace='+self.name+', analysis='+str(instance_id) +
             ', signal='+signal + '): ' + (
                 (str(message)[:60] + '...')
@@ -161,4 +163,4 @@ class Meta(object):
                 'frame': {'signal': signal, 'load': message},
             })
         else:
-            logging.debug('zmq_socket_pub not defined yet.')
+            log.debug('zmq_socket_pub not defined yet.')
