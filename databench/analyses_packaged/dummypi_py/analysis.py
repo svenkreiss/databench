@@ -22,7 +22,7 @@ class Analysis(databench_py.Analysis):
         """Run when button is pressed."""
 
         inside = 0
-        for i in xrange(self.samples):
+        for i in range(self.samples):
             sleep(0.001)
             r1, r2 = (random(), random())
             if r1*r1 + r2*r2 < 1.0:
