@@ -28,7 +28,7 @@ class Meta(object):
         self.analysis_instances = {}
 
         self._init_zmq()
-        print 'Language kernel for '+self.name+' initialized.'
+        print('Language kernel for {} initialized.'.format(self.name))
 
     def _init_zmq(self, sub_port=8041):
         """Initialize zmq messaging. Listen on sub_port. This port might at
@@ -38,8 +38,8 @@ class Meta(object):
         self.zmq_publish = None
 
         self.zmq_sub = zmq.Context().socket(zmq.SUB)
-        self.zmq_sub.connect('tcp://127.0.0.1:'+str(sub_port))
-        self.zmq_sub.setsockopt(zmq.SUBSCRIBE, '')
+        self.zmq_sub.connect('tcp://127.0.0.1:{}'.format(sub_port))
+        self.zmq_sub.setsockopt(zmq.SUBSCRIBE, b'')
 
     @staticmethod
     def run_action(analysis, fn_name, message):

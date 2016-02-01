@@ -1,35 +1,35 @@
 {% extends "base.html" %}
 
 
-{% block title %}Analyses{% endblock %}
+{% block title %}Analyses{% end %}
 
 
 {% block content %}
-{% if description %}
-    [[ description|markdown ]]
+{% if info['description'] %}
+    {{ info['description'] }}
     <br />
-{% endif %}
+{% end %}
 <h1>List of Analyses</h1>
 <div class="row">
-    {% for a in analyses if a.show_in_index %}
+    {% for a in [aa for aa in analyses if aa.show_in_index] %}
     <div class="col-md-6">
-    	<a href="/[[a.name]]/">
-    	<div class="panel panel-default">
-	    	<div class="panel-body">
+        <a href="/{{a.name}}/">
+        <div class="panel panel-default">
+            <div class="panel-body">
                 {% if a.thumbnail %}
-                    <img src="/[[a.name]]/static/[[a.thumbnail]]" class="img-thumbnail analysis-thumbnail" />
-                {% endif %}
-	    		[[a.name]]{% if a.description %}<span class="text-muted">: [[ a.description ]]</span>{% endif %}
-	    	</div>
-    	</div>
-    	</a>
+                    <img src="/{{a.name}}/static/{{a.thumbnail}}" class="img-thumbnail analysis-thumbnail" />
+                {% end %}
+                {{a.name}}{% if a.description %}<span class="text-muted">: {{ a.description }}</span>{% end %}
+            </div>
+        </div>
+        </a>
     </div>
-    {% endfor %}
+    {% end %}
 </div>
 <script>
-    console.log('--- databench v[[databench_version]] ---');
-    console.log('Analyses author: [[analyses_author]]');
-    console.log('Analyses version: [[analyses_version]]');
+    console.log('--- databench v{{databench_version}} ---');
+    console.log('Analyses author: {{info["author"]}}');
+    console.log('Analyses version: {{info["version"]}}');
     console.log('')
 </script>
-{% endblock %}
+{% end %}

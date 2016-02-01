@@ -2,15 +2,17 @@
 
 import os
 import json
-import time
-import gevent
-import inspect
 import logging
-import zipstream
-import subprocess
-import geventwebsocket
-import zmq.green as zmq
-from flask import Blueprint, render_template, Response, request
+import tornado.web
+import tornado.websocket
+import zmq.eventloop
+import zmq.eventloop.zmqstream
+
+from . import __version__ as DATABENCH_VERSION
+
+zmq.eventloop.ioloop.install()
+
+log = logging.getLogger(__name__)
 
 
 class Analysis(object):
@@ -69,13 +71,13 @@ class Analysis(object):
     """Events."""
 
     def onall(self, message_data):
-        logging.debug('onall called.')
+        log.debug('onall called.')
 
     def on_connect(self):
-        logging.debug('on_connect called.')
+        log.debug('on_connect called.')
 
     def on_disconnect(self):
-        logging.debug('on_disconnect called.')
+        log.debug('on_disconnect called.')
 
 
 class Meta(object):
@@ -125,89 +127,50 @@ class Meta(object):
     ):
         Meta.all_instances.append(self)
         self.show_in_index = True
-
         self.name = name
-        self.import_name = import_name
-        self.header = {'logo': '/static/logo.svg', 'title': 'Databench'}
+
+        # find folder of all analyses
+        analyses_path = os.path.join(os.getcwd(), 'analyses')
+        if not os.path.exists(analyses_path):
+            analyses_path = os.path.join(
+                os.getcwd(), 'databench', 'analyses_packaged',
+            )
+        if not os.path.exists(analyses_path):
+            log.info('Folder for {} not found.'.format(self.name))
+        # find folder for this analysis
+        analysis_path = os.path.join(analyses_path, self.name)
+
+        self.info = {'logo_url': '/static/logo.svg', 'title': 'Databench'}
         self.description = description
         self.analysis_class = analysis_class
 
-        analyses_path = os.getcwd()+'/'+'analyses'
-        if not os.path.exists(analyses_path):
-            analyses_path = os.getcwd()+'/'+'databench/analyses_packaged'
-        if not os.path.exists(analyses_path):
-            logging.info('Folder for '+self.name+' not found.')
-        self.analyses_path = analyses_path
+        self.routes = [
+            (r'/{}/static/(.*)'.format(self.name),
+             tornado.web.StaticFileHandler,
+             {'path': analysis_path}),
+
+            (r'/{}/ws'.format(self.name),
+             FrontendHandler,
+             {'instantiate_analysis': self.instantiate_analysis_class}),
+
+            (r'/{}/(?P<template_name>.+\.html)'.format(self.name),
+             RenderTemplate,
+             {'template_path': analysis_path,
+              'info': self.info}),
+
+            (r'/{}/'.format(self.name),
+             RenderTemplate,
+             {'template_name': 'index.html',
+              'template_path': analysis_path,
+              'info': self.info}),
+        ]
 
         # detect whether thumbnail.png is present
-        if os.path.isfile(analyses_path+'/'+self.name+'/thumbnail.png'):
+        thumbnail_path = os.path.join(analysis_path, 'thumbnail.png')
+        if os.path.isfile(thumbnail_path):
             self.thumbnail = 'thumbnail.png'
 
-        self.blueprint = Blueprint(
-            name,
-            import_name,
-            template_folder=analyses_path,
-            static_folder=analyses_path+'/'+self.name,
-            static_url_path='/static',
-        )
-        self.blueprint.add_url_rule('/', 'render_template',
-                                    self.render_template)
-        self.blueprint.add_url_rule('/<templatename>', 'render_template',
-                                    self.render_template)
-        self.blueprint.add_url_rule('/'+name+'.zip', 'zip_analysis',
-                                    self.zip_analysis, methods=['GET'])
-
-        self.sockets = None
         self.request_args = None
-
-    def render_template(self, templatename='index.html'):
-        """Renders the main analysis frontend template."""
-        logging.debug('Rendering '+templatename)
-        self.request_args = dict((k, v) for k, v in request.args.iteritems())
-        return render_template(
-            self.name+'/'+templatename,
-            header=self.header,
-            analysis_name=self.name,
-            analysis_description=self.description,
-        )
-
-    def zip_analysis(self):
-        def generator():
-            z = zipstream.ZipFile(mode='w',
-                                  compression=zipstream.ZIP_DEFLATED)
-
-            # find all analysis files
-            folder = self.analyses_path+'/'+self.name
-            for root, dirnames, filenames in os.walk(folder):
-                invisible_dirs = [d for d in dirnames if d[0] == '.']
-                for d in invisible_dirs:
-                    dirnames.remove(d)
-                for filename in filenames:
-                    if filename[0] == '.':
-                        continue
-                    if filename[-4:] == '.pyc':
-                        continue
-
-                    # add the file to zipstream
-                    fullname = os.path.join(root, filename)
-                    arcname = fullname.replace(self.analyses_path+'/', '')
-                    z.write(fullname, arcname=arcname)
-
-            # add requirements.txt if present
-            if os.path.isfile(self.analyses_path+'/requirements.txt'):
-                z.write(self.analyses_path+'/requirements.txt')
-
-            for chunk in z:
-                yield chunk
-
-        response = Response(generator(), mimetype='application/zip')
-        response.headers['Content-Disposition'] = \
-            'attachment; filename='+self.name+'.zip'
-        return response
-
-    def wire_sockets(self, sockets, url_prefix=''):
-        self.sockets = sockets
-        self.sockets.add_url_rule(url_prefix+'/ws', 'ws_serve', self.ws_serve)
 
     def instantiate_analysis_class(self):
         return self.analysis_class()
@@ -241,226 +204,88 @@ class Meta(object):
         if action_id:
             analysis.emit('__action', {'id': action_id, 'status': 'end'})
 
-    def ws_serve(self, ws):
-        """Handle a new websocket connection."""
-        logging.debug('ws_serve()')
 
-        def sanitize_message(m):
-            try:
-                if m != m:
-                    m = 'NaN'
-                elif m == float('inf'):
-                    m = 'inf'
-                elif m == float('-inf'):
-                    m = '-inf'
-                elif isinstance(m, list):
-                    for i in range(len(m)):
-                        m[i] = sanitize_message(m[i])
-                elif isinstance(m, dict):
-                    for i in m.iterkeys():
-                        m[i] = sanitize_message(m[i])
-            except:
-                # Some types cannot be compared (like numpy arrays).
-                # Just skip those.
-                return m
+class FrontendHandler(tornado.websocket.WebSocketHandler):
+    @staticmethod
+    def sanitize_message(m):
+        try:
+            if m != m:
+                m = 'NaN'
+            elif m == float('inf'):
+                m = 'inf'
+            elif m == float('-inf'):
+                m = '-inf'
+            elif isinstance(m, list):
+                for i in range(len(m)):
+                    m[i] = FrontendHandler.sanitize_message(m[i])
+            elif isinstance(m, dict):
+                for i in m.iterkeys():
+                    m[i] = FrontendHandler.sanitize_message(m[i])
+        except:
+            # Some types cannot be compared (like numpy arrays).
+            # Just skip those.
             return m
+        return m
 
-        def emit(signal, message):
-            # JavaScripts JSON.parse() cannot handle Infinity and NaN.
-            # To prevent the entire message from failing, this casts them to
-            # strings.
-            message = sanitize_message(message)
-            try:
-                ws.send(json.dumps(
-                    {'signal': signal, 'load': message}
-                ).encode('utf-8'))
-            except geventwebsocket.WebSocketError:
-                logging.info('websocket closed. could not send: '+signal +
-                             ' -- '+str(message))
+    def initialize(self, instantiate_analysis):
+        self.instantiate_analysis = instantiate_analysis
+        self.analysis_instance = None
 
-        analysis_instance = self.instantiate_analysis_class()
-        logging.debug("analysis instantiated")
-        analysis_instance.set_emit_fn(emit)
-        greenlets = []
+    def open(self):
+        log.debug('WebSocket connection opened.')
+        self.analysis_instance = self.instantiate_analysis()
+        self.analysis_instance.set_emit_fn(self.emit)
+        log.debug("analysis instantiated")
+        self.analysis_instance.on_connect()
 
-        # call on_connect (optionally with request_args)
-        on_connect_args = inspect.getargspec(analysis_instance.on_connect).args
-        if 'request_args' in on_connect_args:
-            greenlets.append(gevent.Greenlet.spawn(
-                analysis_instance.on_connect, request_args=self.request_args
-            ))
-        else:
-            greenlets.append(gevent.Greenlet.spawn(
-                analysis_instance.on_connect
-            ))
+    def on_close(self):
+        log.debug('WebSocket connection closed.')
+        self.analysis_instance.on_disconnect()
 
-        def process_message(message):
-            if message is None:
-                logging.debug('empty message received.')
-                return
+    def on_message(self, message):
+        if message is None:
+            log.debug('empty message received.')
+            return
 
-            message_data = json.loads(message)
-            analysis_instance.onall(message_data)
-            if 'signal' not in message_data or 'load' not in message_data:
-                logging.info('message not processed: '+message)
-                return
+        message_data = json.loads(message)
+        self.analysis_instance.onall(message_data)
+        if 'signal' not in message_data or 'load' not in message_data:
+            log.info('message not processed: '+message)
+            return
 
-            fn_name = 'on_'+message_data['signal']
-            if not hasattr(self.analysis_class, fn_name):
-                logging.warning('frontend wants to call '+fn_name +
-                                ' which is not in the Analysis class.')
-                return
+        fn_name = 'on_'+message_data['signal']
+        if not hasattr(self.analysis_instance, fn_name):
+            log.warning('frontend wants to call '+fn_name +
+                        ' which is not in the Analysis class.')
+            return
 
-            logging.debug('calling '+fn_name)
-            # every 'on_' is processed in a separate greenlet
-            greenlets.append(gevent.Greenlet.spawn(
-                Meta.run_action, analysis_instance,
-                fn_name, message_data['load']
-            ))
+        log.debug('calling '+fn_name)
+        Meta.run_action(
+            self.analysis_instance,
+            fn_name,
+            message_data['load'],
+        )
 
-        while True:
-            try:
-                message = ws.receive()
-                logging.debug('received message: '+str(message))
-                process_message(message)
-            except geventwebsocket.WebSocketError:
-                break
-
-        # disconnected
-        logging.debug("disconnecting analysis instance")
-        gevent.killall(greenlets)
-        analysis_instance.on_disconnect()
+    def emit(self, signal, message):
+        message = FrontendHandler.sanitize_message(message)
+        try:
+            self.write_message(json.dumps(
+                {'signal': signal, 'load': message}
+            ).encode('utf-8'))
+        except tornado.websocket.WebSocketClosedError:
+            pass
+            # log.error('WebSocket is closed. Cannot emit message: {}'
+            #           ''.format(message))
 
 
-class AnalysisZMQ(Analysis):
+class RenderTemplate(tornado.web.RequestHandler):
+    def initialize(self, template_name, template_path, info):
+        self.template_loc = os.path.join(template_path, template_name)
+        self.info = info
 
-    def __init__(self, namespace, instance_id, zmq_publish):
-        self.namespace = namespace
-        self.instance_id = instance_id
-        self.zmq_publish = zmq_publish
-
-    def onall(self, message_data):
-        msg = {
-            'analysis': self.namespace,
-            'instance_id': self.instance_id,
-            'frame': message_data,
-        }
-        self.zmq_publish.send_json(msg)
-        logging.debug('onall called with: '+str(msg))
-
-    def on_connect(self, request_args=None):
-        msg = {
-            'analysis': self.namespace,
-            'instance_id': self.instance_id,
-            'frame': {'signal': 'connect', 'load': {
-                'request_args': request_args,
-            }},
-        }
-        self.zmq_publish.send_json(msg)
-        logging.debug('on_connect called')
-
-    def on_disconnect(self):
-        msg = {
-            'analysis': self.namespace,
-            'instance_id': self.instance_id,
-            'frame': {'signal': 'disconnect', 'load': {}},
-        }
-        self.zmq_publish.send_json(msg)
-        logging.debug('on_disconnect called')
-
-
-class MetaZMQ(Meta):
-    """A Meta class that pipes all messages to ZMQ and back.
-
-    The entire ZMQ interface of Databench is defined here and in
-    :class`AnalysisZMQ`.
-
-    """
-
-    def __init__(
-            self,
-            name,
-            import_name,
-            description,
-
-            executable,
-            zmq_publish,
-            port_subscribe=None,
-    ):
-        Meta.__init__(self, name, import_name, description, AnalysisZMQ)
-
-        self.zmq_publish = zmq_publish
-
-        self.zmq_analysis_id = 0
-        self.zmq_analyses = {}
-        self.zmq_confirmed = False
-
-        # check whether we have to determine port_subscribe ourselves first
-        if port_subscribe is None:
-            context = zmq.Context()
-            socket = context.socket(zmq.PUB)
-            port_subscribe = socket.bind_to_random_port(
-                'tcp://127.0.0.1',
-                min_port=3000, max_port=9000,
-            )
-            context.destroy()
-            logging.debug('determined: port_subscribe='+str(port_subscribe))
-
-        # zmq subscription to listen for messages from backend
-        logging.debug('main listening on port: '+str(port_subscribe))
-        self.zmq_sub = zmq.Context().socket(zmq.SUB)
-        self.zmq_sub.connect('tcp://127.0.0.1:'+str(port_subscribe))
-        self.zmq_sub.setsockopt(zmq.SUBSCRIBE, '')
-
-        # @copy_current_request_context
-        def zmq_listener():
-            while True:
-                msg = self.zmq_sub.recv_json()
-                self.zmq_confirmed = True
-                logging.debug('main ('+') received '
-                              'msg: '+str(msg))
-
-                if 'description' in msg:
-                    self.description = msg['description']
-
-                if 'instance_id' in msg and \
-                   msg['instance_id'] in self.zmq_analyses:
-                    analysis = self.zmq_analyses[msg['instance_id']]
-                    del msg['instance_id']
-
-                    if 'frame' in msg and \
-                       'signal' in msg['frame'] and \
-                       'load' in msg['frame']:
-                        analysis.emit(msg['frame']['signal'],
-                                      msg['frame']['load'])
-                    else:
-                        logging.debug('dont understand this message: ' +
-                                      str(msg))
-                else:
-                    logging.debug('instance_id not in message or '
-                                  'AnalysisZMQ with that id not found.')
-        self.zmq_listener = gevent.Greenlet.spawn(zmq_listener)
-
-        # launch the language kernel process
-        logging.debug('launching: '+str(executable))
-        self.kernel_process = subprocess.Popen(executable, shell=False)
-
-        # init language kernel
-        def sending_init():
-            while not self.zmq_confirmed:
-                logging.debug('init kernel '+self.name+' to publish on '
-                              'port '+str(port_subscribe))
-                self.zmq_publish.send_json({
-                    'analysis': self.name,
-                    'publish_on_port': port_subscribe,
-                })
-                time.sleep(0.1)
-        gevent.Greenlet.spawn(sending_init)
-
-    def instantiate_analysis_class(self):
-        self.zmq_analysis_id += 1
-        i = self.analysis_class(self.name,
-                                self.zmq_analysis_id,
-                                self.zmq_publish)
-        self.zmq_analyses[self.zmq_analysis_id] = i
-        return i
+    def get(self):
+        self.render(
+            self.template_loc,
+            info=self.info,
+            databench_version=DATABENCH_VERSION,
+        )
