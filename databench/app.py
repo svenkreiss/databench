@@ -3,7 +3,6 @@
 import os
 import sys
 import glob
-import time
 import logging
 import traceback
 import zmq.eventloop
@@ -64,6 +63,7 @@ class App(object):
                 'tcp://127.0.0.1',
                 min_port=3000, max_port=9000,
             )
+            socket.close()
             context.destroy()
             log.debug('determined: zmq_port={}'.format(zmq_port))
 
@@ -76,11 +76,10 @@ class App(object):
         zmq_publish.bind('tcp://127.0.0.1:{}'.format(zmq_port))
         log.debug('main publishing to port {}'.format(zmq_port))
 
-        time.sleep(0.5)
-
-        self.register_analyses_py(zmq_publish, zmq_port)
-        # self.register_analyses_pyspark(zmq_publish)
-        # self.register_analyses_go(zmq_publish)
+        zmq_publish_stream = zmq.eventloop.zmqstream.ZMQStream(zmq_publish)
+        self.register_analyses_py(zmq_publish_stream, zmq_port)
+        # self.register_analyses_pyspark(zmq_publish_stream)
+        # self.register_analyses_go(zmq_publish_stream)
         self.import_analyses()
         self.register_analyses()
 

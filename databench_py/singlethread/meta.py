@@ -120,13 +120,10 @@ class Meta(object):
             if 'publish_on_port' in msg and not self.zmq_publish:
                 port = msg['publish_on_port']
                 self.zmq_publish = zmq.Context().socket(zmq.PUB)
-                self.zmq_publish.bind('tcp://127.0.0.1:{}'.format(port))
+                self.zmq_publish.connect('tcp://127.0.0.1:{}'.format(port))
                 log.debug('kernel publishing on: tcp://127.0.0.1:{}'
                           ''.format(port))
-
-                # wait for slow tcp bind
-                time.sleep(0.5)
-
+            if 'publish_on_port' in msg:
                 # sending hello
                 self.zmq_publish.send_json({
                     'analysis': self.name,

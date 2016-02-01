@@ -83,6 +83,7 @@ class MetaZMQ(Meta):
                 'tcp://127.0.0.1',
                 min_port=3000, max_port=9000,
             )
+            socket.close()
             context.destroy()
             log.debug('determined: port_subscribe='+str(port_subscribe))
 
@@ -90,7 +91,7 @@ class MetaZMQ(Meta):
         log.debug('main listening on port: '+str(port_subscribe))
         self.zmq_sub = zmq.Context().socket(zmq.SUB)
         self.zmq_sub.setsockopt(zmq.SUBSCRIBE, b'')
-        self.zmq_sub.connect('tcp://127.0.0.1:'+str(port_subscribe))
+        self.zmq_sub.bind('tcp://127.0.0.1:{}'.format(port_subscribe))
 
         self.zmq_stream_sub = zmq.eventloop.zmqstream.ZMQStream(self.zmq_sub)
         self.zmq_stream_sub.on_recv(self.zmq_listener)
@@ -105,13 +106,10 @@ class MetaZMQ(Meta):
         while not self.zmq_confirmed:
             log.debug('init kernel {} to publish on port {}'
                       ''.format(self.name, port_subscribe))
-            try:
-                self.zmq_publish.send_json({
-                    'analysis': self.name,
-                    'publish_on_port': port_subscribe,
-                })
-            except zmq.error.ZMQError:
-                pass
+            self.zmq_publish.send_json({
+                'analysis': self.name,
+                'publish_on_port': port_subscribe,
+            })
             yield tornado.gen.sleep(0.1)
 
     def zmq_listener(self, multipart):

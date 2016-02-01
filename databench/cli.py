@@ -2,9 +2,6 @@
 """Databench command line executable. Run to create a server that serves
 the analyses pages and runs the python backend."""
 
-from zmq.eventloop import ioloop
-ioloop.install()
-
 import os
 import sys
 import signal
@@ -14,6 +11,9 @@ import tornado
 import argparse
 
 from . import __version__ as DATABENCH_VERSION
+
+from zmq.eventloop import ioloop
+ioloop.install()
 
 
 def main():
