@@ -3,6 +3,7 @@ import json
 import logging
 import subprocess
 import tornado.gen
+import zmq.eventloop.zmqstream
 from .analysis import Analysis, Meta
 
 log = logging.getLogger(__name__)
@@ -104,10 +105,13 @@ class MetaZMQ(Meta):
         while not self.zmq_confirmed:
             log.debug('init kernel {} to publish on port {}'
                       ''.format(self.name, port_subscribe))
-            self.zmq_publish.send_json({
-                'analysis': self.name,
-                'publish_on_port': port_subscribe,
-            })
+            try:
+                self.zmq_publish.send_json({
+                    'analysis': self.name,
+                    'publish_on_port': port_subscribe,
+                })
+            except zmq.error.ZMQError:
+                pass
             yield tornado.gen.sleep(0.1)
 
     def zmq_listener(self, multipart):

@@ -1,5 +1,6 @@
 """Meta class for Databench Python kernel."""
 
+import sys
 import zmq
 import time
 import inspect
@@ -32,12 +33,22 @@ class Meta(object):
         self._init_zmq()
         print('Language kernel for {} initialized.'.format(self.name))
 
-    def _init_zmq(self, sub_port=8041):
+    def _init_zmq(self, sub_port=None):
         """Initialize zmq messaging. Listen on sub_port. This port might at
         some point receive the message to start publishing on a certain
         port, but until then, no publishing."""
 
         self.zmq_publish = None
+
+        if sub_port is None:
+            if not any(cl.startswith('--zmq-port=') for cl in sys.argv):
+                print('Cannot find zmq port to subscribe to.')
+            for cl in sys.argv:
+                if not cl.startswith('--zmq-port'):
+                    continue
+                sub_port = int(cl[-4:])
+                print('Determined zmq port from command line: {}'
+                      ''.format(sub_port))
 
         self.zmq_sub = zmq.Context().socket(zmq.SUB)
         self.zmq_sub.connect('tcp://127.0.0.1:{}'.format(sub_port))
@@ -109,12 +120,12 @@ class Meta(object):
             if 'publish_on_port' in msg and not self.zmq_publish:
                 port = msg['publish_on_port']
                 self.zmq_publish = zmq.Context().socket(zmq.PUB)
-                self.zmq_publish.bind('tcp://127.0.0.1:'+str(port))
-                logging.debug('kernel publishing on: tcp://127.0.0.1:' +
-                              str(port))
+                self.zmq_publish.bind('tcp://127.0.0.1:{}'.format(port))
+                log.debug('kernel publishing on: tcp://127.0.0.1:{}'
+                          ''.format(port))
 
                 # wait for slow tcp bind
-                time.sleep(0.5)
+                time.sleep(2.5)
 
                 # sending hello
                 self.zmq_publish.send_json({

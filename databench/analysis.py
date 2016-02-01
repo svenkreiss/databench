@@ -5,12 +5,8 @@ import json
 import logging
 import tornado.web
 import tornado.websocket
-import zmq.eventloop
-import zmq.eventloop.zmqstream
 
 from . import __version__ as DATABENCH_VERSION
-
-zmq.eventloop.ioloop.install()
 
 log = logging.getLogger(__name__)
 

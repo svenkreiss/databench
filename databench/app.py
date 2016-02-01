@@ -3,6 +3,7 @@
 import os
 import sys
 import glob
+import time
 import logging
 import traceback
 import zmq.eventloop
@@ -32,7 +33,7 @@ class App(object):
 
     """
 
-    def __init__(self, zmq_port=8041, template_delimiters=None):
+    def __init__(self, zmq_port=None, template_delimiters=None):
 
         self.info = {
             'logo_url': '/static/logo.svg',
@@ -55,6 +56,17 @@ class App(object):
              {'info': self.info}),
         ]
 
+        # check whether we have to determine zmq_port ourselves first
+        if zmq_port is None:
+            context = zmq.Context()
+            socket = context.socket(zmq.PUB)
+            zmq_port = socket.bind_to_random_port(
+                'tcp://127.0.0.1',
+                min_port=3000, max_port=9000,
+            )
+            context.destroy()
+            log.debug('determined: zmq_port={}'.format(zmq_port))
+
         self.spawned_analyses = {}
 
         # if template_delimiters is not None:
@@ -62,9 +74,11 @@ class App(object):
 
         zmq_publish = zmq.Context().socket(zmq.PUB)
         zmq_publish.bind('tcp://127.0.0.1:{}'.format(zmq_port))
-        logging.debug('main publishing to port {}'.format(zmq_port))
+        log.debug('main publishing to port {}'.format(zmq_port))
 
-        self.register_analyses_py(zmq_publish)
+        time.sleep(2.5)
+
+        self.register_analyses_py(zmq_publish, zmq_port)
         # self.register_analyses_pyspark(zmq_publish)
         # self.register_analyses_go(zmq_publish)
         self.import_analyses()
@@ -80,7 +94,7 @@ class App(object):
     #     options.update(delimiters)
     #     self.flask_app.jinja_options = options
 
-    def register_analyses_py(self, zmq_publish):
+    def register_analyses_py(self, zmq_publish, zmq_port):
         analysis_folders = glob.glob('analyses/*_py')
         if not analysis_folders:
             analysis_folders = glob.glob('databench/analyses_packaged/*_py')
@@ -91,7 +105,8 @@ class App(object):
                 continue
             log.debug('creating MetaZMQ for {}'.format(name))
             MetaZMQ(name, __name__, "ZMQ Analysis py",
-                    ['python', analysis_folder+'/analysis.py'],
+                    ['python', analysis_folder+'/analysis.py',
+                     '--zmq-port={}'.format(zmq_port)],
                     zmq_publish)
 
     def register_analyses_pyspark(self, zmq_publish):
