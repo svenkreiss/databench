@@ -76,7 +76,7 @@ class App(object):
         zmq_publish.bind('tcp://127.0.0.1:{}'.format(zmq_port))
         log.debug('main publishing to port {}'.format(zmq_port))
 
-        time.sleep(2.5)
+        time.sleep(0.5)
 
         self.register_analyses_py(zmq_publish, zmq_port)
         # self.register_analyses_pyspark(zmq_publish)

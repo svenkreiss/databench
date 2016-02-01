@@ -51,8 +51,8 @@ class Meta(object):
                       ''.format(sub_port))
 
         self.zmq_sub = zmq.Context().socket(zmq.SUB)
-        self.zmq_sub.connect('tcp://127.0.0.1:{}'.format(sub_port))
         self.zmq_sub.setsockopt(zmq.SUBSCRIBE, b'')
+        self.zmq_sub.connect('tcp://127.0.0.1:{}'.format(sub_port))
 
     @staticmethod
     def run_action(analysis, fn_name, message):
@@ -125,7 +125,7 @@ class Meta(object):
                           ''.format(port))
 
                 # wait for slow tcp bind
-                time.sleep(2.5)
+                time.sleep(0.5)
 
                 # sending hello
                 self.zmq_publish.send_json({

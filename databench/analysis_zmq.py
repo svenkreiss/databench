@@ -89,8 +89,8 @@ class MetaZMQ(Meta):
         # zmq subscription to listen for messages from backend
         log.debug('main listening on port: '+str(port_subscribe))
         self.zmq_sub = zmq.Context().socket(zmq.SUB)
-        self.zmq_sub.connect('tcp://127.0.0.1:'+str(port_subscribe))
         self.zmq_sub.setsockopt(zmq.SUBSCRIBE, b'')
+        self.zmq_sub.connect('tcp://127.0.0.1:'+str(port_subscribe))
 
         self.zmq_stream_sub = zmq.eventloop.zmqstream.ZMQStream(self.zmq_sub)
         self.zmq_stream_sub.on_recv(self.zmq_listener)
