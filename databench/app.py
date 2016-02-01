@@ -179,7 +179,7 @@ class App(object):
             )
         if os.path.isdir(static_path):
             log.debug('Making {} available under analyses_static/.'
-                          ''.format(static_path))
+                      ''.format(static_path))
 
             self.routes.append((
                 r'/analyses_static/(.*)',
@@ -187,8 +187,7 @@ class App(object):
                 {'path': static_path},
             ))
         else:
-            log.debug('Did not find an analyses/static/ folder. ' +
-                          'Checked: {}'.format(static_path))
+            log.debug('Did not find an analyses/static/ folder.')
 
     def register_analyses(self):
         """Register analyses (analyses need to be imported first)."""
