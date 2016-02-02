@@ -1,20 +1,19 @@
-{% from 'macros.html' import include_md %}
-{% extends "base.html" %}
+{% extends "templates/base.html" %}
 
 
-{% block title %}Scaffold_Py{% endblock %}
+{% block title %}Scaffold_Py{% end %}
 
 
 {% block content %}
-[[ include_md('scaffold_py/README.md') ]]
+{% raw info['readme'] %}
 
 <hr />
 <pre id="log"></pre>
-{% endblock %}
+{% end %}
 
 
 {% block footerscripts %}
 <script>
 	var databench = Databench();
 </script>
-{% endblock %}
+{% end %}

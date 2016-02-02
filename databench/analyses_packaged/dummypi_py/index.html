@@ -1,4 +1,3 @@
-{% from 'macros.html' import include_md %}
 {% extends "templates/base.html" %}
 
 
@@ -10,7 +9,7 @@
     dummypi_py
     <small><i>π = <span id="pi">0.0 ± 1.0</span></i></small>
 </h1>
-[[ include_md('dummypi_py/README.md') ]]
+{% raw info['readme'] %}
 
 <hr />
 <div class="row">

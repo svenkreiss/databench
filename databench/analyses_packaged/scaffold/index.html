@@ -1,9 +1,4 @@
-<!-- This is an HTML file that gets processed by Jinja2
-(http://jinja.pocoo.org/docs/dev/). Jinja2 block commands are included in
-curly braces and percent signs and inline commands in double angular brackets.
-Everything outside these commands is just plain HTML. -->
-{% from 'macros.html' import include_md %}
-{% extends "base.html" %}
+{% extends "templates/base.html" %}
 
 
 {% block head %}
@@ -21,18 +16,17 @@ Everything outside these commands is just plain HTML. -->
     You can also add a js library to footerscripts (see below) to have it load
     after the page content.
 -->
-{% endblock %}
+{% end %}
 
 
 <!-- CHANGEME. This sets the content of the HTML <title> element. -->
-{% block title %}Scaffold{% endblock %}
+{% block title %}Scaffold{% end %}
 
 
 
 {% block content %}
-<!-- The description of the analysis is in README.md. The macro include_md()
-pulls that description in and converts it to html to be shown also here. -->
-[[ include_md('scaffold/README.md') ]]
+<!-- The description of the analysis from README.md. -->
+{% raw info['readme'] %}
 
 <hr />
 <!-- CHANGEME. Put your analysis HTML here. -->
@@ -46,7 +40,7 @@ pulls that description in and converts it to html to be shown also here. -->
 analysis. Feel free to delete the line below. -->
 <h3>Log</h3>
 <pre id="log"></pre>
-{% endblock content %}
+{% end content %}
 
 
 
@@ -70,4 +64,4 @@ analysis. Feel free to delete the line below. -->
         databench.emit('got_ready_signal', 'thanks for sending ready signal');
     });
 </script>
-{% endblock footerscripts %}
+{% end footerscripts %}
