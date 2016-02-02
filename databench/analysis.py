@@ -2,12 +2,21 @@
 
 import os
 import json
+import fnmatch
 import logging
 import tornado.web
 import tornado.websocket
 
 # utilities
-from markdown import markdown
+try:
+    from markdown import markdown
+except ImportError:
+    markdown = None
+
+try:
+    from docutils.core import publish_parts as rst
+except ImportError:
+    rst = None
 
 from . import __version__ as DATABENCH_VERSION
 
@@ -173,14 +182,41 @@ class Meta(object):
             self.thumbnail = 'thumbnail.png'
 
         # detect and render readme
-        if os.path.isfile(os.path.join(analysis_path, 'readme.md')):
-            with open(os.path.join(analysis_path, 'readme.md'), 'r') as f:
-                self.info['readme'] = markdown(f.read())
-        if os.path.isfile(os.path.join(analysis_path, 'README.md')):
-            with open(os.path.join(analysis_path, 'README.md'), 'r') as f:
-                self.info['readme'] = markdown(f.read())
+        self.info['readme'] = self.readme(analysis_path)
 
         self.request_args = None
+
+    def readme(self, analysis_path):
+        readme_file = [os.path.join(analysis_path, n)
+                       for n in os.listdir(analysis_path)
+                       if fnmatch.fnmatch(n.lower(), 'readme.*')]
+        readme_file = readme_file[0] if readme_file else None
+        log.debug('Readme file: {}'.format(readme_file))
+        if not readme_file:
+            return None
+
+        with open(readme_file, 'r') as f:
+            r = f.read()
+
+        # process readme
+        if readme_file.lower().endswith('.md'):
+            if markdown is not None:
+                r = markdown(r)
+            else:
+                r = (
+                    '<p>Install markdown with <b>pip install markdown</b>'
+                    ' to render this readme file.</p>'
+                ) + r
+        if readme_file.lower().endswith('.rst'):
+            if rst is not None:
+                r = rst(r, writer_name='html')['html_body']
+            else:
+                r = (
+                    '<p>Install rst rendering with <b>pip install docutils</b>'
+                    ' to render this readme file.</p>'
+                ) + r
+
+        return r
 
     def instantiate_analysis_class(self):
         return self.analysis_class()
