@@ -1,6 +1,6 @@
 """Dummy analysis `dummypi`. Just for testing purposes."""
 
-from .dummypi import analysis
-from .scaffold import analysis
+from .dummypi import analysis as dummypi_analysis
+from .scaffold import analysis as scaffold_analysis
 
-header_title = 'Databench - Packaged Analyses'
+title = 'Databench - Packaged Analyses'
