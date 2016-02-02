@@ -254,23 +254,29 @@ class Meta(object):
 class FrontendHandler(tornado.websocket.WebSocketHandler):
     @staticmethod
     def sanitize_message(m):
-        try:
+        if isinstance(m, int) or isinstance(m, float):
             if m != m:
+                m = 'NaN'
+            elif isinstance(m, float) and m != m:
                 m = 'NaN'
             elif m == float('inf'):
                 m = 'inf'
             elif m == float('-inf'):
                 m = '-inf'
-            elif isinstance(m, list):
-                for i in range(len(m)):
-                    m[i] = FrontendHandler.sanitize_message(m[i])
-            elif isinstance(m, dict):
-                for i in m.iterkeys():
-                    m[i] = FrontendHandler.sanitize_message(m[i])
-        except:
-            # Some types cannot be compared (like numpy arrays).
-            # Just skip those.
-            return m
+        elif isinstance(m, list):
+            for i, e in enumerate(m):
+                m[i] = FrontendHandler.sanitize_message(e)
+        elif isinstance(m, dict):
+            for i in m.iterkeys():
+                m[i] = FrontendHandler.sanitize_message(m[i])
+        elif isinstance(m, (set, tuple)):
+            m = list(m)
+            for i, e in enumerate(m):
+                m[i] = FrontendHandler.sanitize_message(e)
+        elif hasattr(m, 'tolist'):  # for np.ndarray, np.generic
+            m = m.tolist()
+            for i, e in enumerate(m):
+                m[i] = FrontendHandler.sanitize_message(e)
         return m
 
     def initialize(self, instantiate_analysis):
