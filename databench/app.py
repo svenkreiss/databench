@@ -46,10 +46,12 @@ class App(object):
             (r'/favicon\.ico',
              tornado.web.StaticFileHandler,
              {'path': 'static/favicon.ico'}),
+
             (r'/static/(.*)',
              tornado.web.StaticFileHandler,
              {'path': os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                    'static')}),
+
             (r'/',
              IndexHandler,
              {'info': self.info}),
@@ -197,9 +199,6 @@ class App(object):
             self.routes += meta.routes
 
             meta.info = self.info
-
-            # log.debug('Connect websockets to '+meta.name+'.')
-            # meta.wire_sockets(self.sockets, url_prefix='/'+meta.name)
 
 
 class IndexHandler(tornado.web.RequestHandler):

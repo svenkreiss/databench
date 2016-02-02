@@ -6,6 +6,9 @@ import logging
 import tornado.web
 import tornado.websocket
 
+# utilities
+from markdown import markdown
+
 from . import __version__ as DATABENCH_VERSION
 
 log = logging.getLogger(__name__)
@@ -136,7 +139,11 @@ class Meta(object):
         # find folder for this analysis
         analysis_path = os.path.join(analyses_path, self.name)
 
-        self.info = {'logo_url': '/static/logo.svg', 'title': 'Databench'}
+        self.info = {
+            'logo_url': '/static/logo.svg',
+            'title': 'Databench',
+            'readme': None,
+        }
         self.description = description
         self.analysis_class = analysis_class
 
@@ -162,9 +169,16 @@ class Meta(object):
         ]
 
         # detect whether thumbnail.png is present
-        thumbnail_path = os.path.join(analysis_path, 'thumbnail.png')
-        if os.path.isfile(thumbnail_path):
+        if os.path.isfile(os.path.join(analysis_path, 'thumbnail.png')):
             self.thumbnail = 'thumbnail.png'
+
+        # detect and render readme
+        if os.path.isfile(os.path.join(analysis_path, 'readme.md')):
+            with open(os.path.join(analysis_path, 'readme.md'), 'r') as f:
+                self.info['readme'] = markdown(f.read())
+        if os.path.isfile(os.path.join(analysis_path, 'README.md')):
+            with open(os.path.join(analysis_path, 'README.md'), 'r') as f:
+                self.info['readme'] = markdown(f.read())
 
         self.request_args = None
 

@@ -23,6 +23,7 @@ setup(
     install_requires=[
         'tornado>=4.3',
         'pyzmq>=4.3.1',
+        'markdown>=2.6.5',
     ],
     entry_points={
         'console_scripts': [

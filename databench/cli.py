@@ -86,7 +86,7 @@ def main():
 
     print('--- databench v'+DATABENCH_VERSION+' ---')
     # logging.info('host='+str(args.host)+', port='+str(args.port))
-    logging.info('delimiters='+str(delimiters))
+    # logging.info('delimiters='+str(delimiters))
 
     # handle external signal to terminate nicely (used in tests)
     def sig_handler(signum, stack):
