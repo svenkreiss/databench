@@ -267,7 +267,7 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
             for i, e in enumerate(m):
                 m[i] = FrontendHandler.sanitize_message(e)
         elif isinstance(m, dict):
-            for i in m.iterkeys():
+            for i in m:
                 m[i] = FrontendHandler.sanitize_message(m[i])
         elif isinstance(m, (set, tuple)):
             m = list(m)
