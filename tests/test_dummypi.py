@@ -227,4 +227,6 @@ def test_fn_call_dummypi_py_dict():
 
 
 if __name__ == '__main__':
+    setup_module()
     test_multiple_ws_dummypi_py()
+    teardown_module()
