@@ -10,7 +10,8 @@ import databench
 
 class Analysis(databench.Analysis):
 
-    def __init__(self):
+    def __init__(self, id_=None):
+        super(Analysis, self).__init__(id_)
         self.samples = 500
 
     def on_run(self):
@@ -54,4 +55,4 @@ class Analysis(databench.Analysis):
         })
 
 
-META = databench.Meta('dummypi', __name__, __doc__, Analysis)
+META = databench.Meta('dummypi', __doc__, Analysis)

@@ -22,7 +22,7 @@ def setup_module():
                               stdin=subprocess.PIPE,
                               stdout=subprocess.PIPE,
                               preexec_fn=os.setsid)
-    time.sleep(5)
+    time.sleep(1)
 
 
 def teardown_module():
@@ -54,6 +54,11 @@ def test_get_dummypi():
 def test_ws_dummypi():
     websocket.enableTrace(True)
     ws = websocket.create_connection('ws://127.0.0.1:5000/dummypi/ws')
+    ws.send('{"__connect": null}')
+    r = json.loads(ws.recv())
+    print(r)
+    assert r['signal'] == '__connect'
+    assert 'analysis_id' in r['load']
     ws.send('{"signal":"run", "load":{"__action_id":123}}')
     r = json.loads(ws.recv())
     print(r)
@@ -70,6 +75,20 @@ def test_ws_dummypi():
     ws.close()
 
 
+def test_multiple_ws_dummypi():
+    websocket.enableTrace(True)
+    wss = [websocket.create_connection('ws://127.0.0.1:5000/dummypi/ws')
+           for _ in range(4)]
+    for ws in wss:
+        ws.send('{"__connect": null}')
+        r = json.loads(ws.recv())
+        print(r)
+        assert r['signal'] == '__connect'
+        assert 'analysis_id' in r['load']
+    for ws in wss:
+        ws.close()
+
+
 """
 
 Python Language Kernel tests
@@ -82,9 +101,29 @@ def test_get_dummypi_py():
     assert r.status_code == 200
 
 
+def test_multiple_ws_dummypi_py():
+    # websocket.enableTrace(True)
+    wss = [websocket.create_connection('ws://127.0.0.1:5000/dummypi_py/ws')
+           for _ in range(4)]
+    for ws in wss:
+        ws.send('{"__connect": null}')
+        r = json.loads(ws.recv())
+        print(r)
+        assert r['signal'] == '__connect'
+        assert 'analysis_id' in r['load']
+    for ws in wss:
+        ws.close()
+
+
 def test_ws_dummypi_py():
     websocket.enableTrace(True)
     ws = websocket.create_connection('ws://127.0.0.1:5000/dummypi_py/ws')
+    ws.send('{"__connect": null}')
+    r = json.loads(ws.recv())
+    print(r)
+    assert r['signal'] == '__connect'
+    assert 'analysis_id' in r['load']
+    time.sleep(1)
     ws.send('{"signal":"run", "load":{"__action_id":123}}')
     r = json.loads(ws.recv())
     print(r)
@@ -111,6 +150,12 @@ Function Argument Tests
 def _fn_call(name='dummypi'):
     websocket.enableTrace(True)
     ws = websocket.create_connection('ws://127.0.0.1:5000/'+name+'/ws')
+    ws.send('{"__connect": null}')
+    r = json.loads(ws.recv())
+    print(r)
+    assert r['signal'] == '__connect'
+    assert 'analysis_id' in r['load']
+    time.sleep(1)
     ws.send('{"signal":"test_fn", "load": 1}')
     r = json.loads(ws.recv())
     print(r)
@@ -123,6 +168,12 @@ def _fn_call(name='dummypi'):
 def _fn_call_array(name='dummypi'):
     websocket.enableTrace(True)
     ws = websocket.create_connection('ws://127.0.0.1:5000/'+name+'/ws')
+    ws.send('{"__connect": null}')
+    r = json.loads(ws.recv())
+    print(r)
+    assert r['signal'] == '__connect'
+    assert 'analysis_id' in r['load']
+    time.sleep(1)
     ws.send('{"signal":"test_fn", "load": [1, 2]}')
     r = json.loads(ws.recv())
     print(r)
@@ -135,6 +186,12 @@ def _fn_call_array(name='dummypi'):
 def _fn_call_dict(name='dummypi'):
     websocket.enableTrace(True)
     ws = websocket.create_connection('ws://127.0.0.1:5000/'+name+'/ws')
+    ws.send('{"__connect": null}')
+    r = json.loads(ws.recv())
+    print(r)
+    assert r['signal'] == '__connect'
+    assert 'analysis_id' in r['load']
+    time.sleep(1)
     ws.send('{"signal":"test_fn", "load": '
             '{"first_param": 1, "second_param": 2}}')
     r = json.loads(ws.recv())
@@ -167,3 +224,7 @@ def test_fn_call_dummypi_py_array():
 
 def test_fn_call_dummypi_py_dict():
     _fn_call_dict(name='dummypi_py')
+
+
+if __name__ == '__main__':
+    test_multiple_ws_dummypi_py()

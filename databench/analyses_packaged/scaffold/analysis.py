@@ -30,4 +30,4 @@ class Analysis(databench.Analysis):
                   'that the ready signal was received.')
 
 
-META = databench.Meta('scaffold', __name__, __doc__, Analysis)
+META = databench.Meta('scaffold', __doc__, Analysis)

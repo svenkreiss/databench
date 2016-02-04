@@ -2,8 +2,7 @@
 
 import sys
 import zmq
-import time
-import inspect
+import json
 import logging
 
 log = logging.getLogger(__name__)
@@ -23,39 +22,55 @@ class Meta(object):
 
     """
 
-    def __init__(self, name, import_name, description, analysis):
+    def __init__(self, name, description, analysis_class):
         self.name = name
-        self.import_name = import_name
         self.description = description
-        self.analysis_class = analysis
-        self.analysis_instances = {}
 
-        self._init_zmq()
+        analysis_id, zmq_port_subscribe, zmq_port_publish = None, None, None
+        for cl in sys.argv:
+            if cl.startswith('--analysis-id'):
+                analysis_id = cl.partition('=')[2]
+                print('Determined analysis id from command line: {}'
+                      ''.format(analysis_id))
+            if cl.startswith('--zmq-subscribe'):
+                zmq_port_subscribe = cl.partition('=')[2]
+                print('Determined zmq subscribe port from command line: {}'
+                      ''.format(zmq_port_subscribe))
+            if cl.startswith('--zmq-publish'):
+                zmq_port_publish = cl.partition('=')[2]
+                print('Determined zmq publish port from command line: {}'
+                      ''.format(zmq_port_publish))
+
+        print('Analysis id: {}, port sub: {}, port pub: {}'.format(
+              analysis_id, zmq_port_subscribe, zmq_port_publish))
+
+        self.analysis = analysis_class(analysis_id)
+
+        def emit(signal, message):
+            self.emit(signal, message, analysis_id)
+        self.analysis.set_emit_fn(emit)
+
+        self._init_zmq(zmq_port_publish, zmq_port_subscribe)
         print('Language kernel for {} initialized.'.format(self.name))
 
-    def _init_zmq(self, sub_port=None):
+    def _init_zmq(self, port_publish, port_subscribe):
         """Initialize zmq messaging. Listen on sub_port. This port might at
         some point receive the message to start publishing on a certain
         port, but until then, no publishing."""
 
-        self.zmq_publish = None
+        log.debug('kernel {} publishing on port {}'
+                  ''.format(self.analysis.id_, port_publish))
+        self.zmq_publish = zmq.Context().socket(zmq.PUB)
+        self.zmq_publish.connect('tcp://127.0.0.1:{}'.format(port_publish))
 
-        if sub_port is None:
-            if not any(cl.startswith('--zmq-port=') for cl in sys.argv):
-                print('Cannot find zmq port to subscribe to.')
-            for cl in sys.argv:
-                if not cl.startswith('--zmq-port'):
-                    continue
-                sub_port = int(cl[-4:])
-                print('Determined zmq port from command line: {}'
-                      ''.format(sub_port))
-
+        log.debug('kernel {} subscribed on port {}'
+                  ''.format(self.analysis.id_, port_subscribe))
         self.zmq_sub = zmq.Context().socket(zmq.SUB)
-        self.zmq_sub.setsockopt(zmq.SUBSCRIBE, b'')
-        self.zmq_sub.connect('tcp://127.0.0.1:{}'.format(sub_port))
+        self.zmq_sub.setsockopt(zmq.SUBSCRIBE,
+                                self.analysis.id_.encode('utf-8'))
+        self.zmq_sub.connect('tcp://127.0.0.1:{}'.format(port_subscribe))
 
-    @staticmethod
-    def run_action(analysis, fn_name, message):
+    def run_action(self, analysis, fn_name, message='__nomessagetoken__'):
         """Executes an action in the analysis with the given message. It
         also handles the start and stop signals in case an action_id
         is given.
@@ -72,12 +87,9 @@ class Meta(object):
         if action_id:
             analysis.emit('__action', {'id': action_id, 'status': 'start'})
 
+        log.debug('kernel calling {}'.format(fn_name))
         fn = getattr(analysis, fn_name)
-
-        if fn_name == 'on_connect' and 'request_args' in message:
-            on_connect_args = inspect.getargspec(analysis.on_connect).args
-            if 'request_args' not in on_connect_args:
-                del message['request_args']
+        log.debug('{}'.format(fn))
 
         # Check whether this is a list (positional arguments)
         # or a dictionary (keyword arguments).
@@ -85,90 +97,51 @@ class Meta(object):
             fn(*message)
         elif isinstance(message, dict):
             fn(**message)
+        elif message == '__nomessagetoken__':
+            fn()
         else:
             fn(message)
 
         if action_id:
             analysis.emit('__action', {'id': action_id, 'status': 'end'})
 
+        if fn_name == 'on_disconnect':
+            log.debug('kernel {} shutting down'.format(analysis.id_))
+            self.zmq_publish.close()
+            sys.exit(0)
+
     def event_loop(self):
         """Event loop."""
         while True:
-            msg = self.zmq_sub.recv_json()
-            log.debug('kernel msg: '+str(msg))
-            if 'analysis' not in msg or \
-               msg['analysis'] != self.name:
-                continue
+            msg = self.zmq_sub.recv().decode('utf-8')
+            log.debug('kernel msg: {}'.format(msg))
+            msg = json.loads(msg.partition('|')[2])
 
-            del msg['analysis']
-            log.debug('kernel processing msg')
+            if 'signal' not in msg or 'load' not in msg:
+                return
 
-            if 'instance_id' in msg and \
-               msg['instance_id'] not in self.analysis_instances:
-                # instance does not exist yet
-                log.debug('kernel creating analysis instance {}'
-                          ''.format(msg['instance_id']))
-                i = self.analysis_class()
-
-                def emit(signal, message):
-                    self.emit(signal, message, msg['instance_id'])
-
-                i.set_emit_fn(emit)
-                self.analysis_instances[msg['instance_id']] = i
-
-            # init message
-            if 'publish_on_port' in msg and not self.zmq_publish:
-                port = msg['publish_on_port']
-                self.zmq_publish = zmq.Context().socket(zmq.PUB)
-                self.zmq_publish.connect('tcp://127.0.0.1:{}'.format(port))
-                log.debug('kernel publishing on: tcp://127.0.0.1:{}'
-                          ''.format(port))
-            if 'publish_on_port' in msg:
-                # sending hello
-                self.zmq_publish.send_json({
-                    'analysis': self.name,
-                    'description': self.description,
-                })
-
-            if 'instance_id' not in msg:
-                continue
-
-            instance_id = msg['instance_id']
-            i = self.analysis_instances[instance_id]
-            if 'frame' not in msg or \
-               'signal' not in msg['frame'] or \
-               'load' not in msg['frame'] or \
-               not hasattr(i, 'on_'+msg['frame']['signal']):
-                continue
+            if not hasattr(self.analysis,
+                           'on_{}'.format(msg['signal'])):
+                print('Analysis does not contain on_{}()'
+                      ''.format(msg['signal']))
+                return
 
             # standard message
-            fn_name = 'on_'+msg['frame']['signal']
+            fn_name = 'on_'+msg['signal']
             log.debug('kernel processing '+fn_name)
-            Meta.run_action(i, fn_name, msg['frame']['load'])
+            self.run_action(self.analysis, fn_name, msg['load'])
 
-    def emit(self, signal, message, instance_id):
+    def emit(self, signal, message, analysis_id):
         """Emit signal to main.
 
         Args:
-            signal (str): Name of the signal to be emitted.
+            signal: Name of the signal to be emitted.
             message: Message to be sent.
-            instance_id: Identifies the instance of this analysis.
+            analysis_id: Identifies the instance of this analysis.
 
         """
-        log.debug(
-            'backend (namespace='+self.name+', analysis='+str(instance_id) +
-            ', signal='+signal + '): ' + (
-                (str(message)[:60] + '...')
-                if len(str(message)) > 65
-                else str(message)
-            )
-        )
 
-        if self.zmq_publish:
-            self.zmq_publish.send_json({
-                'analysis': self.name,
-                'instance_id': instance_id,
-                'frame': {'signal': signal, 'load': message},
-            })
-        else:
-            log.debug('zmq_socket_pub not defined yet.')
+        self.zmq_publish.send_json({
+            'analysis_id': analysis_id,
+            'frame': {'signal': signal, 'load': message},
+        })

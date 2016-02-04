@@ -95,10 +95,10 @@ def main():
             cov.stop()
             cov.save()
         sys.exit(0)
-    signal.signal(signal.SIGTERM, sig_handler)
+    # signal.signal(signal.SIGTERM, sig_handler)
     # not supported on Windows:
-    if hasattr(signal, 'SIGUSR1'):
-        signal.signal(signal.SIGUSR1, sig_handler)
+    # if hasattr(signal, 'SIGUSR1'):
+    #     signal.signal(signal.SIGUSR1, sig_handler)
 
     app = App(template_delimiters=delimiters).tornado_app()
     app.listen(args.port)

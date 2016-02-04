@@ -6,8 +6,8 @@ import logging
 class Analysis(object):
     """Databench's analysis class."""
 
-    def __init__(self):
-        pass
+    def __init__(self, id_=None):
+        self.id_ = id_
 
     def set_emit_fn(self, emit_fn):
         """Sets what the emit function for this analysis will be."""

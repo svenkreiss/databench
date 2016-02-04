@@ -105,9 +105,9 @@ class App(object):
             if name[0] in ['.', '_']:
                 continue
             log.debug('creating MetaZMQ for {}'.format(name))
-            MetaZMQ(name, __name__, "ZMQ Analysis py",
+            MetaZMQ(name, "ZMQ Analysis py",
                     ['python', analysis_folder+'/analysis.py',
-                     '--zmq-port={}'.format(zmq_port)],
+                     '--zmq-subscribe={}'.format(zmq_port)],
                     zmq_publish)
 
     def register_analyses_pyspark(self, zmq_publish):

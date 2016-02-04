@@ -15,7 +15,8 @@ import databench_py.singlethread
 
 class Analysis(databench_py.Analysis):
 
-    def __init__(self):
+    def __init__(self, id_=None):
+        super(Analysis, self).__init__(id_)
         self.samples = 500
 
     def on_run(self):
@@ -52,6 +53,7 @@ class Analysis(databench_py.Analysis):
 
     def on_test_fn(self, first_param, second_param=100):
         """Echo params."""
+        print('>>>>>>>>>>> onteestfn')
         self.emit('test_fn', {
             'first_param': first_param,
             'second_param': second_param,
@@ -60,6 +62,6 @@ class Analysis(databench_py.Analysis):
 
 if __name__ == "__main__":
     analysis = databench_py.singlethread.Meta(
-        'dummypi_py', __name__, __doc__, Analysis
+        'dummypi_py', __doc__, Analysis
     )
     analysis.event_loop()

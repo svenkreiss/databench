@@ -2,10 +2,13 @@
 
 import os
 import json
+import random
+import string
 import fnmatch
 import logging
 import tornado.web
 import tornado.websocket
+from .datastore import Datastore
 
 # utilities
 try:
@@ -69,23 +72,39 @@ class Analysis(object):
 
     """
 
-    def __init__(self):
-        pass
+    datastore_class = Datastore
+
+    def __init__(self, id_=None):
+        self.id_ = id_ if id_ else Analysis.__create_id()
+        self.__datastore = Analysis.datastore_class(self.id_)
 
     def set_emit_fn(self, emit_fn):
         """Sets what the emit function for this analysis will be."""
         self.emit = emit_fn
+        return self
+
+    def add_data_change_cb(self, cb):
+        self.__datastore.add_change_cb(cb)
+        return self
+
+    """Datastore."""
+
+    @property
+    def data(self):
+        return self.__datastore
 
     """Events."""
-
-    def onall(self, message_data):
-        log.debug('onall called.')
 
     def on_connect(self):
         log.debug('on_connect called.')
 
     def on_disconnect(self):
         log.debug('on_disconnect called.')
+
+    @staticmethod
+    def __create_id():
+        return ''.join(random.choice(string.ascii_letters + string.digits)
+                       for _ in range(8))
 
 
 class Meta(object):
@@ -94,8 +113,6 @@ class Meta(object):
         name (str): Name of this analysis. If ``signals`` is not specified,
             this also becomes the namespace for the WebSocket connection and
             has to match the frontend's :js:class:`Databench` ``name``.
-        import_name (str): Usually the file name ``__name__`` where this
-            analysis is instantiated.
         description (str): Usually the ``__doc__`` string of the analysis.
         analysis_class (:class:`databench.Analysis`): Object
             that should be instantiated for every new websocket connection.
@@ -129,7 +146,6 @@ class Meta(object):
     def __init__(
             self,
             name,
-            import_name,
             description,
             analysis_class,
     ):
@@ -163,7 +179,7 @@ class Meta(object):
 
             (r'/{}/ws'.format(self.name),
              FrontendHandler,
-             {'instantiate_analysis': self.instantiate_analysis_class}),
+             {'meta': self}),
 
             (r'/{}/(?P<template_name>.+\.html)'.format(self.name),
              RenderTemplate,
@@ -218,14 +234,18 @@ class Meta(object):
 
         return r
 
-    def instantiate_analysis_class(self):
-        return self.analysis_class()
-
-    @staticmethod
-    def run_action(analysis, fn_name, message):
+    def run_action(self, analysis, fn_name, message='__nomessagetoken__'):
         """Executes an action in the analysis with the given message. It
         also handles the start and stop signals in case an action_id
         is given."""
+
+        if analysis is None:
+            return
+
+        if not hasattr(analysis, fn_name):
+            log.warning('Frontend wants to call {} which is not in the '
+                        'Analysis class {}.'.format(fn_name, analysis))
+            return
 
         # detect action_id
         action_id = None
@@ -236,6 +256,7 @@ class Meta(object):
         if action_id:
             analysis.emit('__action', {'id': action_id, 'status': 'start'})
 
+        log.debug('calling {}'.format(fn_name))
         fn = getattr(analysis, fn_name)
 
         # Check whether this is a list (positional arguments)
@@ -244,6 +265,8 @@ class Meta(object):
             fn(*message)
         elif isinstance(message, dict):
             fn(**message)
+        elif message == '__nomessagetoken__':
+            fn()
         else:
             fn(message)
 
@@ -252,6 +275,63 @@ class Meta(object):
 
 
 class FrontendHandler(tornado.websocket.WebSocketHandler):
+
+    def initialize(self, meta):
+        self.meta = meta
+        self.analysis = None
+
+    def open(self):
+        log.debug('WebSocket connection opened.')
+
+    def on_close(self):
+        log.debug('WebSocket connection closed.')
+        self.meta.run_action(self.analysis, 'on_disconnect')
+
+    def on_message(self, message):
+        if message is None:
+            log.debug('empty message received.')
+            return
+
+        message_data = json.loads(message)
+        if '__connect' in message_data:
+            if self.analysis is not None:
+                log.error('Connection already has an analysis. Abort.')
+                return
+
+            analysis_id = message_data['__connect']
+            log.debug('Instantiate analysis id {} ...'.format(analysis_id))
+            self.analysis = self.meta.analysis_class(analysis_id)
+            analysis_id = self.analysis.id_  # in case a new id was generated
+            self.analysis.set_emit_fn(self.emit)
+            log.info('Analysis {} instanciated.'.format(analysis_id))
+
+            self.meta.run_action(self.analysis, 'on_connect')
+            self.emit('__connect', {'analysis_id': analysis_id})
+            log.info('Connected to analysis.')
+            return
+
+        if self.analysis is None:
+            log.warning('no analysis connected. Abort.')
+            return
+
+        if 'signal' not in message_data or 'load' not in message_data:
+            log.info('message not processed: '+message)
+            return
+
+        fn_name = 'on_'+message_data['signal']
+        self.meta.run_action(self.analysis, fn_name, message_data['load'])
+
+    def emit(self, signal, message):
+        message = FrontendHandler.sanitize_message(message)
+        try:
+            self.write_message(json.dumps(
+                {'signal': signal, 'load': message}
+            ).encode('utf-8'))
+        except tornado.websocket.WebSocketClosedError:
+            pass
+            # log.warning('WebSocket is closed. Cannot emit message: {}'
+            #             ''.format(message))
+
     @staticmethod
     def sanitize_message(m):
         if isinstance(m, int) or isinstance(m, float):
@@ -278,56 +358,6 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
             for i, e in enumerate(m):
                 m[i] = FrontendHandler.sanitize_message(e)
         return m
-
-    def initialize(self, instantiate_analysis):
-        self.instantiate_analysis = instantiate_analysis
-        self.analysis_instance = None
-
-    def open(self):
-        log.debug('WebSocket connection opened.')
-        self.analysis_instance = self.instantiate_analysis()
-        self.analysis_instance.set_emit_fn(self.emit)
-        log.debug("analysis instantiated")
-        self.analysis_instance.on_connect()
-
-    def on_close(self):
-        log.debug('WebSocket connection closed.')
-        self.analysis_instance.on_disconnect()
-
-    def on_message(self, message):
-        if message is None:
-            log.debug('empty message received.')
-            return
-
-        message_data = json.loads(message)
-        self.analysis_instance.onall(message_data)
-        if 'signal' not in message_data or 'load' not in message_data:
-            log.info('message not processed: '+message)
-            return
-
-        fn_name = 'on_'+message_data['signal']
-        if not hasattr(self.analysis_instance, fn_name):
-            log.warning('frontend wants to call '+fn_name +
-                        ' which is not in the Analysis class.')
-            return
-
-        log.debug('calling '+fn_name)
-        Meta.run_action(
-            self.analysis_instance,
-            fn_name,
-            message_data['load'],
-        )
-
-    def emit(self, signal, message):
-        message = FrontendHandler.sanitize_message(message)
-        try:
-            self.write_message(json.dumps(
-                {'signal': signal, 'load': message}
-            ).encode('utf-8'))
-        except tornado.websocket.WebSocketClosedError:
-            pass
-            # log.error('WebSocket is closed. Cannot emit message: {}'
-            #           ''.format(message))
 
 
 class RenderTemplate(tornado.web.RequestHandler):

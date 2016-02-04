@@ -21,6 +21,7 @@ function Databench(opts) {
 	var ws_reconnect_delay = 100.0;
 
 	var socket = null;
+	var analysis_id = null;
 	function create_websocket_connection() {
 		socket = new WebSocket(opts.ws_url);
 
@@ -41,6 +42,7 @@ function Databench(opts) {
 			ws_reconnect_attempt = 0;
 			ws_reconnect_delay = 100.0;
 			$('.ws-connection-alert').remove();
+			socket.send(JSON.stringify({'__connect': analysis_id}));
 		}
 		socket.onclose = function () {
 			window.clearInterval(check_open);
@@ -67,17 +69,24 @@ function Databench(opts) {
 		socket.onmessage = function(event) {
 			var message_data = JSON.parse(event.data);
 
-			// normal message
-			if (message_data.signal in on_callbacks) {
-				for(cb in on_callbacks[message_data.signal]) {
-					on_callbacks[message_data.signal][cb](message_data.load);
-				}
+			// connect response
+			if (message_data.signal == '__connect') {
+				analysis_id = message_data.load.analysis_id;
+				console.log('Set analysis_id to ' + analysis_id);
 			}
 
+			// actions
 			if (message_data.signal == '__action') {
 				var id = message_data.load.id
 				for(cb in onAction_callbacks[id]) {
 					onAction_callbacks[id][cb](message_data.load.status);
+				}
+			}
+
+			// normal message
+			if (message_data.signal in on_callbacks) {
+				for(cb in on_callbacks[message_data.signal]) {
+					on_callbacks[message_data.signal][cb](message_data.load);
 				}
 			}
 		}
