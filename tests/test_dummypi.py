@@ -17,7 +17,7 @@ def setup_module():
 
     # call os.setsid so that all subprocesses terminate when the
     # main process receives SIGTERM
-    DAEMON = subprocess.Popen(['databench', '--with-coverage'],
+    DAEMON = subprocess.Popen(['databench', '--with-coverage', '--log=INFO'],
                               close_fds=True,
                               stdin=subprocess.PIPE,
                               stdout=subprocess.PIPE,
