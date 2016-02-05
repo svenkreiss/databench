@@ -1,0 +1,31 @@
+{
+  "name": "databench",
+  "version": "0.4.0",
+  "description": "Realtime data analysis tool.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "d3": "^3.5.14",
+    "font-awesome": "^4.5.0",
+    "jquery": "^2.2.0"
+  },
+  "devDependencies": {
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/svenkreiss/databench.git"
+  },
+  "author": "@svenkreiss",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/svenkreiss/databench/issues"
+  },
+  "homepage": "http://databench.trivial.io"
+}

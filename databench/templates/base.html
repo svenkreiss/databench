@@ -8,9 +8,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link rel="shortcut icon" href="/static/favicon.ico">
-        <link rel="stylesheet" href="/static/bootstrap-3.1.1-dist/css/bootstrap.min.css">
-        <link rel="stylesheet" href="/static/font-awesome/css/font-awesome.min.css">
-        <link rel="stylesheet" href="/static/main.css?version={{ databench_version }}">
+        <link rel="stylesheet" href="/static/databench.css?version={{ databench_version }}">
+
+        <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/node_modules/font-awesome/css/font-awesome.min.css">
         {% block head %}{% end %}
     </head>
     <body>
@@ -35,7 +36,7 @@
                     </div>
 
                     <div class="col-sm-6 text-right-sm">
-                        Read the <a href="http://www.svenkreiss.com/databench/v0.3/">Databench Docs</a>.
+                        Read the <a href="http://databench.trivial.io/v0.4/">Databench Docs</a>.
                         <!-- This is version {{databench_version}}. -->
                     </div>
                 </div>
@@ -43,11 +44,10 @@
         </div>
         {% end %}
 
-        <script src="/static/jquery/jquery-2.1.1.min.js"></script>
-        <script src="/static/bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
-        <script src="/static/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
-        <script src="/static/d3/d3.v3.min.js"></script>
-        <script src="/static/mpld3/mpld3.v0.2.js"></script>
+        <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="/node_modules/d3/d3.min.js"></script>
+
         <script src="/static/databench.js?version={{ databench_version }}"></script>
         {% block footerscripts %}{% end %}
     </body>
