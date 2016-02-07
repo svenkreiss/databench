@@ -30,19 +30,13 @@ class Meta(object):
         for cl in sys.argv:
             if cl.startswith('--analysis-id'):
                 analysis_id = cl.partition('=')[2]
-                print('Determined analysis id from command line: {}'
-                      ''.format(analysis_id))
             if cl.startswith('--zmq-subscribe'):
                 zmq_port_subscribe = cl.partition('=')[2]
-                print('Determined zmq subscribe port from command line: {}'
-                      ''.format(zmq_port_subscribe))
             if cl.startswith('--zmq-publish'):
                 zmq_port_publish = cl.partition('=')[2]
-                print('Determined zmq publish port from command line: {}'
-                      ''.format(zmq_port_publish))
 
-        print('Analysis id: {}, port sub: {}, port pub: {}'.format(
-              analysis_id, zmq_port_subscribe, zmq_port_publish))
+        log.info('Analysis id: {}, port sub: {}, port pub: {}'.format(
+                 analysis_id, zmq_port_subscribe, zmq_port_publish))
 
         self.analysis = analysis_class(analysis_id)
 
@@ -51,7 +45,7 @@ class Meta(object):
         self.analysis.set_emit_fn(emit)
 
         self._init_zmq(zmq_port_publish, zmq_port_subscribe)
-        print('Language kernel for {} initialized.'.format(self.name))
+        log.info('Language kernel for {} initialized.'.format(self.name))
 
     def _init_zmq(self, port_publish, port_subscribe):
         """Initialize zmq messaging. Listen on sub_port. This port might at
@@ -89,7 +83,6 @@ class Meta(object):
 
         log.debug('kernel calling {}'.format(fn_name))
         fn = getattr(analysis, fn_name)
-        log.debug('{}'.format(fn))
 
         # Check whether this is a list (positional arguments)
         # or a dictionary (keyword arguments).
@@ -118,13 +111,13 @@ class Meta(object):
             msg = json.loads(msg.partition('|')[2])
 
             if 'signal' not in msg or 'load' not in msg:
-                return
+                continue
 
             if not hasattr(self.analysis,
                            'on_{}'.format(msg['signal'])):
                 print('Analysis does not contain on_{}()'
                       ''.format(msg['signal']))
-                return
+                continue
 
             # standard message
             fn_name = 'on_'+msg['signal']

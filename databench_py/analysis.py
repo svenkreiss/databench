@@ -30,10 +30,10 @@ class Analysis(object):
     """Events."""
 
     def on_connect(self):
-        logging.debug('on_connect called.')
+        log.debug('on_connect called.')
 
     def on_disconnect(self):
-        logging.debug('on_disconnect called.')
+        log.debug('on_disconnect called.')
 
     def on_data(self, **kwargs):
         self.data.update(kwargs)

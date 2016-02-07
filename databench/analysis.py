@@ -303,20 +303,18 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
             log.debug('empty message received.')
             return
 
-        message_data = json.loads(message)
-        if '__connect' in message_data:
+        msg = json.loads(message)
+        if '__connect' in msg:
             if self.analysis is not None:
                 log.error('Connection already has an analysis. Abort.')
                 return
 
-            analysis_id = message_data['__connect']
-            log.debug('Instantiate analysis id {} ...'.format(analysis_id))
-            self.analysis = self.meta.analysis_class(analysis_id)
-            analysis_id = self.analysis.id_  # in case a new id was generated
+            log.debug('Instantiate analysis id {}'.format(msg['__connect']))
+            self.analysis = self.meta.analysis_class(msg['__connect'])
             self.analysis.set_emit_fn(self.emit)
-            log.info('Analysis {} instanciated.'.format(analysis_id))
-            self.emit('__connect', {'analysis_id': analysis_id})
+            log.info('Analysis {} instanciated.'.format(self.analysis.id_))
 
+            self.emit('__connect', {'analysis_id': self.analysis.id_})
             self.meta.run_action(self.analysis, 'on_connect')
             log.info('Connected to analysis.')
             return
@@ -325,12 +323,12 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
             log.warning('no analysis connected. Abort.')
             return
 
-        if 'signal' not in message_data or 'load' not in message_data:
+        if 'signal' not in msg or 'load' not in msg:
             log.info('message not processed: '+message)
             return
 
-        fn_name = 'on_'+message_data['signal']
-        self.meta.run_action(self.analysis, fn_name, message_data['load'])
+        fn_name = 'on_'+msg['signal']
+        self.meta.run_action(self.analysis, fn_name, msg['load'])
 
     def emit(self, signal, message):
         message = FrontendHandler.sanitize_message(message)

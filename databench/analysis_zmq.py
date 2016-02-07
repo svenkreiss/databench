@@ -54,10 +54,11 @@ class AnalysisZMQ(Analysis):
         yield tornado.gen.sleep(1.0)
 
         log.debug('terminating kernel process {}'.format(self.id_))
-        try:
-            self.kernel_process.terminate()
-        except subprocess.OSError:
-            pass
+        if self.kernel_process is not None:
+            try:
+                self.kernel_process.terminate()
+            except subprocess.OSError:
+                pass
         self.zmq_stream_sub.close()
         self.zmq_sub.close()
         self.zmq_sub_ctx.destroy()

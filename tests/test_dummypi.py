@@ -10,6 +10,7 @@ import subprocess
 
 
 DAEMON = None
+LOGLEVEL = 'INFO'
 
 
 def setup_module():
@@ -17,7 +18,8 @@ def setup_module():
 
     # call os.setsid so that all subprocesses terminate when the
     # main process receives SIGTERM
-    DAEMON = subprocess.Popen(['databench', '--with-coverage', '--log=INFO'],
+    DAEMON = subprocess.Popen(['databench', '--with-coverage',
+                               '--log={}'.format(LOGLEVEL)],
                               close_fds=True,
                               stdin=subprocess.PIPE,
                               stdout=subprocess.PIPE,
@@ -247,6 +249,7 @@ def test_fn_call_dummypi_py_dict():
 
 
 if __name__ == '__main__':
+    LOGLEVEL = 'DEBUG'
     setup_module()
     test_ws_dummypi_py()
     teardown_module()
