@@ -7,6 +7,6 @@ install:
  - "pip install --upgrade pip"
  - "pip install -e .[tests]"
  - "pip install python-coveralls coverage"
-script: "travis_retry python setup.py nosetests --with-coverage --cover-package=databench --cover-erase"
+script: "nosetests -vv --with-coverage --cover-package=databench --cover-erase"
 after_success:
   - coveralls
