@@ -46,7 +46,7 @@ class AnalysisZMQ(Analysis):
         ]
         log.debug('launching: {}'.format(e_params))
         self.kernel_process = subprocess.Popen(e_params, shell=False)
-        time.sleep(5)  # give the external process time to start and subscribe
+        time.sleep(1)  # give the external process time to start and subscribe
 
     @tornado.gen.coroutine
     def on_disconnect(self):

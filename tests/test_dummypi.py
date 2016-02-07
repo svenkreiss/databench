@@ -10,7 +10,7 @@ import subprocess
 
 
 DAEMON = None
-LOGLEVEL = 'INFO'
+LOGLEVEL = 'DEBUG'
 
 
 def setup_module():
