@@ -76,22 +76,24 @@ class Analysis(object):
 
     def __init__(self, id_=None):
         self.id_ = id_ if id_ else Analysis.__create_id()
-        self.__datastore = Analysis.datastore_class(self.id_)
+        self.emit = lambda s, pl: log.error('emit called before Analysis '
+                                            'setup complete')
+
+        self.data = Analysis.datastore_class(self.id_)
+        self.global_data = Analysis.datastore_class(type(self).__name__)
+
+        self.data.on_change(self.data_change)
+        self.global_data.on_change(self.global_data_change)
+
+    @staticmethod
+    def __create_id():
+        return ''.join(random.choice(string.ascii_letters + string.digits)
+                       for _ in range(8))
 
     def set_emit_fn(self, emit_fn):
         """Sets what the emit function for this analysis will be."""
         self.emit = emit_fn
         return self
-
-    def add_data_change_cb(self, cb):
-        self.__datastore.add_change_cb(cb)
-        return self
-
-    """Datastore."""
-
-    @property
-    def data(self):
-        return self.__datastore
 
     """Events."""
 
@@ -101,10 +103,19 @@ class Analysis(object):
     def on_disconnect(self):
         log.debug('on_disconnect called.')
 
-    @staticmethod
-    def __create_id():
-        return ''.join(random.choice(string.ascii_letters + string.digits)
-                       for _ in range(8))
+    def on_data(self, **kwargs):
+        self.data.update(kwargs)
+
+    def on_global_data(self, **kwargs):
+        self.global_data.update(kwargs)
+
+    """Data callbacks."""
+
+    def data_change(self, key, value):
+        self.emit('data', {key: value})
+
+    def global_data_change(self, key, value):
+        self.emit('global_data', {key: value})
 
 
 class Meta(object):
@@ -304,9 +315,9 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
             analysis_id = self.analysis.id_  # in case a new id was generated
             self.analysis.set_emit_fn(self.emit)
             log.info('Analysis {} instanciated.'.format(analysis_id))
+            self.emit('__connect', {'analysis_id': analysis_id})
 
             self.meta.run_action(self.analysis, 'on_connect')
-            self.emit('__connect', {'analysis_id': analysis_id})
             log.info('Connected to analysis.')
             return
 

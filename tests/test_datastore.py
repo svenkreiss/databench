@@ -9,7 +9,7 @@ def test_datastore():
         print('{} changed to {}'.format(key, value))
         data_after = value
 
-    d = databench.Datastore('abcdef').add_change_cb(cb)
+    d = databench.Datastore('abcdef').on_change(cb)
     d['test'] = 'trivial'
 
     assert data_after == 'trivial'
@@ -21,7 +21,9 @@ def test_analysis_datastore():
         print('{} changed to {}'.format(key, value))
         data_after = value
 
-    a = databench.Analysis().add_data_change_cb(cb)
+    a = databench.Analysis()
+    a.set_emit_fn(lambda s, pl: None)
+    a.data.on_change(cb)
     a.data['test'] = 'analysis_datastore'
 
     print(data_after)

@@ -16,7 +16,7 @@
     <div class="col-md-3">
         <label for="samples">Samples:</label>
         <input type="range" name="samples" value="1000"
-            min="100" max="10000" step="100" />
+            min="100" max="10000" step="100" data-instance="samples" />
     </div>
     <div class="col-md-9">
         <button class="btn btn-primary" data-signal-name="run">Run</button>
@@ -32,8 +32,8 @@
 <script>
 	var databench = Databench();
 
-	databench.on('status', function(msg) {
-		$('#pi').text(msg['pi-estimate'].toFixed(3)+' ± '+msg['pi-uncertainty'].toFixed(3));
+	databench.on('data', function(msg) {
+		$('#pi').text(msg.pi.estimate.toFixed(3)+' ± '+msg.pi.uncertainty.toFixed(3));
 	});
 </script>
 {% end %}

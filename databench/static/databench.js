@@ -209,10 +209,24 @@ function Databench(opts) {
 		});
 	}
 
-	genericElements.slider = function(selector, signalName) {
+	genericElements.slider = function(selector, signalName, keyName) {
 		var _selector = selector;
 		if ($.type(_selector) == 'string')
 			_selector = $('#'+selector);
+		if (!signalName) {
+			signalName = _selector.attr('data-instance');
+			if (signalName) {
+				keyName = signalName;
+				signalName = 'data';
+			}
+		}
+		if (!signalName) {
+			signalName = _selector.attr('data-global');
+			if (signalName) {
+				keyName = signalName;
+				signalName = 'global_data';
+			}
+		}
 		if (!signalName)
 			signalName = _selector.attr('data-signal-name');
 		if (!signalName)
@@ -233,7 +247,13 @@ function Databench(opts) {
 					_label.html(label+' ('+this.value+')');
 				}
 			}
-			emit(signalName, [parseFloat(this.value)]);
+			if (keyName) {
+				payload = {};
+				payload[keyName] = parseFloat(this.value);
+			}else{
+				payload = parseFloat(this.value);
+			}
+			emit(signalName, payload);
 		});
 		_selector.trigger('input');
 	}

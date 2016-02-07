@@ -8,7 +8,7 @@ class Datastore(object):
     def __init__(self, domain):
         self.domain = domain
 
-    def add_change_cb(self, cb):
+    def on_change(self, cb):
         Datastore.on_change_cb[self.domain].append(cb)
         return self
 
@@ -20,3 +20,7 @@ class Datastore(object):
 
     def __getitem__(self, key):
         return Datastore.store[self.domain][key]
+
+    def update(self, d):
+        for k, v in d.items():
+            self[k] = v
