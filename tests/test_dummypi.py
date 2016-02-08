@@ -133,7 +133,6 @@ def test_ws_dummypi_py():
     print(r)
     assert r['signal'] == 'data'
     assert 'samples' in r['load']
-    time.sleep(1)
     ws.send('{"signal":"run", "load":{"__action_id":123}}')
     r = json.loads(ws.recv())
     print(r)
@@ -169,7 +168,6 @@ def _fn_call(name='dummypi'):
     print(r)
     assert r['signal'] == 'data'
     assert 'samples' in r['load']
-    time.sleep(1)
     ws.send('{"signal":"test_fn", "load": 1}')
     r = json.loads(ws.recv())
     print(r)
@@ -191,7 +189,6 @@ def _fn_call_array(name='dummypi'):
     print(r)
     assert r['signal'] == 'data'
     assert 'samples' in r['load']
-    time.sleep(1)
     ws.send('{"signal":"test_fn", "load": [1, 2]}')
     r = json.loads(ws.recv())
     print(r)
@@ -213,7 +210,6 @@ def _fn_call_dict(name='dummypi'):
     print(r)
     assert r['signal'] == 'data'
     assert 'samples' in r['load']
-    time.sleep(1)
     ws.send('{"signal":"test_fn", "load": '
             '{"first_param": 1, "second_param": 2}}')
     r = json.loads(ws.recv())
