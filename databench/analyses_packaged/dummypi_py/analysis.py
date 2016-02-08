@@ -9,8 +9,8 @@ from random import random
 import databench_py
 import databench_py.singlethread
 
-# import logging
-# logging.basicConfig(level='DEBUG')
+import logging
+logging.basicConfig(level='DEBUG')
 
 
 class Analysis(databench_py.Analysis):

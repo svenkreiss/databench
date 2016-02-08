@@ -114,11 +114,10 @@ class MetaZMQ(Meta):
         also handles the start and stop signals in case an action_id
         is given."""
 
-        log.debug('calling {}'.format(fn_name))
-
         if fn_name == 'on_connect':
             analysis.on_connect(self.executable, self.zmq_publish, self.info)
 
+        log.debug('calling {}'.format(fn_name))
         signal_name = fn_name[3:] if fn_name.startswith('on_') else fn_name
         self.zmq_publish.send('{}|{}'.format(
             analysis.id_,
