@@ -30,10 +30,10 @@
 
 {% block footerscripts %}
 <script>
-	var databench = Databench();
+    var databench = Databench();
 
-	databench.on('data', function(msg) {
-		$('#pi').text(msg.pi.estimate.toFixed(3)+' ± '+msg.pi.uncertainty.toFixed(3));
-	});
+    databench.on('data', function(msg) {
+        $('#pi').text(msg.pi.estimate.toFixed(3)+' ± '+msg.pi.uncertainty.toFixed(3));
+    });
 </script>
 {% end %}
