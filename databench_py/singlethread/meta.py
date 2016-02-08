@@ -83,6 +83,7 @@ class Meta(object):
 
         log.debug('kernel calling {}'.format(fn_name))
         fn = getattr(analysis, fn_name)
+        log.debug('kernel done {}'.format(fn_name))
 
         # Check whether this is a list (positional arguments)
         # or a dictionary (keyword arguments).
@@ -134,6 +135,8 @@ class Meta(object):
 
         """
 
+        log.debug('kernel {} zmq send ({}): {}'
+                  ''.format(analysis_id, signal, message))
         self.zmq_publish.send_json({
             'analysis_id': analysis_id,
             'frame': {'signal': signal, 'load': message},
