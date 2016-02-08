@@ -419,13 +419,17 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
 
 
 class RenderTemplate(tornado.web.RequestHandler):
-    def initialize(self, template_name, template_path, info):
-        self.template_loc = os.path.join(template_path, template_name)
+    def initialize(self, info, template_name=None, template_path=None):
         self.info = info
+        self.template_name = template_name
+        self.template_path = template_path
 
-    def get(self):
+    def get(self, template_name=None):
+        if template_name is None:
+            template_name = self.template_name
+        loc = os.path.join(self.template_path, template_name)
         self.render(
-            self.template_loc,
+            loc,
             databench_version=DATABENCH_VERSION,
             **self.info
         )
