@@ -1,7 +1,3 @@
-"""Calculating \\(\\pi\\) the simple way, but this is called
-dummypi to avoid conflict with simplepi in the databench_examples repo.
-This is using a Python Language Kernel running in a separate process."""
-
 import math
 from time import sleep
 from random import random
@@ -59,7 +55,5 @@ class Analysis(databench_py.Analysis):
 
 
 if __name__ == "__main__":
-    analysis = databench_py.singlethread.Meta(
-        'dummypi_py', __doc__, Analysis
-    )
+    analysis = databench_py.singlethread.Meta('dummypi_py', Analysis)
     analysis.event_loop()

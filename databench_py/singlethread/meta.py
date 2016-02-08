@@ -22,10 +22,8 @@ class Meta(object):
 
     """
 
-    def __init__(self, name, description, analysis_class):
+    def __init__(self, name, analysis_class):
         self.name = name
-        self.description = description
-
         analysis_id, zmq_port_subscribe, zmq_port_publish = None, None, None
         for cl in sys.argv:
             if cl.startswith('--analysis-id'):

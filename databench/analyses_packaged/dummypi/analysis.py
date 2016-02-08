@@ -53,4 +53,4 @@ class Analysis(databench.Analysis):
         })
 
 
-META = databench.Meta('dummypi', __doc__, Analysis)
+META = databench.Meta('dummypi', Analysis)

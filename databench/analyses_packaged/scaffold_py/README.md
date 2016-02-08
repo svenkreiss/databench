@@ -1,3 +1,8 @@
+<!--
+Title: Scaffold_Py
+Description: A short description of this analysis.
+-->
+
 # Scaffold_Py
 
 This is the text in the `README.md` file. This is where you document your

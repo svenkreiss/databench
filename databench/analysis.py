@@ -154,15 +154,10 @@ class Meta(object):
 
     all_instances = []
 
-    def __init__(
-            self,
-            name,
-            description,
-            analysis_class,
-    ):
+    def __init__(self, name, analysis_class):
         Meta.all_instances.append(self)
-        self.show_in_index = True
         self.name = name
+        self.show_in_index = True
 
         # find folder of all analyses
         analyses_path = os.path.join(os.getcwd(), 'analyses')
@@ -177,10 +172,10 @@ class Meta(object):
 
         self.info = {
             'logo_url': '/static/logo.svg',
-            'title': 'Databench',
+            'title': name,
+            'description': '',
             'readme': None,
         }
-        self.description = description
         self.analysis_class = analysis_class
 
         self.routes = [
@@ -209,7 +204,9 @@ class Meta(object):
             self.thumbnail = 'thumbnail.png'
 
         # detect and render readme
-        self.info['readme'] = self.readme(analysis_path)
+        self.info.update(self.readme(analysis_path))
+        log.info('Information extracted for analysis {}:\n{}'
+                 ''.format(self.name, self.info))
 
         self.request_args = None
 
@@ -220,28 +217,81 @@ class Meta(object):
         readme_file = readme_file[0] if readme_file else None
         log.debug('Readme file: {}'.format(readme_file))
         if not readme_file:
-            return None
+            return {}
 
         with open(readme_file, 'r') as f:
-            r = f.read()
+            r = {'readme': f.read()}
 
         # process readme
         if readme_file.lower().endswith('.md'):
+            r.update(self.process_md_meta(r['readme']))
             if markdown is not None:
-                r = markdown(r)
+                r['readme'] = markdown(r['readme'])
             else:
-                r = (
+                r['readme'] = (
                     '<p>Install markdown with <b>pip install markdown</b>'
                     ' to render this readme file.</p>'
-                ) + r
+                ) + r['readme']
         if readme_file.lower().endswith('.rst'):
+            r.update(self.process_rst_meta(r['readme']))
             if rst is not None:
-                r = rst(r, writer_name='html')['html_body']
+                r['readme'] = rst(r['readme'], writer_name='html')['html_body']
             else:
-                r = (
+                r['readme'] = (
                     '<p>Install rst rendering with <b>pip install docutils</b>'
                     ' to render this readme file.</p>'
-                ) + r
+                ) + r['readme']
+
+        return r
+
+    def process_md_meta(self, readme):
+        """
+        Searches for lines like:
+
+        <!--
+        Title: MyTitle
+        Description: hello bla
+        logo_url: /path/to/logo.png
+        -->
+        """
+        possible_fields = ['title', 'description', 'logo_url']
+        r = {}
+
+        for l in readme.split('\n'):
+            if ': ' not in l:
+                continue
+
+            p = l.partition(': ')
+            if p[0].lower() not in possible_fields:
+                continue
+
+            r[p[0].lower()] = p[2]
+
+        return r
+
+    def process_rst_meta(self, readme):
+        """
+        Searches for lines like:
+
+        .. title: MyTitle
+        .. description: hello bla
+        .. logo_url: /path/to/logo.png
+        """
+        possible_fields = ['title', 'description', 'logo_url']
+        r = {}
+
+        for l in readme.split('\n'):
+            if not l.startswith('..') or ': ' not in l:
+                continue
+
+            # remove the leading '.. '
+            l = l[3:]
+
+            p = l.partition(': ')
+            if p[0].lower() not in possible_fields:
+                continue
+
+            r[p[0].lower()] = p[2]
 
         return r
 

@@ -12,7 +12,5 @@ class Analysis(databench_py.Analysis):
 
 
 if __name__ == "__main__":
-    analysis = databench_py.singlethread.Meta(
-        'scaffold_py', __doc__, Analysis
-    )
+    analysis = databench_py.singlethread.Meta('scaffold_py', Analysis)
     analysis.event_loop()

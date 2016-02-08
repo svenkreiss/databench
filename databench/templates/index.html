@@ -19,7 +19,7 @@
                 {% if a.thumbnail %}
                     <img src="/{{a.name}}/static/{{a.thumbnail}}" class="img-thumbnail analysis-thumbnail" />
                 {% end %}
-                {{a.name}}{% if a.description %}<span class="text-muted">: {{ a.description }}</span>{% end %}
+                {{a.info['title']}}{% if a.info['description'] %}<span class="text-muted">: {{ a.info['description'] }}</span>{% end %}
             </div>
         </div>
         </a>

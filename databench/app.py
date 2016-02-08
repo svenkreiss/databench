@@ -110,7 +110,7 @@ class App(object):
             if name[0] in ['.', '_']:
                 continue
             log.debug('creating MetaZMQ for {}'.format(name))
-            MetaZMQ(name, "ZMQ Analysis py",
+            MetaZMQ(name,
                     ['python', analysis_folder+'/analysis.py',
                      '--zmq-subscribe={}'.format(zmq_port)],
                     zmq_publish)
@@ -202,8 +202,6 @@ class App(object):
         for meta in Meta.all_instances:
             print('Registering meta information {}'.format(meta.name))
             self.routes += meta.routes
-
-            meta.info = self.info
 
 
 class IndexHandler(tornado.web.RequestHandler):
