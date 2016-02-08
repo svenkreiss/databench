@@ -35,7 +35,6 @@ class App(object):
     def __init__(self, zmq_port=None, template_delimiters=None):
 
         self.info = {
-            'logo_url': '/static/logo.svg',
             'title': 'Databench',
             'description': None,
             'author': None,
@@ -213,6 +212,6 @@ class IndexHandler(tornado.web.RequestHandler):
         return self.render(
             'templates/index.html',
             analyses=Meta.all_instances,
-            info=self.info,
             databench_version=DATABENCH_VERSION,
+            **self.info
         )

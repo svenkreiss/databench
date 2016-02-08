@@ -1,17 +1,7 @@
-{% extends "templates/base.html" %}
+{% extends "templates/analysis.html" %}
 
 
-{% block title %}dummypi_py{% end %}
-
-
-{% block content %}
-<h1>
-    dummypi_py
-    <small><i>π = <span id="pi">0.0 ± 1.0</span></i></small>
-</h1>
-{% raw info['readme'] %}
-
-<hr />
+{% block analysis %}
 <div class="row">
     <div class="col-md-3">
         <label for="samples">Samples:</label>
@@ -22,13 +12,11 @@
         <button class="btn btn-primary" data-signal-name="run">Run</button>
     </div>
 </div>
-
-<hr />
-<pre id="log"></pre>
+<div style="font-size: 400%"><i>π = <span id="pi">0.0 ± 1.0</span></i></div>
 {% end %}
 
 
-{% block footerscripts %}
+{% block footer %}
 <script>
     var databench = Databench();
 

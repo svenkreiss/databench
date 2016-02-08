@@ -3,15 +3,13 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>{% block title %}index{% end %}</title>
-        <meta name="description" content="{% block description %}{% end %}">
+        <title>{% block title %}{{ globals().get('title', 'Databench') }}{% end %}</title>
+        <meta name="description" content="{% block description %}globals().get('description', ''){% end %}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link rel="shortcut icon" href="/static/favicon.ico">
         <link rel="stylesheet" href="/static/databench.css?version={{ databench_version }}">
-
-        <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
-        <link rel="stylesheet" href="/node_modules/font-awesome/css/font-awesome.min.css">
+        {% block databench_head %}{% end %}
         {% block head %}{% end %}
     </head>
     <body>
@@ -20,7 +18,8 @@
             <div class="header">
                 <h3><a href="/" class="text-muted">
                     {% block headerlogo %}
-                    <img src="{{ info['logo_url'] }}" /> {{ info['title'] }}
+                        <img src="{{ globals().get('logo_url', '/static/logo.svg') }}" />
+                        {{ globals().get('title', 'Databench') }}
                     {% end %}
                 </a></h3>
             </div>
@@ -44,11 +43,7 @@
         </div>
         {% end %}
 
-        <script src="/node_modules/jquery/dist/jquery.min.js"></script>
-        <script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-        <script src="/node_modules/d3/d3.min.js"></script>
-
-        <script src="/static/databench.js?version={{ databench_version }}"></script>
-        {% block footerscripts %}{% end %}
+        {% block databench_footer %}{% end %}
+        {% block footer %}{% end %}
     </body>
 </html>

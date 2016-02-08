@@ -171,7 +171,6 @@ class Meta(object):
         analysis_path = os.path.join(analyses_path, self.name)
 
         self.info = {
-            'logo_url': '/static/logo.svg',
             'title': name,
             'description': '',
             'readme': None,
@@ -427,6 +426,6 @@ class RenderTemplate(tornado.web.RequestHandler):
     def get(self):
         self.render(
             self.template_loc,
-            info=self.info,
             databench_version=DATABENCH_VERSION,
+            **self.info
         )

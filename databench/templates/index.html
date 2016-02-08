@@ -1,12 +1,15 @@
 {% extends "base.html" %}
 
 
-{% block title %}Analyses{% end %}
+{% block databench_head %}
+<link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="/node_modules/font-awesome/css/font-awesome.min.css">
+{% end %}
 
 
 {% block content %}
-{% if info['description'] %}
-    {{ info['description'] }}
+{% if description %}
+    {{ description }}
     <br />
 {% end %}
 <h1>List of Analyses</h1>
@@ -26,10 +29,16 @@
     </div>
     {% end %}
 </div>
+{% end %}
+
+
+{% block databench_footer %}
+<script src="/node_modules/jquery/dist/jquery.min.js"></script>
+<script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 <script>
     console.log('--- databench v{{databench_version}} ---');
-    console.log('Analyses author: {{info["author"]}}');
-    console.log('Analyses version: {{info["version"]}}');
+    console.log('Analyses author: {{author}}');
+    console.log('Analyses version: {{version}}');
     console.log('')
 </script>
 {% end %}

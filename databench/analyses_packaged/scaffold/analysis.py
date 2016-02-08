@@ -1,9 +1,9 @@
 """Scaffold analysis. Just a placeholder."""
 
-import databench
-
 import time
 import datetime
+
+import databench
 
 
 class Analysis(databench.Analysis):
