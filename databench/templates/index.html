@@ -19,7 +19,7 @@
         <a href="/{{a.name}}/">
         <div class="panel panel-default">
             <div class="panel-body">
-                {% if a.thumbnail %}
+                {% if hasattr(a, 'thumbnail') %}
                     <img src="/{{a.name}}/static/{{a.thumbnail}}" class="img-thumbnail analysis-thumbnail" />
                 {% end %}
                 {{a.info['title']}}{% if a.info['description'] %}<span class="text-muted">: {{ a.info['description'] }}</span>{% end %}

@@ -59,11 +59,12 @@ def create_analyses(name, suffix):
     if not suffix:
         with open('analyses/__init__.py', 'r') as f:
             existing = f.readlines()
-        if 'import {}.analysis\n'.format(name) in existing:
+        if 'from .{} import analysis as {}_a\n'.format(name, name) in existing:
             print('WARNING: analysis is already imported in __init__.py.')
         else:
             with open('analyses/__init__.py', 'a') as fa:
-                fa.write('import {}.analysis\n'.format(name))
+                fa.write('from .{} import analysis as {}_a\n'
+                         ''.format(name, name))
 
 
 def copy_scaffold_file(src, dest, name):
@@ -86,7 +87,7 @@ def copy_scaffold_file(src, dest, name):
         raise
 
     # scaffold name
-    scaffold_name = src.rsplit('/', maxsplit=2)[-1]
+    scaffold_name = src.rsplit('/', maxsplit=2)[-2]
 
     # replace
     lines = [l.replace(scaffold_name, name) for l in lines]
