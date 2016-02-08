@@ -59,10 +59,14 @@ class Meta(object):
 
         log.debug('kernel {} subscribed on port {}'
                   ''.format(self.analysis.id_, port_subscribe))
-        self.zmq_sub = zmq.Context().socket(zmq.SUB)
+        self.zmq_sub_ctx = zmq.Context()
+        self.zmq_sub = self.zmq_sub_ctx.socket(zmq.SUB)
         self.zmq_sub.setsockopt(zmq.SUBSCRIBE,
                                 self.analysis.id_.encode('utf-8'))
         self.zmq_sub.connect('tcp://127.0.0.1:{}'.format(port_subscribe))
+
+        self.zmq_stream_sub = zmq.eventloop.zmqstream.ZMQStream(self.zmq_sub)
+        self.zmq_stream_sub.on_recv(self.zmq_listener)
 
     def run_action(self, analysis, fn_name, message='__nomessagetoken__'):
         """Executes an action in the analysis with the given message. It
@@ -102,28 +106,33 @@ class Meta(object):
         if fn_name == 'on_disconnect':
             log.debug('kernel {} shutting down'.format(analysis.id_))
             self.zmq_publish.close()
-            sys.exit(0)
+
+            self.zmq_stream_sub.close()
+            self.zmq_sub.close()
+            self.zmq_sub_ctx.destroy()
 
     def event_loop(self):
         """Event loop."""
-        while True:
-            msg = self.zmq_sub.recv().decode('utf-8')
-            log.debug('kernel msg: {}'.format(msg))
-            msg = json.loads(msg.partition('|')[2])
+        zmq.eventloop.ioloop.IOLoop.current().start()
 
-            if 'signal' not in msg or 'load' not in msg:
-                continue
+    def zmq_listener(self, multipart):
+        msg = (b''.join(multipart)).decode('utf-8')
+        log.debug('kernel msg: {}'.format(msg))
+        msg = json.loads(msg.partition('|')[2])
 
-            if not hasattr(self.analysis,
-                           'on_{}'.format(msg['signal'])):
-                print('Analysis does not contain on_{}()'
-                      ''.format(msg['signal']))
-                continue
+        if 'signal' not in msg or 'load' not in msg:
+            return
 
-            # standard message
-            fn_name = 'on_'+msg['signal']
-            log.debug('kernel processing '+fn_name)
-            self.run_action(self.analysis, fn_name, msg['load'])
+        if not hasattr(self.analysis,
+                       'on_{}'.format(msg['signal'])):
+            print('Analysis does not contain on_{}()'
+                  ''.format(msg['signal']))
+            return
+
+        # standard message
+        fn_name = 'on_'+msg['signal']
+        log.debug('kernel processing '+fn_name)
+        self.run_action(self.analysis, fn_name, msg['load'])
 
     def emit(self, signal, message, analysis_id):
         """Emit signal to main.
