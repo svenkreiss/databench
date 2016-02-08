@@ -3,8 +3,6 @@ Title: Scaffold_Py
 Description: A short description of this analysis.
 -->
 
-# Scaffold
-
 This is the text in the `README.md` file. This is where you document your
 analysis. Add your frontend code to `index.html` as documented in the
 [Frontend section of the docs](http://databench.trivial.io/v0.4/frontend.html)
