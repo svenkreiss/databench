@@ -3,6 +3,7 @@
 import sys
 import zmq
 import json
+import time
 import logging
 
 log = logging.getLogger(__name__)
@@ -65,6 +66,8 @@ class Meta(object):
 
         self.zmq_stream_sub = zmq.eventloop.zmqstream.ZMQStream(self.zmq_sub)
         self.zmq_stream_sub.on_recv(self.zmq_listener)
+
+        time.sleep(0.1)  # waiting for slow TCP connect
 
     def run_action(self, analysis, fn_name, message='__nomessagetoken__'):
         """Executes an action in the analysis with the given message. It
