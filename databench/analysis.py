@@ -166,6 +166,11 @@ class Meta(object):
                 os.getcwd(), 'databench', 'analyses_packaged',
             )
         if not os.path.exists(analyses_path):
+            this_dir = os.path.dirname(os.path.realpath(__file__))
+            analyses_path = os.path.join(
+                this_dir, 'analyses_packaged',
+            )
+        if not os.path.exists(analyses_path):
             log.info('Folder for {} not found.'.format(self.name))
         # find folder for this analysis
         analysis_path = os.path.join(analyses_path, self.name)
@@ -210,6 +215,8 @@ class Meta(object):
         self.request_args = None
 
     def readme(self, analysis_path):
+        if not os.path.exists(analysis_path):
+            return {}
         readme_file = [os.path.join(analysis_path, n)
                        for n in os.listdir(analysis_path)
                        if fnmatch.fnmatch(n.lower(), 'readme.*')]

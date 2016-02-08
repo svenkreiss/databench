@@ -3,6 +3,7 @@
 """Command line tool to scaffold a new analysis environment."""
 
 import os
+import shutil
 import argparse
 
 # for Python 2 compatibility
@@ -70,6 +71,13 @@ def copy_scaffold_file(src, dest, name):
         print('WARNING: file {} exists alread. Skipping.'.format(dest))
         return
 
+    # binary copy for unknown file endings
+    if not any(src.endswith(e) for e in ('.py', '.html', '.md', '.rst')):
+        print('binary copy {} to {}'.format(src, dest))
+        shutil.copyfile(src, dest)
+        return
+
+    print('copy {} to {}'.format(src, dest))
     with open(src, 'r') as f:
         lines = f.readlines()
 
