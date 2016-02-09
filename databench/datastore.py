@@ -27,5 +27,14 @@ class Datastore(object):
         return Datastore.store[self.domain][key]
 
     def update(self, d):
+        """Similar to dict.update(). Call callbacks on each changed key."""
         for k, v in d.items():
             self[k] = v
+
+    def init(self, d):
+        """Only sets values that are not set already.
+        No callbacks are called.
+        """
+        for k, v in d.items():
+            if k not in Datastore.store[self.domain]:
+                Datastore.store[self.domain][k] = v
