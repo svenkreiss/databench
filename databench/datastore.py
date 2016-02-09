@@ -13,9 +13,14 @@ class Datastore(object):
         return self
 
     def __setitem__(self, key, value):
+        if key in Datastore.store[self.domain] and \
+           Datastore.store[self.domain][key] == value:
+            return self
+
         Datastore.store[self.domain][key] = value
         for cb in Datastore.on_change_cb[self.domain]:
             cb(key, value)
+
         return self
 
     def __getitem__(self, key):
