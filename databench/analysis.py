@@ -113,9 +113,13 @@ class Analysis(object):
 
     def data_change(self, key, value):
         self.emit('data', {key: value})
+        if hasattr(self, 'data_{}'.format(key)):
+            getattr(self, 'data_{}'.format(key))(value)
 
     def global_data_change(self, key, value):
         self.emit('global_data', {key: value})
+        if hasattr(self, 'global_data_{}'.format(key)):
+            getattr(self, 'global_data_{}'.format(key))(value)
 
 
 class Meta(object):
