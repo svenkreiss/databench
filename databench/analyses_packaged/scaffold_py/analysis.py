@@ -1,5 +1,3 @@
-"""Scaffold analysis. Just a placeholder."""
-
 import time
 import datetime
 
