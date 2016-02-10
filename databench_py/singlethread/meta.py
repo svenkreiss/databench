@@ -67,7 +67,24 @@ class Meta(object):
         self.zmq_stream_sub = zmq.eventloop.zmqstream.ZMQStream(self.zmq_sub)
         self.zmq_stream_sub.on_recv(self.zmq_listener)
 
-        time.sleep(0.1)  # waiting for slow TCP connect
+        # send zmq handshakes until a zmq ack is received
+        self.zmq_ack = False
+        self.send_handshake()
+
+    def send_handshake(self):
+        if self.zmq_ack:
+            return
+
+        log.debug('kernel {} send handshake'.format(self.analysis.id_))
+        self.zmq_publish.send_json({
+            '__zmq_handshake': None,
+        })
+
+        # check again in a bit
+        zmq.eventloop.ioloop.IOLoop.current().call_later(
+            0.5,
+            self.send_handshake
+        )
 
     def run_action(self, analysis, fn_name, message='__nomessagetoken__'):
         """Executes an action in the analysis with the given message. It
@@ -120,6 +137,11 @@ class Meta(object):
         msg = (b''.join(multipart)).decode('utf-8')
         log.debug('kernel msg: {}'.format(msg))
         msg = json.loads(msg.partition('|')[2])
+
+        if '__zmq_ack' in msg:
+            log.debug('kernel {} received zmq_ack'.format(self.analysis.id_))
+            self.zmq_ack = True
+            return
 
         if 'signal' not in msg or 'load' not in msg:
             return

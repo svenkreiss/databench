@@ -13,6 +13,7 @@ log = logging.getLogger(__name__)
 class AnalysisZMQ(Analysis):
     def __init__(self, id_):
         super(AnalysisZMQ, self).__init__(id_)
+        self.zmq_handshake = False
 
     def on_connect(self, executable, zmq_publish, meta_info_cb):
         self.zmq_publish = zmq_publish
@@ -46,7 +47,7 @@ class AnalysisZMQ(Analysis):
         ]
         log.debug('launching: {}'.format(e_params))
         self.kernel_process = subprocess.Popen(e_params, shell=False)
-        time.sleep(1)  # give the external process time to start and subscribe
+        log.debug('finished on_connect for {}'.format(self.id_))
 
     @tornado.gen.coroutine
     def on_disconnect(self):
@@ -62,14 +63,28 @@ class AnalysisZMQ(Analysis):
         self.zmq_stream_sub.close()
         self.zmq_sub.close()
         self.zmq_sub_ctx.destroy()
+        self.zmq_handshake = False
+
+    def zmq_send(self, data):
+        self.zmq_publish.send('{}|{}'.format(
+            self.id_,
+            json.dumps(data),
+        ).encode('utf-8'))
 
     def zmq_listener(self, multipart):
         # log.debug('main received multipart: {}'.format(multipart))
         msg = json.loads((b''.join(multipart)).decode('utf-8'))
 
+        # zmq handshake
+        if '__zmq_handshake' in msg:
+            self.zmq_handshake = True
+            self.zmq_send({'__zmq_ack': None})
+            return
+
         # meta info
         if '__meta_attr' in msg:
             self.meta_info_cb(msg['__meta_attr'])
+            return
 
         # check message is for this analysis
         if 'analysis_id' not in msg or \
@@ -108,6 +123,7 @@ class MetaZMQ(Meta):
         for attr, value in kv.items():
             setattr(self, attr, value)
 
+    @tornado.gen.coroutine
     def run_action(self, analysis, fn_name, message='__nomessagetoken__'):
         """Executes an action in the analysis with the given message. It
         also handles the start and stop signals in case an action_id
@@ -116,12 +132,15 @@ class MetaZMQ(Meta):
         if fn_name == 'on_connect':
             analysis.on_connect(self.executable, self.zmq_publish, self.info)
 
+        while not analysis.zmq_handshake:
+            yield tornado.gen.sleep(0.1)
+
         log.debug('calling {}'.format(fn_name))
         signal_name = fn_name[3:] if fn_name.startswith('on_') else fn_name
-        self.zmq_publish.send('{}|{}'.format(
-            analysis.id_,
-            json.dumps({'signal': signal_name, 'load': message}),
-        ).encode('utf-8'))
+        analysis.zmq_send({
+            'signal': signal_name,
+            'load': message,
+        })
 
         if fn_name == 'on_disconnect':
             analysis.on_disconnect()
