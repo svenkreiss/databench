@@ -3,7 +3,6 @@
 import sys
 import zmq
 import json
-import time
 import logging
 
 log = logging.getLogger(__name__)
@@ -76,9 +75,13 @@ class Meta(object):
             return
 
         log.debug('kernel {} send handshake'.format(self.analysis.id_))
-        self.zmq_publish.send_json({
-            '__zmq_handshake': None,
-        })
+        try:
+            self.zmq_publish.send_json({
+                '__zmq_handshake': None,
+            })
+        except zmq.error.ZMQError:
+            # socket was closed (maybe main databench process terminated)
+            return
 
         # check again in a bit
         zmq.eventloop.ioloop.IOLoop.current().call_later(
