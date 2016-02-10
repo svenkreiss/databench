@@ -82,8 +82,18 @@ class Analysis(object):
         self.data = Analysis.datastore_class(self.id_)
         self.global_data = Analysis.datastore_class(type(self).__name__)
 
-        self.data.on_change(self.data_change)
-        self.global_data.on_change(self.global_data_change)
+        self.data.on_change(self._data_change)
+        self.global_data.on_change(self._global_data_change)
+
+    def _data_change(self, key, value):
+        self.data_change(key, value)
+        if hasattr(self, 'data_{}'.format(key)):
+            getattr(self, 'data_{}'.format(key))(value)
+
+    def _global_data_change(self, key, value):
+        self.global_data_change(key, value)
+        if hasattr(self, 'global_data_{}'.format(key)):
+            getattr(self, 'global_data_{}'.format(key))(value)
 
     @staticmethod
     def __create_id():
@@ -113,13 +123,9 @@ class Analysis(object):
 
     def data_change(self, key, value):
         self.emit('data', {key: value})
-        if hasattr(self, 'data_{}'.format(key)):
-            getattr(self, 'data_{}'.format(key))(value)
 
     def global_data_change(self, key, value):
         self.emit('global_data', {key: value})
-        if hasattr(self, 'global_data_{}'.format(key)):
-            getattr(self, 'global_data_{}'.format(key))(value)
 
 
 class Meta(object):
