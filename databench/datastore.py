@@ -1,4 +1,8 @@
+import copy
+import logging
 from collections import defaultdict
+
+log = logging.getLogger(__name__)
 
 
 class Datastore(object):
@@ -16,6 +20,8 @@ class Datastore(object):
         if key in Datastore.store[self.domain] and \
            Datastore.store[self.domain][key] == value:
             return self
+
+        value = copy.deepcopy(value)
 
         Datastore.store[self.domain][key] = value
         for cb in Datastore.on_change_cb[self.domain]:
@@ -37,4 +43,4 @@ class Datastore(object):
         """
         for k, v in d.items():
             if k not in Datastore.store[self.domain]:
-                Datastore.store[self.domain][k] = v
+                Datastore.store[self.domain][k] = copy.deepcopy(v)
