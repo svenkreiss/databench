@@ -69,10 +69,10 @@ The `GitHub page`_ provides a few ways for feedback in terms of *Issues* and *Pu
 .. _`send me an email`: mailto:me@svenkreiss.com
 
 
-Contributors
-------------
+.. Contributors
+.. ------------
 
-.. include:: ../AUTHORS.rst
+.. _include ../AUTHORS.rst
 
 
 License
