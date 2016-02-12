@@ -8,8 +8,11 @@ export class Log {
 		this._messages = [];
 
 		// capture events from frontend
-		this._consoleFnOriginal = console[consoleFnName];
-		console[consoleFnName] = (msg) => this.add(msg, 'frontend:');
+		let _consoleFnOriginal = console[consoleFnName];
+		console[consoleFnName] = (message) => {
+			this.add(message, 'frontend');
+			_consoleFnOriginal.apply(console, [message]);
+		}
 	}
 
 	render() {
@@ -19,9 +22,20 @@ export class Log {
 		this.node.innerText = this._messages.map((m) => m.join('')).join('\n');
 	}
 
-	add(message, source='unknown:') {
-		this._consoleFnOriginal.apply(console, [message]);
-		this._messages.push([source, message]);
+	add(message, source='unknown') {
+		if (typeof message != "string") {
+			message = JSON.stringify(message);
+		}
+
+		this._messages.push([' '.repeat(Math.max(0, 8 - source.length)) + source + ': ', message]);
 		this.render();
 	};
+
+	static wire(id='log', source='backend', limit=20, consoleFnName='log') {
+		let node = document.getElementById(id);
+		if (node == null) return;
+
+		let l = new Log(node, limit, consoleFnName);
+		return function(message) { l.add(message, source); };
+	}
 };

@@ -39,9 +39,10 @@ var Log = exports.Log = function () {
 		this._messages = [];
 
 		// capture events from frontend
-		this._consoleFnOriginal = console[consoleFnName];
-		console[consoleFnName] = function (msg) {
-			return _this.add(msg, 'frontend:');
+		var _consoleFnOriginal = console[consoleFnName];
+		console[consoleFnName] = function (message) {
+			_this.add(message, 'frontend');
+			_consoleFnOriginal.apply(console, [message]);
 		};
 	}
 
@@ -58,11 +59,30 @@ var Log = exports.Log = function () {
 	}, {
 		key: 'add',
 		value: function add(message) {
-			var source = arguments.length <= 1 || arguments[1] === undefined ? 'unknown:' : arguments[1];
+			var source = arguments.length <= 1 || arguments[1] === undefined ? 'unknown' : arguments[1];
 
-			this._consoleFnOriginal.apply(console, [message]);
-			this._messages.push([source, message]);
+			if (typeof message != "string") {
+				message = JSON.stringify(message);
+			}
+
+			this._messages.push([' '.repeat(Math.max(0, 8 - source.length)) + source + ': ', message]);
 			this.render();
+		}
+	}], [{
+		key: 'wire',
+		value: function wire() {
+			var id = arguments.length <= 0 || arguments[0] === undefined ? 'log' : arguments[0];
+			var source = arguments.length <= 1 || arguments[1] === undefined ? 'backend' : arguments[1];
+			var limit = arguments.length <= 2 || arguments[2] === undefined ? 20 : arguments[2];
+			var consoleFnName = arguments.length <= 3 || arguments[3] === undefined ? 'log' : arguments[3];
+
+			var node = document.getElementById(id);
+			if (node == null) return;
+
+			var l = new Log(node, limit, consoleFnName);
+			return function (message) {
+				l.add(message, source);
+			};
 		}
 	}]);
 
