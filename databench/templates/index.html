@@ -1,35 +1,44 @@
 {% extends "base.html" %}
 
 
-{% block title %}Analyses{% endblock %}
+{% block databench_head %}
+<link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="/node_modules/font-awesome/css/font-awesome.min.css">
+{% end %}
 
 
 {% block content %}
 {% if description %}
-    [[ description|markdown ]]
+    {{ description }}
     <br />
-{% endif %}
+{% end %}
 <h1>List of Analyses</h1>
 <div class="row">
-    {% for a in analyses if a.show_in_index %}
+    {% for a in [aa for aa in analyses if aa.show_in_index] %}
     <div class="col-md-6">
-    	<a href="/[[a.name]]/">
-    	<div class="panel panel-default">
-	    	<div class="panel-body">
-                {% if a.thumbnail %}
-                    <img src="/[[a.name]]/static/[[a.thumbnail]]" class="img-thumbnail analysis-thumbnail" />
-                {% endif %}
-	    		[[a.name]]{% if a.description %}<span class="text-muted">: [[ a.description ]]</span>{% endif %}
-	    	</div>
-    	</div>
-    	</a>
+        <a href="/{{a.name}}/">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                {% if hasattr(a, 'thumbnail') %}
+                    <img src="/{{a.name}}/static/{{a.thumbnail}}" class="img-thumbnail analysis-thumbnail" />
+                {% end %}
+                {{a.info['title']}}{% if a.info['description'] %}<span class="text-muted">: {{ a.info['description'] }}</span>{% end %}
+            </div>
+        </div>
+        </a>
     </div>
-    {% endfor %}
+    {% end %}
 </div>
+{% end %}
+
+
+{% block databench_footer %}
+<script src="/node_modules/jquery/dist/jquery.min.js"></script>
+<script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 <script>
-    console.log('--- databench v[[databench_version]] ---');
-    console.log('Analyses author: [[analyses_author]]');
-    console.log('Analyses version: [[analyses_version]]');
+    console.log('--- databench v{{databench_version}} ---');
+    console.log('Analyses author: {{author}}');
+    console.log('Analyses version: {{version}}');
     console.log('')
 </script>
-{% endblock %}
+{% end %}

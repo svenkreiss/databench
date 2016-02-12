@@ -1,40 +1,31 @@
-{% from 'macros.html' import include_md %}
-{% extends "base.html" %}
+{% extends "templates/analysis.html" %}
 
 
-{% block title %}dummypi{% endblock %}
-
-
-{% block content %}
-<h1>
-    dummypi
-    <small><i>π = <span id="pi">0.0 ± 1.0</span></i></small>
-</h1>
-[[ include_md('dummypi/README.md') ]]
-
-<hr />
+{% block analysis %}
 <div class="row">
     <div class="col-md-3">
         <label for="samples">Samples:</label>
         <input type="range" name="samples" value="1000"
-            min="100" max="10000" step="100" />
+            min="100" max="10000" step="100" data-instance="samples" />
     </div>
     <div class="col-md-9">
         <button class="btn btn-primary" data-signal-name="run">Run</button>
     </div>
 </div>
-
-<hr />
-<pre id="log"></pre>
-{% endblock %}
+<div style="font-size: 400%"><i>π = <span id="pi">0.0 ± 1.0</span></i></div>
+{% end %}
 
 
-{% block footerscripts %}
+{% block footer %}
 <script>
-	var databench = Databench();
+    var databench = Databench();
 
-	databench.on('status', function(msg) {
-		$('#pi').text(msg['pi-estimate'].toFixed(3)+' ± '+msg['pi-uncertainty'].toFixed(3));
-	});
+    databench.on('log', Databench04.ui.Log.wire());
+
+    databench.on('data', function(msg) {
+        if ('pi' in msg) {
+            $('#pi').text(msg.pi.estimate.toFixed(3)+' ± '+msg.pi.uncertainty.toFixed(3));
+        }
+    });
 </script>
-{% endblock %}
+{% end %}

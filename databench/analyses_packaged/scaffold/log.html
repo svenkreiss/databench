@@ -1,18 +1,14 @@
-{% from 'macros.html' import include_md %}
-{% extends "base.html" %}
-
-{% block title %}Scaffold - Alternative View: Log only{% endblock %}
+{% extends "templates/analysis.html" %}
 
 
-
-{% block content %}
-<h3>Log</h3>
-<pre id="log"></pre>
-{% endblock content %}
+{% block readme %}{% end %}
 
 
+{% block analysis %}
+{% end %}
 
-{% block footerscripts %}
+
+{% block footer %}
 <script>
     // Initialize Databench's frontend library.
     var databench = Databench();
@@ -27,4 +23,4 @@
         databench.emit('got_ready_signal', 'thanks for sending ready signal');
     });
 </script>
-{% endblock footerscripts %}
+{% end %}

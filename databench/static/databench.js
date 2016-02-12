@@ -21,6 +21,7 @@ function Databench(opts) {
 	var ws_reconnect_delay = 100.0;
 
 	var socket = null;
+	var analysis_id = null;
 	function create_websocket_connection() {
 		socket = new WebSocket(opts.ws_url);
 
@@ -41,6 +42,7 @@ function Databench(opts) {
 			ws_reconnect_attempt = 0;
 			ws_reconnect_delay = 100.0;
 			$('.ws-connection-alert').remove();
+			socket.send(JSON.stringify({'__connect': analysis_id}));
 		}
 		socket.onclose = function () {
 			window.clearInterval(check_open);
@@ -67,17 +69,24 @@ function Databench(opts) {
 		socket.onmessage = function(event) {
 			var message_data = JSON.parse(event.data);
 
-			// normal message
-			if (message_data.signal in on_callbacks) {
-				for(cb in on_callbacks[message_data.signal]) {
-					on_callbacks[message_data.signal][cb](message_data.load);
-				}
+			// connect response
+			if (message_data.signal == '__connect') {
+				analysis_id = message_data.load.analysis_id;
+				console.log('Set analysis_id to ' + analysis_id);
 			}
 
+			// actions
 			if (message_data.signal == '__action') {
 				var id = message_data.load.id
 				for(cb in onAction_callbacks[id]) {
 					onAction_callbacks[id][cb](message_data.load.status);
+				}
+			}
+
+			// normal message
+			if (message_data.signal in on_callbacks) {
+				for(cb in on_callbacks[message_data.signal]) {
+					on_callbacks[message_data.signal][cb](message_data.load);
 				}
 			}
 		}
@@ -110,48 +119,6 @@ function Databench(opts) {
 
 
 	var genericElements = {};
-
-	genericElements.log = function(id, signalName, limit, consoleFnName) {
-		if (!signalName) signalName = 'log';
-		if (!limit) limit = 20;
-		if (!consoleFnName) consoleFnName = 'log';
-
-		var _selector = null;
-		if (id) _selector = $('#'+id);
-		var _messages = [];
-
-		// update
-		function update() {
-			while(_messages.length > limit) {
-				_messages.shift();
-			}
-			if (_selector) {
-				// for HTML output, json-stringify messages and join with <br>
-				_selector.text(_messages.map(function(m) {
-					return m[0] + m[1];
-				}).join('\n'));
-			}
-		}
-
-		// capture events from frontend
-		var _consoleFnOriginal = console[consoleFnName];
-		console[consoleFnName] = function(msg) {
-			_consoleFnOriginal.apply(console, ["frontend:", msg]);
-			_messages.push(["frontend:", msg]);
-
-			update();
-		}
-
-		// listen for _messages from backend
-		on(signalName, function(message) {
-			var msg = JSON.stringify(message);
-
-			_consoleFnOriginal.apply(console, [" backend:", msg]);
-			_messages.push([" backend:", msg]);
-
-			update();
-		});
-	};
 
 	genericElements.mpld3canvas = function(id, signalName) {
 		if (!signalName) signalName = 'mpld3canvas';
@@ -200,10 +167,24 @@ function Databench(opts) {
 		});
 	}
 
-	genericElements.slider = function(selector, signalName) {
+	genericElements.slider = function(selector, signalName, keyName) {
 		var _selector = selector;
 		if ($.type(_selector) == 'string')
 			_selector = $('#'+selector);
+		if (!signalName) {
+			signalName = _selector.attr('data-instance');
+			if (signalName) {
+				keyName = signalName;
+				signalName = 'data';
+			}
+		}
+		if (!signalName) {
+			signalName = _selector.attr('data-global');
+			if (signalName) {
+				keyName = signalName;
+				signalName = 'global_data';
+			}
+		}
 		if (!signalName)
 			signalName = _selector.attr('data-signal-name');
 		if (!signalName)
@@ -224,7 +205,13 @@ function Databench(opts) {
 					_label.html(label+' ('+this.value+')');
 				}
 			}
-			emit(signalName, [parseFloat(this.value)]);
+			if (keyName) {
+				payload = {};
+				payload[keyName] = parseFloat(this.value);
+			}else{
+				payload = parseFloat(this.value);
+			}
+			emit(signalName, payload);
 		});
 		_selector.trigger('input');
 	}
@@ -248,12 +235,6 @@ function Databench(opts) {
 		var name = $(this).attr('name');
 		console.log('Initialize databench.genericElements.slider() with signalName='+name+'.');
 		genericElements.slider($(this));
-	});
-	// log
-	$("pre[id^='log']").each(function() {
-		var name = $(this).attr('id');
-		console.log('Initialize databench.genericElements.log(id='+name+').');
-		genericElements.log(name);
 	});
 
 

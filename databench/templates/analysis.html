@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+
+{% block databench_head %}
+<link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="/node_modules/font-awesome/css/font-awesome.min.css">
+{% end %}
+
+
+{% block content %}
+    {% block readme %}{% raw readme %}<br />{% end %}
+
+    {% block analysis %}{% end %}
+
+    {% block log %}<br /><pre id="log"></pre>{% end %}
+{% end %}
+
+
+{% block databench_footer %}
+<script src="/node_modules/jquery/dist/jquery.min.js"></script>
+<script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/node_modules/d3/d3.min.js"></script>
+<script src="/static/databench.js?version={{ databench_version }}"></script>
+<script src="/static/databench_04.js?version={{ databench_version }}"></script>
+{% end %}

@@ -1,20 +1,43 @@
-{% from 'macros.html' import include_md %}
-{% extends "base.html" %}
+{% extends "templates/analysis.html" %}
 
 
-{% block title %}Scaffold_Py{% endblock %}
+{% block head %}
+<!--
+    Add inline CSS to the page:
+    <style>p { font-family: serif; }</style>
+
+    Add a css file (put my-style.css into analyses/scaffold/):
+    <link rel="stylesheet" type="text/css" href="/scaffold/static/my-style.css">
+-->
+{% end %}
 
 
-{% block content %}
-[[ include_md('scaffold_py/README.md') ]]
+{% block analysis %}
+<h3>Analysis Output</h3>
+<p>The backend's <i>ready</i> signal:
+    <span id="backend_ready_msg">nothing yet</span>
+</p>
+{% end %}
 
-<hr />
-<pre id="log"></pre>
-{% endblock %}
 
 
-{% block footerscripts %}
+{% block footer %}
+<!--
+    Add a js library (put my-library.js into analyses/scaffold/):
+    <script src="/scaffold/static/my-library.js"></script>
+-->
 <script>
+    // Initialize Databench's frontend library.
 	var databench = Databench();
+
+    // Interact with the backend. Listen for the 'ready' signal like this:
+    databench.on('ready', function(data) {
+        $('#backend_ready_msg').text(data);
+        console.log('Ready message received and set as the text of element '+
+                    '#backend_ready_msg. Now sending message back to backend.')
+
+        // Send something to the backend in return:
+        databench.emit('got_ready_signal', 'thanks for sending ready signal');
+    });
 </script>
-{% endblock %}
+{% end %}

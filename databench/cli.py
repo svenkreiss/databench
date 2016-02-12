@@ -2,16 +2,18 @@
 """Databench command line executable. Run to create a server that serves
 the analyses pages and runs the python backend."""
 
-
 import os
 import sys
 import signal
 import random
 import logging
+import tornado
 import argparse
-import werkzeug.serving
 
 from . import __version__ as DATABENCH_VERSION
+
+from zmq.eventloop import ioloop
+ioloop.install()
 
 
 def main():
@@ -22,9 +24,9 @@ def main():
                         version='%(prog)s '+DATABENCH_VERSION)
     parser.add_argument('--log', dest='loglevel', default="NOTSET",
                         help='set log level')
-    parser.add_argument('--host', dest='host',
-                        default=os.environ.get('HOST', 'localhost'),
-                        help='set host for webserver')
+    # parser.add_argument('--host', dest='host',
+    #                     default=os.environ.get('HOST', 'localhost'),
+    #                     help='set host for webserver')
     parser.add_argument('--port', dest='port',
                         type=int, default=int(os.environ.get('PORT', 5000)),
                         help='set port for webserver')
@@ -61,7 +63,7 @@ def main():
 
     # log
     if args.loglevel != 'NOTSET':
-        print 'Setting loglevel to '+args.loglevel+'.'
+        print('Setting loglevel to '+args.loglevel+'.')
         logging.basicConfig(level=getattr(logging, args.loglevel))
 
     # delimiters
@@ -82,9 +84,9 @@ def main():
     if args.comment_end_string:
         delimiters['comment_end_string'] = args.comment_end_string
 
-    print '--- databench v'+DATABENCH_VERSION+' ---'
-    logging.info('host='+str(args.host)+', port='+str(args.port))
-    logging.info('delimiters='+str(delimiters))
+    print('--- databench v'+DATABENCH_VERSION+' ---')
+    # logging.info('host='+str(args.host)+', port='+str(args.port))
+    # logging.info('delimiters='+str(delimiters))
 
     # handle external signal to terminate nicely (used in tests)
     def sig_handler(signum, stack):
@@ -93,18 +95,14 @@ def main():
             cov.stop()
             cov.save()
         sys.exit(0)
-    signal.signal(signal.SIGTERM, sig_handler)
+    # signal.signal(signal.SIGTERM, sig_handler)
     # not supported on Windows:
-    if hasattr(signal, 'SIGUSR1'):
-        signal.signal(signal.SIGUSR1, sig_handler)
+    # if hasattr(signal, 'SIGUSR1'):
+    #     signal.signal(signal.SIGUSR1, sig_handler)
 
-    @werkzeug.serving.run_with_reloader
-    def reloader():
-        app = App(__name__, host=args.host, port=args.port,
-                  delimiters=delimiters)
-        app.run()
-        return app
-    return reloader()
+    app = App(template_delimiters=delimiters).tornado_app()
+    app.listen(args.port)
+    tornado.ioloop.IOLoop.current().start()
 
 
 if __name__ == '__main__':

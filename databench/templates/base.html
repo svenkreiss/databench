@@ -1,66 +1,49 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<html>
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>{% block title %}index{% endblock %}</title>
-        <meta name="description" content="{% block description %}{% endblock %}">
+        <title>{% block title %}{{ globals().get('title', 'Databench') }}{% end %}</title>
+        <meta name="description" content="{% block description %}globals().get('description', ''){% end %}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="shortcut icon" href="[[ url_for('static', filename='favicon.ico') ]]">
-        <link rel="stylesheet" href="/static/bootstrap-3.1.1-dist/css/bootstrap.min.css">
-        <link rel="stylesheet" href="/static/font-awesome/css/font-awesome.min.css">
-        <link rel="stylesheet" href="[[ url_for('static', filename='main.css') ]]?version=[[ header.databench_version ]]">
-        {% block head %}{% endblock %}
+        <link rel="shortcut icon" href="/static/favicon.ico">
+        <link rel="stylesheet" href="/static/databench.css?version={{ databench_version }}">
+        {% block databench_head %}{% end %}
+        {% block head %}{% end %}
     </head>
     <body>
-        <!--[if lt IE 7]>
-            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-
         {% block body %}
         <div class="container">
             <div class="header">
                 <h3><a href="/" class="text-muted">
                     {% block headerlogo %}
-                    <img src="[[ header.logo ]]" /> [[ header.title ]]
-                    {% endblock %}
+                        <img src="{{ globals().get('logo_url', '/static/logo.svg') }}" />
+                        {{ globals().get('title', 'Databench') }}
+                    {% end %}
                 </a></h3>
             </div>
 
             <div class="content" id="databench_content">
                 {% block content %}
-                {% endblock %}
+                {% end %}
             </div>
 
             <div class="footer">
                 <div class="row">
                     <div class="col-sm-6">
-                    <ul>
-                        {% if analysis_name %}
-                        <li><a href="[[ analysis_name ]].zip">Download .zip</a> of analysis source.</li>
-                        {% endif %}
-                    </ul>
                     </div>
 
                     <div class="col-sm-6 text-right-sm">
-                        Read the <a href="http://www.svenkreiss.com/databench/v0.3/">Databench Docs</a>.
-                        <!-- This is version [[databench_version]]. -->
+                        Read the <a href="http://databench.trivial.io/v0.4/">Databench Docs</a>.
+                        <!-- This is version {{databench_version}}. -->
                     </div>
                 </div>
             </div>
         </div>
-        {% endblock %}
+        {% end %}
 
-        <script src="/static/jquery/jquery-2.1.1.min.js"></script>
-        <script src="/static/bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
-        <script src="/static/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
-        <script src="/static/d3/d3.v3.min.js"></script>
-        <script src="/static/mpld3/mpld3.v0.2.js"></script>
-        <script src="/static/databench.js?version=[[ header.databench_version ]]"></script>
-        {% block footerscripts %}{% endblock %}
+        {% block databench_footer %}{% end %}
+        {% block footer %}{% end %}
     </body>
 </html>
