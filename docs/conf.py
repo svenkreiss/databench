@@ -12,12 +12,9 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys
 import os
-
 import alabaster
 
-# from ..setup import VERSION as DATABENCH_VERSION
 # extract version from __init__.py
 databench_init_filename = os.path.join(
   os.path.dirname(__file__),
