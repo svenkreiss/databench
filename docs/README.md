@@ -1,6 +1,6 @@
 Install dependencies for making docs:
 
-    pip install -r requirements_docs.txt
+    pip install -r docs/requirements.txt
 
 Build local docs:
 
