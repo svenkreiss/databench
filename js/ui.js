@@ -35,6 +35,7 @@ export class Log {
 		let node = document.getElementById(id);
 		if (node == null) return;
 
+		console.log(`Wiring element id=${id} to ${source}.`);
 		let l = new Log(node, limit, consoleFnName);
 		return function(message) { l.add(message, source); };
 	}

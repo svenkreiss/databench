@@ -20,6 +20,8 @@
 <script>
     var databench = Databench();
 
+    databench.on('log', Databench04.ui.Log.wire());
+
     databench.on('data', function(msg) {
         if ('pi' in msg) {
             $('#pi').text(msg.pi.estimate.toFixed(3)+' ± '+msg.pi.uncertainty.toFixed(3));

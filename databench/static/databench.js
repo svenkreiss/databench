@@ -120,48 +120,6 @@ function Databench(opts) {
 
 	var genericElements = {};
 
-	genericElements.log = function(id, signalName, limit, consoleFnName) {
-		if (!signalName) signalName = 'log';
-		if (!limit) limit = 20;
-		if (!consoleFnName) consoleFnName = 'log';
-
-		var _selector = null;
-		if (id) _selector = $('#'+id);
-		var _messages = [];
-
-		// update
-		function update() {
-			while(_messages.length > limit) {
-				_messages.shift();
-			}
-			if (_selector) {
-				// for HTML output, json-stringify messages and join with <br>
-				_selector.text(_messages.map(function(m) {
-					return m[0] + m[1];
-				}).join('\n'));
-			}
-		}
-
-		// capture events from frontend
-		var _consoleFnOriginal = console[consoleFnName];
-		console[consoleFnName] = function(msg) {
-			_consoleFnOriginal.apply(console, ["frontend:", msg]);
-			_messages.push(["frontend:", msg]);
-
-			update();
-		}
-
-		// listen for _messages from backend
-		on(signalName, function(message) {
-			var msg = JSON.stringify(message);
-
-			_consoleFnOriginal.apply(console, [" backend:", msg]);
-			_messages.push([" backend:", msg]);
-
-			update();
-		});
-	};
-
 	genericElements.mpld3canvas = function(id, signalName) {
 		if (!signalName) signalName = 'mpld3canvas';
 
@@ -277,12 +235,6 @@ function Databench(opts) {
 		var name = $(this).attr('name');
 		console.log('Initialize databench.genericElements.slider() with signalName='+name+'.');
 		genericElements.slider($(this));
-	});
-	// log
-	$("pre[id^='log']").each(function() {
-		var name = $(this).attr('id');
-		console.log('Initialize databench.genericElements.log(id='+name+').');
-		genericElements.log(name);
 	});
 
 

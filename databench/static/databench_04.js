@@ -79,6 +79,7 @@ var Log = exports.Log = function () {
 			var node = document.getElementById(id);
 			if (node == null) return;
 
+			console.log('Wiring element id=' + id + ' to ' + source + '.');
 			var l = new Log(node, limit, consoleFnName);
 			return function (message) {
 				l.add(message, source);
