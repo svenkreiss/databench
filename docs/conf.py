@@ -17,11 +17,11 @@ import os
 
 import alabaster
 
-from ..setup import VERSION as DATABENCH_VERSION
+# from ..setup import VERSION as DATABENCH_VERSION
 # extract version from __init__.py
-# with open('databench/__init__.py', 'r') as f:
-#     version_line = [l for l in f if l.startswith('__version__')][0]
-#     VERSION = version_line.split('=')[1].strip()[1:-1]
+with open('databench/__init__.py', 'r') as f:
+    version_line = [l for l in f if l.startswith('__version__')][0]
+    DATABENCH_VERSION = version_line.split('=')[1].strip()[1:-1]
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
