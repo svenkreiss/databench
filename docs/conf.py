@@ -19,7 +19,13 @@ import alabaster
 
 # from ..setup import VERSION as DATABENCH_VERSION
 # extract version from __init__.py
-with open('databench/__init__.py', 'r') as f:
+databench_init_filename = os.path.join(
+  os.path.dirname(__file__),
+  '..',
+  'databench',
+  '__init__.py',
+)
+with open(databench_init_filename, 'r') as f:
     version_line = [l for l in f if l.startswith('__version__')][0]
     DATABENCH_VERSION = version_line.split('=')[1].strip()[1:-1]
 
