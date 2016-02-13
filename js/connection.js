@@ -1,6 +1,6 @@
 
 export class Connection {
-    constructor(error_cb, analysis_id, ws_url) {
+    constructor(error_cb, analysis_id=null, ws_url=null) {
         this.error_cb = error_cb;
         this.analysis_id = analysis_id;
         this.ws_url = ws_url ? ws_url : this.guess_ws_url();
@@ -17,7 +17,7 @@ export class Connection {
     }
 
     guess_ws_url() {
-        let ws_protocol = 'ws';
+        var ws_protocol = 'ws';
         if (location.origin.startsWith('https://')) ws_protocol = 'wss';
 
         let path = location.pathname.substring(0, location.pathname.lastIndexOf('/'));
@@ -26,20 +26,18 @@ export class Connection {
 
     ws_connect() {
         this.socket = new WebSocket(this.ws_url);
-        console.log('connect');
-        console.log(this);
-        this.socket_check_open = setInterval(this.ws_check_open, 2000);
 
-        this.socket.onopen = this.ws_onopen;
-        this.socket.onclose = this.ws_onclose;
-        this.socket.onmessage = this.ws_onmessage;
+        this.socket_check_open = setInterval(this.ws_check_open.bind(this), 2000);
+        this.socket.onopen = this.ws_onopen.bind(this);
+        this.socket.onclose = this.ws_onclose.bind(this);
+        this.socket.onmessage = this.ws_onmessage.bind(this);
     }
 
     ws_check_open() {
-        if (this.readyState == WebSocket.CONNECTING) {
+        if (this.socket.readyState == WebSocket.CONNECTING) {
             return;
         }
-        if (this.readyState != WebSocket.OPEN) {
+        if (this.socket.readyState != WebSocket.OPEN) {
             this.error_cb(
                 'Connection could not be opened. '+
                 'Please <a href="javascript:location.reload(true);" '+
@@ -50,12 +48,10 @@ export class Connection {
     }
 
     ws_onopen() {
-        console.log('onopen');
-        console.log(this);
         this.ws_reconnect_attempt = 0;
         this.ws_reconnect_delay = 100.0;
         this.error_cb();  // clear errors
-        this.send(JSON.stringify({'__connect': this.analysis_id}));
+        this.socket.send(JSON.stringify({'__connect': this.analysis_id}));
     }
 
     ws_onclose() {
@@ -84,7 +80,7 @@ export class Connection {
         // connect response
         if (message.signal == '__connect') {
             this.analysis_id = message.load.analysis_id;
-            console.log('Set analysis_id to ' + analysis_id);
+            console.log('Set analysis_id to ' + this.analysis_id);
         }
 
         // actions
@@ -94,7 +90,7 @@ export class Connection {
         }
 
         // normal message
-        if (message.signal in on_callbacks) {
+        if (message.signal in this.on_callbacks) {
             this.on_callbacks[message.signal].map((cb) => cb(message.load));
         }
     }

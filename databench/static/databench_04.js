@@ -10,7 +10,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Connection = exports.Connection = function () {
-    function Connection(error_cb, analysis_id, ws_url) {
+    function Connection(error_cb) {
+        var analysis_id = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+        var ws_url = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
+
         _classCallCheck(this, Connection);
 
         this.error_cb = error_cb;
@@ -41,21 +44,19 @@ var Connection = exports.Connection = function () {
         key: 'ws_connect',
         value: function ws_connect() {
             this.socket = new WebSocket(this.ws_url);
-            console.log('connect');
-            console.log(this);
-            this.socket_check_open = setInterval(this.ws_check_open, 2000);
 
-            this.socket.onopen = this.ws_onopen;
-            this.socket.onclose = this.ws_onclose;
-            this.socket.onmessage = this.ws_onmessage;
+            this.socket_check_open = setInterval(this.ws_check_open.bind(this), 2000);
+            this.socket.onopen = this.ws_onopen.bind(this);
+            this.socket.onclose = this.ws_onclose.bind(this);
+            this.socket.onmessage = this.ws_onmessage.bind(this);
         }
     }, {
         key: 'ws_check_open',
         value: function ws_check_open() {
-            if (this.readyState == WebSocket.CONNECTING) {
+            if (this.socket.readyState == WebSocket.CONNECTING) {
                 return;
             }
-            if (this.readyState != WebSocket.OPEN) {
+            if (this.socket.readyState != WebSocket.OPEN) {
                 this.error_cb('Connection could not be opened. ' + 'Please <a href="javascript:location.reload(true);" ' + 'class="alert-link">reload</a> this page to try again.');
             }
             window.clearInterval(this.socket_check_open);
@@ -63,12 +64,10 @@ var Connection = exports.Connection = function () {
     }, {
         key: 'ws_onopen',
         value: function ws_onopen() {
-            console.log('onopen');
-            console.log(this);
             this.ws_reconnect_attempt = 0;
             this.ws_reconnect_delay = 100.0;
             this.error_cb(); // clear errors
-            this.send(JSON.stringify({ '__connect': this.analysis_id }));
+            this.socket.send(JSON.stringify({ '__connect': this.analysis_id }));
         }
     }, {
         key: 'ws_onclose',
@@ -95,7 +94,7 @@ var Connection = exports.Connection = function () {
             // connect response
             if (message.signal == '__connect') {
                 this.analysis_id = message.load.analysis_id;
-                console.log('Set analysis_id to ' + analysis_id);
+                console.log('Set analysis_id to ' + this.analysis_id);
             }
 
             // actions
@@ -107,7 +106,7 @@ var Connection = exports.Connection = function () {
             }
 
             // normal message
-            if (message.signal in on_callbacks) {
+            if (message.signal in this.on_callbacks) {
                 this.on_callbacks[message.signal].map(function (cb) {
                     return cb(message.load);
                 });
