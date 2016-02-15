@@ -74,17 +74,17 @@ var Connection = exports.Connection = function () {
         value: function ws_onclose() {
             window.clearInterval(this.socket_check_open);
 
-            ws_reconnect_attempt += 1;
-            ws_reconnect_delay *= 2;
+            this.ws_reconnect_attempt += 1;
+            this.ws_reconnect_delay *= 2;
 
-            if (ws_reconnect_attempt > 3) {
+            if (this.ws_reconnect_attempt > 3) {
                 this.error_cb('Connection closed. ' + 'Please <a href="javascript:location.reload(true);" ' + 'class="alert-link">reload</a> this page to reconnect.');
                 return;
             }
 
-            var actual_delay = 0.7 * ws_reconnect_delay + 0.3 * Math.random() * ws_reconnect_delay;
-            console.log('WebSocket reconnect attempt ' + ws_reconnect_attempt + ' in ' + actual_delay + 'ms.');
-            setTimeout(this.ws_connect, actual_delay);
+            var actual_delay = 0.7 * this.ws_reconnect_delay + 0.3 * Math.random() * this.ws_reconnect_delay;
+            console.log('WebSocket reconnect attempt ' + this.ws_reconnect_attempt + ' in ' + actual_delay + 'ms.');
+            setTimeout(this.ws_connect.bind(this), actual_delay);
         }
     }, {
         key: 'ws_onmessage',
@@ -171,78 +171,148 @@ window.Databench04 = Databench04;
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-	value: true
+    value: true
 });
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Log = exports.Log = function () {
-	function Log(node) {
-		var _this = this;
+    function Log(node) {
+        var _this = this;
 
-		var limit = arguments.length <= 1 || arguments[1] === undefined ? 20 : arguments[1];
-		var consoleFnName = arguments.length <= 2 || arguments[2] === undefined ? 'log' : arguments[2];
+        var limit = arguments.length <= 1 || arguments[1] === undefined ? 20 : arguments[1];
+        var consoleFnName = arguments.length <= 2 || arguments[2] === undefined ? 'log' : arguments[2];
 
-		_classCallCheck(this, Log);
+        _classCallCheck(this, Log);
 
-		this.node = node;
-		this.limit = limit;
-		this.consoleFnName = consoleFnName;
+        this.render = function () {
+            while (_this._messages.length > _this.limit) {
+                _this._messages.shift();
+            }_this.node.innerText = _this._messages.map(function (m) {
+                return m.join('');
+            }).join('\n');
+        };
 
-		this._messages = [];
+        this.add = function (message) {
+            var source = arguments.length <= 1 || arguments[1] === undefined ? 'unknown' : arguments[1];
 
-		// capture events from frontend
-		var _consoleFnOriginal = console[consoleFnName];
-		console[consoleFnName] = function (message) {
-			_this.add(message, 'frontend');
-			_consoleFnOriginal.apply(console, [message]);
-		};
-	}
+            if (typeof message != "string") {
+                message = JSON.stringify(message);
+            }
 
-	_createClass(Log, [{
-		key: 'render',
-		value: function render() {
-			while (this._messages.length > this.limit) {
-				this._messages.shift();
-			} // for HTML output, json-stringify messages and join with <br>
-			this.node.innerText = this._messages.map(function (m) {
-				return m.join('');
-			}).join('\n');
-		}
-	}, {
-		key: 'add',
-		value: function add(message) {
-			var source = arguments.length <= 1 || arguments[1] === undefined ? 'unknown' : arguments[1];
+            var padded_source = ' '.repeat(Math.max(0, 8 - source.length)) + source;
+            _this._messages.push([padded_source + ': ' + message]);
+            _this.render();
+        };
 
-			if (typeof message != "string") {
-				message = JSON.stringify(message);
-			}
+        this.node = node;
+        this.limit = limit;
+        this.consoleFnName = consoleFnName;
 
-			this._messages.push([' '.repeat(Math.max(0, 8 - source.length)) + source + ': ', message]);
-			this.render();
-		}
-	}], [{
-		key: 'wire',
-		value: function wire() {
-			var id = arguments.length <= 0 || arguments[0] === undefined ? 'log' : arguments[0];
-			var source = arguments.length <= 1 || arguments[1] === undefined ? 'backend' : arguments[1];
-			var limit = arguments.length <= 2 || arguments[2] === undefined ? 20 : arguments[2];
-			var consoleFnName = arguments.length <= 3 || arguments[3] === undefined ? 'log' : arguments[3];
+        this._messages = [];
 
-			var node = document.getElementById(id);
-			if (node == null) return;
+        // capture events from frontend
+        var _consoleFnOriginal = console[consoleFnName];
+        console[consoleFnName] = function (message) {
+            _this.add(message, 'frontend');
+            _consoleFnOriginal.apply(console, [message]);
+        };
+    }
 
-			console.log('Wiring element id=' + id + ' to ' + source + '.');
-			var l = new Log(node, limit, consoleFnName);
-			return function (message) {
-				l.add(message, source);
-			};
-		}
-	}]);
+    _createClass(Log, null, [{
+        key: 'wire',
+        value: function wire() {
+            var id = arguments.length <= 0 || arguments[0] === undefined ? 'log' : arguments[0];
+            var source = arguments.length <= 1 || arguments[1] === undefined ? 'backend' : arguments[1];
+            var limit = arguments.length <= 2 || arguments[2] === undefined ? 20 : arguments[2];
+            var consoleFnName = arguments.length <= 3 || arguments[3] === undefined ? 'log' : arguments[3];
 
-	return Log;
+            var node = document.getElementById(id);
+            if (node == null) return;
+
+            console.log('Wiring element id=' + id + ' to ' + source + '.');
+            var l = new Log(node, limit, consoleFnName);
+            return function (message) {
+                return l.add(message, source);
+            };
+        }
+    }]);
+
+    return Log;
+}();
+
+;
+
+var StatusLog = exports.StatusLog = function () {
+    function StatusLog(node) {
+        var _this2 = this;
+
+        var formatter = arguments.length <= 1 || arguments[1] === undefined ? StatusLog.default_alert : arguments[1];
+
+        _classCallCheck(this, StatusLog);
+
+        this.render = function () {
+            var formatted = [].concat(_toConsumableArray(_this2._messages)).map(function (_ref) {
+                var _ref2 = _slicedToArray(_ref, 2);
+
+                var m = _ref2[0];
+                var c = _ref2[1];
+                return _this2.formatter(m, c);
+            });
+            _this2.node.innerHTML = formatted.join('\n');
+        };
+
+        this.add = function (msg) {
+            if (msg == null) {
+                _this2._messages.clear();
+                return;
+            }
+            if (typeof msg != "string") {
+                msg = JSON.stringify(msg);
+            }
+
+            if (_this2._messages.has(msg)) {
+                _this2._messages.set(msg, _this2._messages.get(msg) + 1);
+            } else {
+                _this2._messages.set(msg, 1);
+            }
+            _this2.render();
+        };
+
+        this.node = node;
+        this.formatter = formatter;
+
+        this._messages = new Map();
+    }
+
+    _createClass(StatusLog, null, [{
+        key: 'default_alert',
+        value: function default_alert(msg, c) {
+            var c_format = c <= 1 ? '' : '<b>(' + c + ')</b> ';
+            return '<div class="alert alert-danger">' + c_format + msg + '</div>';
+        }
+    }, {
+        key: 'wire',
+        value: function wire() {
+            var id = arguments.length <= 0 || arguments[0] === undefined ? 'ws-alerts' : arguments[0];
+            var formatter = arguments.length <= 1 || arguments[1] === undefined ? StatusLog.default_alert : arguments[1];
+
+            var node = document.getElementById(id);
+            if (node == null) return;
+
+            console.log('Wiring element id=' + id + '.');
+            var l = new StatusLog(node, formatter);
+            return l.add;
+        }
+    }]);
+
+    return StatusLog;
 }();
 
 ;

@@ -57,10 +57,10 @@ export class Connection {
     ws_onclose() {
         window.clearInterval(this.socket_check_open);
 
-        ws_reconnect_attempt += 1;
-        ws_reconnect_delay *= 2;
+        this.ws_reconnect_attempt += 1;
+        this.ws_reconnect_delay *= 2;
 
-        if (ws_reconnect_attempt > 3) {
+        if (this.ws_reconnect_attempt > 3) {
             this.error_cb(
                 'Connection closed. '+
                 'Please <a href="javascript:location.reload(true);" '+
@@ -69,9 +69,9 @@ export class Connection {
             return;
         }
 
-        let actual_delay = 0.7 * ws_reconnect_delay + 0.3 * Math.random() * ws_reconnect_delay;
-        console.log(`WebSocket reconnect attempt ${ws_reconnect_attempt} in ${actual_delay}ms.`);
-        setTimeout(this.ws_connect, actual_delay);
+        let actual_delay = 0.7 * this.ws_reconnect_delay + 0.3 * Math.random() * this.ws_reconnect_delay;
+        console.log(`WebSocket reconnect attempt ${this.ws_reconnect_attempt} in ${actual_delay}ms.`);
+        setTimeout(this.ws_connect.bind(this), actual_delay);
     }
 
     ws_onmessage(event) {
