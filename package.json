@@ -36,7 +36,7 @@
     }
   },
   "scripts": {
-    "test": "mocha js/test/testrunner.js"
+    "test": "mocha js/test/test.js"
   },
   "repository": {
     "type": "git",
