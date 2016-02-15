@@ -11,7 +11,7 @@ gulp.task('default', function () {
         entries: 'js/main.js',
         debug: true
     });
-    bundler.transform('babelify', {presets: ['es2015']});
+    bundler.transform('babelify', {presets: ['es2015', 'stage-1']});
 
     bundler.bundle()
         // .on('error', function (err) { console.error(err); })
