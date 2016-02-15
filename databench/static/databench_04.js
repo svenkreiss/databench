@@ -153,6 +153,11 @@ var Connection = exports.Connection = function () {
 },{}],2:[function(require,module,exports){
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.Connection = exports.ui = undefined;
+
 var _ui = require('./ui');
 
 var ui = _interopRequireWildcard(_ui);
@@ -162,10 +167,16 @@ var _connection = require('./connection');
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 // create a public interface
-var Databench04 = window.Databench04 || {};
-Databench04.ui = ui;
-Databench04.Connection = _connection.Connection;
-window.Databench04 = Databench04;
+// var Databench04 = {};
+// Databench04.ui = ui;
+// Databench04.Connection = Connection;
+
+if (typeof window !== 'undefined') {
+	window.Databench04 = { ui: ui, Connection: _connection.Connection };
+}
+
+exports.ui = ui;
+exports.Connection = _connection.Connection;
 
 },{"./connection":1,"./ui":3}],3:[function(require,module,exports){
 'use strict';
@@ -214,7 +225,6 @@ var Log = exports.Log = function () {
         this.node = node;
         this.limit = limit;
         this.consoleFnName = consoleFnName;
-
         this._messages = [];
 
         // capture events from frontend
@@ -287,7 +297,6 @@ var StatusLog = exports.StatusLog = function () {
 
         this.node = node;
         this.formatter = formatter;
-
         this._messages = new Map();
     }
 
