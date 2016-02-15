@@ -9,6 +9,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+if (typeof WebSocket === 'undefined') {
+    var WebSocket = require('websocket').w3cwebsocket;
+}
+
 var Connection = exports.Connection = function () {
     function Connection(error_cb) {
         var analysis_id = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
@@ -150,7 +154,7 @@ var Connection = exports.Connection = function () {
     return Connection;
 }();
 
-},{}],2:[function(require,module,exports){
+},{"websocket":4}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -167,14 +171,9 @@ var _connection = require('./connection');
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 // create a public interface
-// var Databench04 = {};
-// Databench04.ui = ui;
-// Databench04.Connection = Connection;
-
 if (typeof window !== 'undefined') {
 	window.Databench04 = { ui: ui, Connection: _connection.Connection };
 }
-
 exports.ui = ui;
 exports.Connection = _connection.Connection;
 
@@ -325,6 +324,164 @@ var StatusLog = exports.StatusLog = function () {
 }();
 
 ;
+
+},{}],4:[function(require,module,exports){
+var _global = (function() { return this; })();
+var nativeWebSocket = _global.WebSocket || _global.MozWebSocket;
+var websocket_version = require('./version');
+
+
+/**
+ * Expose a W3C WebSocket class with just one or two arguments.
+ */
+function W3CWebSocket(uri, protocols) {
+	var native_instance;
+
+	if (protocols) {
+		native_instance = new nativeWebSocket(uri, protocols);
+	}
+	else {
+		native_instance = new nativeWebSocket(uri);
+	}
+
+	/**
+	 * 'native_instance' is an instance of nativeWebSocket (the browser's WebSocket
+	 * class). Since it is an Object it will be returned as it is when creating an
+	 * instance of W3CWebSocket via 'new W3CWebSocket()'.
+	 *
+	 * ECMAScript 5: http://bclary.com/2004/11/07/#a-13.2.2
+	 */
+	return native_instance;
+}
+
+
+/**
+ * Module exports.
+ */
+module.exports = {
+    'w3cwebsocket' : nativeWebSocket ? W3CWebSocket : null,
+    'version'      : websocket_version
+};
+
+},{"./version":5}],5:[function(require,module,exports){
+module.exports = require('../package.json').version;
+
+},{"../package.json":6}],6:[function(require,module,exports){
+module.exports={
+  "_args": [
+    [
+      "websocket",
+      "/Users/zween/tech/databench"
+    ]
+  ],
+  "_from": "websocket@latest",
+  "_id": "websocket@1.0.22",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/websocket",
+  "_nodeVersion": "3.3.1",
+  "_npmUser": {
+    "email": "brian@worlize.com",
+    "name": "theturtle32"
+  },
+  "_npmVersion": "2.14.3",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "websocket",
+    "raw": "websocket",
+    "rawSpec": "",
+    "scope": null,
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/websocket/-/websocket-1.0.22.tgz",
+  "_shasum": "8c33e3449f879aaf518297c9744cebf812b9e3d8",
+  "_shrinkwrap": null,
+  "_spec": "websocket",
+  "_where": "/Users/zween/tech/databench",
+  "author": {
+    "email": "brian@worlize.com",
+    "name": "Brian McKelvey",
+    "url": "https://www.worlize.com/"
+  },
+  "browser": "lib/browser.js",
+  "bugs": {
+    "url": "https://github.com/theturtle32/WebSocket-Node/issues"
+  },
+  "config": {
+    "verbose": false
+  },
+  "contributors": [
+    {
+      "name": "Iñaki Baz Castillo",
+      "email": "ibc@aliax.net",
+      "url": "http://dev.sipdoc.net"
+    }
+  ],
+  "dependencies": {
+    "debug": "~2.2.0",
+    "nan": "~2.0.5",
+    "typedarray-to-buffer": "~3.0.3",
+    "yaeti": "~0.0.4"
+  },
+  "description": "Websocket Client & Server Library implementing the WebSocket protocol as specified in RFC 6455.",
+  "devDependencies": {
+    "buffer-equal": "^0.0.1",
+    "faucet": "^0.0.1",
+    "gulp": "git+https://github.com/gulpjs/gulp.git#4.0",
+    "gulp-jshint": "^1.11.2",
+    "jshint-stylish": "^1.0.2",
+    "tape": "^4.0.1"
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "dist": {
+    "shasum": "8c33e3449f879aaf518297c9744cebf812b9e3d8",
+    "tarball": "http://registry.npmjs.org/websocket/-/websocket-1.0.22.tgz"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  },
+  "gitHead": "19108bbfd7d94a5cd02dbff3495eafee9e901ca4",
+  "homepage": "https://github.com/theturtle32/WebSocket-Node",
+  "keywords": [
+    "RFC-6455",
+    "client",
+    "comet",
+    "networking",
+    "push",
+    "realtime",
+    "server",
+    "socket",
+    "websocket",
+    "websockets"
+  ],
+  "license": "Apache-2.0",
+  "main": "index",
+  "maintainers": [
+    {
+      "name": "theturtle32",
+      "email": "brian@worlize.com"
+    }
+  ],
+  "name": "websocket",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theturtle32/WebSocket-Node.git"
+  },
+  "scripts": {
+    "gulp": "gulp",
+    "install": "(node-gyp rebuild 2> builderror.log) || (exit 0)",
+    "test": "faucet test/unit"
+  },
+  "version": "1.0.22"
+}
 
 },{}]},{},[2])
 

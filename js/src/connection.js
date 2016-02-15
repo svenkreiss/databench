@@ -1,3 +1,6 @@
+if (typeof WebSocket === 'undefined') {
+    var WebSocket = require('websocket').w3cwebsocket;
+}
 
 export class Connection {
     constructor(error_cb, analysis_id=null, ws_url=null) {

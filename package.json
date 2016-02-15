@@ -11,7 +11,8 @@
     "bootstrap": "^3.3.6",
     "d3": "^3.5.14",
     "font-awesome": "^4.5.0",
-    "jquery": "^2.2.0"
+    "jquery": "^2.2.0",
+    "websocket": "^1.0.22"
   },
   "devDependencies": {
     "babel-eslint": "^4.1.8",
