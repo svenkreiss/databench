@@ -11,6 +11,9 @@ LOGLEVEL = 'WARNING'
 def setup_module():
     global DAEMON
 
+    # transpile js code for node
+    os.system('gulp node')
+
     # call os.setsid so that all subprocesses terminate when the
     # main process receives SIGTERM
     DAEMON = subprocess.Popen(['databench',
