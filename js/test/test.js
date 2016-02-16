@@ -1,12 +1,10 @@
-'use strict';
-
 var assert = require('assert');
 var Databench = require('./../node_client/main');
 
 describe('Databench', function() {
   describe('#Connection', function () {
     // create connection
-    let c = new Databench.Connection(
+    var c = new Databench.Connection(
       (msg) => console.log(msg),
       null,
       'http://localhost:5000/dummypi/ws'
@@ -19,7 +17,7 @@ describe('Databench', function() {
     it('echo an object', function (done) {
       this.timeout(5000);
 
-      let d;
+      var d;
       c.on('test_fn', (data) => { d = data; });
       c.emit('test_fn', [1, 2]);
 
