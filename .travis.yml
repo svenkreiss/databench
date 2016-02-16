@@ -4,10 +4,15 @@ python:
  - "3.4"
  - "3.5"
 install:
+ # install Python dependencies
  - "pip install --upgrade pip"
  - "pip install -e .[tests]"
  - "pip install python-coveralls coverage"
- - "npm install -g mocha gulp"
+ # install new Node version
+ - sudo add-apt-repository -y ppa:chris-lea/node.js
+ - sudo apt-get -y update
+ - sudo apt-get -y install nodejs
+ - npm install -g mocha gulp
 script: "nosetests -vv --with-coverage --cover-package=databench --cover-erase"
 after_success:
   - coveralls
