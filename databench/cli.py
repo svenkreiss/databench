@@ -22,7 +22,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--version', action='version',
                         version='%(prog)s '+DATABENCH_VERSION)
-    parser.add_argument('--log', dest='loglevel', default="NOTSET",
+    parser.add_argument('--log', dest='loglevel', default="WARNING",
                         help='set log level')
     # parser.add_argument('--host', dest='host',
     #                     default=os.environ.get('HOST', 'localhost'),
@@ -62,9 +62,9 @@ def main():
     from .app import App
 
     # log
-    if args.loglevel != 'NOTSET':
+    if args.loglevel != 'WARNING':
         print('Setting loglevel to '+args.loglevel+'.')
-        logging.basicConfig(level=getattr(logging, args.loglevel))
+    logging.basicConfig(level=getattr(logging, args.loglevel))
 
     # delimiters
     delimiters = {
