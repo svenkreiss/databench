@@ -1,7 +1,7 @@
 'use strict';
 
 var assert = require('assert');
-var Databench = require('./../node/main');
+var Databench = require('./../node_client/main');
 
 describe('Databench', function() {
   describe('#Connection', function () {

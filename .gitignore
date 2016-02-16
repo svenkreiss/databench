@@ -7,8 +7,8 @@ __pycache__/
 
 # node
 node_modules/
-js/node/*.js
-js/node/*.js.map
+js/node_client/*.js
+js/node_client/*.js.map
 
 # Distribution / packaging
 .Python

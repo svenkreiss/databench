@@ -12,7 +12,7 @@ def setup_module():
     global DAEMON
 
     # transpile js code for node
-    os.system('gulp node')
+    os.system('gulp node_client')
 
     # call os.setsid so that all subprocesses terminate when the
     # main process receives SIGTERM

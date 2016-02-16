@@ -25,13 +25,13 @@ gulp.task('browser', function () {
 });
 
 
-gulp.task('node', function() {
+gulp.task('node_client', function() {
     return gulp.src('js/src/*.js')
         .pipe(sourcemaps.init())
         .pipe(babel({presets: ['es2015', 'stage-1']}))
         .pipe(sourcemaps.write('./'))
-        .pipe(gulp.dest('js/node/'));
+        .pipe(gulp.dest('js/node_client/'));
 });
 
 
-gulp.task('default', ['browser', 'node']);
+gulp.task('default', ['browser', 'node_client']);
