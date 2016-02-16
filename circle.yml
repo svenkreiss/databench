@@ -6,7 +6,7 @@ dependencies:
   pre:
     - "pip install -e .[tests]"
     - "pip install python-coveralls coverage"
-    - "npm install -g mocha gulp-cli"
+    - "npm install -g mocha gulp"
 test:
   override:
     - "python setup.py nosetests --with-coverage --cover-package=databench --cover-erase"
