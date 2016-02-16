@@ -5,154 +5,129 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 if (typeof WebSocket === 'undefined') {
     var WebSocket = require('websocket').w3cwebsocket;
 }
 
-var Connection = exports.Connection = function () {
-    function Connection(error_cb) {
-        var analysis_id = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
-        var ws_url = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
+var Connection = exports.Connection = function Connection(error_cb) {
+    var _this = this;
 
-        _classCallCheck(this, Connection);
+    var analysis_id = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+    var ws_url = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
 
-        this.error_cb = error_cb;
-        this.analysis_id = analysis_id;
-        this.ws_url = ws_url ? ws_url : this.guess_ws_url();
+    _classCallCheck(this, Connection);
 
-        this.on_callbacks = {};
-        this.onAction_callbacks = {};
+    this.guess_ws_url = function () {
+        var ws_protocol = 'ws';
+        if (location.origin.startsWith('https://')) ws_protocol = 'wss';
 
-        this.ws_reconnect_attempt = 0;
-        this.ws_reconnect_delay = 100.0;
+        var path = location.pathname.substring(0, location.pathname.lastIndexOf('/'));
+        return ws_protocol + '://' + document.domain + ':' + location.port + path + '/ws';
+    };
 
-        this.socket = null;
-        this.socket_check_open = null;
-        this.ws_connect();
-    }
+    this.ws_connect = function () {
+        _this.socket = new WebSocket(_this.ws_url);
 
-    _createClass(Connection, [{
-        key: 'guess_ws_url',
-        value: function guess_ws_url() {
-            var ws_protocol = 'ws';
-            if (location.origin.startsWith('https://')) ws_protocol = 'wss';
+        _this.socket_check_open = setInterval(_this.ws_check_open, 2000);
+        _this.socket.onopen = _this.ws_onopen;
+        _this.socket.onclose = _this.ws_onclose;
+        _this.socket.onmessage = _this.ws_onmessage;
+    };
 
-            var path = location.pathname.substring(0, location.pathname.lastIndexOf('/'));
-            return ws_protocol + '://' + document.domain + ':' + location.port + path + '/ws';
+    this.ws_check_open = function () {
+        if (_this.socket.readyState == WebSocket.CONNECTING) {
+            return;
         }
-    }, {
-        key: 'ws_connect',
-        value: function ws_connect() {
-            this.socket = new WebSocket(this.ws_url);
-
-            this.socket_check_open = setInterval(this.ws_check_open.bind(this), 2000);
-            this.socket.onopen = this.ws_onopen.bind(this);
-            this.socket.onclose = this.ws_onclose.bind(this);
-            this.socket.onmessage = this.ws_onmessage.bind(this);
+        if (_this.socket.readyState != WebSocket.OPEN) {
+            _this.error_cb('Connection could not be opened. ' + 'Please <a href="javascript:location.reload(true);" ' + 'class="alert-link">reload</a> this page to try again.');
         }
-    }, {
-        key: 'ws_check_open',
-        value: function ws_check_open() {
-            if (this.socket.readyState == WebSocket.CONNECTING) {
-                return;
-            }
-            if (this.socket.readyState != WebSocket.OPEN) {
-                this.error_cb('Connection could not be opened. ' + 'Please <a href="javascript:location.reload(true);" ' + 'class="alert-link">reload</a> this page to try again.');
-            }
-            window.clearInterval(this.socket_check_open);
+        clearInterval(_this.socket_check_open);
+    };
+
+    this.ws_onopen = function () {
+        _this.ws_reconnect_attempt = 0;
+        _this.ws_reconnect_delay = 100.0;
+        _this.error_cb(); // clear errors
+        _this.socket.send(JSON.stringify({ '__connect': _this.analysis_id }));
+    };
+
+    this.ws_onclose = function () {
+        clearInterval(_this.socket_check_open);
+
+        _this.ws_reconnect_attempt += 1;
+        _this.ws_reconnect_delay *= 2;
+
+        if (_this.ws_reconnect_attempt > 3) {
+            _this.error_cb('Connection closed. ' + 'Please <a href="javascript:location.reload(true);" ' + 'class="alert-link">reload</a> this page to reconnect.');
+            return;
         }
-    }, {
-        key: 'ws_onopen',
-        value: function ws_onopen() {
-            this.ws_reconnect_attempt = 0;
-            this.ws_reconnect_delay = 100.0;
-            this.error_cb(); // clear errors
-            this.socket.send(JSON.stringify({ '__connect': this.analysis_id }));
+
+        var actual_delay = 0.7 * _this.ws_reconnect_delay + 0.3 * Math.random() * _this.ws_reconnect_delay;
+        console.log('WebSocket reconnect attempt ' + _this.ws_reconnect_attempt + ' in ' + actual_delay + 'ms.');
+        setTimeout(_this.ws_connect, actual_delay);
+    };
+
+    this.ws_onmessage = function (event) {
+        var message = JSON.parse(event.data);
+
+        // connect response
+        if (message.signal == '__connect') {
+            _this.analysis_id = message.load.analysis_id;
+            console.log('Set analysis_id to ' + _this.analysis_id);
         }
-    }, {
-        key: 'ws_onclose',
-        value: function ws_onclose() {
-            window.clearInterval(this.socket_check_open);
 
-            this.ws_reconnect_attempt += 1;
-            this.ws_reconnect_delay *= 2;
-
-            if (this.ws_reconnect_attempt > 3) {
-                this.error_cb('Connection closed. ' + 'Please <a href="javascript:location.reload(true);" ' + 'class="alert-link">reload</a> this page to reconnect.');
-                return;
-            }
-
-            var actual_delay = 0.7 * this.ws_reconnect_delay + 0.3 * Math.random() * this.ws_reconnect_delay;
-            console.log('WebSocket reconnect attempt ' + this.ws_reconnect_attempt + ' in ' + actual_delay + 'ms.');
-            setTimeout(this.ws_connect.bind(this), actual_delay);
+        // actions
+        if (message.signal == '__action') {
+            var id = message.load.id;
+            _this.onAction_callbacks[id].map(function (cb) {
+                return cb(message.load.status);
+            });
         }
-    }, {
-        key: 'ws_onmessage',
-        value: function ws_onmessage(event) {
-            var message = JSON.parse(event.data);
 
-            // connect response
-            if (message.signal == '__connect') {
-                this.analysis_id = message.load.analysis_id;
-                console.log('Set analysis_id to ' + this.analysis_id);
-            }
-
-            // actions
-            if (message.signal == '__action') {
-                var id = message.load.id;
-                this.onAction_callbacks[id].map(function (cb) {
-                    return cb(message.load.status);
-                });
-            }
-
-            // normal message
-            if (message.signal in this.on_callbacks) {
-                this.on_callbacks[message.signal].map(function (cb) {
-                    return cb(message.load);
-                });
-            }
+        // normal message
+        if (message.signal in _this.on_callbacks) {
+            _this.on_callbacks[message.signal].map(function (cb) {
+                return cb(message.load);
+            });
         }
-    }, {
-        key: 'on',
-        value: function on(signalName, callback) {
-            if (!(signalName in this.on_callbacks)) this.on_callbacks[signalName] = [];
-            this.on_callbacks[signalName].push(callback);
+    };
+
+    this.on = function (signalName, callback) {
+        if (!(signalName in _this.on_callbacks)) _this.on_callbacks[signalName] = [];
+        _this.on_callbacks[signalName].push(callback);
+    };
+
+    this.emit = function (signalName, message) {
+        if (_this.socket.readyState != 1) {
+            setTimeout(function () {
+                return _this.emit(signalName, message);
+            }, 5);
+            return;
         }
-    }, {
-        key: 'emit',
-        value: function (_emit) {
-            function emit(_x, _x2) {
-                return _emit.apply(this, arguments);
-            }
+        _this.socket.send(JSON.stringify({ 'signal': signalName, 'load': message }));
+    };
 
-            emit.toString = function () {
-                return _emit.toString();
-            };
+    this.onAction = function (actionID, callback) {
+        if (!(actionID in _this.onAction_callbacks)) _this.onAction_callbacks[actionID] = [];
+        _this.onAction_callbacks[actionID].push(callback);
+    };
 
-            return emit;
-        }(function (signalName, message) {
-            if (this.socket.readyState != 1) {
-                setTimeout(function () {
-                    return emit(signalName, message);
-                }, 5);
-                return;
-            }
-            this.socket.send(JSON.stringify({ 'signal': signalName, 'load': message }));
-        })
-    }, {
-        key: 'onAction',
-        value: function onAction(actionID, callback) {
-            if (!(actionID in this.onAction_callbacks)) this.onAction_callbacks[actionID] = [];
-            this.onAction_callbacks[actionID].push(callback);
-        }
-    }]);
+    this.error_cb = error_cb;
+    this.analysis_id = analysis_id;
+    this.ws_url = ws_url ? ws_url : this.guess_ws_url();
 
-    return Connection;
-}();
+    this.on_callbacks = {};
+    this.onAction_callbacks = {};
+
+    this.ws_reconnect_attempt = 0;
+    this.ws_reconnect_delay = 100.0;
+
+    this.socket = null;
+    this.socket_check_open = null;
+    this.ws_connect();
+};
 
 },{"websocket":4}],2:[function(require,module,exports){
 'use strict';
