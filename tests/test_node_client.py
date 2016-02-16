@@ -12,7 +12,7 @@ def setup_module():
     global DAEMON
 
     # transpile js code for node
-    os.system('gulp node_client')
+    subprocess.call('gulp node_client')
 
     # call os.setsid so that all subprocesses terminate when the
     # main process receives SIGTERM
@@ -40,7 +40,7 @@ def teardown_module():
 
 
 def test_node_client():
-    os.system('npm test')
+    subprocess.check_call('npm test')
 
 
 if __name__ == '__main__':
