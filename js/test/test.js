@@ -11,7 +11,12 @@ describe('Databench', function() {
       null,
       'http://localhost:5000/dummypi/ws'
     );
-    it('create a WebSocket connection', function (done) {
+
+    it('create a WebSocket connection', function () {
+      assert.equal('object', typeof c);
+    });
+
+    it('echo an object', function (done) {
       this.timeout(5000);
 
       let d;
