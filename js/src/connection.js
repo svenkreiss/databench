@@ -19,24 +19,24 @@ export class Connection {
         this.ws_connect();
     }
 
-    guess_ws_url() {
+    guess_ws_url = () => {
         var ws_protocol = 'ws';
         if (location.origin.startsWith('https://')) ws_protocol = 'wss';
 
         let path = location.pathname.substring(0, location.pathname.lastIndexOf('/'));
         return `${ws_protocol}://${document.domain}:${location.port}${path}/ws`;
-    }
+    };
 
-    ws_connect() {
+    ws_connect = () => {
         this.socket = new WebSocket(this.ws_url);
 
-        this.socket_check_open = setInterval(this.ws_check_open.bind(this), 2000);
-        this.socket.onopen = this.ws_onopen.bind(this);
-        this.socket.onclose = this.ws_onclose.bind(this);
-        this.socket.onmessage = this.ws_onmessage.bind(this);
-    }
+        this.socket_check_open = setInterval(this.ws_check_open, 2000);
+        this.socket.onopen = this.ws_onopen;
+        this.socket.onclose = this.ws_onclose;
+        this.socket.onmessage = this.ws_onmessage;
+    };
 
-    ws_check_open() {
+    ws_check_open = () => {
         if (this.socket.readyState == WebSocket.CONNECTING) {
             return;
         }
@@ -47,18 +47,18 @@ export class Connection {
                 'class="alert-link">reload</a> this page to try again.'
             );
         }
-        window.clearInterval(this.socket_check_open);
-    }
+        clearInterval(this.socket_check_open);
+    };
 
-    ws_onopen() {
+    ws_onopen = () => {
         this.ws_reconnect_attempt = 0;
         this.ws_reconnect_delay = 100.0;
         this.error_cb();  // clear errors
         this.socket.send(JSON.stringify({'__connect': this.analysis_id}));
-    }
+    };
 
-    ws_onclose() {
-        window.clearInterval(this.socket_check_open);
+    ws_onclose = () => {
+        clearInterval(this.socket_check_open);
 
         this.ws_reconnect_attempt += 1;
         this.ws_reconnect_delay *= 2;
@@ -74,10 +74,10 @@ export class Connection {
 
         let actual_delay = 0.7 * this.ws_reconnect_delay + 0.3 * Math.random() * this.ws_reconnect_delay;
         console.log(`WebSocket reconnect attempt ${this.ws_reconnect_attempt} in ${actual_delay}ms.`);
-        setTimeout(this.ws_connect.bind(this), actual_delay);
-    }
+        setTimeout(this.ws_connect, actual_delay);
+    };
 
-    ws_onmessage(event) {
+    ws_onmessage = (event) => {
         let message = JSON.parse(event.data);
 
         // connect response
@@ -96,26 +96,26 @@ export class Connection {
         if (message.signal in this.on_callbacks) {
             this.on_callbacks[message.signal].map((cb) => cb(message.load));
         }
-    }
+    };
 
 
-    on(signalName, callback) {
+    on = (signalName, callback) => {
         if (!(signalName in this.on_callbacks))
             this.on_callbacks[signalName] = [];
         this.on_callbacks[signalName].push(callback);
-    }
+    };
 
-    emit(signalName, message) {
+    emit = (signalName, message) => {
         if (this.socket.readyState != 1) {
-            setTimeout(() => emit(signalName, message), 5);
+            setTimeout(() => this.emit(signalName, message), 5);
             return;
         }
         this.socket.send(JSON.stringify({'signal':signalName, 'load':message}));
-    }
+    };
 
-    onAction(actionID, callback) {
+    onAction = (actionID, callback) => {
         if (!(actionID in this.onAction_callbacks))
             this.onAction_callbacks[actionID] = [];
         this.onAction_callbacks[actionID].push(callback);
-    }
+    };
 }
