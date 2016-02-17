@@ -18,7 +18,7 @@ describe('Databench', function() {
       this.timeout(5000);
 
       var d;
-      c.on('test_fn', (data) => { d = data; });
+      c.on('test_fn', function(data) { d = data; });
       c.emit('test_fn', [1, 2]);
 
       setTimeout(function() {
