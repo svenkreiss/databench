@@ -17,6 +17,7 @@ export class Log {
     render = () => {
         while(this._messages.length > this.limit) this._messages.shift();
         this.node.innerText = this._messages.map((m) => m.join('')).join('\n');
+        return this;
     };
 
     add = (message, source='unknown') => {
@@ -27,15 +28,17 @@ export class Log {
         let padded_source = ' '.repeat(Math.max(0, 8 - source.length)) + source;
         this._messages.push([`${padded_source}: ${message}`]);
         this.render();
+        return this;
     };
 
-    static wire(id='log', source='backend', limit=20, consoleFnName='log') {
+    static wire(conn, id='log', source='backend', limit=20, consoleFnName='log') {
         let node = document.getElementById(id);
         if (node == null) return;
 
         console.log(`Wiring element id=${id} to ${source}.`);
         let l = new Log(node, limit, consoleFnName);
-        return (message) => l.add(message, source);
+        conn.on('log', (message) => l.add(message, source));
+        return this;
     }
 };
 
@@ -55,6 +58,7 @@ export class StatusLog {
     render = () => {
         let formatted = [...this._messages].map(([m, c]) => this.formatter(m, c));
         this.node.innerHTML = formatted.join('\n');
+        return this;
     };
 
     add = (msg) => {
@@ -72,14 +76,15 @@ export class StatusLog {
             this._messages.set(msg, 1);
         }
         this.render();
+        return this;
     };
 
-    static wire(id='ws-alerts', formatter=StatusLog.default_alert) {
+    static wire(conn, id='ws-alerts', formatter=StatusLog.default_alert) {
         let node = document.getElementById(id);
         if (node == null) return;
 
         console.log(`Wiring element id=${id}.`);
         let l = new StatusLog(node, formatter);
-        return l.add;
+        conn.error_cb = l.add;
     }
 };

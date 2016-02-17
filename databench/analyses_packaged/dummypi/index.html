@@ -18,12 +18,12 @@
 
 {% block footer %}
 <script>
-    // var databench = Databench();
-    var databench = new Databench04.Connection(Databench04.ui.StatusLog.wire());
+    var d = new Databench04.Connection();
+    Databench04.ui.StatusLog.wire(d);
+    Databench04.ui.Log.wire(d);
+    d.connect();
 
-    databench.on('log', Databench04.ui.Log.wire());
-
-    databench.on('data', function(msg) {
+    d.on('data', function(msg) {
         if ('pi' in msg) {
             $('#pi').text(msg.pi.estimate.toFixed(3)+' ± '+msg.pi.uncertainty.toFixed(3));
         }

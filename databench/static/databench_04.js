@@ -5,129 +5,141 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 if (typeof WebSocket === 'undefined') {
     var WebSocket = require('websocket').w3cwebsocket;
 }
 
-var Connection = exports.Connection = function Connection(error_cb) {
-    var _this = this;
+var Connection = exports.Connection = function () {
+    function Connection() {
+        var _this = this;
 
-    var analysis_id = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
-    var ws_url = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
+        var analysis_id = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+        var ws_url = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
 
-    _classCallCheck(this, Connection);
+        _classCallCheck(this, Connection);
 
-    this.guess_ws_url = function () {
-        var ws_protocol = 'ws';
-        if (location.origin.startsWith('https://')) ws_protocol = 'wss';
+        this.connect = function () {
+            _this.socket = new WebSocket(_this.ws_url);
 
-        var path = location.pathname.substring(0, location.pathname.lastIndexOf('/'));
-        return ws_protocol + '://' + document.domain + ':' + location.port + path + '/ws';
-    };
+            _this.socket_check_open = setInterval(_this.ws_check_open, 2000);
+            _this.socket.onopen = _this.ws_onopen;
+            _this.socket.onclose = _this.ws_onclose;
+            _this.socket.onmessage = _this.ws_onmessage;
+            return _this;
+        };
 
-    this.ws_connect = function () {
-        _this.socket = new WebSocket(_this.ws_url);
+        this.ws_check_open = function () {
+            if (_this.socket.readyState == _this.socket.CONNECTING) {
+                return;
+            }
+            if (_this.socket.readyState != _this.socket.OPEN) {
+                _this.error_cb('Connection could not be opened. ' + 'Please <a href="javascript:location.reload(true);" ' + 'class="alert-link">reload</a> this page to try again.');
+            }
+            clearInterval(_this.socket_check_open);
+        };
 
-        _this.socket_check_open = setInterval(_this.ws_check_open, 2000);
-        _this.socket.onopen = _this.ws_onopen;
-        _this.socket.onclose = _this.ws_onclose;
-        _this.socket.onmessage = _this.ws_onmessage;
-    };
+        this.ws_onopen = function () {
+            _this.ws_reconnect_attempt = 0;
+            _this.ws_reconnect_delay = 100.0;
+            _this.error_cb(); // clear errors
+            _this.socket.send(JSON.stringify({ '__connect': _this.analysis_id }));
+        };
 
-    this.ws_check_open = function () {
-        if (_this.socket.readyState == WebSocket.CONNECTING) {
-            return;
+        this.ws_onclose = function () {
+            clearInterval(_this.socket_check_open);
+
+            _this.ws_reconnect_attempt += 1;
+            _this.ws_reconnect_delay *= 2;
+
+            if (_this.ws_reconnect_attempt > 3) {
+                _this.error_cb('Connection closed. ' + 'Please <a href="javascript:location.reload(true);" ' + 'class="alert-link">reload</a> this page to reconnect.');
+                return;
+            }
+
+            var actual_delay = 0.7 * _this.ws_reconnect_delay + 0.3 * Math.random() * _this.ws_reconnect_delay;
+            console.log('WebSocket reconnect attempt ' + _this.ws_reconnect_attempt + ' in ' + actual_delay + 'ms.');
+            setTimeout(_this.connect, actual_delay);
+        };
+
+        this.ws_onmessage = function (event) {
+            var message = JSON.parse(event.data);
+
+            // connect response
+            if (message.signal == '__connect') {
+                _this.analysis_id = message.load.analysis_id;
+                console.log('Set analysis_id to ' + _this.analysis_id);
+            }
+
+            // actions
+            if (message.signal == '__action') {
+                var id = message.load.id;
+                _this.onAction_callbacks[id].map(function (cb) {
+                    return cb(message.load.status);
+                });
+            }
+
+            // normal message
+            if (message.signal in _this.on_callbacks) {
+                _this.on_callbacks[message.signal].map(function (cb) {
+                    return cb(message.load);
+                });
+            }
+        };
+
+        this.on = function (signalName, callback) {
+            if (!(signalName in _this.on_callbacks)) _this.on_callbacks[signalName] = [];
+            _this.on_callbacks[signalName].push(callback);
+            return _this;
+        };
+
+        this.emit = function (signalName, message) {
+            if (_this.socket.readyState != 1) {
+                setTimeout(function () {
+                    return _this.emit(signalName, message);
+                }, 5);
+                return;
+            }
+            _this.socket.send(JSON.stringify({ 'signal': signalName, 'load': message }));
+            return _this;
+        };
+
+        this.onAction = function (actionID, callback) {
+            if (!(actionID in _this.onAction_callbacks)) _this.onAction_callbacks[actionID] = [];
+            _this.onAction_callbacks[actionID].push(callback);
+            return _this;
+        };
+
+        this.analysis_id = analysis_id;
+        this.ws_url = ws_url ? ws_url : Connection.guess_ws_url();
+
+        this.error_cb = null;
+        this.on_callbacks = {};
+        this.onAction_callbacks = {};
+
+        this.ws_reconnect_attempt = 0;
+        this.ws_reconnect_delay = 100.0;
+
+        this.socket = null;
+        this.socket_check_open = null;
+    }
+
+    _createClass(Connection, null, [{
+        key: 'guess_ws_url',
+        value: function guess_ws_url() {
+            var ws_protocol = 'ws';
+            if (location.origin.startsWith('https://')) ws_protocol = 'wss';
+
+            var path = location.pathname.substring(0, location.pathname.lastIndexOf('/'));
+            return ws_protocol + '://' + document.domain + ':' + location.port + path + '/ws';
         }
-        if (_this.socket.readyState != WebSocket.OPEN) {
-            _this.error_cb('Connection could not be opened. ' + 'Please <a href="javascript:location.reload(true);" ' + 'class="alert-link">reload</a> this page to try again.');
-        }
-        clearInterval(_this.socket_check_open);
-    };
+    }]);
 
-    this.ws_onopen = function () {
-        _this.ws_reconnect_attempt = 0;
-        _this.ws_reconnect_delay = 100.0;
-        _this.error_cb(); // clear errors
-        _this.socket.send(JSON.stringify({ '__connect': _this.analysis_id }));
-    };
-
-    this.ws_onclose = function () {
-        clearInterval(_this.socket_check_open);
-
-        _this.ws_reconnect_attempt += 1;
-        _this.ws_reconnect_delay *= 2;
-
-        if (_this.ws_reconnect_attempt > 3) {
-            _this.error_cb('Connection closed. ' + 'Please <a href="javascript:location.reload(true);" ' + 'class="alert-link">reload</a> this page to reconnect.');
-            return;
-        }
-
-        var actual_delay = 0.7 * _this.ws_reconnect_delay + 0.3 * Math.random() * _this.ws_reconnect_delay;
-        console.log('WebSocket reconnect attempt ' + _this.ws_reconnect_attempt + ' in ' + actual_delay + 'ms.');
-        setTimeout(_this.ws_connect, actual_delay);
-    };
-
-    this.ws_onmessage = function (event) {
-        var message = JSON.parse(event.data);
-
-        // connect response
-        if (message.signal == '__connect') {
-            _this.analysis_id = message.load.analysis_id;
-            console.log('Set analysis_id to ' + _this.analysis_id);
-        }
-
-        // actions
-        if (message.signal == '__action') {
-            var id = message.load.id;
-            _this.onAction_callbacks[id].map(function (cb) {
-                return cb(message.load.status);
-            });
-        }
-
-        // normal message
-        if (message.signal in _this.on_callbacks) {
-            _this.on_callbacks[message.signal].map(function (cb) {
-                return cb(message.load);
-            });
-        }
-    };
-
-    this.on = function (signalName, callback) {
-        if (!(signalName in _this.on_callbacks)) _this.on_callbacks[signalName] = [];
-        _this.on_callbacks[signalName].push(callback);
-    };
-
-    this.emit = function (signalName, message) {
-        if (_this.socket.readyState != 1) {
-            setTimeout(function () {
-                return _this.emit(signalName, message);
-            }, 5);
-            return;
-        }
-        _this.socket.send(JSON.stringify({ 'signal': signalName, 'load': message }));
-    };
-
-    this.onAction = function (actionID, callback) {
-        if (!(actionID in _this.onAction_callbacks)) _this.onAction_callbacks[actionID] = [];
-        _this.onAction_callbacks[actionID].push(callback);
-    };
-
-    this.error_cb = error_cb;
-    this.analysis_id = analysis_id;
-    this.ws_url = ws_url ? ws_url : this.guess_ws_url();
-
-    this.on_callbacks = {};
-    this.onAction_callbacks = {};
-
-    this.ws_reconnect_attempt = 0;
-    this.ws_reconnect_delay = 100.0;
-
-    this.socket = null;
-    this.socket_check_open = null;
-    this.ws_connect();
-};
+    return Connection;
+}();
 
 },{"websocket":4}],2:[function(require,module,exports){
 'use strict';
@@ -182,6 +194,7 @@ var Log = exports.Log = function () {
             }_this.node.innerText = _this._messages.map(function (m) {
                 return m.join('');
             }).join('\n');
+            return _this;
         };
 
         this.add = function (message) {
@@ -194,6 +207,7 @@ var Log = exports.Log = function () {
             var padded_source = ' '.repeat(Math.max(0, 8 - source.length)) + source;
             _this._messages.push([padded_source + ': ' + message]);
             _this.render();
+            return _this;
         };
 
         this.node = node;
@@ -211,20 +225,21 @@ var Log = exports.Log = function () {
 
     _createClass(Log, null, [{
         key: 'wire',
-        value: function wire() {
-            var id = arguments.length <= 0 || arguments[0] === undefined ? 'log' : arguments[0];
-            var source = arguments.length <= 1 || arguments[1] === undefined ? 'backend' : arguments[1];
-            var limit = arguments.length <= 2 || arguments[2] === undefined ? 20 : arguments[2];
-            var consoleFnName = arguments.length <= 3 || arguments[3] === undefined ? 'log' : arguments[3];
+        value: function wire(conn) {
+            var id = arguments.length <= 1 || arguments[1] === undefined ? 'log' : arguments[1];
+            var source = arguments.length <= 2 || arguments[2] === undefined ? 'backend' : arguments[2];
+            var limit = arguments.length <= 3 || arguments[3] === undefined ? 20 : arguments[3];
+            var consoleFnName = arguments.length <= 4 || arguments[4] === undefined ? 'log' : arguments[4];
 
             var node = document.getElementById(id);
             if (node == null) return;
 
             console.log('Wiring element id=' + id + ' to ' + source + '.');
             var l = new Log(node, limit, consoleFnName);
-            return function (message) {
+            conn.on('log', function (message) {
                 return l.add(message, source);
-            };
+            });
+            return this;
         }
     }]);
 
@@ -250,6 +265,7 @@ var StatusLog = exports.StatusLog = function () {
                 return _this2.formatter(m, c);
             });
             _this2.node.innerHTML = formatted.join('\n');
+            return _this2;
         };
 
         this.add = function (msg) {
@@ -267,6 +283,7 @@ var StatusLog = exports.StatusLog = function () {
                 _this2._messages.set(msg, 1);
             }
             _this2.render();
+            return _this2;
         };
 
         this.node = node;
@@ -282,16 +299,16 @@ var StatusLog = exports.StatusLog = function () {
         }
     }, {
         key: 'wire',
-        value: function wire() {
-            var id = arguments.length <= 0 || arguments[0] === undefined ? 'ws-alerts' : arguments[0];
-            var formatter = arguments.length <= 1 || arguments[1] === undefined ? StatusLog.default_alert : arguments[1];
+        value: function wire(conn) {
+            var id = arguments.length <= 1 || arguments[1] === undefined ? 'ws-alerts' : arguments[1];
+            var formatter = arguments.length <= 2 || arguments[2] === undefined ? StatusLog.default_alert : arguments[2];
 
             var node = document.getElementById(id);
             if (node == null) return;
 
             console.log('Wiring element id=' + id + '.');
             var l = new StatusLog(node, formatter);
-            return l.add;
+            conn.error_cb = l.add;
         }
     }]);
 
@@ -345,11 +362,11 @@ module.exports = require('../package.json').version;
 module.exports={
   "_args": [
     [
-      "websocket",
-      "/Users/zween/tech/databench"
+      "websocket@^1.0.22",
+      "/Users/sven/tech/databench"
     ]
   ],
-  "_from": "websocket@latest",
+  "_from": "websocket@>=1.0.22 <2.0.0",
   "_id": "websocket@1.0.22",
   "_inCache": true,
   "_installable": true,
@@ -363,11 +380,11 @@ module.exports={
   "_phantomChildren": {},
   "_requested": {
     "name": "websocket",
-    "raw": "websocket",
-    "rawSpec": "",
+    "raw": "websocket@^1.0.22",
+    "rawSpec": "^1.0.22",
     "scope": null,
-    "spec": "latest",
-    "type": "tag"
+    "spec": ">=1.0.22 <2.0.0",
+    "type": "range"
   },
   "_requiredBy": [
     "/"
@@ -375,8 +392,8 @@ module.exports={
   "_resolved": "https://registry.npmjs.org/websocket/-/websocket-1.0.22.tgz",
   "_shasum": "8c33e3449f879aaf518297c9744cebf812b9e3d8",
   "_shrinkwrap": null,
-  "_spec": "websocket",
-  "_where": "/Users/zween/tech/databench",
+  "_spec": "websocket@^1.0.22",
+  "_where": "/Users/sven/tech/databench",
   "author": {
     "email": "brian@worlize.com",
     "name": "Brian McKelvey",

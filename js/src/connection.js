@@ -3,11 +3,11 @@ if (typeof WebSocket === 'undefined') {
 }
 
 export class Connection {
-    constructor(error_cb, analysis_id=null, ws_url=null) {
-        this.error_cb = error_cb;
+    constructor(analysis_id=null, ws_url=null) {
         this.analysis_id = analysis_id;
-        this.ws_url = ws_url ? ws_url : this.guess_ws_url();
+        this.ws_url = ws_url ? ws_url : Connection.guess_ws_url();
 
+        this.error_cb = null;
         this.on_callbacks = {};
         this.onAction_callbacks = {};
 
@@ -16,10 +16,9 @@ export class Connection {
 
         this.socket = null;
         this.socket_check_open = null;
-        this.ws_connect();
     }
 
-    guess_ws_url = () => {
+    static guess_ws_url() {
         var ws_protocol = 'ws';
         if (location.origin.startsWith('https://')) ws_protocol = 'wss';
 
@@ -27,20 +26,21 @@ export class Connection {
         return `${ws_protocol}://${document.domain}:${location.port}${path}/ws`;
     };
 
-    ws_connect = () => {
+    connect = () => {
         this.socket = new WebSocket(this.ws_url);
 
         this.socket_check_open = setInterval(this.ws_check_open, 2000);
         this.socket.onopen = this.ws_onopen;
         this.socket.onclose = this.ws_onclose;
         this.socket.onmessage = this.ws_onmessage;
+        return this;
     };
 
     ws_check_open = () => {
-        if (this.socket.readyState == WebSocket.CONNECTING) {
+        if (this.socket.readyState == this.socket.CONNECTING) {
             return;
         }
-        if (this.socket.readyState != WebSocket.OPEN) {
+        if (this.socket.readyState != this.socket.OPEN) {
             this.error_cb(
                 'Connection could not be opened. '+
                 'Please <a href="javascript:location.reload(true);" '+
@@ -74,7 +74,7 @@ export class Connection {
 
         let actual_delay = 0.7 * this.ws_reconnect_delay + 0.3 * Math.random() * this.ws_reconnect_delay;
         console.log(`WebSocket reconnect attempt ${this.ws_reconnect_attempt} in ${actual_delay}ms.`);
-        setTimeout(this.ws_connect, actual_delay);
+        setTimeout(this.connect, actual_delay);
     };
 
     ws_onmessage = (event) => {
@@ -103,6 +103,7 @@ export class Connection {
         if (!(signalName in this.on_callbacks))
             this.on_callbacks[signalName] = [];
         this.on_callbacks[signalName].push(callback);
+        return this;
     };
 
     emit = (signalName, message) => {
@@ -111,11 +112,13 @@ export class Connection {
             return;
         }
         this.socket.send(JSON.stringify({'signal':signalName, 'load':message}));
+        return this;
     };
 
     onAction = (actionID, callback) => {
         if (!(actionID in this.onAction_callbacks))
             this.onAction_callbacks[actionID] = [];
         this.onAction_callbacks[actionID].push(callback);
+        return this;
     };
 }
