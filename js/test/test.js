@@ -5,7 +5,7 @@ describe('Databench', function() {
   describe('#Connection', function () {
     // create connection
     var c = new Databench.Connection(
-      (msg) => console.log(msg),
+      function(msg) { console.log(msg) },
       null,
       'http://localhost:5000/dummypi/ws'
     );
@@ -21,7 +21,7 @@ describe('Databench', function() {
       c.on('test_fn', (data) => { d = data; });
       c.emit('test_fn', [1, 2]);
 
-      setTimeout(() => {
+      setTimeout(function() {
         assert.deepEqual({first_param: 1, second_param: 2}, d);
         done();
       }, 100);
