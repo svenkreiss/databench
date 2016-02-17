@@ -7,7 +7,7 @@ export class Connection {
         this.analysis_id = analysis_id;
         this.ws_url = ws_url ? ws_url : Connection.guess_ws_url();
 
-        this.error_cb = null;
+        this.error_cb = (msg) => console.log(msg);
         this.on_callbacks = {};
         this.onAction_callbacks = {};
 
@@ -107,7 +107,7 @@ export class Connection {
     };
 
     emit = (signalName, message) => {
-        if (this.socket.readyState != 1) {
+        if (this.socket == null  ||  this.socket.readyState != this.socket.OPEN) {
             setTimeout(() => this.emit(signalName, message), 5);
             return;
         }

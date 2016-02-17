@@ -5,10 +5,9 @@ describe('Databench', function() {
   describe('#Connection', function () {
     // create connection
     var c = new Databench.Connection(
-      function(msg) { console.log(msg) },
       null,
-      'http://localhost:5000/dummypi/ws'
-    );
+      'ws://localhost:5000/dummypi/ws'
+    ).connect();
 
     it('create a WebSocket connection', function () {
       assert.equal('object', typeof c);
