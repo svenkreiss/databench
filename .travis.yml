@@ -8,11 +8,10 @@ install:
  - "pip install --upgrade pip"
  - "pip install -e .[tests]"
  - "pip install python-coveralls coverage"
- # install new Node version
- - sudo add-apt-repository -y ppa:chris-lea/node.js
- - sudo apt-get -y update
- - sudo apt-get -y install nodejs
- - sudo npm install -g mocha gulp
+ # install Node dependencies
+ - npm install mocha gulp
+ - npm install
+ - export PATH=$PATH:/usr/lib/node_modules/.bin/
 script: "nosetests -vv --with-coverage --cover-package=databench --cover-erase"
 after_success:
   - coveralls
