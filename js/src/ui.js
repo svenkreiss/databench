@@ -88,3 +88,72 @@ export class StatusLog {
         conn.error_cb = l.add;
     }
 };
+
+
+export class Button {
+    constructor(node) {
+        this.IDLE = 0;
+        this.ACTIVE = 2;
+
+        this.node = node;
+        this.click_cb = (actionID) => console.log(`click on ${this.node} with ${actionID}`);
+        this._state = this.IDLE;
+
+        this.node.addEventListener('click', this.click, false);
+    }
+
+    render = () => {
+        switch (this._state) {
+            case this.ACTIVE:
+                this.node.classList.add('active');
+                break;
+            default:
+                this.node.classList.remove('active');
+        }
+    };
+
+    click = () => {
+        if (this._state != this.IDLE) return;
+
+        let actionID = Math.floor(Math.random() * 0x100000);
+        this.click_cb(actionID);
+    };
+
+    state = (s) => {
+        if (s != this.IDLE && s != this.ACTIVE) return;
+
+        this._state = s;
+        this.render();
+    };
+
+    static wire(conn, class_name='wired') {
+        let nodes = Array.from(document.getElementsByClassName(class_name));
+        for (let n of nodes) {
+            let signalName = n.dataset.signalName;
+
+            let b = new Button(n);
+
+            // set up click callback
+            b.click_cb = (actionID) => {
+                // set up action callback
+                conn.onAction(actionID, (status) => {
+                    switch (status) {
+                        case 'start':
+                            b.state(b.ACTIVE);
+                            break;
+                        case 'end':
+                            b.state(b.IDLE);
+                            break;
+                        default:
+                            console.log('error');
+                    }
+                });
+
+                let message = {};
+                if (n.dataset.message) message = JSON.parse(n.dataset.message);
+                message['__action_id'] = actionID;
+                conn.emit(signalName, message);
+            }
+        }
+    }
+}

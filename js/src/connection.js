@@ -89,7 +89,9 @@ export class Connection {
         // actions
         if (message.signal == '__action') {
             let id = message.load.id;
-            this.onAction_callbacks[id].map((cb) => cb(message.load.status));
+            let status = message.load.status;
+            // console.log(`received action ${id} with status ${status}`);
+            this.onAction_callbacks[id].map((cb) => cb(status));
         }
 
         // normal message

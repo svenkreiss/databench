@@ -76,10 +76,14 @@ var Connection = exports.Connection = function () {
 
             // actions
             if (message.signal == '__action') {
-                var id = message.load.id;
-                _this.onAction_callbacks[id].map(function (cb) {
-                    return cb(message.load.status);
-                });
+                (function () {
+                    var id = message.load.id;
+                    var status = message.load.status;
+                    // console.log(`received action ${id} with status ${status}`);
+                    _this.onAction_callbacks[id].map(function (cb) {
+                        return cb(status);
+                    });
+                })();
             }
 
             // normal message
@@ -97,7 +101,7 @@ var Connection = exports.Connection = function () {
         };
 
         this.emit = function (signalName, message) {
-            if (_this.socket.readyState != 1) {
+            if (_this.socket == null || _this.socket.readyState != _this.socket.OPEN) {
                 setTimeout(function () {
                     return _this.emit(signalName, message);
                 }, 5);
@@ -116,7 +120,9 @@ var Connection = exports.Connection = function () {
         this.analysis_id = analysis_id;
         this.ws_url = ws_url ? ws_url : Connection.guess_ws_url();
 
-        this.error_cb = null;
+        this.error_cb = function (msg) {
+            return console.log(msg);
+        };
         this.on_callbacks = {};
         this.onAction_callbacks = {};
 
@@ -316,6 +322,112 @@ var StatusLog = exports.StatusLog = function () {
 }();
 
 ;
+
+var Button = exports.Button = function () {
+    function Button(node) {
+        var _this3 = this;
+
+        _classCallCheck(this, Button);
+
+        this.render = function () {
+            switch (_this3._state) {
+                case _this3.ACTIVE:
+                    _this3.node.classList.add('active');
+                    break;
+                default:
+                    _this3.node.classList.remove('active');
+            }
+        };
+
+        this.click = function () {
+            if (_this3._state != _this3.IDLE) return;
+
+            var actionID = Math.floor(Math.random() * 0x100000);
+            _this3.click_cb(actionID);
+        };
+
+        this.state = function (s) {
+            if (s != _this3.IDLE && s != _this3.ACTIVE) return;
+
+            _this3._state = s;
+            _this3.render();
+        };
+
+        this.IDLE = 0;
+        this.ACTIVE = 2;
+
+        this.node = node;
+        this.click_cb = function (actionID) {
+            return console.log('click on ' + _this3.node + ' with ' + actionID);
+        };
+        this._state = this.IDLE;
+
+        this.node.addEventListener('click', this.click, false);
+    }
+
+    _createClass(Button, null, [{
+        key: 'wire',
+        value: function wire(conn) {
+            var class_name = arguments.length <= 1 || arguments[1] === undefined ? 'wired' : arguments[1];
+
+            var nodes = Array.from(document.getElementsByClassName(class_name));
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                var _loop = function _loop() {
+                    var n = _step.value;
+
+                    var signalName = n.dataset.signalName;
+
+                    var b = new Button(n);
+
+                    // set up click callback
+                    b.click_cb = function (actionID) {
+                        // set up action callback
+                        conn.onAction(actionID, function (status) {
+                            switch (status) {
+                                case 'start':
+                                    b.state(b.ACTIVE);
+                                    break;
+                                case 'end':
+                                    b.state(b.IDLE);
+                                    break;
+                                default:
+                                    console.log('error');
+                            }
+                        });
+
+                        var message = {};
+                        if (n.dataset.message) message = JSON.parse(n.dataset.message);
+                        message['__action_id'] = actionID;
+                        conn.emit(signalName, message);
+                    };
+                };
+
+                for (var _iterator = nodes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    _loop();
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+        }
+    }]);
+
+    return Button;
+}();
 
 },{}],4:[function(require,module,exports){
 var _global = (function() { return this; })();
