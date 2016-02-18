@@ -177,10 +177,10 @@ This is the API documentation for the Databench JavaScript library.
         A set of generally useful elements that are documented right below.
 
 
-.. _genericElements:
+.. _ui:
 
-Generic Elements
-----------------
+UI
+---
 
 Below is the list of genericElements that are in :js:func:`Databench`.
 They all can be instantiated from
@@ -208,18 +208,9 @@ And here are the genericElements:
     ``console.log()`` calls on the frontend. All messages will be shown in the
     bound ``<pre>`` element and in the browser console. When no ``id`` is given, it will only show the messages in the browser console.
 
-.. js:function:: Databench.genericElements.mpld3canvas(id[, signalName])
+.. js:function:: Databench.ui.Button(node)
 
-    :param id: ``id`` of the element.
-    :param string signalName: Waiting for plots to be send on this signal
-        (default='mpld3canvas').
-
-.. js:function:: Databench.genericElements.button(selector[, signalName])
-
-    :param selector: ``id`` or jQuery selector of a ``button`` element.
-    :param string signalName: if not provided, it is taken from a
-        ``data-signal-name`` attribute and if that is also not given then it
-        is set to the id.
+    :param node: a document node (e.g. returned by ``document.getElementById('id_of_node')``).
 
     The signalName can be extracted from an attribute ``data-signal-name``
     and an optional message can be provided in JSON format in ``data-message``.
@@ -230,14 +221,18 @@ And here are the genericElements:
     is set to active (the CSS class ``active`` is added) during the execution
     in the backend.
 
+    :js:func:`wire`:
+    Wires all buttons that have a ``data-signal-name`` attribute.
+    If the element also has a ``data-message`` attribute formatted in JSON,
+    it will be send with the signals.
+
     **Example**: ``index.html``:
 
     .. code-block:: html
 
-        <button class="btn btn-primary" data-signal-name="run">Run</button>
+        <button data-signal-name="run">Run</button>
 
-    where ``class="btn btn-primary"`` is only added to make the button look
-    nicer via `Twitter Bootstrap Buttons <http://getbootstrap.com/css/#buttons>`_. In ``analysis.py``, add
+    In ``analysis.py``, add
 
     .. code-block:: python
 

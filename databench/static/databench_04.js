@@ -61,7 +61,7 @@ var Connection = exports.Connection = function () {
             }
 
             var actual_delay = 0.7 * _this.ws_reconnect_delay + 0.3 * Math.random() * _this.ws_reconnect_delay;
-            console.log('WebSocket reconnect attempt ' + _this.ws_reconnect_attempt + ' in ' + actual_delay + 'ms.');
+            console.log('WebSocket reconnect attempt ' + _this.ws_reconnect_attempt + ' in ' + actual_delay.toFixed(0) + 'ms.');
             setTimeout(_this.connect, actual_delay);
         };
 
@@ -368,9 +368,7 @@ var Button = exports.Button = function () {
     _createClass(Button, null, [{
         key: 'wire',
         value: function wire(conn) {
-            var class_name = arguments.length <= 1 || arguments[1] === undefined ? 'wired' : arguments[1];
-
-            var nodes = Array.from(document.getElementsByClassName(class_name));
+            var nodes = Array.from(document.getElementsByTagName('BUTTON'));
             var _iteratorNormalCompletion = true;
             var _didIteratorError = false;
             var _iteratorError = undefined;
@@ -380,6 +378,7 @@ var Button = exports.Button = function () {
                     var n = _step.value;
 
                     var signalName = n.dataset.signalName;
+                    if (!signalName) return 'continue';
 
                     var b = new Button(n);
 
@@ -407,7 +406,9 @@ var Button = exports.Button = function () {
                 };
 
                 for (var _iterator = nodes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    _loop();
+                    var _ret = _loop();
+
+                    if (_ret === 'continue') continue;
                 }
             } catch (err) {
                 _didIteratorError = true;

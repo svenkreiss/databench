@@ -126,10 +126,11 @@ export class Button {
         this.render();
     };
 
-    static wire(conn, class_name='wired') {
-        let nodes = Array.from(document.getElementsByClassName(class_name));
+    static wire(conn) {
+        let nodes = Array.from(document.getElementsByTagName('BUTTON'));
         for (let n of nodes) {
             let signalName = n.dataset.signalName;
+            if (!signalName) continue;
 
             let b = new Button(n);
 

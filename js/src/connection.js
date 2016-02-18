@@ -73,7 +73,7 @@ export class Connection {
         }
 
         let actual_delay = 0.7 * this.ws_reconnect_delay + 0.3 * Math.random() * this.ws_reconnect_delay;
-        console.log(`WebSocket reconnect attempt ${this.ws_reconnect_attempt} in ${actual_delay}ms.`);
+        console.log(`WebSocket reconnect attempt ${this.ws_reconnect_attempt} in ${actual_delay.toFixed(0)}ms.`);
         setTimeout(this.connect, actual_delay);
     };
 
