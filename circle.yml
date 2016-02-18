@@ -13,4 +13,4 @@ test:
   override:
     - "python setup.py nosetests --with-coverage --cover-package=databench --cover-erase"
   post:
-    - coveralls
+    - coveralls || true
