@@ -171,6 +171,9 @@ class Meta(object):
 
         # find folder of all analyses
         analyses_path = os.path.join(os.getcwd(), 'analyses')
+        if not os.path.exists(analyses_path) and \
+           os.getcwd().endswith('/analyses'):
+            analyses_path = os.getcwd()  # in case running from inside analyses
         if not os.path.exists(analyses_path):
             analyses_path = os.path.join(
                 os.getcwd(), 'databench', 'analyses_packaged',
@@ -225,6 +228,7 @@ class Meta(object):
         self.request_args = None
 
     def readme(self, analysis_path):
+        log.debug('analysis path: {}'.format(analysis_path))
         if not os.path.exists(analysis_path):
             return {}
         readme_file = [os.path.join(analysis_path, n)

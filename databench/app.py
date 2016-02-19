@@ -46,12 +46,12 @@ class App(object):
              tornado.web.StaticFileHandler,
              {'path': 'static/favicon.ico'}),
 
-            (r'/static/(.*)',
+            (r'/_static/(.*)',
              tornado.web.StaticFileHandler,
              {'path': os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                    'static')}),
 
-            (r'/node_modules/(.*)',
+            (r'/_node_modules/(.*)',
              tornado.web.StaticFileHandler,
              {'path': os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                    '..', 'node_modules')}),
@@ -184,16 +184,36 @@ class App(object):
                 os.getcwd(), 'databench', 'analyses_packaged', 'static',
             )
         if os.path.isdir(static_path):
-            log.debug('Making {} available under analyses_static/.'
+            log.debug('Making {} available under /static/.'
                       ''.format(static_path))
 
             self.routes.append((
-                r'/analyses_static/(.*)',
+                r'/static/(.*)',
                 tornado.web.StaticFileHandler,
                 {'path': static_path},
             ))
         else:
             log.debug('Did not find an analyses/static/ folder.')
+
+        # if main analyses folder contains a 'node_modules' folder,
+        # make it available
+        node_modules_path = os.path.join(os.getcwd(), 'analyses',
+                                         'node_modules')
+        if not os.path.isdir(node_modules_path):
+            node_modules_path = os.path.join(
+                os.getcwd(), 'databench', 'analyses_packaged', 'node_modules',
+            )
+        if os.path.isdir(node_modules_path):
+            log.debug('Making {} available under analyses_node_modules/.'
+                      ''.format(node_modules_path))
+
+            self.routes.append((
+                r'/node_modules/(.*)',
+                tornado.web.StaticFileHandler,
+                {'path': node_modules_path},
+            ))
+        else:
+            log.debug('Did not find an analyses/node_modules/ folder.')
 
     def register_analyses(self):
         """Register analyses (analyses need to be imported first)."""
