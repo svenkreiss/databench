@@ -222,6 +222,10 @@ class App(object):
             print('Registering meta information {}'.format(meta.name))
             self.routes += meta.routes
 
+            if 'logo_url' in self.info and \
+               'logo_url' not in meta.info:
+                meta.info['logo_url'] = self.info['logo_url']
+
 
 class IndexHandler(tornado.web.RequestHandler):
     def initialize(self, info):
