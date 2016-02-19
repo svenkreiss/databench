@@ -1,9 +1,9 @@
 
 export function wire(conn) {
-    Databench04.ui.StatusLog.wire(d);
-    Databench04.ui.Log.wire(d);
-    Databench04.ui.Button.wire(d);
-    Databench04.ui.Slider.wire(d);
+    StatusLog.wire(d);
+    Log.wire(d);
+    Button.wire(d);
+    Slider.wire(d);
     return conn;
 }
 

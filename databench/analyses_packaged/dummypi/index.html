@@ -18,8 +18,8 @@
 
 {% block footer %}
 <script>
-    var d = new Databench04.Connection();
-    Databench04.ui.wire(d);
+    var d = new Databench.Connection();
+    Databench.ui.wire(d);
     d.connect();
 
     d.on('data', function(msg) {

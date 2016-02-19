@@ -16,7 +16,7 @@ gulp.task('browser', function () {
     bundler.transform('babelify', {presets: ['es2015', 'stage-1']});
 
     bundler.bundle()
-        .pipe(source('databench_04.js'))
+        .pipe(source('databench.js'))
         .pipe(buffer())
         .pipe(sourcemaps.init({ loadMaps: true }))
         // .pipe(uglify())

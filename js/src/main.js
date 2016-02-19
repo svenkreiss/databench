@@ -3,6 +3,6 @@ import { Connection } from './connection';
 
 // create a public interface
 if (typeof window !== 'undefined') {
-	window.Databench04 = { ui, Connection };
+	window.Databench = { ui, Connection };
 }
 export { ui, Connection };
