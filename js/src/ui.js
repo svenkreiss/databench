@@ -1,4 +1,13 @@
 
+export function wire(conn) {
+    Databench04.ui.StatusLog.wire(d);
+    Databench04.ui.Log.wire(d);
+    Databench04.ui.Button.wire(d);
+    Databench04.ui.Slider.wire(d);
+    return conn;
+}
+
+
 export class Log {
     constructor(node, limit=20, consoleFnName='log') {
         this.node = node;
@@ -110,6 +119,7 @@ export class Button {
             default:
                 this.node.classList.remove('active');
         }
+        return this;
     };
 
     click = () => {
@@ -117,6 +127,7 @@ export class Button {
 
         let actionID = Math.floor(Math.random() * 0x100000);
         this.click_cb(actionID);
+        return this;
     };
 
     state = (s) => {
@@ -124,6 +135,7 @@ export class Button {
 
         this._state = s;
         this.render();
+        return this;
     };
 
     static wire(conn) {
@@ -132,6 +144,7 @@ export class Button {
             let signalName = n.dataset.signal;
             if (!signalName) continue;
 
+            console.log(`Wiring button ${n}.`);
             let b = new Button(n);
 
             // set up click callback
@@ -154,7 +167,96 @@ export class Button {
                 if (n.dataset.message) message = JSON.parse(n.dataset.message);
                 message['__action_id'] = actionID;
                 conn.emit(signalName, message);
+            };
+        }
+    }
+}
+
+
+export class Slider {
+    constructor(node, label_node) {
+        this.node = node;
+        this.label_node = label_node;
+        this.label_html = label_node ? label_node.innerHTML : null;
+        this.change_cb = (value) => console.log(`slider value ${value}`);
+        this.v_to_slider = (value) => value;
+        this.slider_to_v = (s) => s;
+
+        this.node.addEventListener('change', this.change, false);
+        this.render();
+    }
+
+    render = () => {
+        let v = this.value();
+        if (this.label_node) {
+            this.label_node.innerHTML = `${this.label_html} (${v})`;
+        }
+        return this;
+    };
+
+    value = (v) => {
+        if (!v) {
+            // reading value
+            v = this.slider_to_v(parseFloat(this.node.value));
+            return v;
+        }
+
+        // setting value
+        this.node.value = this.v_to_slider(v);
+        this.render();
+        return this;
+    };
+
+    change = () => {
+        this.change_cb(this.value());
+        this.render();
+    };
+
+    static wire(conn) {
+        // preprocess all labels on the page
+        let labels = Array.from(document.getElementsByTagName('LABEL'));
+        for (let l of labels) {
+            if (l.htmlFor) {
+                let n = document.getElementsByName(l.htmlFor)[0];
+                if (n) n.label = l;
             }
+        }
+
+        let nodes = Array.from(document.getElementsByTagName('INPUT'));
+        for (let n of nodes) {
+            if (n.getAttribute('type') != 'range') continue;
+
+            console.log(`Wiring slider ${n}.`);
+            let s = new Slider(n, n.label);
+
+            s.change_cb = (value) => {
+                // construct message
+                let message = s.value();
+                if (n.dataset.message) {
+                    message = JSON.parse(n.dataset.message);
+                    message.value = s.value();
+                }
+
+                // construct signal
+                let signal = null;
+                if (n.dataset.signal) {
+                    signal = n.dataset.signal;
+                } else if (n.dataset.instance) {
+                    message = { [n.dataset.instance]: message };
+                    signal = 'data';
+                } else if (n.dataset.global) {
+                    message = { [n.dataset.global]: message };
+                    signal = 'global_data';
+                } else if (n.getAttribute('name')) {
+                    signal = n.getAttribute('name');
+                }
+                if (!signal) {
+                    console.log(`Could not determine signal name for ${n}.`);
+                    return;
+                }
+
+                conn.emit(signal, message);
+            };
         }
     }
 }

@@ -6,7 +6,7 @@
     <div class="col-md-3">
         <label for="samples">Samples:</label>
         <input type="range" name="samples" value="1000"
-            min="100" max="10000" step="100" data-instance="samples" />
+            min="1000" max="10000" step="1000" data-instance="samples" />
     </div>
     <div class="col-md-9">
         <button class="btn btn-primary" data-signal="run">Run</button>
@@ -19,9 +19,7 @@
 {% block footer %}
 <script>
     var d = new Databench04.Connection();
-    Databench04.ui.StatusLog.wire(d);
-    Databench04.ui.Log.wire(d);
-    Databench04.ui.Button.wire(d);
+    Databench04.ui.wire(d);
     d.connect();
 
     d.on('data', function(msg) {

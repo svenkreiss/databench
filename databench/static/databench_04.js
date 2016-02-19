@@ -181,9 +181,21 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+exports.wire = wire;
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function wire(conn) {
+    Databench04.ui.StatusLog.wire(d);
+    Databench04.ui.Log.wire(d);
+    Databench04.ui.Button.wire(d);
+    Databench04.ui.Slider.wire(d);
+    return conn;
+}
 
 var Log = exports.Log = function () {
     function Log(node) {
@@ -337,6 +349,7 @@ var Button = exports.Button = function () {
                 default:
                     _this3.node.classList.remove('active');
             }
+            return _this3;
         };
 
         this.click = function () {
@@ -344,6 +357,7 @@ var Button = exports.Button = function () {
 
             var actionID = Math.floor(Math.random() * 0x100000);
             _this3.click_cb(actionID);
+            return _this3;
         };
 
         this.state = function (s) {
@@ -351,6 +365,7 @@ var Button = exports.Button = function () {
 
             _this3._state = s;
             _this3.render();
+            return _this3;
         };
 
         this.IDLE = 0;
@@ -377,9 +392,10 @@ var Button = exports.Button = function () {
                 var _loop = function _loop() {
                     var n = _step.value;
 
-                    var signalName = n.dataset.signalName;
+                    var signalName = n.dataset.signal;
                     if (!signalName) return 'continue';
 
+                    console.log('Wiring button ' + n + '.');
                     var b = new Button(n);
 
                     // set up click callback
@@ -428,6 +444,157 @@ var Button = exports.Button = function () {
     }]);
 
     return Button;
+}();
+
+var Slider = exports.Slider = function () {
+    function Slider(node, label_node) {
+        var _this4 = this;
+
+        _classCallCheck(this, Slider);
+
+        this.render = function () {
+            var v = _this4.value();
+            if (_this4.label_node) {
+                _this4.label_node.innerHTML = _this4.label_html + ' (' + v + ')';
+            }
+            return _this4;
+        };
+
+        this.value = function (v) {
+            if (!v) {
+                // reading value
+                v = _this4.slider_to_v(parseFloat(_this4.node.value));
+                return v;
+            }
+
+            // setting value
+            _this4.node.value = _this4.v_to_slider(v);
+            _this4.render();
+            return _this4;
+        };
+
+        this.change = function () {
+            _this4.change_cb(_this4.value());
+            _this4.render();
+        };
+
+        this.node = node;
+        this.label_node = label_node;
+        this.label_html = label_node ? label_node.innerHTML : null;
+        this.change_cb = function (value) {
+            return console.log('slider value ' + value);
+        };
+        this.v_to_slider = function (value) {
+            return value;
+        };
+        this.slider_to_v = function (s) {
+            return s;
+        };
+
+        this.node.addEventListener('change', this.change, false);
+        this.render();
+    }
+
+    _createClass(Slider, null, [{
+        key: 'wire',
+        value: function wire(conn) {
+            // preprocess all labels on the page
+            var labels = Array.from(document.getElementsByTagName('LABEL'));
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+                for (var _iterator2 = labels[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var l = _step2.value;
+
+                    if (l.htmlFor) {
+                        var _n = document.getElementsByName(l.htmlFor)[0];
+                        if (_n) _n.label = l;
+                    }
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
+
+            var nodes = Array.from(document.getElementsByTagName('INPUT'));
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
+
+            try {
+                var _loop2 = function _loop2() {
+                    var n = _step3.value;
+
+                    if (n.getAttribute('type') != 'range') return 'continue';
+
+                    console.log('Wiring slider ' + n + '.');
+                    var s = new Slider(n, n.label);
+
+                    s.change_cb = function (value) {
+                        // construct message
+                        var message = s.value();
+                        if (n.dataset.message) {
+                            message = JSON.parse(n.dataset.message);
+                            message.value = s.value();
+                        }
+
+                        // construct signal
+                        var signal = null;
+                        if (n.dataset.signal) {
+                            signal = n.dataset.signal;
+                        } else if (n.dataset.instance) {
+                            message = _defineProperty({}, n.dataset.instance, message);
+                            signal = 'data';
+                        } else if (n.dataset.global) {
+                            message = _defineProperty({}, n.dataset.global, message);
+                            signal = 'global_data';
+                        } else if (n.getAttribute('name')) {
+                            signal = n.getAttribute('name');
+                        }
+                        if (!signal) {
+                            console.log('Could not determine signal name for ' + n + '.');
+                            return;
+                        }
+
+                        conn.emit(signal, message);
+                    };
+                };
+
+                for (var _iterator3 = nodes[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var _ret2 = _loop2();
+
+                    if (_ret2 === 'continue') continue;
+                }
+            } catch (err) {
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                        _iterator3.return();
+                    }
+                } finally {
+                    if (_didIteratorError3) {
+                        throw _iteratorError3;
+                    }
+                }
+            }
+        }
+    }]);
+
+    return Slider;
 }();
 
 },{}],4:[function(require,module,exports){
