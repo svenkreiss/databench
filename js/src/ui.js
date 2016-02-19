@@ -129,7 +129,7 @@ export class Button {
     static wire(conn) {
         let nodes = Array.from(document.getElementsByTagName('BUTTON'));
         for (let n of nodes) {
-            let signalName = n.dataset.signalName;
+            let signalName = n.dataset.signal;
             if (!signalName) continue;
 
             let b = new Button(n);

@@ -222,7 +222,7 @@ And here are the genericElements:
     in the backend.
 
     :js:func:`wire`:
-    Wires all buttons that have a ``data-signal-name`` attribute.
+    Wires all buttons that have a ``data-signal`` attribute.
     If the element also has a ``data-message`` attribute formatted in JSON,
     it will be send with the signals.
 
@@ -230,7 +230,7 @@ And here are the genericElements:
 
     .. code-block:: html
 
-        <button data-signal-name="run">Run</button>
+        <button data-signal="run">Run</button>
 
     In ``analysis.py``, add
 
