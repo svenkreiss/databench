@@ -18,7 +18,5 @@ with its many [icons](http://fortawesome.github.io/Font-Awesome/icons/).
 You should link to your analysis's GitHub page or external resources with a 
 list of links like the one below.
 
-<i class="fa fa-fw fa-github"></i>
-This [analysis is on GitHub (change link)](#).<br />
-<i class="fa fa-fw fa-external-link"></i>
-[External link (change me too)](#).
+* This [analysis is on GitHub (change link)](#).
+* [External link (change me too)](#).
