@@ -642,11 +642,11 @@ module.exports = require('../package.json').version;
 module.exports={
   "_args": [
     [
-      "websocket@^1.0.22",
-      "/Users/sven/tech/databench"
+      "websocket",
+      "/Users/zween/tech/databench"
     ]
   ],
-  "_from": "websocket@>=1.0.22 <2.0.0",
+  "_from": "websocket@latest",
   "_id": "websocket@1.0.22",
   "_inCache": true,
   "_installable": true,
@@ -660,11 +660,11 @@ module.exports={
   "_phantomChildren": {},
   "_requested": {
     "name": "websocket",
-    "raw": "websocket@^1.0.22",
-    "rawSpec": "^1.0.22",
+    "raw": "websocket",
+    "rawSpec": "",
     "scope": null,
-    "spec": ">=1.0.22 <2.0.0",
-    "type": "range"
+    "spec": "latest",
+    "type": "tag"
   },
   "_requiredBy": [
     "/"
@@ -672,8 +672,8 @@ module.exports={
   "_resolved": "https://registry.npmjs.org/websocket/-/websocket-1.0.22.tgz",
   "_shasum": "8c33e3449f879aaf518297c9744cebf812b9e3d8",
   "_shrinkwrap": null,
-  "_spec": "websocket@^1.0.22",
-  "_where": "/Users/sven/tech/databench",
+  "_spec": "websocket",
+  "_where": "/Users/zween/tech/databench",
   "author": {
     "email": "brian@worlize.com",
     "name": "Brian McKelvey",
