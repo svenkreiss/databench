@@ -42,7 +42,7 @@ class App(object):
         }
 
         self.routes = [
-            (r'/favicon\.ico',
+            (r'/(favicon\.ico)',
              tornado.web.StaticFileHandler,
              {'path': 'static/favicon.ico'}),
 
