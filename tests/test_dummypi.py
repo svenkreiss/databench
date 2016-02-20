@@ -245,7 +245,6 @@ def test_fn_call_dummypi_py_dict():
 
 
 if __name__ == '__main__':
-    LOGLEVEL = 'DEBUG'
     setup_module()
     test_ws_dummypi_py()
     teardown_module()
