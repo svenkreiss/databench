@@ -10,7 +10,8 @@ with open('databench/__init__.py', 'r') as f:
 setup(
     name='databench',
     version=VERSION,
-    packages=['databench', 'databench_py', 'databench_py.singlethread'],
+    packages=['databench', 'databench.analyses_packaged',
+              'databench_py', 'databench_py.singlethread'],
     license='MIT',
     description='Realtime data analysis tool.',
     long_description=open('README.rst').read(),
