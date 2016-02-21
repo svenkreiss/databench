@@ -7,3 +7,7 @@ recursive-include databench/analyses_packaged *
 recursive-exclude databench/analyses_packaged *.pyc .DS_Store
 recursive-include tests *
 recursive-exclude tests *.pyc .DS_Store
+
+include node_modules/jquery/dist/jquery.min.js
+include node_modules/bootstrap/dist/js/bootstrap.min.js
+include node_modules/bootstrap/dist/css/bootstrap.min.css
