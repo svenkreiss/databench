@@ -182,19 +182,25 @@ export class Slider {
         this.v_to_slider = (value) => value;
         this.slider_to_v = (s) => s;
 
+        // binding methods
+        this.render = this.render.bind(this);
+        this.value = this.value.bind(this);
+        this.change = this.change.bind(this);
+
+        this.node.addEventListener('input', this.render, false);
         this.node.addEventListener('change', this.change, false);
         this.render();
     }
 
-    render = () => {
+    render() {
         let v = this.value();
         if (this.label_node) {
             this.label_node.innerHTML = `${this.label_html} (${v})`;
         }
         return this;
-    };
+    }
 
-    value = (v) => {
+    value(v) {
         if (!v) {
             // reading value
             v = this.slider_to_v(parseFloat(this.node.value));
@@ -205,12 +211,11 @@ export class Slider {
         this.node.value = this.v_to_slider(v);
         this.render();
         return this;
-    };
+    }
 
-    change = () => {
+    change() {
         this.change_cb(this.value());
-        this.render();
-    };
+    }
 
     static wire(conn) {
         // preprocess all labels on the page

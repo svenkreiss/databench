@@ -448,35 +448,7 @@ var Button = exports.Button = function () {
 
 var Slider = exports.Slider = function () {
     function Slider(node, label_node) {
-        var _this4 = this;
-
         _classCallCheck(this, Slider);
-
-        this.render = function () {
-            var v = _this4.value();
-            if (_this4.label_node) {
-                _this4.label_node.innerHTML = _this4.label_html + ' (' + v + ')';
-            }
-            return _this4;
-        };
-
-        this.value = function (v) {
-            if (!v) {
-                // reading value
-                v = _this4.slider_to_v(parseFloat(_this4.node.value));
-                return v;
-            }
-
-            // setting value
-            _this4.node.value = _this4.v_to_slider(v);
-            _this4.render();
-            return _this4;
-        };
-
-        this.change = function () {
-            _this4.change_cb(_this4.value());
-            _this4.render();
-        };
 
         this.node = node;
         this.label_node = label_node;
@@ -491,11 +463,45 @@ var Slider = exports.Slider = function () {
             return s;
         };
 
+        // binding methods
+        this.render = this.render.bind(this);
+        this.value = this.value.bind(this);
+        this.change = this.change.bind(this);
+
+        this.node.addEventListener('input', this.render, false);
         this.node.addEventListener('change', this.change, false);
         this.render();
     }
 
-    _createClass(Slider, null, [{
+    _createClass(Slider, [{
+        key: 'render',
+        value: function render() {
+            var v = this.value();
+            if (this.label_node) {
+                this.label_node.innerHTML = this.label_html + ' (' + v + ')';
+            }
+            return this;
+        }
+    }, {
+        key: 'value',
+        value: function value(v) {
+            if (!v) {
+                // reading value
+                v = this.slider_to_v(parseFloat(this.node.value));
+                return v;
+            }
+
+            // setting value
+            this.node.value = this.v_to_slider(v);
+            this.render();
+            return this;
+        }
+    }, {
+        key: 'change',
+        value: function change() {
+            this.change_cb(this.value());
+        }
+    }], [{
         key: 'wire',
         value: function wire(conn) {
             // preprocess all labels on the page
