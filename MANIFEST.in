@@ -1,13 +1,7 @@
 include README.rst AUTHORS.rst LICENSE
-recursive-include databench/templates *
-recursive-exclude databench/templates *.pyc .DS_Store
-recursive-include databench/static *
-recursive-exclude databench/static *.pyc .DS_Store
+recursive-include databench/templates *.html
+recursive-include databench/static *.css *.js *.map *.ico *.svg
+recursive-include databench/node_modules *.css *.js *.map
 recursive-include databench/analyses_packaged *
 recursive-exclude databench/analyses_packaged *.pyc .DS_Store
-recursive-include tests *
-recursive-exclude tests *.pyc .DS_Store
-
-include node_modules/jquery/dist/jquery.min.js
-include node_modules/bootstrap/dist/js/bootstrap.min.js
-include node_modules/bootstrap/dist/css/bootstrap.min.css
+recursive-include tests *.py

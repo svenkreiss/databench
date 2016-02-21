@@ -55,7 +55,7 @@ class App(object):
             (r'/_node_modules/(.*)',
              tornado.web.StaticFileHandler,
              {'path': os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                   '..', 'node_modules')}),
+                                   'node_modules')}),
 
             (r'/',
              IndexHandler,
