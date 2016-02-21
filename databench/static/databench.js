@@ -464,6 +464,9 @@ var Slider = exports.Slider = function () {
         this.slider_to_v = function (s) {
             return s;
         };
+        this.v_repr = function (v) {
+            return v;
+        };
 
         // binding methods
         this.render = this.render.bind(this);
@@ -480,7 +483,7 @@ var Slider = exports.Slider = function () {
         value: function render() {
             var v = this.value();
             if (this.label_node) {
-                this.label_node.innerHTML = this.label_html + ' (' + v + ')';
+                this.label_node.innerHTML = this.label_html + ' ' + this.v_repr(v);
             }
             return this;
         }

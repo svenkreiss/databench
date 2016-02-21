@@ -181,6 +181,7 @@ export class Slider {
         this.change_cb = (value) => console.log(`slider value ${value}`);
         this.v_to_slider = (value) => value;
         this.slider_to_v = (s) => s;
+        this.v_repr = (v) => v;
 
         // binding methods
         this.render = this.render.bind(this);
@@ -195,7 +196,7 @@ export class Slider {
     render() {
         let v = this.value();
         if (this.label_node) {
-            this.label_node.innerHTML = `${this.label_html} (${v})`;
+            this.label_node.innerHTML = `${this.label_html} ${this.v_repr(v)}`;
         }
         return this;
     }
@@ -249,7 +250,7 @@ export class Slider {
 
             console.log(`Wiring slider ${n} to signal ${signal}.`);
             let s = new Slider(n, n.label);
-            n.databench_object = s;
+            n.databench_ui = s;
 
             // handle events from frontend
             s.change_cb = (value) => {
