@@ -182,12 +182,8 @@ class App(object):
             log.info('Analyses module does not specify a title.')
             self.info['title'] = 'Databench'
 
-        # if main analyses folder contains a 'static' folder, make it available
-        static_path = os.path.join(os.getcwd(), 'analyses', 'static')
-        if not os.path.isdir(static_path):
-            static_path = os.path.join(
-                os.getcwd(), 'databench', 'analyses_packaged', 'static',
-            )
+        # if 'analyses' contains a 'static' folder, make it available
+        static_path = os.path.join(analyses_path, 'static')
         if os.path.isdir(static_path):
             log.debug('Making {} available under /static/.'
                       ''.format(static_path))
@@ -200,14 +196,8 @@ class App(object):
         else:
             log.debug('Did not find an analyses/static/ folder.')
 
-        # if main analyses folder contains a 'node_modules' folder,
-        # make it available
-        node_modules_path = os.path.join(os.getcwd(), 'analyses',
-                                         'node_modules')
-        if not os.path.isdir(node_modules_path):
-            node_modules_path = os.path.join(
-                os.getcwd(), 'databench', 'analyses_packaged', 'node_modules',
-            )
+        # if 'analyses' contains a 'node_modules' folder, make it available
+        node_modules_path = os.path.join(analyses_path, 'node_modules')
         if os.path.isdir(node_modules_path):
             log.debug('Making {} available under /node_modules/.'
                       ''.format(node_modules_path))
