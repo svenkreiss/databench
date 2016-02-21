@@ -18,8 +18,7 @@
             <div class="header">
                 <h3><a href="/" class="text-muted">
                     {% block headerlogo %}
-                        <img src="{{ globals().get('logo_url', '/_static/logo.svg') }}" />
-                        {{ globals().get('title', 'Databench') }}
+                        <img src="{{ logo_url }}" />{{ title }}
                     {% end %}
                 </a></h3>
             </div>

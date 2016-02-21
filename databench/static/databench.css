@@ -11,6 +11,7 @@ body {
 }
 .header img {
     height: 26px;
+    margin-right: 0.5em;
     vertical-align: baseline;
 }
 

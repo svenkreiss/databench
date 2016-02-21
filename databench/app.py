@@ -11,6 +11,7 @@ import tornado.web
 
 from .analysis import Meta
 from .analysis_zmq import MetaZMQ
+from .readme import Readme
 from . import __version__ as DATABENCH_VERSION
 
 log = logging.getLogger(__name__)
@@ -159,23 +160,27 @@ class App(object):
             print('Did not find "analyses" module. Using packaged analyses.')
             from databench import analyses_packaged as analyses
 
-        self.info['description'] = analyses.__doc__
-        try:
-            self.info['author'] = analyses.__author__
-        except AttributeError:
-            log.info('Analyses module does not have an author string.')
-        try:
-            self.info['version'] = analyses.__version__
-        except AttributeError:
-            log.info('Analyses module does not have a version string.')
-        try:
-            self.info['logo_url'] = analyses.logo_url
-        except AttributeError:
+        analyses_path = os.path.dirname(os.path.realpath(analyses.__file__))
+
+        self.info['author'] = getattr(analyses, '__author__', None)
+        self.info['version'] = getattr(analyses, '__version__', None)
+        self.info['logo_url'] = getattr(analyses, 'logo_url', None)
+        self.info['title'] = getattr(analyses, 'title', None)
+
+        readme = Readme(analyses_path)
+        self.info['description'] = readme.text
+        self.info.update(readme.meta)
+
+        if self.info['logo_url'] is None:
             log.info('Analyses module does not specify a logo url.')
-        try:
-            self.info['title'] = analyses.title
-        except AttributeError:
+            self.info['logo_url'] = '/_static/logo.svg'
+        if self.info['version'] is None:
+            log.info('Analyses module does not specify a version.')
+        if self.info['author'] is None:
+            log.info('Analyses module does not specify an author.')
+        if self.info['title'] is None:
             log.info('Analyses module does not specify a title.')
+            self.info['title'] = 'Databench'
 
         # if main analyses folder contains a 'static' folder, make it available
         static_path = os.path.join(os.getcwd(), 'analyses', 'static')

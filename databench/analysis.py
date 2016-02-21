@@ -4,23 +4,13 @@ import os
 import json
 import random
 import string
-import fnmatch
+import inspect
 import logging
 import tornado.web
 import tornado.websocket
 from .datastore import Datastore
 
-# utilities
-try:
-    from markdown import markdown
-except ImportError:
-    markdown = None
-
-try:
-    from docutils.core import publish_parts as rst
-except ImportError:
-    rst = None
-
+from .readme import Readme
 from . import __version__ as DATABENCH_VERSION
 
 log = logging.getLogger(__name__)
@@ -167,33 +157,18 @@ class Meta(object):
     def __init__(self, name, analysis_class):
         Meta.all_instances.append(self)
         self.name = name
+        self.analysis_class = analysis_class
         self.show_in_index = True
 
-        # find folder of all analyses
-        analyses_path = os.path.join(os.getcwd(), 'analyses')
-        if not os.path.exists(analyses_path) and \
-           os.getcwd().endswith('/analyses'):
-            analyses_path = os.getcwd()  # in case running from inside analyses
-        if not os.path.exists(analyses_path):
-            analyses_path = os.path.join(
-                os.getcwd(), 'databench', 'analyses_packaged',
-            )
-        if not os.path.exists(analyses_path):
-            this_dir = os.path.dirname(os.path.realpath(__file__))
-            analyses_path = os.path.join(
-                this_dir, 'analyses_packaged',
-            )
-        if not os.path.exists(analyses_path):
-            log.info('Folder for {} not found.'.format(self.name))
-        # find folder for this analysis
-        analysis_path = os.path.join(analyses_path, self.name)
+        analysis_path = os.path.dirname(inspect.getfile(analysis_class))
 
+        readme = Readme(analysis_path)
         self.info = {
             'title': name,
             'description': '',
-            'readme': None,
+            'readme': readme.text,
         }
-        self.analysis_class = analysis_class
+        self.info.update(readme.meta)
 
         self.routes = [
             (r'/{}/static/(.*)'.format(self.name),
@@ -220,100 +195,7 @@ class Meta(object):
         if os.path.isfile(os.path.join(analysis_path, 'thumbnail.png')):
             self.thumbnail = 'thumbnail.png'
 
-        # detect and render readme
-        self.info.update(self.readme(analysis_path))
-        log.info('Information extracted for analysis {}:\n{}'
-                 ''.format(self.name, self.info))
-
         self.request_args = None
-
-    def readme(self, analysis_path):
-        log.debug('analysis path: {}'.format(analysis_path))
-        if not os.path.exists(analysis_path):
-            return {}
-        readme_file = [os.path.join(analysis_path, n)
-                       for n in os.listdir(analysis_path)
-                       if fnmatch.fnmatch(n.lower(), 'readme.*')]
-        readme_file = readme_file[0] if readme_file else None
-        log.debug('Readme file: {}'.format(readme_file))
-        if not readme_file:
-            return {}
-
-        with open(readme_file, 'r') as f:
-            r = {'readme': f.read()}
-
-        # process readme
-        if readme_file.lower().endswith('.md'):
-            r.update(self.process_md_meta(r['readme']))
-            if markdown is not None:
-                r['readme'] = markdown(r['readme'])
-            else:
-                r['readme'] = (
-                    '<p>Install markdown with <b>pip install markdown</b>'
-                    ' to render this readme file.</p>'
-                ) + r['readme']
-        if readme_file.lower().endswith('.rst'):
-            r.update(self.process_rst_meta(r['readme']))
-            if rst is not None:
-                r['readme'] = rst(r['readme'], writer_name='html')['html_body']
-            else:
-                r['readme'] = (
-                    '<p>Install rst rendering with <b>pip install docutils</b>'
-                    ' to render this readme file.</p>'
-                ) + r['readme']
-
-        return r
-
-    def process_md_meta(self, readme):
-        """
-        Searches for lines like:
-
-        <!--
-        Title: MyTitle
-        Description: hello bla
-        logo_url: /path/to/logo.png
-        -->
-        """
-        possible_fields = ['title', 'description', 'logo_url']
-        r = {}
-
-        for l in readme.split('\n'):
-            if ': ' not in l:
-                continue
-
-            p = l.partition(': ')
-            if p[0].lower() not in possible_fields:
-                continue
-
-            r[p[0].lower()] = p[2]
-
-        return r
-
-    def process_rst_meta(self, readme):
-        """
-        Searches for lines like:
-
-        .. title: MyTitle
-        .. description: hello bla
-        .. logo_url: /path/to/logo.png
-        """
-        possible_fields = ['title', 'description', 'logo_url']
-        r = {}
-
-        for l in readme.split('\n'):
-            if not l.startswith('..') or ': ' not in l:
-                continue
-
-            # remove the leading '.. '
-            l = l[3:]
-
-            p = l.partition(': ')
-            if p[0].lower() not in possible_fields:
-                continue
-
-            r[p[0].lower()] = p[2]
-
-        return r
 
     def run_action(self, analysis, fn_name, message='__nomessagetoken__'):
         """Executes an action in the analysis with the given message. It
