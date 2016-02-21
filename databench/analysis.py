@@ -1,6 +1,7 @@
 """Analysis module for Databench."""
 
 import os
+import sys
 import json
 import random
 import string
@@ -124,7 +125,7 @@ class Meta(object):
         name (str): Name of this analysis. If ``signals`` is not specified,
             this also becomes the namespace for the WebSocket connection and
             has to match the frontend's :js:class:`Databench` ``name``.
-        description (str): Usually the ``__doc__`` string of the analysis.
+        description (str): Defined in README.
         analysis_class (:class:`databench.Analysis`): Object
             that should be instantiated for every new websocket connection.
 
@@ -160,7 +161,14 @@ class Meta(object):
         self.analysis_class = analysis_class
         self.show_in_index = True
 
-        analysis_path = os.path.dirname(inspect.getfile(analysis_class))
+        # determine analysis path
+        sys.path.append('.')
+        try:
+            import analyses
+        except ImportError:
+            from databench import analyses_packaged as analyses
+        analyses_path = os.path.dirname(os.path.realpath(analyses.__file__))
+        analysis_path = os.path.join(analyses_path, self.name)
 
         readme = Readme(analysis_path)
         self.info = {

@@ -570,7 +570,7 @@ var Slider = exports.Slider = function () {
 
                     console.log('Wiring slider ' + n + ' to signal ' + signal + '.');
                     var s = new Slider(n, n.label);
-                    n.databench_object = s;
+                    n.databench_ui = s;
 
                     // handle events from frontend
                     s.change_cb = function (value) {
