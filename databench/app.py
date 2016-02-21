@@ -209,7 +209,7 @@ class App(object):
                 os.getcwd(), 'databench', 'analyses_packaged', 'node_modules',
             )
         if os.path.isdir(node_modules_path):
-            log.debug('Making {} available under analyses_node_modules/.'
+            log.debug('Making {} available under /node_modules/.'
                       ''.format(node_modules_path))
 
             self.routes.append((
