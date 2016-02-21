@@ -231,9 +231,27 @@ export class Slider {
         for (let n of nodes) {
             if (n.getAttribute('type') != 'range') continue;
 
-            console.log(`Wiring slider ${n}.`);
-            let s = new Slider(n, n.label);
+            // construct signal
+            let signal = null;
+            if (n.dataset.signal) {
+                signal = n.dataset.signal;
+            } else if (n.dataset.instance) {
+                signal = 'data';
+            } else if (n.dataset.global) {
+                signal = 'global_data';
+            } else if (n.getAttribute('name')) {
+                signal = n.getAttribute('name');
+            }
+            if (!signal) {
+                console.log(`Could not determine signal name for ${n}.`);
+                return;
+            }
 
+            console.log(`Wiring slider ${n} to signal ${signal}.`);
+            let s = new Slider(n, n.label);
+            n.databench_object = s;
+
+            // handle events from frontend
             s.change_cb = (value) => {
                 // construct message
                 let message = s.value();
@@ -242,26 +260,32 @@ export class Slider {
                     message.value = s.value();
                 }
 
-                // construct signal
-                let signal = null;
-                if (n.dataset.signal) {
-                    signal = n.dataset.signal;
-                } else if (n.dataset.instance) {
+                // process message in case signal bound to data or global_data
+                if (signal == 'data') {
                     message = { [n.dataset.instance]: message };
-                    signal = 'data';
-                } else if (n.dataset.global) {
+                } else if (signal == 'global_data') {
                     message = { [n.dataset.global]: message };
-                    signal = 'global_data';
-                } else if (n.getAttribute('name')) {
-                    signal = n.getAttribute('name');
-                }
-                if (!signal) {
-                    console.log(`Could not determine signal name for ${n}.`);
-                    return;
                 }
 
                 conn.emit(signal, message);
             };
+
+            // handle events from backend
+            if (signal == 'data') {
+                conn.on('data', (message) => {
+                    if (n.dataset.instance in message) {
+                        s.value(message[n.dataset.instance]);
+                    }
+                });
+            } else if (signal == 'global_data') {
+                conn.on('global_data', (message) => {
+                    if (n.dataset.global in message) {
+                        s.value(message[n.dataset.global]);
+                    }
+                });
+            } else {
+                conn.on(signal, (message) => s.value(message));
+            }
         }
     }
 }

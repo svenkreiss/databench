@@ -177,6 +177,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -545,9 +547,29 @@ var Slider = exports.Slider = function () {
 
                     if (n.getAttribute('type') != 'range') return 'continue';
 
-                    console.log('Wiring slider ' + n + '.');
-                    var s = new Slider(n, n.label);
+                    // construct signal
+                    var signal = null;
+                    if (n.dataset.signal) {
+                        signal = n.dataset.signal;
+                    } else if (n.dataset.instance) {
+                        signal = 'data';
+                    } else if (n.dataset.global) {
+                        signal = 'global_data';
+                    } else if (n.getAttribute('name')) {
+                        signal = n.getAttribute('name');
+                    }
+                    if (!signal) {
+                        console.log('Could not determine signal name for ' + n + '.');
+                        return {
+                            v: undefined
+                        };
+                    }
 
+                    console.log('Wiring slider ' + n + ' to signal ' + signal + '.');
+                    var s = new Slider(n, n.label);
+                    n.databench_object = s;
+
+                    // handle events from frontend
                     s.change_cb = function (value) {
                         // construct message
                         var message = s.value();
@@ -556,32 +578,46 @@ var Slider = exports.Slider = function () {
                             message.value = s.value();
                         }
 
-                        // construct signal
-                        var signal = null;
-                        if (n.dataset.signal) {
-                            signal = n.dataset.signal;
-                        } else if (n.dataset.instance) {
+                        // process message in case signal bound to data or global_data
+                        if (signal == 'data') {
                             message = _defineProperty({}, n.dataset.instance, message);
-                            signal = 'data';
-                        } else if (n.dataset.global) {
+                        } else if (signal == 'global_data') {
                             message = _defineProperty({}, n.dataset.global, message);
-                            signal = 'global_data';
-                        } else if (n.getAttribute('name')) {
-                            signal = n.getAttribute('name');
-                        }
-                        if (!signal) {
-                            console.log('Could not determine signal name for ' + n + '.');
-                            return;
                         }
 
                         conn.emit(signal, message);
                     };
+
+                    // handle events from backend
+                    if (signal == 'data') {
+                        conn.on('data', function (message) {
+                            if (n.dataset.instance in message) {
+                                s.value(message[n.dataset.instance]);
+                            }
+                        });
+                    } else if (signal == 'global_data') {
+                        conn.on('global_data', function (message) {
+                            if (n.dataset.global in message) {
+                                s.value(message[n.dataset.global]);
+                            }
+                        });
+                    } else {
+                        conn.on(signal, function (message) {
+                            return s.value(message);
+                        });
+                    }
                 };
 
                 for (var _iterator3 = nodes[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
                     var _ret2 = _loop2();
 
-                    if (_ret2 === 'continue') continue;
+                    switch (_ret2) {
+                        case 'continue':
+                            continue;
+
+                        default:
+                            if ((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object") return _ret2.v;
+                    }
                 }
             } catch (err) {
                 _didIteratorError3 = true;
