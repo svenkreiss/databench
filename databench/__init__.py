@@ -8,5 +8,3 @@ from .analysis import Meta, Analysis
 from .analysis_zmq import MetaZMQ, AnalysisZMQ
 from .datastore import Datastore
 from .readme import Readme
-
-from . import analyses_packaged

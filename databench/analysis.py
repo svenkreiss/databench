@@ -161,50 +161,76 @@ class Meta(object):
         self.name = name
         self.analysis_class = analysis_class
         self.show_in_index = True
-
-        # determine analysis path
-        sys.path.append('.')
-        try:
-            import analyses
-        except ImportError:
-            from . import analyses_packaged as analyses
-        analyses_path = os.path.dirname(os.path.realpath(analyses.__file__))
-        analysis_path = os.path.join(analyses_path, self.name)
-
-        readme = Readme(analysis_path)
-        self.info = {
-            'title': name,
-            'description': '',
-            'readme': readme.text,
-        }
-        self.info.update(readme.meta)
-
-        self.routes = [
-            (r'/{}/static/(.*)'.format(self.name),
-             tornado.web.StaticFileHandler,
-             {'path': analysis_path}),
-
-            (r'/{}/ws'.format(self.name),
-             FrontendHandler,
-             {'meta': self}),
-
-            (r'/{}/(?P<template_name>.+\.html)'.format(self.name),
-             RenderTemplate,
-             {'template_path': analysis_path,
-              'info': self.info}),
-
-            (r'/{}/'.format(self.name),
-             RenderTemplate,
-             {'template_name': 'index.html',
-              'template_path': analysis_path,
-              'info': self.info}),
-        ]
-
-        # detect whether thumbnail.png is present
-        if os.path.isfile(os.path.join(analysis_path, 'thumbnail.png')):
-            self.thumbnail = 'thumbnail.png'
-
         self.request_args = None
+
+        self._analysis_path = None
+        self._info = None
+        self._routes = None
+        self._thumbnail = None
+
+    @property
+    def analysis_path(self):
+        if self._analysis_path is None:
+            sys.path.append('.')
+            try:
+                import analyses
+            except ImportError:
+                from . import analyses_packaged as analyses
+            analyses_path = os.path.dirname(
+                os.path.realpath(analyses.__file__)
+            )
+            self._analysis_path = os.path.join(analyses_path, self.name)
+
+        return self._analysis_path
+
+    @property
+    def info(self):
+        if self._info is None:
+            readme = Readme(self.analysis_path)
+            self._info = {
+                'title': self.name,
+                'description': '',
+                'readme': readme.text,
+            }
+            self._info.update(readme.meta)
+
+        return self._info
+
+    @property
+    def routes(self):
+        if self._routes is None:
+            self._routes = [
+                (r'/{}/static/(.*)'.format(self.name),
+                 tornado.web.StaticFileHandler,
+                 {'path': self.analysis_path}),
+
+                (r'/{}/ws'.format(self.name),
+                 FrontendHandler,
+                 {'meta': self}),
+
+                (r'/{}/(?P<template_name>.+\.html)'.format(self.name),
+                 RenderTemplate,
+                 {'template_path': self.analysis_path,
+                  'info': self.info}),
+
+                (r'/{}/'.format(self.name),
+                 RenderTemplate,
+                 {'template_name': 'index.html',
+                  'template_path': self.analysis_path,
+                  'info': self.info}),
+            ]
+        return self._routes
+
+    @property
+    def thumbnail(self):
+        if self._thumbnail is None:
+            # detect whether thumbnail.png is present
+            if os.path.isfile(os.path.join(self.analysis_path,
+                                           'thumbnail.png')):
+                self._thumbnail = 'thumbnail.png'
+            else:
+                self._thumbnail = False
+        return self._thumbnail
 
     def run_action(self, analysis, fn_name, message='__nomessagetoken__'):
         """Executes an action in the analysis with the given message. It

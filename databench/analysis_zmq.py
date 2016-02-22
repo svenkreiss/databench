@@ -1,6 +1,5 @@
 import zmq
 import json
-import time
 import logging
 import subprocess
 import tornado.gen
@@ -15,9 +14,9 @@ class AnalysisZMQ(Analysis):
         super(AnalysisZMQ, self).__init__(id_)
         self.zmq_handshake = False
 
-    def on_connect(self, executable, zmq_publish, meta_info_cb):
+    def on_connect(self, executable, zmq_publish):  # , meta_info_cb):
         self.zmq_publish = zmq_publish
-        self.meta_info_cb = meta_info_cb
+        # self.meta_info_cb = meta_info_cb
 
         # determine a port_subscribe
         context = zmq.Context()
@@ -82,9 +81,9 @@ class AnalysisZMQ(Analysis):
             return
 
         # meta info
-        if '__meta_attr' in msg:
-            self.meta_info_cb(msg['__meta_attr'])
-            return
+        # if '__meta_attr' in msg:
+        #     self.meta_info_cb(msg['__meta_attr'])
+        #     return
 
         # check message is for this analysis
         if 'analysis_id' not in msg or \
@@ -119,9 +118,9 @@ class MetaZMQ(Meta):
         self.executable = executable
         self.zmq_publish = zmq_publish
 
-    def info(self, kv):
-        for attr, value in kv.items():
-            setattr(self, attr, value)
+    # def info(self, kv):
+    #     for attr, value in kv.items():
+    #         setattr(self, attr, value)
 
     @tornado.gen.coroutine
     def run_action(self, analysis, fn_name, message='__nomessagetoken__'):
@@ -130,7 +129,7 @@ class MetaZMQ(Meta):
         is given."""
 
         if fn_name == 'on_connect':
-            analysis.on_connect(self.executable, self.zmq_publish, self.info)
+            analysis.on_connect(self.executable, self.zmq_publish)  #, self.info)
 
         while not analysis.zmq_handshake:
             yield tornado.gen.sleep(0.1)
