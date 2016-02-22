@@ -32,10 +32,6 @@ class Datastore(object):
     def __getitem__(self, key):
         return Datastore.store[self.domain][key]
 
-    def __delitem__(self, key):
-        del Datastore.store[self.domain][key]
-        return self
-
     def __contains__(self, key):
         return key in Datastore.store[self.domain]
 
