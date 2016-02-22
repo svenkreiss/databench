@@ -1,11 +1,12 @@
 """Analysis module for Databench."""
 
+from __future__ import absolute_import, unicode_literals, division
+
 import os
 import sys
 import json
 import random
 import string
-import inspect
 import logging
 import tornado.web
 import tornado.websocket
@@ -166,7 +167,7 @@ class Meta(object):
         try:
             import analyses
         except ImportError:
-            from databench import analyses_packaged as analyses
+            from . import analyses_packaged as analyses
         analyses_path = os.path.dirname(os.path.realpath(analyses.__file__))
         analysis_path = os.path.join(analyses_path, self.name)
 
