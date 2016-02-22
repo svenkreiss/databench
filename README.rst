@@ -1,5 +1,5 @@
 .. image:: http://www.svenkreiss.com/databench/logo.svg
-    :target: http://www.svenkreiss.com/databench/v0.3/
+    :target: http://databench.trivial.io
 
 Databench
 =========
