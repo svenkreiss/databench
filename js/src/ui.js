@@ -179,11 +179,14 @@ export class Slider {
         this.label_node = label_node;
         this.label_html = label_node ? label_node.innerHTML : null;
         this.change_cb = (value) => console.log(`slider value ${value}`);
-        this.v_to_slider = (value) => value;
-        this.slider_to_v = (s) => s;
-        this.v_repr = (v) => v;
+        this._v_to_slider = (value) => value;
+        this._slider_to_v = (s) => s;
+        this._v_repr = (v) => v;
 
         // binding methods
+        this.v_to_slider = this.v_to_slider.bind(this);
+        this.slider_to_v = this.slider_to_v.bind(this);
+        this.v_repr = this.v_repr.bind(this);
         this.render = this.render.bind(this);
         this.value = this.value.bind(this);
         this.change = this.change.bind(this);
@@ -193,10 +196,26 @@ export class Slider {
         this.render();
     }
 
+    v_to_slider(fn) {
+        this._v_to_slider = fn;
+        return this;
+    }
+
+    slider_to_v(fn) {
+        this._slider_to_v = fn;
+        return this;
+    }
+
+    v_repr(fn) {
+        this._v_repr = fn;
+        this.render();
+        return this;
+    }
+
     render() {
         let v = this.value();
         if (this.label_node) {
-            this.label_node.innerHTML = `${this.label_html} ${this.v_repr(v)}`;
+            this.label_node.innerHTML = `${this.label_html} ${this._v_repr(v)}`;
         }
         return this;
     }
@@ -204,12 +223,12 @@ export class Slider {
     value(v) {
         if (!v) {
             // reading value
-            v = this.slider_to_v(parseFloat(this.node.value));
+            v = this._slider_to_v(parseFloat(this.node.value));
             return v;
         }
 
         // setting value
-        this.node.value = this.v_to_slider(v);
+        this.node.value = this._v_to_slider(v);
         this.render();
         return this;
     }

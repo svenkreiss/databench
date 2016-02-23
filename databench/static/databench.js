@@ -458,17 +458,20 @@ var Slider = exports.Slider = function () {
         this.change_cb = function (value) {
             return console.log('slider value ' + value);
         };
-        this.v_to_slider = function (value) {
+        this._v_to_slider = function (value) {
             return value;
         };
-        this.slider_to_v = function (s) {
+        this._slider_to_v = function (s) {
             return s;
         };
-        this.v_repr = function (v) {
+        this._v_repr = function (v) {
             return v;
         };
 
         // binding methods
+        this.v_to_slider = this.v_to_slider.bind(this);
+        this.slider_to_v = this.slider_to_v.bind(this);
+        this.v_repr = this.v_repr.bind(this);
         this.render = this.render.bind(this);
         this.value = this.value.bind(this);
         this.change = this.change.bind(this);
@@ -479,11 +482,30 @@ var Slider = exports.Slider = function () {
     }
 
     _createClass(Slider, [{
+        key: 'v_to_slider',
+        value: function v_to_slider(fn) {
+            this._v_to_slider = fn;
+            return this;
+        }
+    }, {
+        key: 'slider_to_v',
+        value: function slider_to_v(fn) {
+            this._slider_to_v = fn;
+            return this;
+        }
+    }, {
+        key: 'v_repr',
+        value: function v_repr(fn) {
+            this._v_repr = fn;
+            this.render();
+            return this;
+        }
+    }, {
         key: 'render',
         value: function render() {
             var v = this.value();
             if (this.label_node) {
-                this.label_node.innerHTML = this.label_html + ' ' + this.v_repr(v);
+                this.label_node.innerHTML = this.label_html + ' ' + this._v_repr(v);
             }
             return this;
         }
@@ -492,12 +514,12 @@ var Slider = exports.Slider = function () {
         value: function value(v) {
             if (!v) {
                 // reading value
-                v = this.slider_to_v(parseFloat(this.node.value));
+                v = this._slider_to_v(parseFloat(this.node.value));
                 return v;
             }
 
             // setting value
-            this.node.value = this.v_to_slider(v);
+            this.node.value = this._v_to_slider(v);
             this.render();
             return this;
         }
@@ -687,11 +709,11 @@ module.exports = require('../package.json').version;
 module.exports={
   "_args": [
     [
-      "websocket",
-      "/Users/zween/tech/databench"
+      "websocket@^1.0.22",
+      "/Users/sven/tech/databench"
     ]
   ],
-  "_from": "websocket@latest",
+  "_from": "websocket@>=1.0.22 <2.0.0",
   "_id": "websocket@1.0.22",
   "_inCache": true,
   "_installable": true,
@@ -705,11 +727,11 @@ module.exports={
   "_phantomChildren": {},
   "_requested": {
     "name": "websocket",
-    "raw": "websocket",
-    "rawSpec": "",
+    "raw": "websocket@^1.0.22",
+    "rawSpec": "^1.0.22",
     "scope": null,
-    "spec": "latest",
-    "type": "tag"
+    "spec": ">=1.0.22 <2.0.0",
+    "type": "range"
   },
   "_requiredBy": [
     "/"
@@ -717,8 +739,8 @@ module.exports={
   "_resolved": "https://registry.npmjs.org/websocket/-/websocket-1.0.22.tgz",
   "_shasum": "8c33e3449f879aaf518297c9744cebf812b9e3d8",
   "_shrinkwrap": null,
-  "_spec": "websocket",
-  "_where": "/Users/zween/tech/databench",
+  "_spec": "websocket@^1.0.22",
+  "_where": "/Users/sven/tech/databench",
   "author": {
     "email": "brian@worlize.com",
     "name": "Brian McKelvey",
