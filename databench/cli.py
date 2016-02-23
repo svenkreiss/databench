@@ -100,7 +100,9 @@ def main():
     # if hasattr(signal, 'SIGUSR1'):
     #     signal.signal(signal.SIGUSR1, sig_handler)
 
-    app = App(template_delimiters=delimiters).tornado_app()
+    app = App(template_delimiters=delimiters).tornado_app(
+        debug=args.loglevel not in ('WARNING', 'ERROR', 'CRITICAL')
+    )
     app.listen(args.port)
     tornado.ioloop.IOLoop.current().start()
 

@@ -92,8 +92,8 @@ class App(object):
         self.import_analyses()
         self.register_analyses()
 
-    def tornado_app(self):
-        return tornado.web.Application(self.routes)
+    def tornado_app(self, debug=False):
+        return tornado.web.Application(self.routes, debug=debug)
 
     # def custom_delimiters(self, delimiters):
     #     """Change the standard jinja2 delimiters to allow those delimiters be

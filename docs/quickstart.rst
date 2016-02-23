@@ -68,7 +68,7 @@ And the frontend in ``analyses/helloworld/index.html``:
     </body>
     </html>
 
-Now you can run the executable ``databench`` in your ``workingDir`` folder (outside of analyses) which creates a webserver and you can open http://localhost:5000 in your webbrowser. The command line options ``--host`` and ``--port`` set the host and port of the webserver ``--log`` changes the loglevel. For example, calling ``databench --log=DEBUG`` enables all messages; the options are ``NOTSET``, ``DEBUG``, ``INFO``, ``WARNING``, ``ERROR`` and ``CRITICAL``. You can also create a ``requirements.txt`` file containing other Python packages your analysis needs. An example of this setup is the `databench_examples`_ repository.
+Now you can run the executable ``databench`` in your ``workingDir`` folder (outside of analyses) which creates a webserver and you can open http://localhost:5000 in your webbrowser. The command line options ``--host`` and ``--port`` set the host and port of the webserver ``--log`` changes the loglevel. For example, calling ``databench --log=DEBUG`` enables all messages; the options are ``NOTSET``, ``DEBUG``, ``INFO``, ``WARNING``, ``ERROR`` and ``CRITICAL``. Running databench in ``WARNING`` or ``INFO`` enables autoreloading on code changes. You can also create a ``requirements.txt`` file containing other Python packages your analysis needs. An example of this setup is the `databench_examples`_ repository.
 
 .. _`databench_examples`: https://github.com/svenkreiss/databench_examples
 
