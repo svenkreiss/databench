@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-"""Databench command line executable. Run to create a server that serves
-the analyses pages and runs the python backend."""
+"""Databench command line tool. See http://databench.trivial.io for
+more info."""
 
 import os
 import sys
@@ -23,29 +23,17 @@ def main():
     parser.add_argument('--version', action='version',
                         version='%(prog)s '+DATABENCH_VERSION)
     parser.add_argument('--log', dest='loglevel', default="WARNING",
-                        help='set log level')
-    # parser.add_argument('--host', dest='host',
-    #                     default=os.environ.get('HOST', 'localhost'),
-    #                     help='set host for webserver')
+                        help='log level (INFO and DEBUG enable '
+                             'autoreload)')
+    parser.add_argument('--host', dest='host',
+                        default=os.environ.get('HOST', 'localhost'),
+                        help='host address for webserver (default localhost)')
     parser.add_argument('--port', dest='port',
                         type=int, default=int(os.environ.get('PORT', 5000)),
-                        help='set port for webserver')
+                        help='port for webserver')
     parser.add_argument('--with-coverage', dest='with_coverage',
                         default=False, action='store_true',
-                        help='create code coverage statistics')
-    delimiter_args = parser.add_argument_group('delimiters')
-    delimiter_args.add_argument('--variable_start_string',
-                                help='delimiter for variable start')
-    delimiter_args.add_argument('--variable_end_string',
-                                help='delimiter for variable end')
-    delimiter_args.add_argument('--block_start_string',
-                                help='delimiter for block start')
-    delimiter_args.add_argument('--block_end_string',
-                                help='delimiter for block end')
-    delimiter_args.add_argument('--comment_start_string',
-                                help='delimiter for comment start')
-    delimiter_args.add_argument('--comment_end_string',
-                                help='delimiter for comment end')
+                        help=argparse.SUPPRESS)
     args = parser.parse_args()
 
     # coverage
@@ -66,27 +54,8 @@ def main():
         print('Setting loglevel to '+args.loglevel+'.')
     logging.basicConfig(level=getattr(logging, args.loglevel))
 
-    # delimiters
-    delimiters = {
-        'variable_start_string': '[[',
-        'variable_end_string': ']]',
-    }
-    if args.variable_start_string:
-        delimiters['variable_start_string'] = args.variable_start_string
-    if args.variable_end_string:
-        delimiters['variable_end_string'] = args.variable_end_string
-    if args.block_start_string:
-        delimiters['block_start_string'] = args.block_start_string
-    if args.block_end_string:
-        delimiters['block_end_string'] = args.block_end_string
-    if args.comment_start_string:
-        delimiters['comment_start_string'] = args.comment_start_string
-    if args.comment_end_string:
-        delimiters['comment_end_string'] = args.comment_end_string
-
-    print('--- databench v'+DATABENCH_VERSION+' ---')
-    # logging.info('host='+str(args.host)+', port='+str(args.port))
-    # logging.info('delimiters='+str(delimiters))
+    logging.info('--- databench v{} ---'.format(DATABENCH_VERSION))
+    logging.info('host={}, port={}'.format(args.host, args.port))
 
     # handle external signal to terminate nicely (used in tests)
     def sig_handler(signum, stack):
@@ -100,10 +69,10 @@ def main():
     # if hasattr(signal, 'SIGUSR1'):
     #     signal.signal(signal.SIGUSR1, sig_handler)
 
-    app = App(template_delimiters=delimiters).tornado_app(
+    app = App().tornado_app(
         debug=args.loglevel not in ('WARNING', 'ERROR', 'CRITICAL')
     )
-    app.listen(args.port)
+    app.listen(args.port, args.host)
     tornado.ioloop.IOLoop.current().start()
 
 

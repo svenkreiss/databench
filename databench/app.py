@@ -35,7 +35,7 @@ class App(object):
 
     """
 
-    def __init__(self, zmq_port=None, template_delimiters=None):
+    def __init__(self, zmq_port=None):
 
         self.info = {
             'title': 'Databench',
@@ -78,9 +78,6 @@ class App(object):
 
         self.spawned_analyses = {}
 
-        # if template_delimiters is not None:
-        #     self.custom_delimiters(template_delimiters)
-
         zmq_publish = zmq.Context().socket(zmq.PUB)
         zmq_publish.bind('tcp://127.0.0.1:{}'.format(zmq_port))
         log.debug('main publishing to port {}'.format(zmq_port))
@@ -94,13 +91,6 @@ class App(object):
 
     def tornado_app(self, debug=False):
         return tornado.web.Application(self.routes, debug=debug)
-
-    # def custom_delimiters(self, delimiters):
-    #     """Change the standard jinja2 delimiters to allow those delimiters be
-    #     used by frontend template engines."""
-    #     options = self.flask_app.jinja_options.copy()
-    #     options.update(delimiters)
-    #     self.flask_app.jinja_options = options
 
     def register_analyses_py(self, zmq_publish, zmq_port):
         analysis_folders = glob.glob('analyses/*_py')
