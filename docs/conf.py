@@ -46,7 +46,7 @@ extensions = [
     # 'sphinx.ext.coverage',
     # 'sphinx.ext.viewcode',
     'sphinx.ext.intersphinx',
-    'sphinxcontrib.email',
+    # 'sphinxcontrib.email',
     'alabaster',
 ]
 
