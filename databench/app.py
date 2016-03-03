@@ -149,7 +149,8 @@ class App(object):
                 traceback.print_exc(file=sys.stdout)
                 raise e
 
-            print('Did not find "analyses" module. Using packaged analyses.')
+            log.warning('Did not find "analyses" module. '
+                        'Using packaged analyses.')
             from databench import analyses_packaged as analyses
 
         analyses_path = os.path.dirname(os.path.realpath(analyses.__file__))
@@ -206,7 +207,7 @@ class App(object):
         """Register analyses (analyses need to be imported first)."""
 
         for meta in Meta.all_instances:
-            print('Registering meta information {}'.format(meta.name))
+            log.info('Registering meta information {}'.format(meta.name))
             self.routes += meta.routes
 
             if 'logo_url' in self.info and \

@@ -7,7 +7,10 @@ export class Connection {
         this.analysis_id = analysis_id;
         this.ws_url = ws_url ? ws_url : Connection.guess_ws_url();
 
-        this.error_cb = (msg) => console.log(msg);
+        this.error_cb = (msg) => {
+            if (msg != null)
+                console.log(`connection error: ${msg}`);
+        }
         this.on_callbacks = {};
         this.onAction_callbacks = {};
 
@@ -93,14 +96,12 @@ export class Connection {
         // connect response
         if (message.signal == '__connect') {
             this.analysis_id = message.load.analysis_id;
-            console.log('Set analysis_id to ' + this.analysis_id);
         }
 
         // actions
         if (message.signal == '__action') {
             let id = message.load.id;
             let status = message.load.status;
-            // console.log(`received action ${id} with status ${status}`);
             this.onAction_callbacks[id].map((cb) => cb(status));
         }
 

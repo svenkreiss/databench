@@ -151,8 +151,8 @@ class Meta(object):
 
         if not hasattr(self.analysis,
                        'on_{}'.format(msg['signal'])):
-            print('Analysis does not contain on_{}()'
-                  ''.format(msg['signal']))
+            log.warning('Analysis does not contain on_{}()'
+                        ''.format(msg['signal']))
             return
 
         # standard message

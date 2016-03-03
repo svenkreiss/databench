@@ -2,7 +2,7 @@ var assert = require('assert');
 var Databench = require('./../node_client/main');
 
 describe('Databench', function() {
-  describe('#Connection', function () {
+  describe('Connection', function () {
     // create connection
     var c = new Databench.Connection(
       null,
