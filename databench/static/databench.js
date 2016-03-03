@@ -15,107 +15,10 @@ if (typeof WebSocket === 'undefined') {
 
 var Connection = exports.Connection = function () {
     function Connection() {
-        var _this = this;
-
         var analysis_id = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
         var ws_url = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
 
         _classCallCheck(this, Connection);
-
-        this.connect = function () {
-            _this.socket = new WebSocket(_this.ws_url);
-
-            _this.socket_check_open = setInterval(_this.ws_check_open, 2000);
-            _this.socket.onopen = _this.ws_onopen;
-            _this.socket.onclose = _this.ws_onclose;
-            _this.socket.onmessage = _this.ws_onmessage;
-            return _this;
-        };
-
-        this.ws_check_open = function () {
-            if (_this.socket.readyState == _this.socket.CONNECTING) {
-                return;
-            }
-            if (_this.socket.readyState != _this.socket.OPEN) {
-                _this.error_cb('Connection could not be opened. ' + 'Please <a href="javascript:location.reload(true);" ' + 'class="alert-link">reload</a> this page to try again.');
-            }
-            clearInterval(_this.socket_check_open);
-        };
-
-        this.ws_onopen = function () {
-            _this.ws_reconnect_attempt = 0;
-            _this.ws_reconnect_delay = 100.0;
-            _this.error_cb(); // clear errors
-            _this.socket.send(JSON.stringify({ '__connect': _this.analysis_id }));
-        };
-
-        this.ws_onclose = function () {
-            clearInterval(_this.socket_check_open);
-
-            _this.ws_reconnect_attempt += 1;
-            _this.ws_reconnect_delay *= 2;
-
-            if (_this.ws_reconnect_attempt > 3) {
-                _this.error_cb('Connection closed. ' + 'Please <a href="javascript:location.reload(true);" ' + 'class="alert-link">reload</a> this page to reconnect.');
-                return;
-            }
-
-            var actual_delay = 0.7 * _this.ws_reconnect_delay + 0.3 * Math.random() * _this.ws_reconnect_delay;
-            console.log('WebSocket reconnect attempt ' + _this.ws_reconnect_attempt + ' in ' + actual_delay.toFixed(0) + 'ms.');
-            setTimeout(_this.connect, actual_delay);
-        };
-
-        this.ws_onmessage = function (event) {
-            var message = JSON.parse(event.data);
-
-            // connect response
-            if (message.signal == '__connect') {
-                _this.analysis_id = message.load.analysis_id;
-                console.log('Set analysis_id to ' + _this.analysis_id);
-            }
-
-            // actions
-            if (message.signal == '__action') {
-                (function () {
-                    var id = message.load.id;
-                    var status = message.load.status;
-                    // console.log(`received action ${id} with status ${status}`);
-                    _this.onAction_callbacks[id].map(function (cb) {
-                        return cb(status);
-                    });
-                })();
-            }
-
-            // normal message
-            if (message.signal in _this.on_callbacks) {
-                _this.on_callbacks[message.signal].map(function (cb) {
-                    return cb(message.load);
-                });
-            }
-        };
-
-        this.on = function (signalName, callback) {
-            if (!(signalName in _this.on_callbacks)) _this.on_callbacks[signalName] = [];
-            _this.on_callbacks[signalName].push(callback);
-            return _this;
-        };
-
-        this.emit = function (signalName, message) {
-            if (_this.socket == null || _this.socket.readyState != _this.socket.OPEN) {
-                setTimeout(function () {
-                    return _this.emit(signalName, message);
-                }, 5);
-                return;
-            }
-            _this.socket.send(JSON.stringify({ 'signal': signalName, 'load': message }));
-            return _this;
-        };
-
-        this.onAction = function (actionID, callback) {
-            if (!(actionID in _this.onAction_callbacks)) _this.onAction_callbacks[actionID] = [];
-            _this.onAction_callbacks[actionID].push(callback);
-            return _this;
-        };
 
         this.analysis_id = analysis_id;
         this.ws_url = ws_url ? ws_url : Connection.guess_ws_url();
@@ -131,9 +34,126 @@ var Connection = exports.Connection = function () {
 
         this.socket = null;
         this.socket_check_open = null;
+
+        // bind methods
+        this.connect = this.connect.bind(this);
+        this.ws_check_open = this.ws_check_open.bind(this);
+        this.ws_onopen = this.ws_onopen.bind(this);
+        this.ws_onclose = this.ws_onclose.bind(this);
+        this.ws_onmessage = this.ws_onmessage.bind(this);
+        this.on = this.on.bind(this);
+        this.emit = this.emit.bind(this);
+        this.onAction = this.onAction.bind(this);
     }
 
-    _createClass(Connection, null, [{
+    _createClass(Connection, [{
+        key: 'connect',
+        value: function connect() {
+            this.socket = new WebSocket(this.ws_url);
+
+            this.socket_check_open = setInterval(this.ws_check_open, 2000);
+            this.socket.onopen = this.ws_onopen;
+            this.socket.onclose = this.ws_onclose;
+            this.socket.onmessage = this.ws_onmessage;
+            return this;
+        }
+    }, {
+        key: 'ws_check_open',
+        value: function ws_check_open() {
+            if (this.socket.readyState == this.socket.CONNECTING) {
+                return;
+            }
+            if (this.socket.readyState != this.socket.OPEN) {
+                this.error_cb('Connection could not be opened. ' + 'Please <a href="javascript:location.reload(true);" ' + 'class="alert-link">reload</a> this page to try again.');
+            }
+            clearInterval(this.socket_check_open);
+        }
+    }, {
+        key: 'ws_onopen',
+        value: function ws_onopen() {
+            this.ws_reconnect_attempt = 0;
+            this.ws_reconnect_delay = 100.0;
+            this.error_cb(); // clear errors
+            this.socket.send(JSON.stringify({ '__connect': this.analysis_id }));
+        }
+    }, {
+        key: 'ws_onclose',
+        value: function ws_onclose() {
+            clearInterval(this.socket_check_open);
+
+            this.ws_reconnect_attempt += 1;
+            this.ws_reconnect_delay *= 2;
+
+            if (this.ws_reconnect_attempt > 3) {
+                this.error_cb('Connection closed. ' + 'Please <a href="javascript:location.reload(true);" ' + 'class="alert-link">reload</a> this page to reconnect.');
+                return;
+            }
+
+            var actual_delay = 0.7 * this.ws_reconnect_delay + 0.3 * Math.random() * this.ws_reconnect_delay;
+            console.log('WebSocket reconnect attempt ' + this.ws_reconnect_attempt + ' in ' + actual_delay.toFixed(0) + 'ms.');
+            setTimeout(this.connect, actual_delay);
+        }
+    }, {
+        key: 'ws_onmessage',
+        value: function ws_onmessage(event) {
+            var _this = this;
+
+            var message = JSON.parse(event.data);
+
+            // connect response
+            if (message.signal == '__connect') {
+                this.analysis_id = message.load.analysis_id;
+                console.log('Set analysis_id to ' + this.analysis_id);
+            }
+
+            // actions
+            if (message.signal == '__action') {
+                (function () {
+                    var id = message.load.id;
+                    var status = message.load.status;
+                    // console.log(`received action ${id} with status ${status}`);
+                    _this.onAction_callbacks[id].map(function (cb) {
+                        return cb(status);
+                    });
+                })();
+            }
+
+            // normal message
+            if (message.signal in this.on_callbacks) {
+                this.on_callbacks[message.signal].map(function (cb) {
+                    return cb(message.load);
+                });
+            }
+        }
+    }, {
+        key: 'on',
+        value: function on(signalName, callback) {
+            if (!(signalName in this.on_callbacks)) this.on_callbacks[signalName] = [];
+            this.on_callbacks[signalName].push(callback);
+            return this;
+        }
+    }, {
+        key: 'emit',
+        value: function emit(signalName, message) {
+            var _this2 = this;
+
+            if (this.socket == null || this.socket.readyState != this.socket.OPEN) {
+                setTimeout(function () {
+                    return _this2.emit(signalName, message);
+                }, 5);
+                return;
+            }
+            this.socket.send(JSON.stringify({ 'signal': signalName, 'load': message }));
+            return this;
+        }
+    }, {
+        key: 'onAction',
+        value: function onAction(actionID, callback) {
+            if (!(actionID in this.onAction_callbacks)) this.onAction_callbacks[actionID] = [];
+            this.onAction_callbacks[actionID].push(callback);
+            return this;
+        }
+    }], [{
         key: 'guess_ws_url',
         value: function guess_ws_url() {
             var ws_protocol = 'ws';
@@ -208,32 +228,14 @@ var Log = exports.Log = function () {
 
         _classCallCheck(this, Log);
 
-        this.render = function () {
-            while (_this._messages.length > _this.limit) {
-                _this._messages.shift();
-            }_this.node.innerText = _this._messages.map(function (m) {
-                return m.join('');
-            }).join('\n');
-            return _this;
-        };
-
-        this.add = function (message) {
-            var source = arguments.length <= 1 || arguments[1] === undefined ? 'unknown' : arguments[1];
-
-            if (typeof message != "string") {
-                message = JSON.stringify(message);
-            }
-
-            var padded_source = ' '.repeat(Math.max(0, 8 - source.length)) + source;
-            _this._messages.push([padded_source + ': ' + message]);
-            _this.render();
-            return _this;
-        };
-
         this.node = node;
         this.limit = limit;
         this.consoleFnName = consoleFnName;
         this._messages = [];
+
+        // bind methods
+        this.render = this.render.bind(this);
+        this.add = this.add.bind(this);
 
         // capture events from frontend
         var _consoleFnOriginal = console[consoleFnName];
@@ -243,7 +245,31 @@ var Log = exports.Log = function () {
         };
     }
 
-    _createClass(Log, null, [{
+    _createClass(Log, [{
+        key: 'render',
+        value: function render() {
+            while (this._messages.length > this.limit) {
+                this._messages.shift();
+            }this.node.innerText = this._messages.map(function (m) {
+                return m.join('');
+            }).join('\n');
+            return this;
+        }
+    }, {
+        key: 'add',
+        value: function add(message) {
+            var source = arguments.length <= 1 || arguments[1] === undefined ? 'unknown' : arguments[1];
+
+            if (typeof message != "string") {
+                message = JSON.stringify(message);
+            }
+
+            var padded_source = ' '.repeat(Math.max(0, 8 - source.length)) + source;
+            this._messages.push([padded_source + ': ' + message]);
+            this.render();
+            return this;
+        }
+    }], [{
         key: 'wire',
         value: function wire(conn) {
             var id = arguments.length <= 1 || arguments[1] === undefined ? 'log' : arguments[1];
@@ -270,48 +296,54 @@ var Log = exports.Log = function () {
 
 var StatusLog = exports.StatusLog = function () {
     function StatusLog(node) {
-        var _this2 = this;
-
         var formatter = arguments.length <= 1 || arguments[1] === undefined ? StatusLog.default_alert : arguments[1];
 
         _classCallCheck(this, StatusLog);
 
-        this.render = function () {
-            var formatted = [].concat(_toConsumableArray(_this2._messages)).map(function (_ref) {
+        this.node = node;
+        this.formatter = formatter;
+        this._messages = new Map();
+
+        // bind methods
+        this.render = this.render.bind(this);
+        this.add = this.add.bind(this);
+    }
+
+    _createClass(StatusLog, [{
+        key: 'render',
+        value: function render() {
+            var _this2 = this;
+
+            var formatted = [].concat(_toConsumableArray(this._messages)).map(function (_ref) {
                 var _ref2 = _slicedToArray(_ref, 2);
 
                 var m = _ref2[0];
                 var c = _ref2[1];
                 return _this2.formatter(m, c);
             });
-            _this2.node.innerHTML = formatted.join('\n');
-            return _this2;
-        };
-
-        this.add = function (msg) {
+            this.node.innerHTML = formatted.join('\n');
+            return this;
+        }
+    }, {
+        key: 'add',
+        value: function add(msg) {
             if (msg == null) {
-                _this2._messages.clear();
+                this._messages.clear();
                 return;
             }
             if (typeof msg != "string") {
                 msg = JSON.stringify(msg);
             }
 
-            if (_this2._messages.has(msg)) {
-                _this2._messages.set(msg, _this2._messages.get(msg) + 1);
+            if (this._messages.has(msg)) {
+                this._messages.set(msg, this._messages.get(msg) + 1);
             } else {
-                _this2._messages.set(msg, 1);
+                this._messages.set(msg, 1);
             }
-            _this2.render();
-            return _this2;
-        };
-
-        this.node = node;
-        this.formatter = formatter;
-        this._messages = new Map();
-    }
-
-    _createClass(StatusLog, null, [{
+            this.render();
+            return this;
+        }
+    }], [{
         key: 'default_alert',
         value: function default_alert(msg, c) {
             var c_format = c <= 1 ? '' : '<b>(' + c + ')</b> ';
@@ -343,33 +375,6 @@ var Button = exports.Button = function () {
 
         _classCallCheck(this, Button);
 
-        this.render = function () {
-            switch (_this3._state) {
-                case _this3.ACTIVE:
-                    _this3.node.classList.add('active');
-                    break;
-                default:
-                    _this3.node.classList.remove('active');
-            }
-            return _this3;
-        };
-
-        this.click = function () {
-            if (_this3._state != _this3.IDLE) return;
-
-            var actionID = Math.floor(Math.random() * 0x100000);
-            _this3.click_cb(actionID);
-            return _this3;
-        };
-
-        this.state = function (s) {
-            if (s != _this3.IDLE && s != _this3.ACTIVE) return;
-
-            _this3._state = s;
-            _this3.render();
-            return _this3;
-        };
-
         this.IDLE = 0;
         this.ACTIVE = 2;
 
@@ -380,9 +385,44 @@ var Button = exports.Button = function () {
         this._state = this.IDLE;
 
         this.node.addEventListener('click', this.click, false);
+
+        // bind methods
+        this.render = this.render.bind(this);
+        this.click = this.click.bind(this);
+        this.state = this.state.bind(this);
     }
 
-    _createClass(Button, null, [{
+    _createClass(Button, [{
+        key: 'render',
+        value: function render() {
+            switch (this._state) {
+                case this.ACTIVE:
+                    this.node.classList.add('active');
+                    break;
+                default:
+                    this.node.classList.remove('active');
+            }
+            return this;
+        }
+    }, {
+        key: 'click',
+        value: function click() {
+            if (this._state != this.IDLE) return;
+
+            var actionID = Math.floor(Math.random() * 0x100000);
+            this.click_cb(actionID);
+            return this;
+        }
+    }, {
+        key: 'state',
+        value: function state(s) {
+            if (s != this.IDLE && s != this.ACTIVE) return;
+
+            this._state = s;
+            this.render();
+            return this;
+        }
+    }], [{
         key: 'wire',
         value: function wire(conn) {
             var nodes = Array.from(document.getElementsByTagName('BUTTON'));
@@ -468,7 +508,7 @@ var Slider = exports.Slider = function () {
             return v;
         };
 
-        // binding methods
+        // bind methods
         this.v_to_slider = this.v_to_slider.bind(this);
         this.slider_to_v = this.slider_to_v.bind(this);
         this.v_repr = this.v_repr.bind(this);
@@ -710,7 +750,7 @@ module.exports={
   "_args": [
     [
       "websocket@^1.0.22",
-      "/Users/sven/tech/databench"
+      "/Users/zween/tech/databench"
     ]
   ],
   "_from": "websocket@>=1.0.22 <2.0.0",
@@ -740,7 +780,7 @@ module.exports={
   "_shasum": "8c33e3449f879aaf518297c9744cebf812b9e3d8",
   "_shrinkwrap": null,
   "_spec": "websocket@^1.0.22",
-  "_where": "/Users/sven/tech/databench",
+  "_where": "/Users/zween/tech/databench",
   "author": {
     "email": "brian@worlize.com",
     "name": "Brian McKelvey",

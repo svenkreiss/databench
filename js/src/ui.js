@@ -15,6 +15,10 @@ export class Log {
         this.consoleFnName = consoleFnName;
         this._messages = [];
 
+        // bind methods
+        this.render = this.render.bind(this);
+        this.add = this.add.bind(this);
+
         // capture events from frontend
         let _consoleFnOriginal = console[consoleFnName];
         console[consoleFnName] = (message) => {
@@ -23,13 +27,13 @@ export class Log {
         }
     }
 
-    render = () => {
+    render() {
         while(this._messages.length > this.limit) this._messages.shift();
         this.node.innerText = this._messages.map((m) => m.join('')).join('\n');
         return this;
-    };
+    }
 
-    add = (message, source='unknown') => {
+    add(message, source='unknown') {
         if (typeof message != "string") {
             message = JSON.stringify(message);
         }
@@ -38,7 +42,7 @@ export class Log {
         this._messages.push([`${padded_source}: ${message}`]);
         this.render();
         return this;
-    };
+    }
 
     static wire(conn, id='log', source='backend', limit=20, consoleFnName='log') {
         let node = document.getElementById(id);
@@ -57,6 +61,10 @@ export class StatusLog {
         this.node = node;
         this.formatter = formatter;
         this._messages = new Map();
+
+        // bind methods
+        this.render = this.render.bind(this);
+        this.add = this.add.bind(this);
     }
 
     static default_alert(msg, c) {
@@ -64,13 +72,13 @@ export class StatusLog {
         return `<div class="alert alert-danger">${c_format}${msg}</div>`;
     }
 
-    render = () => {
+    render() {
         let formatted = [...this._messages].map(([m, c]) => this.formatter(m, c));
         this.node.innerHTML = formatted.join('\n');
         return this;
-    };
+    }
 
-    add = (msg) => {
+    add(msg) {
         if (msg == null) {
             this._messages.clear();
             return;
@@ -86,7 +94,7 @@ export class StatusLog {
         }
         this.render();
         return this;
-    };
+    }
 
     static wire(conn, id='ws-alerts', formatter=StatusLog.default_alert) {
         let node = document.getElementById(id);
@@ -109,9 +117,14 @@ export class Button {
         this._state = this.IDLE;
 
         this.node.addEventListener('click', this.click, false);
+
+        // bind methods
+        this.render = this.render.bind(this);
+        this.click = this.click.bind(this);
+        this.state = this.state.bind(this);
     }
 
-    render = () => {
+    render() {
         switch (this._state) {
             case this.ACTIVE:
                 this.node.classList.add('active');
@@ -120,23 +133,23 @@ export class Button {
                 this.node.classList.remove('active');
         }
         return this;
-    };
+    }
 
-    click = () => {
+    click() {
         if (this._state != this.IDLE) return;
 
         let actionID = Math.floor(Math.random() * 0x100000);
         this.click_cb(actionID);
         return this;
-    };
+    }
 
-    state = (s) => {
+    state(s) {
         if (s != this.IDLE && s != this.ACTIVE) return;
 
         this._state = s;
         this.render();
         return this;
-    };
+    }
 
     static wire(conn) {
         let nodes = Array.from(document.getElementsByTagName('BUTTON'));
@@ -183,7 +196,7 @@ export class Slider {
         this._slider_to_v = (s) => s;
         this._v_repr = (v) => v;
 
-        // binding methods
+        // bind methods
         this.v_to_slider = this.v_to_slider.bind(this);
         this.slider_to_v = this.slider_to_v.bind(this);
         this.v_repr = this.v_repr.bind(this);
