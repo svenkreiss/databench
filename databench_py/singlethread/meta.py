@@ -43,7 +43,8 @@ class Meta(object):
         self.analysis.set_emit_fn(emit)
 
         self._init_zmq(zmq_port_publish, zmq_port_subscribe)
-        log.info('Language kernel for {} initialized.'.format(self.name))
+        log.info('Language kernel for {} initialized with '
+                 'analysis id {}.'.format(self.name, self.analysis.id_))
 
     def _init_zmq(self, port_publish, port_subscribe):
         """Initialize zmq messaging. Listen on sub_port. This port might at
