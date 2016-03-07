@@ -84,8 +84,8 @@ class App(object):
 
         zmq_publish_stream = zmq.eventloop.zmqstream.ZMQStream(zmq_publish)
         self.register_analyses_py(zmq_publish_stream, zmq_port)
-        # self.register_analyses_pyspark(zmq_publish_stream)
-        # self.register_analyses_go(zmq_publish_stream)
+        self.register_analyses_pyspark(zmq_publish_stream, zmq_port)
+        self.register_analyses_go(zmq_publish_stream, zmq_port)
         self.import_analyses()
         self.register_analyses()
 
@@ -98,16 +98,16 @@ class App(object):
             analysis_folders = glob.glob('databench/analyses_packaged/*_py')
 
         for analysis_folder in analysis_folders:
-            name = analysis_folder[analysis_folder.rfind('/')+1:]
-            if name[0] in ['.', '_']:
+            name = analysis_folder.rpartition('/')[2]
+            if name[0] in ('.', '_'):
                 continue
             log.debug('creating MetaZMQ for {}'.format(name))
             MetaZMQ(name,
-                    ['python', analysis_folder+'/analysis.py',
+                    ['python', '{}/analysis.py'.format(analysis_folder),
                      '--zmq-subscribe={}'.format(zmq_port)],
                     zmq_publish)
 
-    def register_analyses_pyspark(self, zmq_publish):
+    def register_analyses_pyspark(self, zmq_publish, zmq_port):
         analysis_folders = glob.glob('analyses/*_pyspark')
         if not analysis_folders:
             analysis_folders = glob.glob(
@@ -115,28 +115,30 @@ class App(object):
             )
 
         for analysis_folder in analysis_folders:
-            name = analysis_folder[analysis_folder.rfind('/')+1:]
-            if name[0] in ['.', '_']:
+            name = analysis_folder.rpartition('/')[2]
+            if name[0] in ('.', '_'):
                 continue
-            log.debug('creating MetaZMQ for '+name)
-            MetaZMQ(name, __name__, "ZMQ Analysis py",
-                    ['pyspark', analysis_folder+'/analysis.py'],
+            log.debug('creating MetaZMQ for {}'.format(name))
+            MetaZMQ(name,
+                    ['pyspark', '{}/analysis.py'.format(analysis_folder),
+                     '--zmq-subscribe={}'.format(zmq_port)],
                     zmq_publish)
 
-    def register_analyses_go(self, zmq_publish):
+    def register_analyses_go(self, zmq_publish, zmq_port):
         analysis_folders = glob.glob('analyses/*_go')
         if not analysis_folders:
             analysis_folders = glob.glob('databench/analyses_packaged/*_go')
 
         for analysis_folder in analysis_folders:
-            name = analysis_folder[analysis_folder.rfind('/')+1:]
-            if name[0] in ['.', '_']:
+            name = analysis_folder.rpartition('/')[2]
+            if name[0] in ('.', '_'):
                 continue
-            log.info('installing '+name)
-            os.system('cd '+analysis_folder+'; go install')
-            log.debug('creating MetaZMQ for '+name)
-            MetaZMQ(name, __name__, "ZMQ Analysis go",
-                    [name], zmq_publish)
+            log.info('installing {}'.format(name))
+            os.system('cd {}; go install'.format(analysis_folder))
+            log.debug('creating MetaZMQ for {}'.format(name))
+            MetaZMQ(name,
+                    [name, '--zmq-subscribe={}'.format(zmq_port)],
+                    zmq_publish)
 
     def import_analyses(self):
         """Add analyses from the analyses folder."""
