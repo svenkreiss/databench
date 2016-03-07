@@ -13,7 +13,7 @@ Overview
 
 .. _customization:
 
-Customization
+Customization (outdated)
 +++++++++++++
 
 You can customize the header in ``analyses/__init__.py``:
@@ -30,7 +30,7 @@ string passed into :class:`databench.Analysis` which is usually the ``__doc__``
 string of your analysis Python file.
 
 
-Formatting: Math, Markdown and src Files
+Formatting: Math, Markdown and src Files (outdated)
 ++++++++++++++++++++++++++++++++++++++++
 
 The frontend also renders math expressions enclosed in ``\\(`` and ``\\)`` as
@@ -46,7 +46,7 @@ To include an external source code file, use the ``include_src(file, type)``
 macro.
 
 
-Twitter Bootstrap and Font Awesome
+Twitter Bootstrap and Font Awesome (outdated)
 ++++++++++++++++++++++++++++++++++
 
 `Twitter Bootstrap <http://getbootstrap.com/>`_ is
@@ -73,7 +73,7 @@ that hosts the analysis with
 which shows a GitHub icon and the Markdown rendered text with a link.
 
 
-Static Files
+Static Files (outdated)
 ++++++++++++
 
 To add a static file to an analysis, place it in the analysis folder. Static
@@ -94,9 +94,27 @@ the same folder that is used for a custom header logo;
 see :ref:`customization`.
 
 
+Node Modules
+++++++++++++
+
+Put inside of ``analyses`` folder.
+
+.. code-block:: bash
+
+    cd analyses; npm install d3
+
+to then access to with a
+
+.. code-block:: html
+
+    <script src="/node_modules/d3/d3.min.js"></script>
+
+which you can check into your version control if you want.
+
+
 .. _include-databench-js:
 
-Including Databench's JavaScript Library
+Including Databench's JavaScript Library (outdated)
 ++++++++++++++++++++++++++++++++++++++++
 
 When using the ``base.html`` template, the databench library and a few more
@@ -115,7 +133,7 @@ When using your own html template, you need to include at least ``jQuery``
 and ``databench.js``.
 
 
-Running the Backend at a Custom Location
+Running the Backend at a Custom Location (outdated)
 ++++++++++++++++++++++++++++++++++++++++++++++
 
 You can also include Databench in websites. For that, you need the
@@ -144,7 +162,7 @@ isolated server.
 
 
 
-Databench JavaScript Frontend
+Databench JavaScript Frontend (outdated)
 -----------------------------
 
 This is the API documentation for the Databench JavaScript library.
@@ -179,7 +197,7 @@ This is the API documentation for the Databench JavaScript library.
 
 .. _ui:
 
-UI
+UI (partially outdated)
 ---
 
 Below is the list of genericElements that are in :js:func:`Databench`.

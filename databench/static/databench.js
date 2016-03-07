@@ -24,7 +24,7 @@ var Connection = exports.Connection = function () {
         this.ws_url = ws_url ? ws_url : Connection.guess_ws_url();
 
         this.error_cb = function (msg) {
-            return console.log(msg);
+            if (msg != null) return console.log('connection error: ' + msg);
         };
         this.on_callbacks = {};
         this.onAction_callbacks = {};
@@ -103,7 +103,6 @@ var Connection = exports.Connection = function () {
             // connect response
             if (message.signal == '__connect') {
                 this.analysis_id = message.load.analysis_id;
-                console.log('Set analysis_id to ' + this.analysis_id);
             }
 
             // actions
@@ -111,7 +110,6 @@ var Connection = exports.Connection = function () {
                 (function () {
                     var id = message.load.id;
                     var status = message.load.status;
-                    // console.log(`received action ${id} with status ${status}`);
                     _this.onAction_callbacks[id].map(function (cb) {
                         return cb(status);
                     });
@@ -221,16 +219,19 @@ function wire(conn) {
 
 var Log = exports.Log = function () {
     function Log(node) {
+        var consoleFnName = arguments.length <= 1 || arguments[1] === undefined ? 'log' : arguments[1];
+
         var _this = this;
 
-        var limit = arguments.length <= 1 || arguments[1] === undefined ? 20 : arguments[1];
-        var consoleFnName = arguments.length <= 2 || arguments[2] === undefined ? 'log' : arguments[2];
+        var limit = arguments.length <= 2 || arguments[2] === undefined ? 20 : arguments[2];
+        var length_limit = arguments.length <= 3 || arguments[3] === undefined ? 250 : arguments[3];
 
         _classCallCheck(this, Log);
 
         this.node = node;
-        this.limit = limit;
         this.consoleFnName = consoleFnName;
+        this.limit = limit;
+        this.length_limit = length_limit;
         this._messages = [];
 
         // bind methods
@@ -248,11 +249,16 @@ var Log = exports.Log = function () {
     _createClass(Log, [{
         key: 'render',
         value: function render() {
+            var _this2 = this;
+
             while (this._messages.length > this.limit) {
                 this._messages.shift();
             }this.node.innerText = this._messages.map(function (m) {
                 return m.join('');
+            }).map(function (m) {
+                return m.length > _this2.length_limit ? m.substr(0, _this2.length_limit) + '...' : m;
             }).join('\n');
+
             return this;
         }
     }, {
@@ -274,14 +280,15 @@ var Log = exports.Log = function () {
         value: function wire(conn) {
             var id = arguments.length <= 1 || arguments[1] === undefined ? 'log' : arguments[1];
             var source = arguments.length <= 2 || arguments[2] === undefined ? 'backend' : arguments[2];
-            var limit = arguments.length <= 3 || arguments[3] === undefined ? 20 : arguments[3];
-            var consoleFnName = arguments.length <= 4 || arguments[4] === undefined ? 'log' : arguments[4];
+            var consoleFnName = arguments.length <= 3 || arguments[3] === undefined ? 'log' : arguments[3];
+            var limit = arguments.length <= 4 || arguments[4] === undefined ? 20 : arguments[4];
+            var length_limit = arguments.length <= 5 || arguments[5] === undefined ? 250 : arguments[5];
 
             var node = document.getElementById(id);
             if (node == null) return;
 
             console.log('Wiring element id=' + id + ' to ' + source + '.');
-            var l = new Log(node, limit, consoleFnName);
+            var l = new Log(node, consoleFnName, limit, length_limit);
             conn.on('log', function (message) {
                 return l.add(message, source);
             });
@@ -312,14 +319,14 @@ var StatusLog = exports.StatusLog = function () {
     _createClass(StatusLog, [{
         key: 'render',
         value: function render() {
-            var _this2 = this;
+            var _this3 = this;
 
             var formatted = [].concat(_toConsumableArray(this._messages)).map(function (_ref) {
                 var _ref2 = _slicedToArray(_ref, 2);
 
                 var m = _ref2[0];
                 var c = _ref2[1];
-                return _this2.formatter(m, c);
+                return _this3.formatter(m, c);
             });
             this.node.innerHTML = formatted.join('\n');
             return this;
@@ -371,7 +378,7 @@ var StatusLog = exports.StatusLog = function () {
 
 var Button = exports.Button = function () {
     function Button(node) {
-        var _this3 = this;
+        var _this4 = this;
 
         _classCallCheck(this, Button);
 
@@ -380,16 +387,16 @@ var Button = exports.Button = function () {
 
         this.node = node;
         this.click_cb = function (actionID) {
-            return console.log('click on ' + _this3.node + ' with ' + actionID);
+            return console.log('click on ' + _this4.node + ' with ' + actionID);
         };
         this._state = this.IDLE;
-
-        this.node.addEventListener('click', this.click, false);
 
         // bind methods
         this.render = this.render.bind(this);
         this.click = this.click.bind(this);
         this.state = this.state.bind(this);
+
+        this.node.addEventListener('click', this.click, false);
     }
 
     _createClass(Button, [{
@@ -434,10 +441,10 @@ var Button = exports.Button = function () {
                 var _loop = function _loop() {
                     var n = _step.value;
 
-                    var signalName = n.dataset.signal;
-                    if (!signalName) return 'continue';
+                    var signal = n.dataset.signal;
+                    if (!signal) return 'continue';
 
-                    console.log('Wiring button ' + n + '.');
+                    console.log('Wiring button ' + n + ' to signal ' + signal + '.');
                     var b = new Button(n);
 
                     // set up click callback
@@ -459,7 +466,7 @@ var Button = exports.Button = function () {
                         var message = {};
                         if (n.dataset.message) message = JSON.parse(n.dataset.message);
                         message['__action_id'] = actionID;
-                        conn.emit(signalName, message);
+                        conn.emit(signal, message);
                     };
                 };
 

@@ -175,6 +175,7 @@ class Meta(object):
             try:
                 import analyses
             except ImportError:
+                log.debug('Did not find analyses. Using packaged analyses.')
                 from . import analyses_packaged as analyses
             analyses_path = os.path.dirname(
                 os.path.realpath(analyses.__file__)

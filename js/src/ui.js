@@ -9,10 +9,11 @@ export function wire(conn) {
 
 
 export class Log {
-    constructor(node, limit=20, consoleFnName='log') {
+    constructor(node, consoleFnName='log', limit=20, length_limit=250) {
         this.node = node;
-        this.limit = limit;
         this.consoleFnName = consoleFnName;
+        this.limit = limit;
+        this.length_limit = length_limit;
         this._messages = [];
 
         // bind methods
@@ -29,7 +30,14 @@ export class Log {
 
     render() {
         while(this._messages.length > this.limit) this._messages.shift();
-        this.node.innerText = this._messages.map((m) => m.join('')).join('\n');
+
+        this.node.innerText = this._messages
+            .map((m) => m.join(''))
+            .map((m) => ((m.length > this.length_limit)
+                         ? m.substr(0, this.length_limit)+'...'
+                         : m))
+            .join('\n');
+
         return this;
     }
 
@@ -44,12 +52,12 @@ export class Log {
         return this;
     }
 
-    static wire(conn, id='log', source='backend', limit=20, consoleFnName='log') {
+    static wire(conn, id='log', source='backend', consoleFnName='log', limit=20, length_limit=250) {
         let node = document.getElementById(id);
         if (node == null) return;
 
         console.log(`Wiring element id=${id} to ${source}.`);
-        let l = new Log(node, limit, consoleFnName);
+        let l = new Log(node, consoleFnName, limit, length_limit);
         conn.on('log', (message) => l.add(message, source));
         return this;
     }
@@ -116,12 +124,12 @@ export class Button {
         this.click_cb = (actionID) => console.log(`click on ${this.node} with ${actionID}`);
         this._state = this.IDLE;
 
-        this.node.addEventListener('click', this.click, false);
-
         // bind methods
         this.render = this.render.bind(this);
         this.click = this.click.bind(this);
         this.state = this.state.bind(this);
+
+        this.node.addEventListener('click', this.click, false);
     }
 
     render() {
@@ -154,10 +162,10 @@ export class Button {
     static wire(conn) {
         let nodes = Array.from(document.getElementsByTagName('BUTTON'));
         for (let n of nodes) {
-            let signalName = n.dataset.signal;
-            if (!signalName) continue;
+            let signal = n.dataset.signal;
+            if (!signal) continue;
 
-            console.log(`Wiring button ${n}.`);
+            console.log(`Wiring button ${n} to signal ${signal}.`);
             let b = new Button(n);
 
             // set up click callback
@@ -179,7 +187,7 @@ export class Button {
                 let message = {};
                 if (n.dataset.message) message = JSON.parse(n.dataset.message);
                 message['__action_id'] = actionID;
-                conn.emit(signalName, message);
+                conn.emit(signal, message);
             };
         }
     }

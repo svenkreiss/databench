@@ -9,7 +9,7 @@ export class Connection {
 
         this.error_cb = (msg) => {
             if (msg != null)
-                console.log(`connection error: ${msg}`);
+                return console.log(`connection error: ${msg}`);
         }
         this.on_callbacks = {};
         this.onAction_callbacks = {};
