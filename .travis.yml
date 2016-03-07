@@ -15,5 +15,3 @@ install:
 script: "nosetests -vv --with-coverage --cover-package=databench --cover-erase"
 after_success:
   - coveralls || true
-notifications:
-  webhooks: https://readthedocs.org/build/databench
