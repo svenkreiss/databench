@@ -10,7 +10,7 @@ title, description, watch, build
 
 Example ``analyses/README.md``:
 
-.. code-block::
+.. code-block:: markdown
 
     <!--
     title: Databench Examples
