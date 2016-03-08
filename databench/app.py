@@ -10,6 +10,12 @@ import traceback
 import zmq.eventloop
 
 import tornado.web
+import tornado.autoreload
+
+try:
+    import glob2
+except ImportError:
+    glob2 = None
 
 from .analysis import Meta
 from .analysis_zmq import MetaZMQ
@@ -20,20 +26,7 @@ log = logging.getLogger(__name__)
 
 
 class App(object):
-    """Databench app. The Tornado app is either injected or created.
-
-    Args:
-        name (str): Name of the app.
-        host (str): Host name.
-        port (int): Port number.
-        flask_app (flask.Flask, optional): An instance of flask.Flask.
-        delimiters (dict): Configuration option for the delimiters used for the
-            server-side templates. You can specify strings for
-            ``variable_start_string``, ``variable_end_string``,
-            ``block_start_string``, ``block_end_string``,
-            ``comment_start_string``, ``comment_end_string``.
-
-    """
+    """Databench app. Creates a Tornado app."""
 
     def __init__(self, zmq_port=None):
 
@@ -95,6 +88,10 @@ class App(object):
                 os.path.dirname(os.path.realpath(__file__)),
                 'templates',
             )
+
+        if debug:
+            self.build()
+
         return tornado.web.Application(
             self.routes,
             debug=debug,
@@ -187,6 +184,20 @@ class App(object):
             log.info('Analyses module does not specify a title.')
             self.info['title'] = 'Databench'
 
+        # process files to watch for autoreload
+        if 'watch' in readme.meta:
+            log.info('watching files: {}'.format(readme.meta['watch']))
+            if glob2:
+                files = glob2.glob(readme.meta['watch'])
+            else:
+                files = glob.glob(readme.meta['watch'])
+                if '**' in readme.meta['watch']:
+                    log.warning('Please run "pip install glob2" to properly '
+                                'process watch patterns with "**".')
+            for fn in files:
+                log.debug('watch file {}'.format(fn))
+                tornado.autoreload.watch(fn)
+
         # if 'analyses' contains a 'static' folder, make it available
         static_path = os.path.join(analyses_path, 'static')
         if os.path.isdir(static_path):
@@ -225,6 +236,15 @@ class App(object):
             if 'logo_url' in self.info and \
                'logo_url' not in meta.info:
                 meta.info['logo_url'] = self.info['logo_url']
+
+    def build(self):
+        """Run the build command specified in the Readme."""
+        if 'build' not in self.info:
+            return
+
+        cmd = self.info['build']
+        log.debug('building this command: {}'.format(cmd))
+        os.system(cmd)
 
 
 class IndexHandler(tornado.web.RequestHandler):

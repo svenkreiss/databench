@@ -85,9 +85,10 @@ class Readme(object):
         Title: MyTitle
         Description: hello bla
         logo_url: /path/to/logo.png
+        build: gulp
         -->
         """
-        possible_fields = ['title', 'description', 'logo_url']
+        possible_fields = ['title', 'description', 'logo_url', 'build', 'watch']
 
         for l in self._text.split('\n'):
             if ': ' not in l:
@@ -108,8 +109,9 @@ class Readme(object):
         .. title: MyTitle
         .. description: hello bla
         .. logo_url: /path/to/logo.png
+        .. build: gulp
         """
-        possible_fields = ['title', 'description', 'logo_url']
+        possible_fields = ['title', 'description', 'logo_url', 'build', 'watch']
 
         for l in self._text.split('\n'):
             if not l.startswith('..') or ': ' not in l:
