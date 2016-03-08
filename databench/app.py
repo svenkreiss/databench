@@ -89,8 +89,18 @@ class App(object):
         self.import_analyses()
         self.register_analyses()
 
-    def tornado_app(self, debug=False):
-        return tornado.web.Application(self.routes, debug=debug)
+    def tornado_app(self, debug=False, template_path=None, **kwargs):
+        if template_path is None:
+            template_path = os.path.join(
+                os.path.dirname(os.path.realpath(__file__)),
+                'templates',
+            )
+        return tornado.web.Application(
+            self.routes,
+            debug=debug,
+            template_path=template_path,
+            **kwargs
+        )
 
     def register_analyses_py(self, zmq_publish, zmq_port):
         analysis_folders = glob.glob('analyses/*_py')
@@ -224,7 +234,7 @@ class IndexHandler(tornado.web.RequestHandler):
     def get(self):
         """Render the List-of-Analyses overview page."""
         return self.render(
-            'templates/index.html',
+            'index.html',
             analyses=Meta.all_instances,
             databench_version=DATABENCH_VERSION,
             **self.info
