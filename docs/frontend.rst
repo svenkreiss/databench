@@ -101,15 +101,19 @@ Put inside of ``analyses`` folder.
 
 .. code-block:: bash
 
-    cd analyses; npm install d3
+    cd analyses
+    npm init  # creates package.json interactively
+    npm install --save d3  # install d3 and add as dependency to packages.json
 
-to then access to with a
+to then access it with
 
 .. code-block:: html
 
     <script src="/node_modules/d3/d3.min.js"></script>
 
-which you can check into your version control if you want.
+in html. You can check that JavaScript file into your version control
+or require users to run ``cd analyses; npm install`` to install their own
+``node_modules`` locally.
 
 
 .. _include-databench-js:
