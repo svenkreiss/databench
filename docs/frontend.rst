@@ -14,7 +14,7 @@ Overview
 .. _customization:
 
 Customization (outdated)
-+++++++++++++
+++++++++++++++++++++++++
 
 You can customize the header in ``analyses/__init__.py``:
 
@@ -31,7 +31,7 @@ string of your analysis Python file.
 
 
 Formatting: Math, Markdown and src Files (outdated)
-++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 The frontend also renders math expressions enclosed in ``\\(`` and ``\\)`` as
 inline math and as block math when they are enclosed in ``$$`` and ``$$``. It
@@ -47,7 +47,7 @@ macro.
 
 
 Twitter Bootstrap and Font Awesome (outdated)
-++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++
 
 `Twitter Bootstrap <http://getbootstrap.com/>`_ is
 included so that responsive layouts of the form
@@ -74,7 +74,7 @@ which shows a GitHub icon and the Markdown rendered text with a link.
 
 
 Static Files (outdated)
-++++++++++++
++++++++++++++++++++++++
 
 To add a static file to an analysis, place it in the analysis folder. Static
 files in this folder are exposed at the ``/<some_analysis>/static/`` url.
@@ -115,7 +115,7 @@ which you can check into your version control if you want.
 .. _include-databench-js:
 
 Including Databench's JavaScript Library (outdated)
-++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 When using the ``base.html`` template, the databench library and a few more
 libraries are already loaded:
@@ -134,7 +134,7 @@ and ``databench.js``.
 
 
 Running the Backend at a Custom Location (outdated)
-++++++++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 You can also include Databench in websites. For that, you need the
 Databench JavaScript library (explained above at :ref:`include-databench-js`)
@@ -163,7 +163,7 @@ isolated server.
 
 
 Databench JavaScript Frontend (outdated)
------------------------------
+----------------------------------------
 
 This is the API documentation for the Databench JavaScript library.
 
