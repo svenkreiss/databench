@@ -4,7 +4,7 @@ import datetime
 import databench
 
 
-class Analysis(databench.Analysis):
+class Scaffold(databench.Analysis):
 
     def on_connect(self):
         """Run as soon as a browser connects to this."""
@@ -22,4 +22,4 @@ class Analysis(databench.Analysis):
                   'that the ready signal was received.')
 
 
-META = databench.Meta('scaffold', Analysis)
+META = databench.Meta('scaffold', Scaffold)

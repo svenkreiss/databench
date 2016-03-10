@@ -8,10 +8,7 @@ from random import random
 import databench
 
 
-class Analysis(databench.Analysis):
-
-    def __init__(self, id_=None):
-        super(Analysis, self).__init__(id_)
+class Dummypi(databench.Analysis):
 
     def on_connect(self):
         self.data['samples'] = 500
@@ -53,4 +50,4 @@ class Analysis(databench.Analysis):
         })
 
 
-META = databench.Meta('dummypi', Analysis)
+META = databench.Meta('dummypi', Dummypi)

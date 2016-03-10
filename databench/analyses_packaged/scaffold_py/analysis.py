@@ -5,7 +5,7 @@ import databench_py
 import databench_py.singlethread
 
 
-class Analysis(databench_py.Analysis):
+class Scaffold_Py(databench_py.Analysis):
 
     def on_connect(self):
         """Run as soon as a browser connects to this."""
@@ -24,5 +24,5 @@ class Analysis(databench_py.Analysis):
 
 
 if __name__ == "__main__":
-    analysis = databench_py.singlethread.Meta('scaffold_py', Analysis)
+    analysis = databench_py.singlethread.Meta('scaffold_py', Scaffold_Py)
     analysis.event_loop()

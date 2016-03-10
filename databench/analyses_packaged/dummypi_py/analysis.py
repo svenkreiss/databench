@@ -9,10 +9,7 @@ import logging
 logging.basicConfig(level='DEBUG')
 
 
-class Analysis(databench_py.Analysis):
-
-    def __init__(self, id_=None):
-        super(Analysis, self).__init__(id_)
+class Dummypi_Py(databench_py.Analysis):
 
     def on_connect(self):
         self.data['samples'] = 500
@@ -55,5 +52,5 @@ class Analysis(databench_py.Analysis):
 
 
 if __name__ == "__main__":
-    analysis = databench_py.singlethread.Meta('dummypi_py', Analysis)
+    analysis = databench_py.singlethread.Meta('dummypi_py', Dummypi_Py)
     analysis.event_loop()
