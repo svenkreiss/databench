@@ -2,8 +2,8 @@
 dummypi to avoid conflict with simplepi in the databench_examples repo."""
 
 import math
-from time import sleep
-from random import random
+import random
+import tornado.gen
 
 import databench
 
@@ -11,33 +11,38 @@ import databench
 class Dummypi(databench.Analysis):
 
     def on_connect(self):
-        self.data['samples'] = 500
+        self.data['samples'] = 1000
 
+    @tornado.gen.coroutine
     def on_run(self):
         """Run when button is pressed."""
 
         inside = 0
-        for i in range(self.data['samples']):
-            sleep(0.001)
-            r1, r2 = (random(), random())
+        for draws in range(1, self.data['samples']):
+            yield tornado.gen.sleep(0.001)
+
+            # generate points and check whether they are inside the unit circle
+            r1 = random.random()
+            r2 = random.random()
             if r1*r1 + r2*r2 < 1.0:
                 inside += 1
 
-            if (i+1) % 100 == 0:
-                draws = i+1
-                self.emit('log', {
-                    'draws': draws,
-                    'inside': inside,
-                    'r1': r1,
-                    'r2': r2,
-                })
+            # every 100 iterations, update status
+            if draws % 100 != 0:
+                continue
 
-                p = float(inside)/draws
-                uncertainty = 4.0*math.sqrt(draws*p*(1.0 - p)) / draws
-                self.data['pi'] = {
-                    'estimate': 4.0*inside/draws,
-                    'uncertainty': uncertainty,
-                }
+            # debug
+            self.emit('log', {'draws': draws, 'inside': inside})
+
+            # calculate pi and its uncertainty given the current draws
+            p = float(inside)/draws
+            uncertainty = 4.0*math.sqrt(draws*p*(1.0 - p)) / draws
+
+            # send status to frontend
+            self.data['pi'] = {
+                'estimate': 4.0*inside/draws,
+                'uncertainty': uncertainty,
+            }
 
         self.emit('log', {'action': 'done'})
 

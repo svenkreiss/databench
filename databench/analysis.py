@@ -8,6 +8,7 @@ import json
 import random
 import string
 import logging
+import tornado.gen
 import tornado.web
 import tornado.websocket
 from .datastore import Datastore
@@ -233,6 +234,7 @@ class Meta(object):
                 self._thumbnail = False
         return self._thumbnail
 
+    @tornado.gen.coroutine
     def run_action(self, analysis, fn_name, message='__nomessagetoken__'):
         """Executes an action in the analysis with the given message. It
         also handles the start and stop signals in case an action_id
@@ -261,13 +263,13 @@ class Meta(object):
         # Check whether this is a list (positional arguments)
         # or a dictionary (keyword arguments).
         if isinstance(message, list):
-            fn(*message)
+            yield tornado.gen.maybe_future(fn(*message))
         elif isinstance(message, dict):
-            fn(**message)
+            yield tornado.gen.maybe_future(fn(**message))
         elif message == '__nomessagetoken__':
-            fn()
+            yield tornado.gen.maybe_future(fn())
         else:
-            fn(message)
+            yield tornado.gen.maybe_future(fn(message))
 
         if action_id:
             analysis.emit('__action', {'id': action_id, 'status': 'end'})

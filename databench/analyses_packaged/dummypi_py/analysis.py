@@ -12,7 +12,7 @@ logging.basicConfig(level='DEBUG')
 class Dummypi_Py(databench_py.Analysis):
 
     def on_connect(self):
-        self.data['samples'] = 500
+        self.data['samples'] = 1000
 
     def on_run(self):
         """Run when button is pressed."""
