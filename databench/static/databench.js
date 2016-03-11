@@ -404,10 +404,10 @@ var Button = exports.Button = function () {
         value: function render() {
             switch (this._state) {
                 case this.ACTIVE:
-                    this.node.classList.add('active');
+                    this.node.classList.add('disabled');
                     break;
                 default:
-                    this.node.classList.remove('active');
+                    this.node.classList.remove('disabled');
             }
             return this;
         }
