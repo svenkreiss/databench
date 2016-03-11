@@ -1,6 +1,6 @@
 <!--
-Title: DummyPi
-Description: Calculating pi the simple way, but this is called dummypi to avoid conflict with simplepi in the databench_examples repo.
+Title: Dummy π
+Description: Calculating π the simple way, but this is called dummypi to avoid conflict with simplepi in the databench_examples repo.
 -->
 
 This little demo uses two random numbers r1 and r2 and

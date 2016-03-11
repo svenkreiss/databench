@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import io
 import os
 import fnmatch
 import logging
@@ -39,7 +40,7 @@ class Readme(object):
         if not readme_file:
             return
 
-        with open(readme_file, 'r') as f:
+        with io.open(readme_file, 'r') as f:
             self._text = f.read()
 
         if readme_file.lower().endswith('.md'):
