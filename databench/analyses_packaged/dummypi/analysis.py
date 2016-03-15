@@ -1,6 +1,3 @@
-"""Calculating \\(\\pi\\) the simple way, but this is called
-dummypi to avoid conflict with simplepi in the databench_examples repo."""
-
 import math
 import random
 import tornado.gen
