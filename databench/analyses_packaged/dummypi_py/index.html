@@ -6,10 +6,10 @@
     <div class="col-md-3">
         <label for="samples">Samples:</label>
         <input type="range" name="samples" value="1000"
-            min="100" max="10000" step="100" data-instance="samples" />
+            min="1000" max="10000" step="1000" data-instance="samples" />
     </div>
     <div class="col-md-9">
-        <button class="btn btn-primary" data-signal-name="run">Run</button>
+        <button class="btn btn-primary" data-signal="run">Run</button>
     </div>
 </div>
 <div style="font-size: 400%"><i>π = <span id="pi">0.0 ± 1.0</span></i></div>
@@ -18,10 +18,14 @@
 
 {% block footer %}
 <script>
-    var databench = Databench();
+    var d = new Databench.Connection();
+    Databench.ui.wire(d);
+    d.connect();
 
-    databench.on('data', function(msg) {
-        $('#pi').text(msg.pi.estimate.toFixed(3)+' ± '+msg.pi.uncertainty.toFixed(3));
+    d.on('data', function(msg) {
+        if ('pi' in msg) {
+            $('#pi').text(msg.pi.estimate.toFixed(3)+' ± '+msg.pi.uncertainty.toFixed(3));
+        }
     });
 </script>
 {% end %}
