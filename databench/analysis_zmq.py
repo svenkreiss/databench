@@ -1,5 +1,6 @@
 import zmq
 import json
+import time
 import logging
 import subprocess
 import tornado.gen
@@ -47,10 +48,10 @@ class AnalysisZMQ(Analysis):
         self.kernel_process = subprocess.Popen(e_params, shell=False)
         log.debug('finished on_connect for {}'.format(self.id_))
 
-    @tornado.gen.coroutine
     def on_disconnect(self):
-        # give kernel time to process disconnect message
-        yield tornado.gen.sleep(1.0)
+        # Give kernel time to process disconnect message.
+        # In autoreload, this callback needs to be processed synchronously.
+        time.sleep(0.1)
 
         log.debug('terminating kernel process {}'.format(self.id_))
         if self.kernel_process is not None:

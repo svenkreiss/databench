@@ -280,6 +280,7 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
     def initialize(self, meta):
         self.meta = meta
         self.analysis = None
+        tornado.autoreload.add_reload_hook(self.on_close)
 
     def open(self):
         log.debug('WebSocket connection opened.')
