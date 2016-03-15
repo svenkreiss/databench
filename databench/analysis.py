@@ -322,7 +322,7 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
 
     def emit(self, signal, message):
         message = FrontendHandler.sanitize_message(message)
-        log.debug('websocket writing: {}'.format(message))
+        # log.debug('websocket writing: {}'.format(message))
         try:
             self.write_message(json.dumps(
                 {'signal': signal, 'load': message}
