@@ -54,7 +54,8 @@ def main():
         print('Setting loglevel to '+args.loglevel+'.')
     logging.basicConfig(level=getattr(logging, args.loglevel))
 
-    logging.info('--- databench v{} ---'.format(DATABENCH_VERSION))
+    logging.info('Python {}'.format(sys.version))
+    logging.info('Databench {}'.format(DATABENCH_VERSION))
     logging.info('host={}, port={}'.format(args.host, args.port))
 
     # handle external signal to terminate nicely (used in tests)

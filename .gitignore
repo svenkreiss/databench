@@ -29,6 +29,7 @@ var/
 .eggs
 venv/
 venv26/
+venv3/
 .coverage*
 
 # Installer logs
