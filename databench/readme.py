@@ -26,7 +26,7 @@ class Readme(object):
         self._text = None
         self._meta = None
 
-    def _read(self):
+    def _read(self, encoding='utf8', encoding_errors='ignore'):
         self._meta = {}
         self._text = ''
 
@@ -36,11 +36,12 @@ class Readme(object):
                        for n in os.listdir(self.directory)
                        if fnmatch.fnmatch(n.lower(), 'readme.*')]
         readme_file = readme_file[0] if readme_file else None
-        log.debug('Readme file name: {}'.format(readme_file))
         if not readme_file:
             return
 
-        with io.open(readme_file, 'r') as f:
+        log.debug('Readme file name: {}'.format(readme_file))
+        with io.open(readme_file, 'r',
+                     encoding=encoding, errors=encoding_errors) as f:
             self._text = f.read()
 
         if readme_file.lower().endswith('.md'):
@@ -89,7 +90,8 @@ class Readme(object):
         build: gulp
         -->
         """
-        possible_fields = ['title', 'description', 'logo_url', 'build', 'watch']
+        possible_fields = ['title', 'description', 'logo_url', 'build',
+                           'watch']
 
         for l in self._text.split('\n'):
             if ': ' not in l:
@@ -112,7 +114,8 @@ class Readme(object):
         .. logo_url: /path/to/logo.png
         .. build: gulp
         """
-        possible_fields = ['title', 'description', 'logo_url', 'build', 'watch']
+        possible_fields = ['title', 'description', 'logo_url', 'build',
+                           'watch']
 
         for l in self._text.split('\n'):
             if not l.startswith('..') or ': ' not in l:
