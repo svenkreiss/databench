@@ -18,35 +18,57 @@ Install ``databench`` as shown at the top of the :ref:`overview` page. To start 
 
 At this point you are all set up and can run ``databench``, view the analysis in a browser at http://localhost:5000 and start modifying the analysis source code.
 
-
-Analysis Structure
-------------------
-
 To understand the structure, this is a walk-through of the steps that just happened in ``scaffold-databench``. First, tell the analyses module that we created a new analysis called *helloworld* in the ``analyses/__init__.py`` file:
 
 .. code-block:: python
 
-    import helloworld.analysis
+    from .helloworld import analysis as helloworld_a
 
 Next, create the helloworld backend in ``analyses/helloworld/analysis.py``:
 
 .. code-block:: python
 
-    """Hello World for Databench."""
-
     import databench
 
 
-    class Analysis(databench.Analysis):
+    class HelloWorld(databench.Analysis):
 
         def on_connect(self):
             """Run as soon as a browser connects to this."""
-            self.emit('status', {'message': 'Hello World'})
+            self.data['status'] = 'Hello World'
 
 
-    META = databench.Meta('helloworld', __name__, __doc__, Analysis)
+    META = databench.Meta('helloworld', HelloWorld)
 
 And the frontend in ``analyses/helloworld/index.html``:
+
+.. code-block:: html
+
+    {% extends "analysis.html" %}
+
+
+    {% block analysis %}
+    <p id="output"></p>
+    {% end %}
+
+
+    {% block footer %}
+    <script>
+        var d = new Databench.Connection();
+        d.connect();
+
+        d.on('data', function(data) {
+            document.getElementById('output').innerHTML = data.status;
+        });
+    </script>
+    {% end %}
+
+Now you can run the executable ``databench`` in your ``workingDir`` folder (outside of ``analyses``) which creates a webserver and you can open http://localhost:5000 in your webbrowser. The command line options ``--host`` and ``--port`` set the host and port of the webserver ``--log`` changes the loglevel. For example, calling ``databench --log=DEBUG`` enables all messages; the options are ``NOTSET``, ``DEBUG``, ``INFO``, ``WARNING``, ``ERROR`` and ``CRITICAL``. Running databench in ``WARNING`` or ``INFO`` enables autoreloading on code changes. You can also create a ``requirements.txt`` file containing other Python packages your analysis needs. An example of this setup is the `databench_examples`_ repository.
+
+.. _`databench_examples`: https://github.com/svenkreiss/databench_examples
+
+
+**Without a template**: The analysis can also be run without a template. You can replace ``index.html`` with
 
 .. code-block:: html
 
@@ -56,44 +78,18 @@ And the frontend in ``analyses/helloworld/index.html``:
     <body>
         <p id="output"></p>
 
-        <script src="/static/jquery/jquery-2.1.1.min.js"></script>
-        <script src="/static/databench.js"></script>
+        <script src="/_static/databench.js"></script>
         <script>
-            var databench = Databench();
-            databench.on('status', function(json) {
-                document.getElementById('output').innerHTML =
-                    json.message;
+            var d = new Databench.Connection();
+            d.connect();
+
+            d.on('data', function(data) {
+                document.getElementById('output').innerHTML = data.status;
             });
         </script>
     </body>
     </html>
 
-Now you can run the executable ``databench`` in your ``workingDir`` folder (outside of analyses) which creates a webserver and you can open http://localhost:5000 in your webbrowser. The command line options ``--host`` and ``--port`` set the host and port of the webserver ``--log`` changes the loglevel. For example, calling ``databench --log=DEBUG`` enables all messages; the options are ``NOTSET``, ``DEBUG``, ``INFO``, ``WARNING``, ``ERROR`` and ``CRITICAL``. Running databench in ``WARNING`` or ``INFO`` enables autoreloading on code changes. You can also create a ``requirements.txt`` file containing other Python packages your analysis needs. An example of this setup is the `databench_examples`_ repository.
+You can find the result of this tutorial in the `helloworld analysis of the databench_examples`_ repo.
 
-.. _`databench_examples`: https://github.com/svenkreiss/databench_examples
-
-
-**Using the** ``base.html`` **Template:** To provide some basic header and footer for an analysis, the ``base.html`` template is available. It is not required to use it, but it includes a range of default libraries that might come in handy. To use it, change the ``index.html`` to
-
-.. code-block:: html
-
-    {% extends "base.html" %}
-
-
-    {% block title %}Hello World{% endblock %}
-
-
-    {% block content %}
-    <p id="output"></p>
-    {% endblock %}
-
-
-    {% block footerscripts %}
-    <script>
-        var databench = Databench();
-        databench.on('status', function(json) {
-            document.getElementById('output').innerHTML =
-                json.message;
-        });
-    </script>
-    {% endblock %}
+.. _`helloworld analysis of the databench_examples`: https://github.com/svenkreiss/databench_examples

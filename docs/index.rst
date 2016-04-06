@@ -34,8 +34,6 @@ Some features are shown in the `live demos`_. They do not include examples with 
    :height: 270
    :target: http://databench-examples.svenkreiss.com/simplepi/
 
-The `live demos`_ and `databench_examples`_ also show seemless integration with *markdown* and *MathJax* as well as with *angular.js*.
-
 .. _`first blog post`: http://www.svenkreiss.com/blog/databench-initial/
 .. _`slides from Hack and Tell NY`: https://speakerdeck.com/svenkreiss/databench
 .. _`live demos`: http://databench-examples.svenkreiss.com/
