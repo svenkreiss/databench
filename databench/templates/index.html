@@ -1,39 +1,26 @@
 {% extends "base.html" %}
 
 
-{% block databench_head %}
-<link rel="stylesheet" href="/_node_modules/bootstrap/dist/css/bootstrap.min.css">
-{% end %}
-
-
 {% block content %}
 {% if description %}
     {% raw description %}
     <br />
 {% end %}
 <h1>List of Analyses</h1>
-<div class="row">
+<div class="d-boxes">
     {% for a in [aa for aa in analyses if aa.show_in_index] %}
-    <div class="col-md-6">
-        <a href="/{{a.name}}/">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                {% if a.thumbnail %}
-                    <img src="/{{a.name}}/static/{{a.thumbnail}}" class="img-thumbnail analysis-thumbnail" />
-                {% end %}
-                {{a.info['title']}}{% if a.info['description'] %}<span class="text-muted">: {{ a.info['description'] }}</span>{% end %}
-            </div>
-        </div>
-        </a>
-    </div>
+    <a class="d-box" href="/{{a.name}}/">
+    {% if a.thumbnail %}
+        <img src="/{{a.name}}/static/{{a.thumbnail}}" class="d-analysis-thumbnail" />
+    {% end %}
+    {{a.info['title']}}{% if a.info['description'] %}<span class="text-muted">: {{ a.info['description'] }}</span>{% end %}
+    </a>
     {% end %}
 </div>
 {% end %}
 
 
 {% block databench_footer %}
-<script src="/_node_modules/jquery/dist/jquery.min.js"></script>
-<script src="/_node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 <script>
     console.log('--- databench v{{databench_version}} ---');
     console.log('Analyses author: {{author}}');

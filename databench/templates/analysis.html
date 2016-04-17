@@ -1,11 +1,6 @@
 {% extends "base.html" %}
 
 
-{% block databench_head %}
-<link rel="stylesheet" href="/_node_modules/bootstrap/dist/css/bootstrap.min.css">
-{% end %}
-
-
 {% block content %}
     {% block readme %}{% raw readme %}<br />{% end %}
 
@@ -17,7 +12,5 @@
 
 
 {% block databench_footer %}
-<script src="/_node_modules/jquery/dist/jquery.min.js"></script>
-<script src="/_node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="/_static/databench.js?version={{ databench_version }}"></script>
 {% end %}

@@ -14,29 +14,24 @@
     </head>
     <body>
         {% block body %}
-        <div class="container">
-            <div class="header">
-                <h3><a href="/" class="text-muted">
+        <div class="d-container">
+            <div class="d-header">
+                <h2><a href="/" class="text-muted">
                     {% block headerlogo %}
                         <img src="{{ logo_url }}" />{{ title }}
                     {% end %}
-                </a></h3>
+                </a></h2>
             </div>
 
-            <div class="content" id="databench_content">
+            <div class="d-content" id="d-content">
                 {% block content %}
                 {% end %}
             </div>
 
-            <div class="footer">
-                <div class="row">
-                    <div class="col-sm-6">
-                    </div>
-
-                    <div class="col-sm-6 text-right-sm">
-                        Read the <a href="http://databench.trivial.io/v0.4/">Databench Docs</a>.
-                        <!-- This is version {{databench_version}}. -->
-                    </div>
+            <div class="d-footer">
+                <div class="text-right-sm">
+                    Read the <a href="http://databench.trivial.io/v0.4/">Databench Docs</a>.
+                    <!-- This is version {{databench_version}}. -->
                 </div>
             </div>
         </div>
