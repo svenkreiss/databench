@@ -82,6 +82,14 @@ button.disabled {
     box-shadow: none;
     opacity: .65;
 }
+.btn-primary {
+    color: #fff;
+    background-color: #38b;
+    border-color: #37a;
+}
+.btn-primary:hover {
+    background-color: #27a;
+}
 
 label {
     font-weight: 700;
