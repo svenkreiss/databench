@@ -30,6 +30,31 @@ string passed into :class:`databench.Analysis` which is usually the ``__doc__``
 string of your analysis Python file.
 
 
+HTML Template
++++++++++++++
+
+Templates are rendered buy Tornado's template engine. Databench provides
+a visual frame for your analysis which you can extend from with
+``{% extends "analysis.html" %}``.
+This template offers you three main entry points for modifying the HTML page.
+Those are the template blocks ``head`` which places your code inside the
+HTML ``<head>``, ``analysis`` which inserts your main code into the
+HTML ``<body>`` and ``footer`` for code that should be placed right before the
+closing ``</body>`` tag.
+
+Here is an example for making use of the ``head`` block:
+
+.. code-block:: html
+
+    {% block head %}
+        <!-- Add inline CSS to the page: -->
+        <style>p { font-family: serif; }</style>
+
+        <!-- Add a css file (put my-style.css into analyses/scaffold/): -->
+        <link rel="stylesheet" type="text/css" href="static/my-style.css">
+    {% end %}
+
+
 Formatting: Math, Markdown and src Files (outdated)
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 

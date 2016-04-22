@@ -1,0 +1,24 @@
+{% extends "analysis.html" %}
+
+
+{% block analysis %}
+{% end %}
+
+
+{% block footer %}
+<script>
+    var d = new Databench.Connection();
+    Databench.ui.wire(d);
+    d.connect();
+
+    // listen for the 'ready' signal
+    d.on('ready', function(data) {
+        document.getElementById('backend_ready_msg').innerHTML = data;
+        console.log('Ready message received and set as the text of element '+
+                    '#backend_ready_msg. Now sending message back to backend.')
+
+        // Send something to the backend in return:
+        d.emit('got_ready_signal', 'thanks for sending ready signal');
+    });
+</script>
+{% end %}
