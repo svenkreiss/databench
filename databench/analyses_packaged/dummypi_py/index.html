@@ -24,7 +24,7 @@
 
     d.on('data', function(msg) {
         if ('pi' in msg) {
-            $('#pi').text(msg.pi.estimate.toFixed(3)+' ± '+msg.pi.uncertainty.toFixed(3));
+            document.getElementById('pi').innerHTML = msg.pi.estimate.toFixed(3)+' ± '+msg.pi.uncertainty.toFixed(3);
         }
     });
 </script>

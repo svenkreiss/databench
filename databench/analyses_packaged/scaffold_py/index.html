@@ -1,17 +1,6 @@
 {% extends "analysis.html" %}
 
 
-{% block head %}
-<!--
-    Add inline CSS to the page:
-    <style>p { font-family: serif; }</style>
-
-    Add a css file (put my-style.css into analyses/scaffold/):
-    <link rel="stylesheet" type="text/css" href="/scaffold/static/my-style.css">
--->
-{% end %}
-
-
 {% block analysis %}
 <h3>Analysis Output</h3>
 <p>The backend's <i>ready</i> signal:
@@ -22,22 +11,20 @@
 
 
 {% block footer %}
-<!--
-    Add a js library (put my-library.js into analyses/scaffold/):
-    <script src="/scaffold/static/my-library.js"></script>
--->
 <script>
-    // Initialize Databench's frontend library.
-	var databench = Databench();
+    // initialize Databench's frontend library
+    var d = new Databench.Connection();
+    Databench.ui.wire(d);
+    d.connect();
 
-    // Interact with the backend. Listen for the 'ready' signal like this:
-    databench.on('ready', function(data) {
-        $('#backend_ready_msg').text(data);
+    // listen for the 'ready' signal
+    d.on('ready', function(data) {
+        document.getElementById('backend_ready_msg').innerHTML = data;
         console.log('Ready message received and set as the text of element '+
                     '#backend_ready_msg. Now sending message back to backend.')
 
         // Send something to the backend in return:
-        databench.emit('got_ready_signal', 'thanks for sending ready signal');
+        d.emit('got_ready_signal', 'thanks for sending ready signal');
     });
 </script>
 {% end %}
