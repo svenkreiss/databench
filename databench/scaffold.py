@@ -87,7 +87,7 @@ def copy_scaffold_file(src, dest, name):
         raise
 
     # scaffold name
-    scaffold_name = src.rsplit('/', maxsplit=2)[-2]
+    scaffold_name = src.rsplit('/', 2)[-2]
 
     # replace
     lines = [l.replace(scaffold_name, name) for l in lines]
