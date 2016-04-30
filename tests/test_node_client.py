@@ -1,7 +1,7 @@
 import os
-import time
 import signal
 import subprocess
+import time
 
 
 DAEMON = None

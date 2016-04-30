@@ -1,12 +1,12 @@
 """Simple test."""
 
-import os
 import json
-import time
-import signal
+import os
 import requests
-import websocket
+import signal
 import subprocess
+import time
+import websocket
 
 
 DAEMON = None
@@ -158,7 +158,7 @@ Function Argument Tests
 
 def _fn_call(name='dummypi'):
     # websocket.enableTrace(True)
-    ws = websocket.create_connection('ws://127.0.0.1:5000/'+name+'/ws')
+    ws = websocket.create_connection('ws://127.0.0.1:5000/{}/ws'.format(name))
     ws.send('{"__connect": null}')
     r = json.loads(ws.recv())
     print(r)
@@ -179,7 +179,7 @@ def _fn_call(name='dummypi'):
 
 def _fn_call_array(name='dummypi'):
     # websocket.enableTrace(True)
-    ws = websocket.create_connection('ws://127.0.0.1:5000/'+name+'/ws')
+    ws = websocket.create_connection('ws://127.0.0.1:5000/{}/ws'.format(name))
     ws.send('{"__connect": null}')
     r = json.loads(ws.recv())
     print(r)
@@ -200,7 +200,7 @@ def _fn_call_array(name='dummypi'):
 
 def _fn_call_dict(name='dummypi'):
     # websocket.enableTrace(True)
-    ws = websocket.create_connection('ws://127.0.0.1:5000/'+name+'/ws')
+    ws = websocket.create_connection('ws://127.0.0.1:5000/{}/ws'.format(name))
     ws.send('{"__connect": null}')
     r = json.loads(ws.recv())
     print(r)

@@ -18,6 +18,9 @@ local machine. Then install your local version in editable mode into a
     npm install -g gulp
     npm install
 
+    # install pre-commit hook to check linting
+    flake8 --install-hook
+
 
 Now you can run
 

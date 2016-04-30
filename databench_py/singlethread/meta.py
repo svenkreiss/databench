@@ -1,9 +1,9 @@
 """Meta class for Databench Python kernel."""
 
-import sys
-import zmq
 import json
 import logging
+import sys
+import zmq
 
 log = logging.getLogger(__name__)
 
@@ -47,9 +47,12 @@ class Meta(object):
                  'analysis id {}.'.format(self.name, self.analysis.id_))
 
     def _init_zmq(self, port_publish, port_subscribe):
-        """Initialize zmq messaging. Listen on sub_port. This port might at
+        """Initialize zmq messaging.
+
+        Listen on sub_port. This port might at
         some point receive the message to start publishing on a certain
-        port, but until then, no publishing."""
+        port, but until then, no publishing.
+        """
 
         log.debug('kernel {} publishing on port {}'
                   ''.format(self.analysis.id_, port_publish))
@@ -91,8 +94,9 @@ class Meta(object):
         )
 
     def run_action(self, analysis, fn_name, message='__nomessagetoken__'):
-        """Executes an action in the analysis with the given message. It
-        also handles the start and stop signals in case an action_id
+        """Executes an action in the analysis with the given message.
+
+        It also handles the start and stop signals in case an action_id
         is given.
 
         This method is exactly the same as in databench.Analysis.
@@ -157,8 +161,8 @@ class Meta(object):
             return
 
         # standard message
-        fn_name = 'on_'+msg['signal']
-        log.debug('kernel processing '+fn_name)
+        fn_name = 'on_{}'.format(msg['signal'])
+        log.debug('kernel processing {}'.format(fn_name))
         self.run_action(self.analysis, fn_name, msg['load'])
 
     def emit(self, signal, message, analysis_id):
