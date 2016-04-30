@@ -5,13 +5,15 @@ python:
  - "3.5"
 install:
  # install Python dependencies
- - "pip install --upgrade pip"
+ - pip install --upgrade pip
  - "pip install -e .[tests]"
- - "pip install python-coveralls coverage"
+ - pip install python-coveralls coverage
  # install Node dependencies
  - npm install mocha gulp
  - npm install
  - export PATH=$PATH:/usr/lib/node_modules/.bin/
-script: "nosetests -vv --with-coverage --cover-package=databench --cover-erase"
+script:
+ - flake8
+ - nosetests -vv --with-coverage --cover-package=databench --cover-erase
 after_success:
-  - coveralls || true
+ - coveralls || true

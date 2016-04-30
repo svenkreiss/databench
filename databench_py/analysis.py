@@ -1,7 +1,7 @@
 """Analysis module for Databench Python kernel."""
 
-import logging
 from databench import Datastore
+import logging
 
 log = logging.getLogger(__name__)
 

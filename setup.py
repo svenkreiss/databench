@@ -38,6 +38,8 @@ setup(
             'docutils>=0.12',
         ],
         'tests': [
+            'flake8>=2.5.4',
+            'hacking>=0.11.0',
             'nose>=1.3.4',
             'coverage>=4.0.3',
             'requests>=2.9.1',
@@ -58,7 +60,9 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
     ]

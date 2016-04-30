@@ -2,25 +2,23 @@
 
 from __future__ import absolute_import, unicode_literals, division
 
-import os
-import sys
+from . import __version__ as DATABENCH_VERSION
+from .analysis import Meta
+from .analysis_zmq import MetaZMQ
+from .readme import Readme
 import glob
 import logging
+import os
+import sys
+import tornado.autoreload
+import tornado.web
 import traceback
 import zmq.eventloop
-
-import tornado.web
-import tornado.autoreload
 
 try:
     import glob2
 except ImportError:
     glob2 = None
-
-from .analysis import Meta
-from .analysis_zmq import MetaZMQ
-from .readme import Readme
-from . import __version__ as DATABENCH_VERSION
 
 log = logging.getLogger(__name__)
 

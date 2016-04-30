@@ -2,18 +2,18 @@
 
 from __future__ import absolute_import, unicode_literals, division
 
-import os
-import sys
+from .datastore import Datastore
+from .readme import Readme
 import json
+import logging
+import os
 import random
 import string
-import logging
+import sys
 import tornado.gen
 import tornado.web
 import tornado.websocket
-from .datastore import Datastore
 
-from .readme import Readme
 from . import __version__ as DATABENCH_VERSION
 
 log = logging.getLogger(__name__)
@@ -122,7 +122,8 @@ class Analysis(object):
 
 
 class Meta(object):
-    """
+    """Meta class referencing an analysis.
+
     Args:
         name (str): Name of this analysis. If ``signals`` is not specified,
             this also becomes the namespace for the WebSocket connection and
@@ -236,9 +237,11 @@ class Meta(object):
 
     @tornado.gen.coroutine
     def run_action(self, analysis, fn_name, message='__nomessagetoken__'):
-        """Executes an action in the analysis with the given message. It
-        also handles the start and stop signals in case an action_id
-        is given."""
+        """Executes an action in the analysis with the given message.
+
+        It also handles the start and stop signals in case an action_id
+        is given.
+        """
 
         if analysis is None:
             return
@@ -315,10 +318,10 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
             return
 
         if 'signal' not in msg or 'load' not in msg:
-            log.info('message not processed: '+message)
+            log.info('message not processed: {}'.format(message))
             return
 
-        fn_name = 'on_'+msg['signal']
+        fn_name = 'on_{}'.format(msg['signal'])
         self.meta.run_action(self.analysis, fn_name, msg['load'])
 
     def emit(self, signal, message):

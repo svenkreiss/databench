@@ -1,6 +1,6 @@
+from collections import defaultdict
 import copy
 import logging
-from collections import defaultdict
 
 log = logging.getLogger(__name__)
 
@@ -42,6 +42,7 @@ class Datastore(object):
 
     def init(self, d):
         """Only sets values that are not set already.
+
         No callbacks are called.
         """
         for k, v in d.items():
