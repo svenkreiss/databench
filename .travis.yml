@@ -13,7 +13,7 @@ install:
  - npm install
  - export PATH=$PATH:/usr/lib/node_modules/.bin/
 script:
- - flake8 databench
+ - flake8
  - nosetests -vv --with-coverage --cover-package=databench --cover-erase
 after_success:
  - coveralls || true
