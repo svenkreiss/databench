@@ -2,13 +2,13 @@
 """Databench command line tool. See http://databench.trivial.io for
 more info."""
 
-import os
-import sys
-import signal
-import random
-import logging
-import tornado
 import argparse
+import logging
+import os
+import random
+# import signal
+import sys
+import tornado
 
 from . import __version__ as DATABENCH_VERSION
 
@@ -21,7 +21,7 @@ def main():
 
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--version', action='version',
-                        version='%(prog)s '+DATABENCH_VERSION)
+                        version='%(prog)s {}'.format(DATABENCH_VERSION))
     parser.add_argument('--log', dest='loglevel', default="WARNING",
                         help='log level (INFO and DEBUG enable '
                              'autoreload)')
@@ -41,7 +41,7 @@ def main():
     if args.with_coverage:
         import coverage
         cov = coverage.coverage(
-            data_suffix=str(int(random.random()*999999.0)),
+            data_suffix=str(int(random.random() * 999999.0)),
             source=['databench'],
         )
         cov.start()
@@ -51,7 +51,7 @@ def main():
 
     # log
     if args.loglevel != 'WARNING':
-        print('Setting loglevel to '+args.loglevel+'.')
+        print('Setting loglevel to {}.'.format(args.loglevel))
     logging.basicConfig(level=getattr(logging, args.loglevel))
 
     logging.info('Python {}'.format(sys.version))

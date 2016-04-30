@@ -1,5 +1,5 @@
-import time
 import datetime
+import time
 
 import databench
 
@@ -14,8 +14,11 @@ class Scaffold(databench.Analysis):
                   datetime.datetime.now().isoformat())
 
     def on_got_ready_signal(self, msg):
-        """This is the signal the frontend sends back to the backend once
-        it received the 'ready' signal from the on_connect() function."""
+        """Respond to 'ready' signal.
+
+        This is the signal the frontend sends back to the backend once
+        it received the 'ready' signal from the on_connect() function.
+        """
 
         time.sleep(2)
         self.emit('log', 'Backend received the confirmation from the frontend '

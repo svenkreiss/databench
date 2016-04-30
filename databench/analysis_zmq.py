@@ -1,9 +1,9 @@
-import zmq
 import json
-import time
 import logging
 import subprocess
+import time
 import tornado.gen
+import zmq
 import zmq.eventloop.zmqstream
 from .analysis import Analysis, Meta
 
@@ -115,9 +115,11 @@ class MetaZMQ(Meta):
 
     @tornado.gen.coroutine
     def run_action(self, analysis, fn_name, message='__nomessagetoken__'):
-        """Executes an action in the analysis with the given message. It
-        also handles the start and stop signals in case an action_id
-        is given."""
+        """Executes an action in the analysis with the given message.
+
+        It also handles the start and stop signals in case an action_id
+        is given.
+        """
 
         if fn_name == 'on_connect':
             analysis.on_connect(self.executable, self.zmq_publish)

@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
 
-import io
-import os
 import fnmatch
+import io
 import logging
+import os
 
 # utilities
 try:
@@ -80,7 +80,8 @@ class Readme(object):
         return self._meta
 
     def extract_md_meta(self):
-        """
+        """Extract meta data from markdown files.
+
         Searches for lines like:
 
         <!--
@@ -106,7 +107,8 @@ class Readme(object):
         return self
 
     def extract_rst_meta(self):
-        """
+        """Extract meta data from rst files.
+
         Searches for lines like:
 
         .. title: MyTitle

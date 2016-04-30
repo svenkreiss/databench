@@ -2,9 +2,9 @@
 
 """Command line tool to scaffold a new analysis environment."""
 
+import argparse
 import os
 import shutil
-import argparse
 
 # for Python 2 compatibility
 try:
@@ -23,13 +23,13 @@ def check_folders(name):
         if correct != 'y':
             return False
 
-    if not os.path.exists(os.getcwd()+'/analyses'):
+    if not os.path.exists(os.getcwd() + '/analyses'):
         correct = input('This is the first analysis here. Do '
                         'you want to continue? (y/N)')
         if correct != 'y':
             return False
 
-    if os.path.exists(os.getcwd()+'/analyses/'+name):
+    if os.path.exists(os.getcwd() + '/analyses/' + name):
         correct = input('An analysis with this name exists already. Do '
                         'you want to continue? (y/N)')
         if correct != 'y':
@@ -39,13 +39,16 @@ def check_folders(name):
 
 
 def create_analyses(name, suffix):
-    """If it does not exist already, it creates the top level analyses folder
-    and it's __init__.py file."""
+    """Create an analysis with given name and suffix.
 
-    if not os.path.exists(os.getcwd()+'/analyses'):
+    If it does not exist already, it creates the top level analyses folder
+    and it's __init__.py file.
+    """
+
+    if not os.path.exists(os.getcwd() + '/analyses'):
         os.system("mkdir analyses")
 
-    if not os.path.exists(os.getcwd()+'/analyses/__init__.py'):
+    if not os.path.exists(os.getcwd() + '/analyses/__init__.py'):
         with open('analyses/__init__.py', 'w') as f:
             f.write('"""Analyses folder created by `scaffold-databench`. '
                     'Modify me. This text is in `analyses/__init__.py`.'
@@ -102,7 +105,7 @@ def create_analysis(name, suffix, src_dir):
     """Create analysis files."""
 
     # analysis folder
-    folder = os.getcwd()+'/analyses/'+name
+    folder = os.getcwd() + '/analyses/' + name
     if not os.path.exists(folder):
         os.makedirs(folder)
     else:

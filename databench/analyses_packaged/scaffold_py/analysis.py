@@ -1,5 +1,5 @@
-import time
 import datetime
+import time
 
 import databench_py
 import databench_py.singlethread
@@ -15,7 +15,9 @@ class Scaffold_Py(databench_py.Analysis):
                   datetime.datetime.now().isoformat())
 
     def on_got_ready_signal(self, msg):
-        """This is the signal the frontend sends back to the backend once
+        """Respond to 'ready' signal.
+
+        This is the signal the frontend sends back to the backend once
         it received the 'ready' signal from the on_connect() function.
         """
         time.sleep(2)
