@@ -7,13 +7,13 @@ install:
  # install Python dependencies
  - pip install --upgrade pip
  - "pip install -e .[tests]"
- - pip install python-coveralls coverage
+ - pip install python-coveralls
  # install Node dependencies
  - npm install mocha gulp
  - npm install
  - export PATH=$PATH:/usr/lib/node_modules/.bin/
 script:
  - flake8
- - nosetests -vv --with-coverage --cover-package=databench --cover-erase
+ - nosetests -vv --with-coverage --cover-package=databench
 after_success:
  - coveralls || true
