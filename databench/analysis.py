@@ -124,36 +124,16 @@ class Analysis(object):
 class Meta(object):
     """Meta class referencing an analysis.
 
-    Args:
-        name (str): Name of this analysis. If ``signals`` is not specified,
-            this also becomes the namespace for the WebSocket connection and
-            has to match the frontend's :js:class:`Databench` ``name``.
-        description (str): Defined in README.
-        analysis_class (:class:`databench.Analysis`): Object
-            that should be instantiated for every new websocket connection.
+    An instance of this class is created in every ``analysis.py``.
 
-    For standard use cases, you don't have to modify this class. However,
-    If you want to serve more than the ``index.html`` page, say a
-    ``details.html`` page, you can derive from this class and add this
-    to the constructor
+    :param str name:
+        Name of this analysis. If ``signals`` is not specified,
+        this also becomes the namespace for the WebSocket connection and
+        has to match the frontend's :js:class:`Databench` ``name``.
 
-    .. code-block:: python
-
-        self.blueprint.add_url_rule('/details.html', 'render_details',
-                                    self.render_details)
-
-    and add a new method to the class
-
-    .. code-block:: python
-
-        def render_details(self):
-            return render_template(
-                self.name+'/details.html',
-                analysis_description=self.description
-            )
-
-    and create the file ``details.html`` similar to ``index.html``.
-
+    :param analysis_class:
+        Object that should be instantiated for every new websocket connection.
+    :type analysis_class: :class:`databench.Analysis`
     """
 
     all_instances = []
