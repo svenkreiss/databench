@@ -97,6 +97,18 @@ label {
     font-weight: 700;
 }
 
+.alert {
+    border:1px solid #aaa;
+    border-radius: 4px;
+    padding: 15px;
+}
+
+.alert-danger {
+    color: #b44;
+    border-color: #edd;
+    background-color: #fee;
+}
+
 
 
 .d-header {
