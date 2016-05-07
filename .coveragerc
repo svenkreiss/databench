@@ -1,9 +1,0 @@
-[run]
-source = databench
-
-[report]
-omit =
-    *.html
-    databench/scaffold.py
-    databench/cli.py
-    databench/analyses_packaged/*

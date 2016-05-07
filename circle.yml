@@ -13,6 +13,6 @@ dependencies:
 test:
   override:
     - flake8
-    - nosetests -vv --with-coverage --cover-package=databench
+    - nosetests -vv --with-coverage --cover-package=databench --cover-erase
   post:
     - coveralls || true
