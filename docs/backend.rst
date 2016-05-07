@@ -62,3 +62,10 @@ Meta
 
 .. autoclass:: databench.Meta
    :members: render_index
+
+
+Datastore
+---------
+
+.. autoclass:: databench.Datastore
+   :members:
