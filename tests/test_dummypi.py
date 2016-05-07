@@ -38,6 +38,7 @@ def teardown_module():
         os.killpg(DAEMON.pid, signal.SIGUSR1)
     else:
         os.killpg(DAEMON.pid, signal.SIGTERM)
+    time.sleep(5)
     DAEMON.wait()
 
 
