@@ -41,7 +41,7 @@ setup(
             'flake8>=2.5.4',
             'hacking>=0.11.0',
             'nose>=1.3.4',
-            'coverage>=4.0.3',
+            'coverage>=4.1b2',
             'requests>=2.9.1',
             'websocket-client>=0.35.0',
         ],
