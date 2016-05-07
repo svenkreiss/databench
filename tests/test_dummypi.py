@@ -24,7 +24,7 @@ def setup_module():
                               stdin=subprocess.PIPE,
                               stdout=subprocess.PIPE,
                               preexec_fn=os.setsid)
-    time.sleep(1)
+    time.sleep(5)
 
 
 def teardown_module():
