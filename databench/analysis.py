@@ -216,10 +216,10 @@ class Meta(object):
         return self._thumbnail
 
     @tornado.gen.coroutine
-    def run_action(self, analysis, fn_name, message='__nomessagetoken__'):
+    def run_process(self, analysis, fn_name, message='__nomessagetoken__'):
         """Executes an action in the analysis with the given message.
 
-        It also handles the start and stop signals in case an action_id
+        It also handles the start and stop signals in case a process_id
         is given.
         """
 
@@ -231,14 +231,14 @@ class Meta(object):
                         'Analysis class {}.'.format(fn_name, analysis))
             return
 
-        # detect action_id
-        action_id = None
-        if isinstance(message, dict) and '__action_id' in message:
-            action_id = message['__action_id']
-            del message['__action_id']
+        # detect process_id
+        process_id = None
+        if isinstance(message, dict) and '__process_id' in message:
+            process_id = message['__process_id']
+            del message['__process_id']
 
-        if action_id:
-            analysis.emit('__action', {'id': action_id, 'status': 'start'})
+        if process_id:
+            analysis.emit('__process', {'id': process_id, 'status': 'start'})
 
         log.debug('calling {}'.format(fn_name))
         fn = getattr(analysis, fn_name)
@@ -254,8 +254,8 @@ class Meta(object):
         else:
             yield tornado.gen.maybe_future(fn(message))
 
-        if action_id:
-            analysis.emit('__action', {'id': action_id, 'status': 'end'})
+        if process_id:
+            analysis.emit('__process', {'id': process_id, 'status': 'end'})
 
 
 class FrontendHandler(tornado.websocket.WebSocketHandler):
@@ -270,7 +270,7 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
 
     def on_close(self):
         log.debug('WebSocket connection closed.')
-        self.meta.run_action(self.analysis, 'on_disconnect')
+        self.meta.run_process(self.analysis, 'on_disconnect')
 
     def on_message(self, message):
         if message is None:
@@ -289,7 +289,7 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
             log.info('Analysis {} instanciated.'.format(self.analysis.id_))
             self.emit('__connect', {'analysis_id': self.analysis.id_})
 
-            self.meta.run_action(self.analysis, 'on_connect')
+            self.meta.run_process(self.analysis, 'on_connect')
             log.info('Connected to analysis.')
             return
 
@@ -302,7 +302,7 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
             return
 
         fn_name = 'on_{}'.format(msg['signal'])
-        self.meta.run_action(self.analysis, fn_name, msg['load'])
+        self.meta.run_process(self.analysis, fn_name, msg['load'])
 
     def emit(self, signal, message):
         message = sanitize_message(message)

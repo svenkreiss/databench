@@ -15,10 +15,7 @@ class Meta(object):
 
     Args:
         name (str): Name of this analysis.
-        import_name (str): Usually the file name ``__name__`` where this
-            analysis is instantiated.
-        description (str): Usually the ``__doc__`` string of the analysis.
-        analysis (Analysis): Analysis class.
+        analysis_class (Analysis): Analysis class.
 
     """
 
@@ -93,23 +90,23 @@ class Meta(object):
             self.send_handshake
         )
 
-    def run_action(self, analysis, fn_name, message='__nomessagetoken__'):
-        """Executes an action in the analysis with the given message.
+    def run_process(self, analysis, fn_name, message='__nomessagetoken__'):
+        """Executes an process in the analysis with the given message.
 
-        It also handles the start and stop signals in case an action_id
+        It also handles the start and stop signals in case an process_id
         is given.
 
         This method is exactly the same as in databench.Analysis.
         """
 
-        # detect action_id
-        action_id = None
-        if isinstance(message, dict) and '__action_id' in message:
-            action_id = message['__action_id']
-            del message['__action_id']
+        # detect process_id
+        process_id = None
+        if isinstance(message, dict) and '__process_id' in message:
+            process_id = message['__process_id']
+            del message['__process_id']
 
-        if action_id:
-            analysis.emit('__action', {'id': action_id, 'status': 'start'})
+        if process_id:
+            analysis.emit('__process', {'id': process_id, 'status': 'start'})
 
         log.debug('kernel calling {}'.format(fn_name))
         fn = getattr(analysis, fn_name)
@@ -126,8 +123,8 @@ class Meta(object):
         else:
             fn(message)
 
-        if action_id:
-            analysis.emit('__action', {'id': action_id, 'status': 'end'})
+        if process_id:
+            analysis.emit('__process', {'id': process_id, 'status': 'end'})
 
         if fn_name == 'on_disconnect':
             log.debug('kernel {} shutting down'.format(analysis.id_))
@@ -163,7 +160,7 @@ class Meta(object):
         # standard message
         fn_name = 'on_{}'.format(msg['signal'])
         log.debug('kernel processing {}'.format(fn_name))
-        self.run_action(self.analysis, fn_name, msg['load'])
+        self.run_process(self.analysis, fn_name, msg['load'])
 
     def emit(self, signal, message, analysis_id):
         """Emit signal to main.

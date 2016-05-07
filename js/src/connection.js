@@ -12,7 +12,7 @@ export class Connection {
                 return console.log(`connection error: ${msg}`);
         }
         this.on_callbacks = {};
-        this.onAction_callbacks = {};
+        this.onProcess_callbacks = {};
 
         this.ws_reconnect_attempt = 0;
         this.ws_reconnect_delay = 100.0;
@@ -28,7 +28,7 @@ export class Connection {
         this.ws_onmessage = this.ws_onmessage.bind(this);
         this.on = this.on.bind(this);
         this.emit = this.emit.bind(this);
-        this.onAction = this.onAction.bind(this);
+        this.onProcess = this.onProcess.bind(this);
     }
 
     static guess_ws_url() {
@@ -98,11 +98,11 @@ export class Connection {
             this.analysis_id = message.load.analysis_id;
         }
 
-        // actions
-        if (message.signal == '__action') {
+        // processes
+        if (message.signal == '__process') {
             let id = message.load.id;
             let status = message.load.status;
-            this.onAction_callbacks[id].map((cb) => cb(status));
+            this.onProcess_callbacks[id].map((cb) => cb(status));
         }
 
         // normal message
@@ -128,10 +128,10 @@ export class Connection {
         return this;
     }
 
-    onAction(actionID, callback) {
-        if (!(actionID in this.onAction_callbacks))
-            this.onAction_callbacks[actionID] = [];
-        this.onAction_callbacks[actionID].push(callback);
+    onProcess(processID, callback) {
+        if (!(processID in this.onProcess_callbacks))
+            this.onProcess_callbacks[processID] = [];
+        this.onProcess_callbacks[processID].push(callback);
         return this;
     }
 }

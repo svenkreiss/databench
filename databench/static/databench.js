@@ -27,7 +27,7 @@ var Connection = exports.Connection = function () {
             if (msg != null) return console.log('connection error: ' + msg);
         };
         this.on_callbacks = {};
-        this.onAction_callbacks = {};
+        this.onProcess_callbacks = {};
 
         this.ws_reconnect_attempt = 0;
         this.ws_reconnect_delay = 100.0;
@@ -43,7 +43,7 @@ var Connection = exports.Connection = function () {
         this.ws_onmessage = this.ws_onmessage.bind(this);
         this.on = this.on.bind(this);
         this.emit = this.emit.bind(this);
-        this.onAction = this.onAction.bind(this);
+        this.onProcess = this.onProcess.bind(this);
     }
 
     _createClass(Connection, [{
@@ -105,12 +105,12 @@ var Connection = exports.Connection = function () {
                 this.analysis_id = message.load.analysis_id;
             }
 
-            // actions
-            if (message.signal == '__action') {
+            // processes
+            if (message.signal == '__process') {
                 (function () {
                     var id = message.load.id;
                     var status = message.load.status;
-                    _this.onAction_callbacks[id].map(function (cb) {
+                    _this.onProcess_callbacks[id].map(function (cb) {
                         return cb(status);
                     });
                 })();
@@ -145,10 +145,10 @@ var Connection = exports.Connection = function () {
             return this;
         }
     }, {
-        key: 'onAction',
-        value: function onAction(actionID, callback) {
-            if (!(actionID in this.onAction_callbacks)) this.onAction_callbacks[actionID] = [];
-            this.onAction_callbacks[actionID].push(callback);
+        key: 'onProcess',
+        value: function onProcess(processID, callback) {
+            if (!(processID in this.onProcess_callbacks)) this.onProcess_callbacks[processID] = [];
+            this.onProcess_callbacks[processID].push(callback);
             return this;
         }
     }], [{
@@ -386,8 +386,8 @@ var Button = exports.Button = function () {
         this.ACTIVE = 2;
 
         this.node = node;
-        this.click_cb = function (actionID) {
-            return console.log('click on ' + _this4.node + ' with ' + actionID);
+        this.click_cb = function (processID) {
+            return console.log('click on ' + _this4.node + ' with ' + processID);
         };
         this._state = this.IDLE;
 
@@ -416,8 +416,8 @@ var Button = exports.Button = function () {
         value: function click() {
             if (this._state != this.IDLE) return;
 
-            var actionID = Math.floor(Math.random() * 0x100000);
-            this.click_cb(actionID);
+            var processID = Math.floor(Math.random() * 0x100000);
+            this.click_cb(processID);
             return this;
         }
     }, {
@@ -448,9 +448,9 @@ var Button = exports.Button = function () {
                     var b = new Button(n);
 
                     // set up click callback
-                    b.click_cb = function (actionID) {
+                    b.click_cb = function (processID) {
                         // set up action callback
-                        conn.onAction(actionID, function (status) {
+                        conn.onAction(processID, function (status) {
                             switch (status) {
                                 case 'start':
                                     b.state(b.ACTIVE);
@@ -465,7 +465,7 @@ var Button = exports.Button = function () {
 
                         var message = {};
                         if (n.dataset.message) message = JSON.parse(n.dataset.message);
-                        message['__action_id'] = actionID;
+                        message['__process_id'] = processID;
                         conn.emit(signal, message);
                     };
                 };
@@ -633,7 +633,7 @@ var Slider = exports.Slider = function () {
                     if (!signal) {
                         console.log('Could not determine signal name for ' + n + '.');
                         return {
-                            v: undefined
+                            v: void 0
                         };
                     }
 
@@ -757,7 +757,7 @@ module.exports={
   "_args": [
     [
       "websocket@^1.0.22",
-      "/Users/sven/tech/databench"
+      "/Users/svenkreiss/tech/databench"
     ]
   ],
   "_from": "websocket@>=1.0.22 <2.0.0",
@@ -787,7 +787,7 @@ module.exports={
   "_shasum": "8c33e3449f879aaf518297c9744cebf812b9e3d8",
   "_shrinkwrap": null,
   "_spec": "websocket@^1.0.22",
-  "_where": "/Users/sven/tech/databench",
+  "_where": "/Users/svenkreiss/tech/databench",
   "author": {
     "email": "brian@worlize.com",
     "name": "Brian McKelvey",
@@ -802,8 +802,8 @@ module.exports={
   },
   "contributors": [
     {
-      "name": "Iñaki Baz Castillo",
       "email": "ibc@aliax.net",
+      "name": "Iñaki Baz Castillo",
       "url": "http://dev.sipdoc.net"
     }
   ],
@@ -827,7 +827,7 @@ module.exports={
   },
   "dist": {
     "shasum": "8c33e3449f879aaf518297c9744cebf812b9e3d8",
-    "tarball": "http://registry.npmjs.org/websocket/-/websocket-1.0.22.tgz"
+    "tarball": "https://registry.npmjs.org/websocket/-/websocket-1.0.22.tgz"
   },
   "engines": {
     "node": ">=0.8.0"
@@ -835,23 +835,23 @@ module.exports={
   "gitHead": "19108bbfd7d94a5cd02dbff3495eafee9e901ca4",
   "homepage": "https://github.com/theturtle32/WebSocket-Node",
   "keywords": [
-    "RFC-6455",
-    "client",
-    "comet",
+    "websocket",
+    "websockets",
+    "socket",
     "networking",
+    "comet",
     "push",
+    "RFC-6455",
     "realtime",
     "server",
-    "socket",
-    "websocket",
-    "websockets"
+    "client"
   ],
   "license": "Apache-2.0",
   "main": "index",
   "maintainers": [
     {
-      "name": "theturtle32",
-      "email": "brian@worlize.com"
+      "email": "brian@worlize.com",
+      "name": "theturtle32"
     }
   ],
   "name": "websocket",

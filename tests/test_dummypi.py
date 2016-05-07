@@ -65,10 +65,10 @@ def test_ws_dummypi():
     print(r)
     assert r['signal'] == 'data'
     assert 'samples' in r['load']
-    ws.send('{"signal":"run", "load":{"__action_id":123}}')
+    ws.send('{"signal":"run", "load":{"__process_id":123}}')
     r = json.loads(ws.recv())
     print(r)
-    assert r['signal'] == '__action'
+    assert r['signal'] == '__process'
     assert r['load']['id'] == 123
     r = json.loads(ws.recv())
     print(r)
@@ -133,10 +133,10 @@ def test_ws_dummypi_py():
     print(r)
     assert r['signal'] == 'data'
     assert 'samples' in r['load']
-    ws.send('{"signal":"run", "load":{"__action_id":123}}')
+    ws.send('{"signal":"run", "load":{"__process_id":123}}')
     r = json.loads(ws.recv())
     print(r)
-    assert r['signal'] == '__action'
+    assert r['signal'] == '__process'
     assert r['load']['id'] == 123
     r = json.loads(ws.recv())
     print(r)

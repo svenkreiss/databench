@@ -114,10 +114,10 @@ class MetaZMQ(Meta):
         self.zmq_publish = zmq_publish
 
     @tornado.gen.coroutine
-    def run_action(self, analysis, fn_name, message='__nomessagetoken__'):
-        """Executes an action in the analysis with the given message.
+    def run_process(self, analysis, fn_name, message='__nomessagetoken__'):
+        """Executes an process in the analysis with the given message.
 
-        It also handles the start and stop signals in case an action_id
+        It also handles the start and stop signals in case a process_id
         is given.
         """
 
