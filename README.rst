@@ -4,7 +4,7 @@
 Databench
 =========
 
-    Data analysis tool using Flask, WebSockets and d3.js. Live demos are at
+    Data analysis tool using Tornado and WebSockets. Live demos are at
     `databench-examples.trivial.io <http://databench-examples.trivial.io>`_.
 
 .. image:: https://travis-ci.org/svenkreiss/databench.svg
