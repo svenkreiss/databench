@@ -17,3 +17,4 @@ script:
  - nosetests -vv --with-coverage --cover-package=databench --cover-erase
 after_success:
  - coveralls || true
+ - bash <(curl -s https://codecov.io/bash)
