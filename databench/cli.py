@@ -2,11 +2,13 @@
 """Databench command line tool. See http://databench.trivial.io for
 more info."""
 
+from __future__ import absolute_import
+
 import argparse
 import logging
 import os
 import random
-# import signal
+import signal
 import sys
 import tornado
 
@@ -65,10 +67,10 @@ def main():
             cov.stop()
             cov.save()
         sys.exit(0)
-    # signal.signal(signal.SIGTERM, sig_handler)
+    signal.signal(signal.SIGTERM, sig_handler)
     # not supported on Windows:
-    # if hasattr(signal, 'SIGUSR1'):
-    #     signal.signal(signal.SIGUSR1, sig_handler)
+    if hasattr(signal, 'SIGUSR1'):
+        signal.signal(signal.SIGUSR1, sig_handler)
 
     app = App().tornado_app(
         debug=args.loglevel not in ('WARNING', 'ERROR', 'CRITICAL')

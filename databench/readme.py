@@ -20,6 +20,13 @@ log = logging.getLogger(__name__)
 
 
 class Readme(object):
+    """Readme reader and meta data extractor.
+
+    Supports markdown (``.md``) and restructured text (``.rst``).
+
+    :param directory:
+        Path to a directory containing a readme file.
+    """
     def __init__(self, directory):
         self.directory = directory
 
@@ -56,7 +63,7 @@ class Readme(object):
                 ) + self._text
 
         if readme_file.lower().endswith('.rst'):
-            self.extract_rst_meta(self._text)
+            self.extract_rst_meta()
             if rst is not None:
                 self._text = rst(self._text, writer_name='html')['html_body']
             else:
