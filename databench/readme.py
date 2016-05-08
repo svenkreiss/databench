@@ -8,13 +8,13 @@ import os
 # utilities
 try:
     from markdown import markdown
-except ImportError:
-    markdown = None
+except ImportError:  # pragma: no cover
+    markdown = None  # pragma: no cover
 
 try:
     from docutils.core import publish_parts as rst
-except ImportError:
-    rst = None
+except ImportError:  # pragma: no cover
+    rst = None  # pragma: no cover
 
 log = logging.getLogger(__name__)
 
@@ -60,7 +60,7 @@ class Readme(object):
                 self._text = (
                     '<p>Install markdown with <b>pip install markdown</b>'
                     ' to render this readme file.</p>'
-                ) + self._text
+                ) + self._text  # pragma: no cover
 
         if readme_file.lower().endswith('.rst'):
             self.extract_rst_meta()
@@ -70,7 +70,7 @@ class Readme(object):
                 self._text = (
                     '<p>Install rst rendering with <b>pip install docutils</b>'
                     ' to render this readme file.</p>'
-                ) + self._text
+                ) + self._text  # pragma: no cover
 
     @property
     def text(self):

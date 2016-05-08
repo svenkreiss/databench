@@ -90,7 +90,7 @@ class Meta(object):
             self.send_handshake
         )
 
-    def run_process(self, analysis, fn_name, message='__nomessagetoken__'):
+    def run_process(self, analysis, action_name, message='__nomessagetoken__'):
         """Executes an process in the analysis with the given message.
 
         It also handles the start and stop signals in case an process_id
@@ -108,6 +108,7 @@ class Meta(object):
         if process_id:
             analysis.emit('__process', {'id': process_id, 'status': 'start'})
 
+        fn_name = 'on_{}'.format(action_name)
         log.debug('kernel calling {}'.format(fn_name))
         fn = getattr(analysis, fn_name)
         log.debug('kernel done {}'.format(fn_name))
@@ -126,7 +127,7 @@ class Meta(object):
         if process_id:
             analysis.emit('__process', {'id': process_id, 'status': 'end'})
 
-        if fn_name == 'on_disconnect':
+        if fn_name == 'on_disconnected':
             log.debug('kernel {} shutting down'.format(analysis.id_))
             self.zmq_publish.close()
 
@@ -136,7 +137,10 @@ class Meta(object):
 
     def event_loop(self):
         """Event loop."""
-        zmq.eventloop.ioloop.IOLoop.current().start()
+        try:
+            zmq.eventloop.ioloop.IOLoop.current().start()
+        except KeyboardInterrupt:
+            zmq.eventloop.ioloop.IOLoop.current().stop()
 
     def zmq_listener(self, multipart):
         msg = (b''.join(multipart)).decode('utf-8')
@@ -151,16 +155,10 @@ class Meta(object):
         if 'signal' not in msg or 'load' not in msg:
             return
 
-        if not hasattr(self.analysis,
-                       'on_{}'.format(msg['signal'])):
-            log.warning('Analysis does not contain on_{}()'
-                        ''.format(msg['signal']))
-            return
-
         # standard message
-        fn_name = 'on_{}'.format(msg['signal'])
-        log.debug('kernel processing {}'.format(fn_name))
-        self.run_process(self.analysis, fn_name, msg['load'])
+        action_name = msg['signal']
+        log.debug('kernel processing {}'.format(action_name))
+        self.run_process(self.analysis, action_name, msg['load'])
 
     def emit(self, signal, message, analysis_id):
         """Emit signal to main.

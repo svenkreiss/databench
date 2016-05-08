@@ -1,8 +1,8 @@
 machine:
   python:
-    version: 3.5.0
+    version: 3.5.1
   node:
-    version: 5.1.0
+    version: 5.7.0
 
 dependencies:
   pre:
@@ -13,6 +13,6 @@ dependencies:
 test:
   override:
     - flake8
-    - nosetests -vv --with-coverage --cover-package=databench --cover-erase
+    - nosetests -vv --with-coverage --cover-package=databench --cover-erase --cover-inclusive
   post:
     - coveralls || true

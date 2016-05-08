@@ -2,8 +2,6 @@
 
 from __future__ import absolute_import, unicode_literals, division
 
-from .datastore import Datastore
-from .readme import Readme
 import json
 import logging
 import os
@@ -15,6 +13,8 @@ import tornado.web
 import tornado.websocket
 
 from . import __version__ as DATABENCH_VERSION
+from .datastore import Datastore
+from .readme import Readme
 
 log = logging.getLogger(__name__)
 
@@ -30,14 +30,14 @@ class Analysis(object):
     optional argument ``request_args`` contains a dictionary of parameters
     from the request url.
 
-    **Incoming messages** are captured by specifying a class method starting
-    with ``on_`` followed by the signal name. To capture the frontend signal
+    **Actions:** are captured by specifying a class method starting
+    with ``on_`` followed by the action name. To capture the action
     ``run`` that is emitted with the JavaScript code
 
     .. code-block:: js
 
         // on the JavaScript frontend
-        databench.emit('run', {my_param: 'helloworld'});
+        d.emit('run', {my_param: 'helloworld'});
 
     use
 
@@ -47,46 +47,49 @@ class Analysis(object):
         def on_run(self, my_param):
 
     here. The entries of a dictionary will be used as keyword arguments in the
-    function call; as in this example. If the emitted message is an array,
+    function call. If the emitted message is an array,
     the entries will be used as positional arguments in the function call.
     If the message is neither of type ``list`` nor ``dict`` (for example a
     plain ``string`` or ``float``), the function will be called with that
     as its first parameter.
 
-    **Outgoing messages** are sent using ``emit(signal_name, message)``.
-    For example, use
+    **Writing to a datastore:** By default, a :class:`Datastore` scoped to
+    the current analysis instance is created at ``self.data``. You can write
+    key-value pairs to it with
 
     .. code-block:: python
 
-        self.emit('result', {'msg': 'done'})
+        self.data[key] = value
 
-    to send the signal ``result`` with the message ``{'msg': 'done'}`` to
-    the frontend.
+    Similarly, there is a ``self.class_data`` :class:`Datastore` which is
+    scoped to all instances of this analysis by its class name.
 
+    **Outgoing messages**: changes to the datastore are emitted to the
+    frontend and this path should usually not be modified (according to the
+    Flux model). However, databench does provide access to ``emit()``
+    method and to methods that modify a value for a key before it is send
+    out with ``data_<key>(value)`` methods.
     """
-
-    datastore_class = Datastore
 
     def __init__(self, id_=None):
         self.id_ = id_ if id_ else Analysis.__create_id()
         self.emit = lambda s, pl: log.error('emit called before Analysis '
                                             'setup complete')
+        self.init_datastores()
 
-        self.data = Analysis.datastore_class(self.id_)
-        self.global_data = Analysis.datastore_class(type(self).__name__)
+    def init_datastores(self):
+        """Initialize datastores for this analysis instance.
 
-        self.data.on_change(self._data_change)
-        self.global_data.on_change(self._global_data_change)
+        This creates instances of :class:`Datastore` at ``self.data`` and
+        ``seld.class_data`` with the datastore domains being the current id
+        and the class name of this analysis respectively.
 
-    def _data_change(self, key, value):
-        self.data_change(key, value)
-        if hasattr(self, 'data_{}'.format(key)):
-            getattr(self, 'data_{}'.format(key))(value)
-
-    def _global_data_change(self, key, value):
-        self.global_data_change(key, value)
-        if hasattr(self, 'global_data_{}'.format(key)):
-            getattr(self, 'global_data_{}'.format(key))(value)
+        Overwrite this method to use other datastore backends.
+        """
+        self.data = Datastore(self.id_)
+        self.data.on_change(self.data_change)
+        self.class_data = Datastore(type(self).__name__)
+        self.class_data.on_change(self.class_data_change)
 
     @staticmethod
     def __create_id():
@@ -101,24 +104,30 @@ class Analysis(object):
     """Events."""
 
     def on_connect(self):
+        """Default handlers for the "connect" action.
+
+        Overwrite to add behavior.
+        """
         log.debug('on_connect called.')
 
-    def on_disconnect(self):
-        log.debug('on_disconnect called.')
+    def on_disconnected(self):
+        """Default handler for "disconnected" action.
 
-    def on_data(self, **kwargs):
-        self.data.update(kwargs)
-
-    def on_global_data(self, **kwargs):
-        self.global_data.update(kwargs)
+        Overwrite to add behavior.
+        """
+        log.debug('on_disconnected called.')
 
     """Data callbacks."""
 
     def data_change(self, key, value):
+        if hasattr(self, 'data_{}'.format(key)):
+            value = getattr(self, 'data_{}'.format(key))(value)
         self.emit('data', {key: value})
 
-    def global_data_change(self, key, value):
-        self.emit('global_data', {key: value})
+    def class_data_change(self, key, value):
+        if hasattr(self, 'class_data_{}'.format(key)):
+            value = getattr(self, 'class_data_{}'.format(key))(value)
+        self.emit('class_data', {key: value})
 
 
 class Meta(object):
@@ -216,7 +225,7 @@ class Meta(object):
         return self._thumbnail
 
     @tornado.gen.coroutine
-    def run_process(self, analysis, fn_name, message='__nomessagetoken__'):
+    def run_process(self, analysis, action_name, message='__nomessagetoken__'):
         """Executes an action in the analysis with the given message.
 
         It also handles the start and stop signals in case a process_id
@@ -224,11 +233,6 @@ class Meta(object):
         """
 
         if analysis is None:
-            return
-
-        if not hasattr(analysis, fn_name):
-            log.warning('Frontend wants to call {} which is not in the '
-                        'Analysis class {}.'.format(fn_name, analysis))
             return
 
         # detect process_id
@@ -240,19 +244,29 @@ class Meta(object):
         if process_id:
             analysis.emit('__process', {'id': process_id, 'status': 'start'})
 
-        log.debug('calling {}'.format(fn_name))
-        fn = getattr(analysis, fn_name)
+        fn_name = 'on_{}'.format(action_name)
+        if hasattr(analysis, fn_name):
+            log.debug('calling {}'.format(fn_name))
+            fn = getattr(analysis, fn_name)
 
-        # Check whether this is a list (positional arguments)
-        # or a dictionary (keyword arguments).
-        if isinstance(message, list):
-            yield tornado.gen.maybe_future(fn(*message))
-        elif isinstance(message, dict):
-            yield tornado.gen.maybe_future(fn(**message))
-        elif message == '__nomessagetoken__':
-            yield tornado.gen.maybe_future(fn())
+            # Check whether this is a list (positional arguments)
+            # or a dictionary (keyword arguments).
+            if isinstance(message, list):
+                yield tornado.gen.maybe_future(fn(*message))
+            elif isinstance(message, dict):
+                yield tornado.gen.maybe_future(fn(**message))
+            elif message == '__nomessagetoken__':
+                yield tornado.gen.maybe_future(fn())
+            else:
+                yield tornado.gen.maybe_future(fn(message))
         else:
-            yield tornado.gen.maybe_future(fn(message))
+            # default is to store action name and data as key and value
+            # in analysis.data
+            analysis.data[action_name] = (
+                message
+                if message != '__nomessagetoken__'
+                else None
+            )
 
         if process_id:
             analysis.emit('__process', {'id': process_id, 'status': 'end'})
@@ -270,7 +284,7 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
 
     def on_close(self):
         log.debug('WebSocket connection closed.')
-        self.meta.run_process(self.analysis, 'on_disconnect')
+        self.meta.run_process(self.analysis, 'disconnected')
 
     def on_message(self, message):
         if message is None:
@@ -289,7 +303,7 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
             log.info('Analysis {} instanciated.'.format(self.analysis.id_))
             self.emit('__connect', {'analysis_id': self.analysis.id_})
 
-            self.meta.run_process(self.analysis, 'on_connect')
+            self.meta.run_process(self.analysis, 'connect')
             log.info('Connected to analysis.')
             return
 
@@ -301,20 +315,16 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
             log.info('message not processed: {}'.format(message))
             return
 
-        fn_name = 'on_{}'.format(msg['signal'])
-        self.meta.run_process(self.analysis, fn_name, msg['load'])
+        self.meta.run_process(self.analysis, msg['signal'], msg['load'])
 
     def emit(self, signal, message):
         message = sanitize_message(message)
-        # log.debug('websocket writing: {}'.format(message))
         try:
             self.write_message(json.dumps(
                 {'signal': signal, 'load': message}
             ).encode('utf-8'))
         except tornado.websocket.WebSocketClosedError:
             pass
-            # log.warning('WebSocket is closed. Cannot emit message: {}'
-            #             ''.format(message))
 
 
 def sanitize_message(m):
@@ -332,13 +342,9 @@ def sanitize_message(m):
         for i in m:
             m[i] = sanitize_message(m[i])
     elif isinstance(m, (set, tuple)):
-        m = list(m)
-        for i, e in enumerate(m):
-            m[i] = sanitize_message(e)
-    elif hasattr(m, 'tolist'):  # for np.ndarray, np.generic
-        m = m.tolist()
-        for i, e in enumerate(m):
-            m[i] = sanitize_message(e)
+        m = [sanitize_message(e) for e in m]
+    elif hasattr(m, 'tolist'):  # for np.array
+        m = [sanitize_message(e) for e in m]
     return m
 
 

@@ -8,7 +8,6 @@ import argparse
 import logging
 import os
 import random
-import signal
 import sys
 import tornado
 
@@ -60,23 +59,17 @@ def main():
     logging.info('Databench {}'.format(DATABENCH_VERSION))
     logging.info('host={}, port={}'.format(args.host, args.port))
 
-    # handle external signal to terminate nicely (used in tests)
-    def sig_handler(signum, stack):
-        print('exit program')
-        if cov:
-            cov.stop()
-            cov.save()
-        sys.exit(0)
-    signal.signal(signal.SIGTERM, sig_handler)
-    # not supported on Windows:
-    if hasattr(signal, 'SIGUSR1'):
-        signal.signal(signal.SIGUSR1, sig_handler)
-
     app = App().tornado_app(
         debug=args.loglevel not in ('WARNING', 'ERROR', 'CRITICAL')
     )
     app.listen(args.port, args.host)
-    tornado.ioloop.IOLoop.current().start()
+    try:
+        tornado.ioloop.IOLoop.current().start()
+    except KeyboardInterrupt:
+        if cov:
+            cov.stop()
+            cov.save()
+        tornado.ioloop.IOLoop.current().stop()
 
 
 if __name__ == '__main__':
