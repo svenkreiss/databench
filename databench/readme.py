@@ -4,6 +4,7 @@ import fnmatch
 import io
 import logging
 import os
+import tornado.autoreload
 
 # utilities
 try:
@@ -26,12 +27,16 @@ class Readme(object):
 
     :param directory:
         Path to a directory containing a readme file.
+
+    :param bool watch:
+        Whether to watch for changes in the readme file.
     """
-    def __init__(self, directory):
+    def __init__(self, directory, watch=True):
         self.directory = directory
 
         self._text = None
         self._meta = None
+        self.watch = watch
 
     def _read(self, encoding='utf8', encoding_errors='ignore'):
         self._meta = {}
@@ -47,6 +52,9 @@ class Readme(object):
             return
 
         log.debug('Readme file name: {}'.format(readme_file))
+        if self.watch:
+            tornado.autoreload.watch(readme_file)
+
         with io.open(readme_file, 'r',
                      encoding=encoding, errors=encoding_errors) as f:
             self._text = f.read()
