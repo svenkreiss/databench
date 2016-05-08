@@ -48,8 +48,8 @@ class AnalysisZMQ(Analysis):
         self.kernel_process = subprocess.Popen(e_params, shell=False)
         log.debug('finished on_connect for {}'.format(self.id_))
 
-    def on_disconnect(self):
-        # Give kernel time to process disconnect message.
+    def on_disconnected(self):
+        # Give kernel time to process disconnected message.
         # In autoreload, this callback needs to be processed synchronously.
         time.sleep(0.1)
 
@@ -114,25 +114,24 @@ class MetaZMQ(Meta):
         self.zmq_publish = zmq_publish
 
     @tornado.gen.coroutine
-    def run_process(self, analysis, fn_name, message='__nomessagetoken__'):
+    def run_process(self, analysis, action_name, message='__nomessagetoken__'):
         """Executes an process in the analysis with the given message.
 
         It also handles the start and stop signals in case a process_id
         is given.
         """
 
-        if fn_name == 'on_connect':
+        if action_name == 'connect':
             analysis.on_connect(self.executable, self.zmq_publish)
 
         while not analysis.zmq_handshake:
             yield tornado.gen.sleep(0.1)
 
-        log.debug('calling {}'.format(fn_name))
-        signal_name = fn_name[3:] if fn_name.startswith('on_') else fn_name
+        log.debug('sending action {}'.format(action_name))
         analysis.zmq_send({
-            'signal': signal_name,
+            'signal': action_name,
             'load': message,
         })
 
-        if fn_name == 'on_disconnect':
-            analysis.on_disconnect()
+        if action_name == 'disconnected':
+            analysis.on_disconnected()

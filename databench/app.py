@@ -182,20 +182,6 @@ class App(object):
             log.info('Analyses module does not specify a title.')
             self.info['title'] = 'Databench'
 
-        # process files to watch for autoreload
-        if 'watch' in readme.meta:
-            log.info('watching files: {}'.format(readme.meta['watch']))
-            if glob2:
-                files = glob2.glob(readme.meta['watch'])
-            else:
-                files = glob.glob(readme.meta['watch'])
-                if '**' in readme.meta['watch']:
-                    log.warning('Please run "pip install glob2" to properly '
-                                'process watch patterns with "**".')
-            for fn in files:
-                log.debug('watch file {}'.format(fn))
-                tornado.autoreload.watch(fn)
-
         # if 'analyses' contains a 'static' folder, make it available
         static_path = os.path.join(analyses_path, 'static')
         if os.path.isdir(static_path):
@@ -226,6 +212,9 @@ class App(object):
 
     def register_analyses(self):
         """Register analyses (analyses need to be imported first)."""
+        watch_lists = []
+        if 'watch' in self.info:
+            watch_lists.append(self.info['watch'])
 
         for meta in Meta.all_instances:
             log.info('Registering meta information {}'.format(meta.name))
@@ -234,6 +223,23 @@ class App(object):
             if 'logo_url' in self.info and \
                'logo_url' not in meta.info:
                 meta.info['logo_url'] = self.info['logo_url']
+
+            if 'watch' in meta.info:
+                watch_lists.append(meta.info['watch'])
+
+        # process files to watch for autoreload
+        if watch_lists:
+            log.info('watching additional files: {}'.format(watch_lists))
+            if glob2:
+                files = glob2.glob(','.join(watch_lists))
+            else:
+                files = glob.glob(','.join(watch_lists))
+                if any('**' in w for w in watch_lists):
+                    log.warning('Please run "pip install glob2" to properly '
+                                'process watch patterns with "**".')
+            for fn in files:
+                log.debug('watch file {}'.format(fn))
+                tornado.autoreload.watch(fn)
 
     def build(self):
         """Run the build command specified in the Readme."""

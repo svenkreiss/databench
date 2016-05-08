@@ -7,6 +7,7 @@ def test_md():
     print(data.text)
     assert data.meta['title'] == 'testtitle'
     assert data.meta['description'] == 'testdescription of a test'
+    assert data.meta['watch'] == '*.md'
 
 
 def test_rst():

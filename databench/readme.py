@@ -4,17 +4,18 @@ import fnmatch
 import io
 import logging
 import os
+import tornado.autoreload
 
 # utilities
 try:
     from markdown import markdown
-except ImportError:
-    markdown = None
+except ImportError:  # pragma: no cover
+    markdown = None  # pragma: no cover
 
 try:
     from docutils.core import publish_parts as rst
-except ImportError:
-    rst = None
+except ImportError:  # pragma: no cover
+    rst = None  # pragma: no cover
 
 log = logging.getLogger(__name__)
 
@@ -26,12 +27,16 @@ class Readme(object):
 
     :param directory:
         Path to a directory containing a readme file.
+
+    :param bool watch:
+        Whether to watch for changes in the readme file.
     """
-    def __init__(self, directory):
+    def __init__(self, directory, watch=True):
         self.directory = directory
 
         self._text = None
         self._meta = None
+        self.watch = watch
 
     def _read(self, encoding='utf8', encoding_errors='ignore'):
         self._meta = {}
@@ -47,6 +52,9 @@ class Readme(object):
             return
 
         log.debug('Readme file name: {}'.format(readme_file))
+        if self.watch:
+            tornado.autoreload.watch(readme_file)
+
         with io.open(readme_file, 'r',
                      encoding=encoding, errors=encoding_errors) as f:
             self._text = f.read()
@@ -60,7 +68,7 @@ class Readme(object):
                 self._text = (
                     '<p>Install markdown with <b>pip install markdown</b>'
                     ' to render this readme file.</p>'
-                ) + self._text
+                ) + self._text  # pragma: no cover
 
         if readme_file.lower().endswith('.rst'):
             self.extract_rst_meta()
@@ -70,7 +78,7 @@ class Readme(object):
                 self._text = (
                     '<p>Install rst rendering with <b>pip install docutils</b>'
                     ' to render this readme file.</p>'
-                ) + self._text
+                ) + self._text  # pragma: no cover
 
     @property
     def text(self):

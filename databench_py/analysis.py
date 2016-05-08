@@ -17,9 +17,8 @@ class Analysis(object):
                                             'setup complete')
 
         self.data = Analysis.datastore_class(self.id_)
-        self.global_data = Analysis.datastore_class(type(self).__name__)
-
         self.data.on_change(self.data_change)
+        self.global_data = Analysis.datastore_class(type(self).__name__)
         self.global_data.on_change(self.global_data_change)
 
     def set_emit_fn(self, emit_fn):
@@ -32,14 +31,8 @@ class Analysis(object):
     def on_connect(self):
         log.debug('on_connect called.')
 
-    def on_disconnect(self):
-        log.debug('on_disconnect called.')
-
-    def on_data(self, **kwargs):
-        self.data.update(kwargs)
-
-    def on_global_data(self, **kwargs):
-        self.global_data.update(kwargs)
+    def on_disconnected(self):
+        log.debug('on_disconnected called.')
 
     """Data callbacks."""
 
