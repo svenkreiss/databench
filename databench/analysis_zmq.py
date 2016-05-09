@@ -49,10 +49,7 @@ class AnalysisZMQ(Analysis):
         log.debug('finished on_connect for {}'.format(self.id_))
 
     def on_disconnected(self):
-        # Give kernel time to process disconnected message.
         # In autoreload, this callback needs to be processed synchronously.
-        time.sleep(0.1)
-
         log.debug('terminating kernel process {}'.format(self.id_))
         if self.kernel_process is not None:
             try:
@@ -134,4 +131,6 @@ class MetaZMQ(Meta):
         })
 
         if action_name == 'disconnected':
+            # Give kernel time to process disconnected message.
+            yield tornado.gen.sleep(0.1)
             analysis.on_disconnected()
