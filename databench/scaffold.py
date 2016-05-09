@@ -50,14 +50,9 @@ def create_analyses(name, suffix):
 
     if not os.path.exists(os.getcwd() + '/analyses/__init__.py'):
         with open('analyses/__init__.py', 'w') as f:
-            f.write('"""Analyses folder created by `scaffold-databench`. '
-                    'Modify me. This text is in `analyses/__init__.py`.'
-                    '\n\nSources: '
-                    '[github.com/username/project]'
-                    '(http://github.com/username/project)"""\n\n')
-            f.write('__version__ = "0.0.1"\n')
-            f.write('__author__ = "Change Me Please <change@meplease.com>"\n')
-            f.write('\n')
+            f.write("'''Automatically created by `scaffold-databench`.'''\n\n")
+            f.write("__version__ = '0.1.0'\n")
+            f.write("\n")
 
     if not suffix:
         with open('analyses/__init__.py', 'r') as f:

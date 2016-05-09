@@ -1,0 +1,27 @@
+{% extends "analysis.html" %}
+
+
+{% block analysis %}
+<h3>Analysis Output</h3>
+<p>The current status: <span id="status">unknown</span></p>
+{% end %}
+
+
+
+{% block footer %}
+<script>
+    // initialize Databench's frontend library
+    var d = new Databench.Connection();
+    Databench.ui.wire(d);
+    d.connect();
+
+    // listen for updates to 'status' in 'data'
+    d.on({data: 'status'}, function(status) {
+        console.log(`received ${JSON.stringify(status)}`);
+        document.getElementById('status').innerHTML = status;
+
+        // send 'ack' action back:
+        d.emit('ack', 'thanks for sending ready');
+    });
+</script>
+{% end %}
