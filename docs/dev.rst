@@ -22,12 +22,16 @@ local machine. Then install your local version in editable mode into a
     flake8 --install-hook
 
 
-Now you can run
+Now you can:
 
 .. code-block:: bash
 
+    # run Databench
 	gulp && databench --log DEBUG
+    # and open http://localhost:5000 in a web browser
 
-and open http://localhost:5000 in a web browser. Now you are ready to submit
-pull requests of your contributions. Don't forget to add yourself to
-``AUTHORS.rst``.
+    # run tests
+    nosetests -vv --with-coverage --cover-package=databench --cover-erase --cover-inclusive
+
+For new contributions, create a feature branch and submit a Pull Request.
+Don't forget to add yourself to ``AUTHORS.rst``.

@@ -8,21 +8,15 @@ class Scaffold(databench.Analysis):
 
     def on_connect(self):
         """Run as soon as a browser connects to this."""
-        self.emit('log', 'backend is connected and initialized')
-        time.sleep(2)
-        self.emit('ready', 'ready at ' +
-                  datetime.datetime.now().isoformat())
+        time.sleep(1)
+        formatted_time = datetime.datetime.now().isoformat()
+        self.data['status'] = 'ready since {}'.format(formatted_time)
 
-    def on_got_ready_signal(self, msg):
-        """Respond to 'ready' signal.
+    def on_ack(self, msg):
+        """process 'ack' action"""
 
-        This is the signal the frontend sends back to the backend once
-        it received the 'ready' signal from the on_connect() function.
-        """
-
-        time.sleep(2)
-        self.emit('log', 'Backend received the confirmation from the frontend '
-                  'that the ready signal was received.')
+        time.sleep(1)
+        self.data['status'] = 'acknowledged'
 
 
 META = databench.Meta('scaffold', Scaffold)

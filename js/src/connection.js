@@ -112,10 +112,25 @@ export class Connection {
     }
 
 
-    on(signalName, callback) {
-        if (!(signalName in this.on_callbacks))
-            this.on_callbacks[signalName] = [];
-        this.on_callbacks[signalName].push(callback);
+    on(signal, callback) {
+        if (typeof(signal) === "string") {
+            if (!(signal in this.on_callbacks))
+                this.on_callbacks[signal] = [];
+            this.on_callbacks[signal].push(callback);
+        }else if(typeof(signal) === "object") {
+            for (let signalName in signal) {
+                let entryName = signal[signalName];
+                let filtered_callback = data => {
+                    if (data.hasOwnProperty(entryName)) {
+                        callback(data[entryName]);
+                    }
+                };
+
+                if (!(signalName in this.on_callbacks))
+                    this.on_callbacks[signalName] = [];
+                this.on_callbacks[signalName].push(filtered_callback);
+            }
+        }
         return this;
     }
 

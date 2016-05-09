@@ -1,6 +1,7 @@
 <!--
 Title: Dummy π with Python Language Kernel
 Description: Calculating π the simple way, but this is called dummypi to avoid conflict with simplepi in the databench_examples repo. This is using a Python Language Kernel running in a separate process.
+watch: analyses/dummypi_py/*.html,analyses/dummypi_py/*.py
 -->
 
 This little demo uses two random numbers r1 and r2 and

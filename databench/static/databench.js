@@ -5,6 +5,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -125,19 +127,39 @@ var Connection = exports.Connection = function () {
         }
     }, {
         key: 'on',
-        value: function on(signalName, callback) {
-            if (!(signalName in this.on_callbacks)) this.on_callbacks[signalName] = [];
-            this.on_callbacks[signalName].push(callback);
+        value: function on(signal, callback) {
+            var _this2 = this;
+
+            if (typeof signal === "string") {
+                if (!(signal in this.on_callbacks)) this.on_callbacks[signal] = [];
+                this.on_callbacks[signal].push(callback);
+            } else if ((typeof signal === 'undefined' ? 'undefined' : _typeof(signal)) === "object") {
+                var _loop = function _loop(signalName) {
+                    var entryName = signal[signalName];
+                    var filtered_callback = function filtered_callback(data) {
+                        if (data.hasOwnProperty(entryName)) {
+                            callback(data[entryName]);
+                        }
+                    };
+
+                    if (!(signalName in _this2.on_callbacks)) _this2.on_callbacks[signalName] = [];
+                    _this2.on_callbacks[signalName].push(filtered_callback);
+                };
+
+                for (var signalName in signal) {
+                    _loop(signalName);
+                }
+            }
             return this;
         }
     }, {
         key: 'emit',
         value: function emit(signalName, message) {
-            var _this2 = this;
+            var _this3 = this;
 
             if (this.socket == null || this.socket.readyState != this.socket.OPEN) {
                 setTimeout(function () {
-                    return _this2.emit(signalName, message);
+                    return _this3.emit(signalName, message);
                 }, 5);
                 return;
             }

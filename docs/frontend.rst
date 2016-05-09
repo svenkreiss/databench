@@ -30,6 +30,33 @@ string passed into :class:`databench.Analysis` which is usually the ``__doc__``
 string of your analysis Python file.
 
 
+Additional Views
+++++++++++++++++
+
+Next to the ``index.html``, you can create other html files like this
+``log.html`` file:
+
+.. code-block:: html
+
+    {% extends "analysis.html" %}
+
+
+    {% block footer %}
+    <script>
+        var d = new Databench.Connection();
+        Databench.ui.wire(d);
+        d.connect();
+
+        d.on('ready', function(data) {
+            console.log(`Ready message received: ${data}`);
+        });
+    </script>
+    {% end %}
+
+which will automatically be available at the url ending with ``log.html``.
+
+
+
 HTML Template
 +++++++++++++
 
@@ -191,37 +218,42 @@ isolated server.
 
 
 
-Databench JavaScript Frontend (outdated)
-----------------------------------------
+Databench JavaScript Frontend Library (outdated)
+------------------------------------------------
 
-This is the API documentation for the Databench JavaScript library.
+This is the API documentation for ``databench.js``.
 
-.. js:function:: Databench(opts)
+.. js:function:: Databench.Connection(analysis_id=null, ws_url=null)
 
-    At the heart of this closure are the :js:func:`Databench.emit` and
-    :js:func:`Databench.on` functions. Use them in your own JavaScript
-    code to communicate with the backend.
+    At the heart of this class are the :js:func:`Databench.Connection.emit` and
+    :js:func:`Databench.Connection.on` functions. Use them in your own
+    JavaScript code to communicate with the backend.
 
-    :param opts: Options to customize Databench. `ws_url` changes the
-        default url for connecting to the backend. `content_class_name` is
-        the CSS class name of the object that wraps the content which is
-        used to insert pop-up notifications into the page.
+    :param string analysis_id:
+        Sets an analysis id. The connection will try to connect to a previously
+        created analysis with that id.
 
-    .. js:function:: Databench.emit(signalName, message)
+    :param string ws_url:
+        Sets the url of the backend. If ``null`` (default) the location is
+        inferred automatically.
 
-        :param string signalName: Name of the signal that is used to send the
-            message.
-        :param message: Message to send.
+    .. js:function:: Databench.emit(action, data)
 
-    .. js:function:: Databench.on(signalName, callback)
+        :param string action:
+            Name of an action that is sent to the backend.
+        :param data:
+            Data associated with the action.
 
-        :param string signalName: Name of the signal to listen to from the backend.
-        :param function callback: Function that is called when a signal is
-            received.
+    .. js:function:: Databench.on(signal, callback)
 
-    .. js:attribute:: Databench.genericElements
+        :param signal:
+            An Object of the form ``{data: status}`` to listen for updates of
+            the ``status`` entry in the ``data`` Datastore.
+            It can also be the name of the signal to listen to from the
+            backend but this should only be used for lower level functionality.
 
-        A set of generally useful elements that are documented right below.
+        :param function callback:
+            Function that is called when a matching signal is received.
 
 
 .. _ui:

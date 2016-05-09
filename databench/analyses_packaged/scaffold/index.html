@@ -3,27 +3,25 @@
 
 {% block analysis %}
 <h3>Analysis Output</h3>
-<p>The backend's <i>ready</i> signal:
-    <span id="backend_ready_msg">nothing yet</span>
-</p>
+<p>The current status: <span id="status">unknown</span></p>
 {% end %}
 
 
 
 {% block footer %}
 <script>
+    // initialize Databench's frontend library
     var d = new Databench.Connection();
     Databench.ui.wire(d);
     d.connect();
 
-    // listen for the 'ready' signal
-    d.on('ready', function(data) {
-        document.getElementById('backend_ready_msg').innerHTML = data;
-        console.log('Ready message received and set as the text of element '+
-                    '#backend_ready_msg. Now sending message back to backend.')
+    // listen for updates to 'status' in 'data'
+    d.on({data: 'status'}, function(status) {
+        console.log(`received ${JSON.stringify(status)}`);
+        document.getElementById('status').innerHTML = status;
 
-        // Send something to the backend in return:
-        d.emit('got_ready_signal', 'thanks for sending ready signal');
+        // send 'ack' action back:
+        d.emit('ack', 'thanks for sending ready');
     });
 </script>
 {% end %}
