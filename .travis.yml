@@ -14,7 +14,7 @@ install:
  - export PATH=$PATH:/usr/lib/node_modules/.bin/
 script:
  - flake8
- - nosetests -vv --with-coverage --cover-package=databench --cover-erase --cover-inclusive
+ - nosetests -vv --with-coverage --cover-erase --cover-inclusive
 after_success:
  - coveralls || true
  - bash <(curl -s https://codecov.io/bash)

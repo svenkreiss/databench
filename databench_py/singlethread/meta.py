@@ -111,8 +111,6 @@ class Meta(object):
         fn_name = 'on_{}'.format(action_name)
         log.debug('kernel calling {}'.format(fn_name))
         fn = getattr(analysis, fn_name)
-        log.debug('kernel done {}'.format(fn_name))
-
         # Check whether this is a list (positional arguments)
         # or a dictionary (keyword arguments).
         if isinstance(message, list):
@@ -123,11 +121,12 @@ class Meta(object):
             fn()
         else:
             fn(message)
+        log.debug('kernel done {}'.format(fn_name))
 
         if process_id:
             analysis.emit('__process', {'id': process_id, 'status': 'end'})
 
-        if fn_name == 'on_disconnected':
+        if action_name == 'disconnected':
             log.debug('kernel {} shutting down'.format(analysis.id_))
             self.zmq_publish.close()
 

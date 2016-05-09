@@ -1,7 +1,6 @@
 import json
 import logging
 import subprocess
-import time
 import tornado.gen
 import zmq
 import zmq.eventloop.zmqstream
