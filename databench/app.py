@@ -1,4 +1,4 @@
-"""Main Flask App."""
+"""Main App."""
 
 from __future__ import absolute_import, unicode_literals, division
 
