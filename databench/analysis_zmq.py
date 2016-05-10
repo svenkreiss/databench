@@ -35,7 +35,10 @@ class AnalysisZMQ(Analysis):
         self.zmq_sub.setsockopt(zmq.SUBSCRIBE, b'')
         self.zmq_sub.bind('tcp://127.0.0.1:{}'.format(port_subscribe))
 
-        self.zmq_stream_sub = zmq.eventloop.zmqstream.ZMQStream(self.zmq_sub)
+        self.zmq_stream_sub = zmq.eventloop.zmqstream.ZMQStream(
+            self.zmq_sub,
+            tornado.ioloop.IOLoop.current(),
+        )
         self.zmq_stream_sub.on_recv(self.zmq_listener)
 
         # launch the language kernel process

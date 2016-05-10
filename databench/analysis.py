@@ -148,7 +148,11 @@ class Meta(object):
     all_instances = []
 
     def __init__(self, name, analysis_class):
-        Meta.all_instances.append(self)
+        # TODO(sven): Meta should only be instantiated once per analysis
+        # but multiple imports lead to multiple instances
+        if name not in [m.name for m in Meta.all_instances]:
+            Meta.all_instances.append(self)
+
         self.name = name
         self.analysis_class = analysis_class
         self.show_in_index = True
@@ -162,10 +166,10 @@ class Meta(object):
     @property
     def analysis_path(self):
         if self._analysis_path is None:
-            sys.path.append('.')
-            try:
+            if os.path.isfile('analyses/__init__.py'):
+                sys.path.append('.')
                 import analyses
-            except ImportError:
+            else:
                 log.debug('Did not find analyses. Using packaged analyses.')
                 from . import analyses_packaged as analyses
             analyses_path = os.path.dirname(

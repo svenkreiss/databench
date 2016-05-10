@@ -12,7 +12,6 @@ import os
 import sys
 import tornado.autoreload
 import tornado.web
-import traceback
 import zmq.eventloop
 
 try:
@@ -73,7 +72,10 @@ class App(object):
         zmq_publish.bind('tcp://127.0.0.1:{}'.format(zmq_port))
         log.debug('main publishing to port {}'.format(zmq_port))
 
-        zmq_publish_stream = zmq.eventloop.zmqstream.ZMQStream(zmq_publish)
+        zmq_publish_stream = zmq.eventloop.zmqstream.ZMQStream(
+            zmq_publish,
+            tornado.ioloop.IOLoop.current(),
+        )
         self.register_analyses_py(zmq_publish_stream, zmq_port)
         self.register_analyses_pyspark(zmq_publish_stream, zmq_port)
         self.register_analyses_go(zmq_publish_stream, zmq_port)
@@ -148,14 +150,10 @@ class App(object):
     def import_analyses(self):
         """Add analyses from the analyses folder."""
 
-        sys.path.append('.')
-        try:
+        if os.path.isfile('analyses/__init__.py'):
+            sys.path.append('.')
             import analyses
-        except ImportError as e:
-            if str(e).replace("'", "") != 'No module named analyses':
-                traceback.print_exc(file=sys.stdout)
-                raise e
-
+        else:
             log.warning('Did not find "analyses" module. '
                         'Using packaged analyses.')
             from databench import analyses_packaged as analyses
