@@ -15,6 +15,84 @@ import websocket
 LOGLEVEL = 'DEBUG'
 
 
+class WebSocketBaseTestCase(tornado.testing.AsyncHTTPTestCase):
+    """similar to tornado websocket unit tests
+
+    see https://github.com/tornadoweb/tornado/blob/master/
+        tornado/test/websocket_test.py
+    """
+    @tornado.gen.coroutine
+    def ws_connect(self, path, compression_options=None):
+        ws = yield tornado.websocket.websocket_connect(
+            'ws://127.0.0.1:%d%s' % (self.get_http_port(), path),
+            compression_options=compression_options)
+        raise tornado.gen.Return(ws)
+
+    @tornado.gen.coroutine
+    def close(self, ws):
+        """Close a websocket connection and wait for the server side.
+
+        If we don't wait here, there are sometimes leak warnings in the
+        tests.
+        """
+        ws.close()
+
+
+class WebSocketDatabenchTest(WebSocketBaseTestCase):
+    def get_app(self):
+        return databench.App().tornado_app()
+
+    def test_index(self):
+        response = self.fetch('/')
+        self.assertEqual(response.code, 200)
+        self.assertIn(b'Simple1', response.body)
+
+    @tornado.testing.gen_test
+    def test_websocket_gen(self):
+        ws = yield self.ws_connect('/simple1/ws')
+        yield ws.write_message('{"__connect": null}')
+        response = yield ws.read_message()
+        r = json.loads(response)
+        self.assertEqual(r['signal'], '__connect')
+        yield self.close(ws)
+
+    @tornado.testing.gen_test
+    def test_process(self):
+        ws = yield self.ws_connect('/simple1/ws')
+
+        yield ws.write_message('{"__connect": null}')
+        response = yield ws.read_message()
+        r = json.loads(response)
+        self.assertEqual(r['signal'], '__connect')
+        self.assertIn('analysis_id', r['load'])
+        response = yield ws.read_message()
+        r = json.loads(response)
+        self.assertEqual(r['signal'], 'data')
+
+        yield ws.write_message(
+            '{"signal":"test_fn", '
+            '"load":{"__process_id":123, "first_param":1}}'
+        )
+        response = yield ws.read_message()
+        r = json.loads(response)
+        self.assertEqual(r['signal'], '__process')
+        self.assertEqual(r['load']['id'], 123)
+        self.assertEqual(r['load']['status'], 'start')
+
+        response = yield ws.read_message()
+        r = json.loads(response)
+        self.assertEqual(r['signal'], 'test_fn')
+        self.assertEqual(r['load']['first_param'], 1)
+
+        response = yield ws.read_message()
+        r = json.loads(response)
+        self.assertEqual(r['signal'], '__process')
+        self.assertEqual(r['load']['id'], 123)
+        self.assertEqual(r['load']['status'], 'end')
+
+        yield self.close(ws)
+
+
 class Dummypi(unittest.TestCase):
     def setUp(self):
         # call os.setsid so that all subprocesses terminate when the
@@ -230,51 +308,6 @@ class Dummypi(unittest.TestCase):
 
     def test_fn_call_dummypi_py_dict(self):
         self._fn_call_dict(name='dummypi_py')
-
-
-class WebSocketBaseTestCase(tornado.testing.AsyncHTTPTestCase):
-    """similar to tornado websocket unit tests
-
-    see https://github.com/tornadoweb/tornado/blob/master/
-        tornado/test/websocket_test.py
-    """
-    @tornado.gen.coroutine
-    def ws_connect(self, path, compression_options=None):
-        ws = yield tornado.websocket.websocket_connect(
-            'ws://127.0.0.1:%d%s' % (self.get_http_port(), path),
-            compression_options=compression_options)
-        raise tornado.gen.Return(ws)
-
-    @tornado.gen.coroutine
-    def close(self, ws):
-        """Close a websocket connection and wait for the server side.
-
-        If we don't wait here, there are sometimes leak warnings in the
-        tests.
-        """
-        ws.close()
-        # yield self.close_future
-
-
-class WebSocketDatabenchTest(WebSocketBaseTestCase):
-    def get_app(self):
-        # self.close_future = tornado.concurrent.Future()
-        app = databench.App().tornado_app()
-        return app
-
-    def test_index(self):
-        response = self.fetch('/')
-        self.assertEqual(response.code, 200)
-        self.assertIn(b'Simple1', response.body)
-
-    @tornado.testing.gen_test
-    def test_websocket_gen(self):
-        ws = yield self.ws_connect('/simple1/ws')
-        yield ws.write_message('{"__connect": null}')
-        response = yield ws.read_message()
-        r = json.loads(response)
-        self.assertEqual(r['signal'], '__connect')
-        yield self.close(ws)
 
 
 if __name__ == '__main__':

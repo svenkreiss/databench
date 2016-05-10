@@ -472,7 +472,7 @@ var Button = exports.Button = function () {
                     // set up click callback
                     b.click_cb = function (processID) {
                         // set up action callback
-                        conn.onAction(processID, function (status) {
+                        conn.onProcess(processID, function (status) {
                             switch (status) {
                                 case 'start':
                                     b.state(b.ACTIVE);

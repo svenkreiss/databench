@@ -171,7 +171,7 @@ export class Button {
             // set up click callback
             b.click_cb = (processID) => {
                 // set up action callback
-                conn.onAction(processID, (status) => {
+                conn.onProcess(processID, (status) => {
                     switch (status) {
                         case 'start':
                             b.state(b.ACTIVE);
