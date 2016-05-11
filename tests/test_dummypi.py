@@ -7,12 +7,13 @@ import unittest
 
 
 class MultipleConnections(test_websocket.WebSocketBaseTestCase):
+    ANALYSIS = 'dummypi'
 
-    @tornado.gen.coroutine
-    def _run(self, analysis='dummypi'):
+    @tornado.testing.gen_test
+    def test_run(self):
         wss = []
         for _ in range(4):
-            ws = yield self.ws_connect('/{}/ws'.format(analysis))
+            ws = yield self.ws_connect('/{}/ws'.format(self.ANALYSIS))
             wss.append(ws)
         for ws in wss:
             yield ws.write_message('{"__connect": null}')
@@ -23,20 +24,17 @@ class MultipleConnections(test_websocket.WebSocketBaseTestCase):
         for ws in wss:
             yield self.close(ws)
 
-    @tornado.testing.gen_test
-    def test_(self):
-        self._run('dummypi')
+
+class MultipleConnectionsPy(MultipleConnections):
+    ANALYSIS = 'dummypi_py'
+
+
+class Parameters(test_websocket.WebSocketBaseTestCase):
+    ANALYSIS = 'dummypi'
 
     @tornado.testing.gen_test
-    def test_py(self):
-        self._run('dummypi_py')
-
-
-class ParameterTest(test_websocket.WebSocketBaseTestCase):
-
-    @tornado.gen.coroutine
-    def _parameter(self, analysis='dummypi'):
-        ws = yield self.ws_connect('/{}/ws'.format(analysis))
+    def test_parameter(self):
+        ws = yield self.ws_connect('/{}/ws'.format(self.ANALYSIS))
         yield ws.write_message('{"__connect": null}')
         response = yield ws.read_message()
         r = json.loads(response)
@@ -56,9 +54,9 @@ class ParameterTest(test_websocket.WebSocketBaseTestCase):
 
         yield self.close(ws)
 
-    @tornado.gen.coroutine
-    def _list(self, analysis='dummypi'):
-        ws = yield self.ws_connect('/{}/ws'.format(analysis))
+    @tornado.testing.gen_test
+    def test_list(self):
+        ws = yield self.ws_connect('/{}/ws'.format(self.ANALYSIS))
         yield ws.write_message('{"__connect": null}')
         response = yield ws.read_message()
         r = json.loads(response)
@@ -79,9 +77,9 @@ class ParameterTest(test_websocket.WebSocketBaseTestCase):
 
         yield self.close(ws)
 
-    @tornado.gen.coroutine
-    def _dict(self, analysis='dummypi'):
-        ws = yield self.ws_connect('/{}/ws'.format(analysis))
+    @tornado.testing.gen_test
+    def test_dict(self):
+        ws = yield self.ws_connect('/{}/ws'.format(self.ANALYSIS))
         yield ws.write_message('{"__connect": null}')
         response = yield ws.read_message()
         r = json.loads(response)
@@ -102,29 +100,9 @@ class ParameterTest(test_websocket.WebSocketBaseTestCase):
 
         yield self.close(ws)
 
-    @tornado.testing.gen_test
-    def test_parameter(self):
-        self._parameter('dummypi')
 
-    @tornado.testing.gen_test
-    def test_parameter_py(self):
-        self._parameter('dummypi_py')
-
-    @tornado.testing.gen_test
-    def test_list(self):
-        self._list('dummypi')
-
-    @tornado.testing.gen_test
-    def test_list_py(self):
-        self._list('dummypi_py')
-
-    @tornado.testing.gen_test
-    def test_dict(self):
-        self._dict('dummypi')
-
-    @tornado.testing.gen_test
-    def test_dict_py(self):
-        self._dict('dummypi_py')
+class ParametersPy(Parameters):
+    ANALYSIS = 'dummypi_py'
 
 
 if __name__ == '__main__':

@@ -145,14 +145,7 @@ class Meta(object):
     :type analysis_class: :class:`databench.Analysis`
     """
 
-    all_instances = []
-
     def __init__(self, name, analysis_class):
-        # TODO(sven): Meta should only be instantiated once per analysis
-        # but multiple imports lead to multiple instances
-        if name not in [m.name for m in Meta.all_instances]:
-            Meta.all_instances.append(self)
-
         self.name = name
         self.analysis_class = analysis_class
         self.show_in_index = True

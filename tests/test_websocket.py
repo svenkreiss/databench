@@ -4,10 +4,6 @@ import databench
 import json
 import tornado.testing
 import unittest
-from zmq.eventloop.ioloop import ZMQIOLoop
-
-from zmq.eventloop import ioloop
-ioloop.install()
 
 
 class WebSocketBaseTestCase(tornado.testing.AsyncHTTPTestCase):
@@ -18,9 +14,6 @@ class WebSocketBaseTestCase(tornado.testing.AsyncHTTPTestCase):
     """
     def get_app(self):
         return databench.App().tornado_app()
-
-    def get_new_ioloop(self):
-        return ZMQIOLoop()
 
     @tornado.gen.coroutine
     def ws_connect(self, path, compression_options=None):
@@ -38,9 +31,12 @@ class WebSocketBaseTestCase(tornado.testing.AsyncHTTPTestCase):
         tests.
         """
         ws.close()
+        yield tornado.gen.sleep(1.0)
 
 
-class WebSocketDatabenchTest(WebSocketBaseTestCase):
+class Basics(WebSocketBaseTestCase):
+    ANALYSIS = 'dummypi'
+
     def test_index(self):
         response = self.fetch('/')
         self.assertEqual(response.code, 200)
@@ -48,16 +44,16 @@ class WebSocketDatabenchTest(WebSocketBaseTestCase):
 
     @tornado.testing.gen_test
     def test_connect(self):
-        ws = yield self.ws_connect('/dummypi/ws')
+        ws = yield self.ws_connect('/{}/ws'.format(self.ANALYSIS))
         yield ws.write_message('{"__connect": null}')
         response = yield ws.read_message()
         r = json.loads(response)
         self.assertEqual(r['signal'], '__connect')
         yield self.close(ws)
 
-    @tornado.gen.coroutine
-    def _process(self, analysis='dummypi'):
-        ws = yield self.ws_connect('/{}/ws'.format(analysis))
+    @tornado.testing.gen_test
+    def test_process(self):
+        ws = yield self.ws_connect('/{}/ws'.format(self.ANALYSIS))
 
         yield ws.write_message('{"__connect": null}')
         response = yield ws.read_message()
@@ -91,13 +87,9 @@ class WebSocketDatabenchTest(WebSocketBaseTestCase):
 
         yield self.close(ws)
 
-    @tornado.testing.gen_test
-    def test_process(self):
-        self._process('dummypi')
 
-    @tornado.testing.gen_test
-    def test_process_py(self):
-        self._process('dummypi_py')
+class BasicsPy(Basics):
+    ANALYSIS = 'dummypi_py'
 
 
 if __name__ == '__main__':

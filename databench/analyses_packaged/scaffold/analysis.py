@@ -14,9 +14,5 @@ class Scaffold(databench.Analysis):
 
     def on_ack(self, msg):
         """process 'ack' action"""
-
         time.sleep(1)
         self.data['status'] = 'acknowledged'
-
-
-META = databench.Meta('scaffold', Scaffold)
