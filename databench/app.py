@@ -12,7 +12,6 @@ import os
 import sys
 import tornado.autoreload
 import tornado.web
-import traceback
 import zmq.eventloop
 
 try:
@@ -20,6 +19,7 @@ try:
 except ImportError:
     glob2 = None
 
+zmq.eventloop.ioloop.install()
 log = logging.getLogger(__name__)
 
 
@@ -34,6 +34,7 @@ class App(object):
             'author': None,
             'version': None,
         }
+        self.metas = []
 
         self.routes = [
             (r'/(favicon\.ico)',
@@ -52,7 +53,7 @@ class App(object):
 
             (r'/',
              IndexHandler,
-             {'info': self.info}),
+             {'info': self.info, 'metas': self.metas}),
         ]
 
         # check whether we have to determine zmq_port ourselves first
@@ -69,98 +70,36 @@ class App(object):
 
         self.spawned_analyses = {}
 
-        zmq_publish = zmq.Context().socket(zmq.PUB)
-        zmq_publish.bind('tcp://127.0.0.1:{}'.format(zmq_port))
+        self.zmq_pub_ctx = zmq.Context()
+        self.zmq_pub = self.zmq_pub_ctx.socket(zmq.PUB)
+        self.zmq_pub.bind('tcp://127.0.0.1:{}'.format(zmq_port))
         log.debug('main publishing to port {}'.format(zmq_port))
 
-        zmq_publish_stream = zmq.eventloop.zmqstream.ZMQStream(zmq_publish)
-        self.register_analyses_py(zmq_publish_stream, zmq_port)
-        self.register_analyses_pyspark(zmq_publish_stream, zmq_port)
-        self.register_analyses_go(zmq_publish_stream, zmq_port)
-        self.import_analyses()
-        self.register_analyses()
-
-    def tornado_app(self, debug=False, template_path=None, **kwargs):
-        if template_path is None:
-            template_path = os.path.join(
-                os.path.dirname(os.path.realpath(__file__)),
-                'templates',
-            )
-
-        if debug:
-            self.build()
-
-        return tornado.web.Application(
-            self.routes,
-            debug=debug,
-            template_path=template_path,
-            **kwargs
+        self.zmq_pub_stream = zmq.eventloop.zmqstream.ZMQStream(
+            self.zmq_pub,
+            tornado.ioloop.IOLoop.current(),
         )
 
-    def register_analyses_py(self, zmq_publish, zmq_port):
-        analysis_folders = glob.glob('analyses/*_py')
-        if not analysis_folders:
-            analysis_folders = glob.glob('databench/analyses_packaged/*_py')
+        self.analyses_info()
 
-        for analysis_folder in analysis_folders:
-            name = analysis_folder.rpartition('/')[2]
-            if name[0] in ('.', '_'):
-                continue
-            log.debug('creating MetaZMQ for {}'.format(name))
-            MetaZMQ(name,
-                    ['python', '{}/analysis.py'.format(analysis_folder),
-                     '--zmq-subscribe={}'.format(zmq_port)],
-                    zmq_publish)
+        self.metas += self.meta_analyses()
+        self.metas += self.meta_analyses_py(self.zmq_pub_stream, zmq_port)
+        self.metas += self.meta_analyses_pyspark(self.zmq_pub_stream, zmq_port)
+        self.metas += self.meta_analyses_go(self.zmq_pub_stream, zmq_port)
+        self.register_metas()
 
-    def register_analyses_pyspark(self, zmq_publish, zmq_port):
-        analysis_folders = glob.glob('analyses/*_pyspark')
-        if not analysis_folders:
-            analysis_folders = glob.glob(
-                'databench/analyses_packaged/*_pyspark'
-            )
-
-        for analysis_folder in analysis_folders:
-            name = analysis_folder.rpartition('/')[2]
-            if name[0] in ('.', '_'):
-                continue
-            log.debug('creating MetaZMQ for {}'.format(name))
-            MetaZMQ(name,
-                    ['pyspark', '{}/analysis.py'.format(analysis_folder),
-                     '--zmq-subscribe={}'.format(zmq_port)],
-                    zmq_publish)
-
-    def register_analyses_go(self, zmq_publish, zmq_port):
-        analysis_folders = glob.glob('analyses/*_go')
-        if not analysis_folders:
-            analysis_folders = glob.glob('databench/analyses_packaged/*_go')
-
-        for analysis_folder in analysis_folders:
-            name = analysis_folder.rpartition('/')[2]
-            if name[0] in ('.', '_'):
-                continue
-            log.info('installing {}'.format(name))
-            os.system('cd {}; go install'.format(analysis_folder))
-            log.debug('creating MetaZMQ for {}'.format(name))
-            MetaZMQ(name,
-                    [name, '--zmq-subscribe={}'.format(zmq_port)],
-                    zmq_publish)
-
-    def import_analyses(self):
+    def analyses_info(self):
         """Add analyses from the analyses folder."""
 
-        sys.path.append('.')
-        try:
+        if os.path.isfile('analyses/__init__.py'):
+            sys.path.append('.')
             import analyses
-        except ImportError as e:
-            if str(e).replace("'", "") != 'No module named analyses':
-                traceback.print_exc(file=sys.stdout)
-                raise e
-
+            analyses_path = 'analyses'
+        else:
             log.warning('Did not find "analyses" module. '
                         'Using packaged analyses.')
             from databench import analyses_packaged as analyses
-
-        analyses_path = os.path.dirname(os.path.realpath(analyses.__file__))
+            analyses_path = 'databench/analyses_packaged'
 
         self.info['author'] = getattr(analyses, '__author__', None)
         self.info['version'] = getattr(analyses, '__version__', None)
@@ -210,13 +149,87 @@ class App(object):
         else:
             log.debug('Did not find an analyses/node_modules/ folder.')
 
-    def register_analyses(self):
-        """Register analyses (analyses need to be imported first)."""
+    def meta_analyses(self):
+        if os.path.isfile('analyses/__init__.py'):
+            sys.path.append('.')
+            import analyses
+        else:
+            log.debug('Did not find analyses. Using packaged analyses.')
+            from . import analyses_packaged as analyses
+
+        metas = []
+        for name, analysis_class in analyses.analyses:
+            log.debug('creating Meta for {}'.format(name))
+            metas.append(Meta(name, analysis_class))
+        return metas
+
+    def meta_analyses_py(self, zmq_publish, zmq_port):
+        analysis_folders = glob.glob('analyses/*_py')
+        if not analysis_folders:
+            analysis_folders = glob.glob('databench/analyses_packaged/*_py')
+
+        metas = []
+        for analysis_folder in analysis_folders:
+            name = analysis_folder.rpartition('/')[2]
+            if name[0] in ('.', '_'):
+                continue
+            log.debug('creating MetaZMQ for {}'.format(name))
+            metas.append(MetaZMQ(
+                name,
+                ['python', '{}/analysis.py'.format(analysis_folder),
+                 '--zmq-subscribe={}'.format(zmq_port)],
+                zmq_publish,
+            ))
+        return metas
+
+    def meta_analyses_pyspark(self, zmq_publish, zmq_port):
+        analysis_folders = glob.glob('analyses/*_pyspark')
+        if not analysis_folders:
+            analysis_folders = glob.glob(
+                'databench/analyses_packaged/*_pyspark'
+            )
+
+        metas = []
+        for analysis_folder in analysis_folders:
+            name = analysis_folder.rpartition('/')[2]
+            if name[0] in ('.', '_'):
+                continue
+            log.debug('creating MetaZMQ for {}'.format(name))
+            metas.append(MetaZMQ(
+                name,
+                ['pyspark', '{}/analysis.py'.format(analysis_folder),
+                 '--zmq-subscribe={}'.format(zmq_port)],
+                zmq_publish,
+            ))
+        return metas
+
+    def meta_analyses_go(self, zmq_publish, zmq_port):
+        analysis_folders = glob.glob('analyses/*_go')
+        if not analysis_folders:
+            analysis_folders = glob.glob('databench/analyses_packaged/*_go')
+
+        metas = []
+        for analysis_folder in analysis_folders:
+            name = analysis_folder.rpartition('/')[2]
+            if name[0] in ('.', '_'):
+                continue
+            log.info('installing {}'.format(name))
+            os.system('cd {}; go install'.format(analysis_folder))
+            log.debug('creating MetaZMQ for {}'.format(name))
+            metas.append(MetaZMQ(
+                name,
+                [name, '--zmq-subscribe={}'.format(zmq_port)],
+                zmq_publish,
+            ))
+        return metas
+
+    def register_metas(self):
+        """register metas"""
         watch_lists = []
         if 'watch' in self.info:
             watch_lists.append(self.info['watch'])
 
-        for meta in Meta.all_instances:
+        for meta in self.metas:
             log.info('Registering meta information {}'.format(meta.name))
             self.routes += meta.routes
 
@@ -250,16 +263,34 @@ class App(object):
         log.debug('building this command: {}'.format(cmd))
         os.system(cmd)
 
+    def tornado_app(self, debug=False, template_path=None, **kwargs):
+        if template_path is None:
+            template_path = os.path.join(
+                os.path.dirname(os.path.realpath(__file__)),
+                'templates',
+            )
+
+        if debug:
+            self.build()
+
+        return tornado.web.Application(
+            self.routes,
+            debug=debug,
+            template_path=template_path,
+            **kwargs
+        )
+
 
 class IndexHandler(tornado.web.RequestHandler):
-    def initialize(self, info):
+    def initialize(self, info, metas):
         self.info = info
+        self.metas = metas
 
     def get(self):
         """Render the List-of-Analyses overview page."""
         return self.render(
             'index.html',
-            analyses=Meta.all_instances,
+            analyses=self.metas,
             databench_version=DATABENCH_VERSION,
             **self.info
         )

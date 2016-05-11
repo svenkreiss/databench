@@ -15,7 +15,6 @@ class Scaffold_Py(databench_py.Analysis):
 
     def on_ack(self, msg):
         """process 'ack' action"""
-
         time.sleep(1)
         self.data['status'] = 'acknowledged'
 

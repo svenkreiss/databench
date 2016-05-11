@@ -52,6 +52,3 @@ class Dummypi(databench.Analysis):
             'first_param': first_param,
             'second_param': second_param,
         })
-
-
-META = databench.Meta('dummypi', Dummypi)
