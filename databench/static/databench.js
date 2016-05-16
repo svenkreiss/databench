@@ -28,7 +28,8 @@ var Connection = exports.Connection = function () {
         this.error_cb = function (msg) {
             if (msg != null) return console.log('connection error: ' + msg);
         };
-        this.on_callbacks = {};
+        this.on_callbacks = [];
+        this._on_callbacks_optimized = null;
         this.onProcess_callbacks = {};
 
         this.ws_reconnect_attempt = 0;
@@ -43,6 +44,7 @@ var Connection = exports.Connection = function () {
         this.ws_onopen = this.ws_onopen.bind(this);
         this.ws_onclose = this.ws_onclose.bind(this);
         this.ws_onmessage = this.ws_onmessage.bind(this);
+        this.optimize_on_callbacks = this.optimize_on_callbacks.bind(this);
         this.on = this.on.bind(this);
         this.emit = this.emit.bind(this);
         this.onProcess = this.onProcess.bind(this);
@@ -119,37 +121,56 @@ var Connection = exports.Connection = function () {
             }
 
             // normal message
-            if (message.signal in this.on_callbacks) {
-                this.on_callbacks[message.signal].map(function (cb) {
+            if (this._on_callbacks_optimized === null) this.optimize_on_callbacks();
+            if (message.signal in this._on_callbacks_optimized) {
+                this._on_callbacks_optimized[message.signal].map(function (cb) {
                     return cb(message.load);
                 });
             }
         }
     }, {
-        key: 'on',
-        value: function on(signal, callback) {
+        key: 'optimize_on_callbacks',
+        value: function optimize_on_callbacks() {
             var _this2 = this;
 
-            if (typeof signal === "string") {
-                if (!(signal in this.on_callbacks)) this.on_callbacks[signal] = [];
-                this.on_callbacks[signal].push(callback);
-            } else if ((typeof signal === 'undefined' ? 'undefined' : _typeof(signal)) === "object") {
-                var _loop = function _loop(signalName) {
-                    var entryName = signal[signalName];
-                    var filtered_callback = function filtered_callback(data) {
-                        if (data.hasOwnProperty(entryName)) {
-                            callback(data[entryName]);
+            this._on_callbacks_optimized = {};
+            this.on_callbacks.map(function (_ref) {
+                var signal = _ref.signal;
+                var callback = _ref.callback;
+
+                if (typeof signal === "string") {
+                    if (!(signal in _this2._on_callbacks_optimized)) _this2._on_callbacks_optimized[signal] = [];
+                    _this2._on_callbacks_optimized[signal].push(callback);
+                } else if ((typeof signal === 'undefined' ? 'undefined' : _typeof(signal)) === "object") {
+                    var _loop = function _loop(signalName) {
+                        var entryName = signal[signalName];
+                        var filtered_callback = function filtered_callback(data) {
+                            if (data.hasOwnProperty(entryName)) {
+                                callback(data[entryName]);
+                            }
+                        };
+
+                        if (!(signalName in _this2._on_callbacks_optimized)) _this2._on_callbacks_optimized[signalName] = [];
+
+                        // only use the filtered callback if the entry was not empty
+                        if (entryName) {
+                            _this2._on_callbacks_optimized[signalName].push(filtered_callback);
+                        } else {
+                            _this2._on_callbacks_optimized[signalName].push(callback);
                         }
                     };
 
-                    if (!(signalName in _this2.on_callbacks)) _this2.on_callbacks[signalName] = [];
-                    _this2.on_callbacks[signalName].push(filtered_callback);
-                };
-
-                for (var signalName in signal) {
-                    _loop(signalName);
+                    for (var signalName in signal) {
+                        _loop(signalName);
+                    }
                 }
-            }
+            });
+        }
+    }, {
+        key: 'on',
+        value: function on(signal, callback) {
+            this.on_callbacks.push({ signal: signal, callback: callback });
+            this._on_callbacks_optimized = null;
             return this;
         }
     }, {
@@ -217,17 +238,17 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 exports.wire = wire;
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -235,30 +256,69 @@ function wire(conn) {
     StatusLog.wire(d);
     Log.wire(d);
     Button.wire(d);
+    TextInput.wire(d);
+    Text.wire(d);
     Slider.wire(d);
     return conn;
 }
 
-var Log = exports.Log = function () {
+var UIElement = function () {
+    function UIElement(node) {
+        _classCallCheck(this, UIElement);
+
+        this.node = node;
+        this.node.databench_ui = this;
+
+        this.action_name = UIElement.determine_action_name(node);
+        this.action_format = function (value) {
+            return value;
+        };
+
+        this.wire_signal = { data: this.action_name };
+    }
+
+    _createClass(UIElement, null, [{
+        key: 'determine_action_name',
+        value: function determine_action_name(node) {
+            // determine action name from HTML DOM
+            var action = null;
+
+            if (node.dataset.action) {
+                action = node.dataset.action;
+            } else if (node.getAttribute('name')) {
+                action = node.getAttribute('name');
+            }
+
+            return action;
+        }
+    }]);
+
+    return UIElement;
+}();
+
+var Log = exports.Log = function (_UIElement) {
+    _inherits(Log, _UIElement);
+
     function Log(node) {
         var consoleFnName = arguments.length <= 1 || arguments[1] === undefined ? 'log' : arguments[1];
-
-        var _this = this;
-
         var limit = arguments.length <= 2 || arguments[2] === undefined ? 20 : arguments[2];
         var length_limit = arguments.length <= 3 || arguments[3] === undefined ? 250 : arguments[3];
 
         _classCallCheck(this, Log);
 
-        this.node = node;
-        this.consoleFnName = consoleFnName;
-        this.limit = limit;
-        this.length_limit = length_limit;
-        this._messages = [];
+        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Log).call(this, node));
+
+        _this.consoleFnName = consoleFnName;
+        _this.limit = limit;
+        _this.length_limit = length_limit;
+        _this._messages = [];
+
+        // more sensible default for this case
+        _this.wire_signal = { log: null };
 
         // bind methods
-        this.render = this.render.bind(this);
-        this.add = this.add.bind(this);
+        _this.render = _this.render.bind(_this);
+        _this.add = _this.add.bind(_this);
 
         // capture events from frontend
         var _consoleFnOriginal = console[consoleFnName];
@@ -266,6 +326,7 @@ var Log = exports.Log = function () {
             _this.add(message, 'frontend');
             _consoleFnOriginal.apply(console, [message]);
         };
+        return _this;
     }
 
     _createClass(Log, [{
@@ -309,9 +370,9 @@ var Log = exports.Log = function () {
             var node = document.getElementById(id);
             if (node == null) return;
 
-            console.log('Wiring element id=' + id + ' to ' + source + '.');
+            console.log('Wiring element id=' + id + '.');
             var l = new Log(node, consoleFnName, limit, length_limit);
-            conn.on('log', function (message) {
+            conn.on(l.wire_signal, function (message) {
                 return l.add(message, source);
             });
             return this;
@@ -319,36 +380,43 @@ var Log = exports.Log = function () {
     }]);
 
     return Log;
-}();
+}(UIElement);
 
 ;
 
-var StatusLog = exports.StatusLog = function () {
+var StatusLog = exports.StatusLog = function (_UIElement2) {
+    _inherits(StatusLog, _UIElement2);
+
     function StatusLog(node) {
         var formatter = arguments.length <= 1 || arguments[1] === undefined ? StatusLog.default_alert : arguments[1];
 
         _classCallCheck(this, StatusLog);
 
-        this.node = node;
-        this.formatter = formatter;
-        this._messages = new Map();
+        var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(StatusLog).call(this, node));
+
+        _this3.formatter = formatter;
+        _this3._messages = new Map();
+
+        // to avoid confusion, void meaningless parent variable
+        _this3.wire_signal = null;
 
         // bind methods
-        this.render = this.render.bind(this);
-        this.add = this.add.bind(this);
+        _this3.render = _this3.render.bind(_this3);
+        _this3.add = _this3.add.bind(_this3);
+        return _this3;
     }
 
     _createClass(StatusLog, [{
         key: 'render',
         value: function render() {
-            var _this3 = this;
+            var _this4 = this;
 
             var formatted = [].concat(_toConsumableArray(this._messages)).map(function (_ref) {
                 var _ref2 = _slicedToArray(_ref, 2);
 
                 var m = _ref2[0];
                 var c = _ref2[1];
-                return _this3.formatter(m, c);
+                return _this4.formatter(m, c);
             });
             this.node.innerHTML = formatted.join('\n');
             return this;
@@ -394,31 +462,33 @@ var StatusLog = exports.StatusLog = function () {
     }]);
 
     return StatusLog;
-}();
+}(UIElement);
 
 ;
 
-var Button = exports.Button = function () {
-    function Button(node) {
-        var _this4 = this;
+var Button = exports.Button = function (_UIElement3) {
+    _inherits(Button, _UIElement3);
 
+    function Button(node) {
         _classCallCheck(this, Button);
 
-        this.IDLE = 0;
-        this.ACTIVE = 2;
+        var _this5 = _possibleConstructorReturn(this, Object.getPrototypeOf(Button).call(this, node));
 
-        this.node = node;
-        this.click_cb = function (processID) {
-            return console.log('click on ' + _this4.node + ' with ' + processID);
+        _this5.IDLE = 0;
+        _this5.ACTIVE = 2;
+
+        _this5.click_cb = function (processID) {
+            return console.log('click on ' + _this5.node + ' with ' + processID);
         };
-        this._state = this.IDLE;
+        _this5._state = _this5.IDLE;
 
         // bind methods
-        this.render = this.render.bind(this);
-        this.click = this.click.bind(this);
-        this.state = this.state.bind(this);
+        _this5.render = _this5.render.bind(_this5);
+        _this5.click = _this5.click.bind(_this5);
+        _this5.state = _this5.state.bind(_this5);
 
-        this.node.addEventListener('click', this.click, false);
+        _this5.node.addEventListener('click', _this5.click, false);
+        return _this5;
     }
 
     _createClass(Button, [{
@@ -436,7 +506,7 @@ var Button = exports.Button = function () {
     }, {
         key: 'click',
         value: function click() {
-            if (this._state != this.IDLE) return;
+            if (this._state != this.IDLE) return this;
 
             var processID = Math.floor(Math.random() * 0x100000);
             this.click_cb(processID);
@@ -445,7 +515,7 @@ var Button = exports.Button = function () {
     }, {
         key: 'state',
         value: function state(s) {
-            if (s != this.IDLE && s != this.ACTIVE) return;
+            if (s != this.IDLE && s != this.ACTIVE) return this;
 
             this._state = s;
             this.render();
@@ -454,100 +524,176 @@ var Button = exports.Button = function () {
     }], [{
         key: 'wire',
         value: function wire(conn) {
-            var nodes = Array.from(document.getElementsByTagName('BUTTON'));
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
+            Array.from(document.getElementsByTagName('BUTTON')).filter(function (node) {
+                return node.databench_ui === undefined;
+            }).map(function (node) {
+                var b = new Button(node);
+                console.log('Wiring button ' + node + ' to action ' + b.action_name + '.');
 
-            try {
-                var _loop = function _loop() {
-                    var n = _step.value;
+                // set up click callback
+                b.click_cb = function (processID) {
+                    // set up process callback
+                    conn.onProcess(processID, function (status) {
+                        return b.state(
+                        // map process status to state
+                        { start: b.ACTIVE, end: b.IDLE }[status]);
+                    });
 
-                    var signal = n.dataset.signal;
-                    if (!signal) return 'continue';
-
-                    console.log('Wiring button ' + n + ' to signal ' + signal + '.');
-                    var b = new Button(n);
-
-                    // set up click callback
-                    b.click_cb = function (processID) {
-                        // set up action callback
-                        conn.onProcess(processID, function (status) {
-                            switch (status) {
-                                case 'start':
-                                    b.state(b.ACTIVE);
-                                    break;
-                                case 'end':
-                                    b.state(b.IDLE);
-                                    break;
-                                default:
-                                    console.log('error');
-                            }
-                        });
-
-                        var message = {};
-                        if (n.dataset.message) message = JSON.parse(n.dataset.message);
-                        message['__process_id'] = processID;
-                        conn.emit(signal, message);
-                    };
+                    conn.emit(b.action_name, b.action_format({ __process_id: processID }));
                 };
-
-                for (var _iterator = nodes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var _ret = _loop();
-
-                    if (_ret === 'continue') continue;
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
-            }
+            });
         }
     }]);
 
     return Button;
-}();
+}(UIElement);
 
-var Slider = exports.Slider = function () {
+var Text = exports.Text = function (_UIElement4) {
+    _inherits(Text, _UIElement4);
+
+    function Text(node) {
+        _classCallCheck(this, Text);
+
+        var _this6 = _possibleConstructorReturn(this, Object.getPrototypeOf(Text).call(this, node));
+
+        _this6.format_fn = function (value) {
+            return value;
+        };
+
+        // bind methods
+        _this6.value = _this6.value.bind(_this6);
+        return _this6;
+    }
+
+    _createClass(Text, [{
+        key: 'value',
+        value: function value(v) {
+            this.node.innerHTML = this.format_fn(v);
+            return this;
+        }
+    }], [{
+        key: 'wire',
+        value: function wire(conn) {
+            [].concat(_toConsumableArray(Array.from(document.getElementsByTagName('SPAN'))), _toConsumableArray(Array.from(document.getElementsByTagName('P'))), _toConsumableArray(Array.from(document.getElementsByTagName('DIV'))), _toConsumableArray(Array.from(document.getElementsByTagName('I'))), _toConsumableArray(Array.from(document.getElementsByTagName('B')))).filter(function (node) {
+                return node.databench_ui === undefined;
+            }).filter(function (node) {
+                return UIElement.determine_action_name(node) !== null;
+            }).map(function (node) {
+                var t = new Text(node);
+                console.log('Wiring text ' + node + ' to action ' + t.action_name + '.');
+
+                // handle events from backend
+                conn.on(t.wire_signal, function (message) {
+                    return t.value(message);
+                });
+            });
+        }
+    }]);
+
+    return Text;
+}(UIElement);
+
+var TextInput = exports.TextInput = function (_UIElement5) {
+    _inherits(TextInput, _UIElement5);
+
+    function TextInput(node) {
+        _classCallCheck(this, TextInput);
+
+        var _this7 = _possibleConstructorReturn(this, Object.getPrototypeOf(TextInput).call(this, node));
+
+        _this7.format_fn = function (value) {
+            return value;
+        };
+        _this7.change_cb = function (value) {
+            return console.log('change of ' + _this7.node + ': ' + value);
+        };
+
+        // bind methods
+        _this7.change = _this7.change.bind(_this7);
+        _this7.value = _this7.value.bind(_this7);
+
+        _this7.node.addEventListener('change', _this7.change, false);
+        return _this7;
+    }
+
+    _createClass(TextInput, [{
+        key: 'change',
+        value: function change() {
+            return this.change_cb(this.action_format(this.value()));
+        }
+    }, {
+        key: 'value',
+        value: function value(v) {
+            if (!v) {
+                // reading value
+                return this.node.value;
+            }
+
+            this.node.value = this.format_fn(v);
+            return this;
+        }
+    }], [{
+        key: 'wire',
+        value: function wire(conn) {
+            Array.from(document.getElementsByTagName('INPUT')).filter(function (node) {
+                return node.databench_ui === undefined;
+            }).filter(function (node) {
+                return node.getAttribute('type') == 'text';
+            }).map(function (node) {
+                var t = new TextInput(node);
+                console.log('Wiring text input ' + node + ' to action ' + t.action_name + '.');
+
+                // handle events from frontend
+                t.change_cb = function (message) {
+                    return conn.emit(t.action_name, message);
+                };
+
+                // handle events from backend
+                conn.on(t.wire_signal, function (message) {
+                    return t.value(message);
+                });
+            });
+        }
+    }]);
+
+    return TextInput;
+}(UIElement);
+
+var Slider = exports.Slider = function (_UIElement6) {
+    _inherits(Slider, _UIElement6);
+
     function Slider(node, label_node) {
         _classCallCheck(this, Slider);
 
-        this.node = node;
-        this.label_node = label_node;
-        this.label_html = label_node ? label_node.innerHTML : null;
-        this.change_cb = function (value) {
-            return console.log('slider value ' + value);
+        var _this8 = _possibleConstructorReturn(this, Object.getPrototypeOf(Slider).call(this, node));
+
+        _this8.label_node = label_node;
+        _this8.label_html = label_node ? label_node.innerHTML : null;
+        _this8.change_cb = function (value) {
+            return console.log('slider value change: ' + value);
         };
-        this._v_to_slider = function (value) {
+        _this8._v_to_slider = function (value) {
             return value;
         };
-        this._slider_to_v = function (s) {
+        _this8._slider_to_v = function (s) {
             return s;
         };
-        this._v_repr = function (v) {
+        _this8._v_repr = function (v) {
             return v;
         };
 
         // bind methods
-        this.v_to_slider = this.v_to_slider.bind(this);
-        this.slider_to_v = this.slider_to_v.bind(this);
-        this.v_repr = this.v_repr.bind(this);
-        this.render = this.render.bind(this);
-        this.value = this.value.bind(this);
-        this.change = this.change.bind(this);
+        _this8.v_to_slider = _this8.v_to_slider.bind(_this8);
+        _this8.slider_to_v = _this8.slider_to_v.bind(_this8);
+        _this8.v_repr = _this8.v_repr.bind(_this8);
+        _this8.render = _this8.render.bind(_this8);
+        _this8.value = _this8.value.bind(_this8);
+        _this8.change = _this8.change.bind(_this8);
 
-        this.node.addEventListener('input', this.render, false);
-        this.node.addEventListener('change', this.change, false);
-        this.render();
+        _this8.node.addEventListener('input', _this8.render, false);
+        _this8.node.addEventListener('change', _this8.change, false);
+        _this8.render();
+        return _this8;
     }
 
     _createClass(Slider, [{
@@ -583,155 +729,59 @@ var Slider = exports.Slider = function () {
         value: function value(v) {
             if (!v) {
                 // reading value
-                v = this._slider_to_v(parseFloat(this.node.value));
-                return v;
+                return this._slider_to_v(parseFloat(this.node.value));
             }
 
-            // setting value
-            this.node.value = this._v_to_slider(v);
+            var new_slider_value = this._v_to_slider(v);
+            if (this.node.value == new_slider_value) return this;
+
+            this.node.value = new_slider_value;
             this.render();
             return this;
         }
     }, {
         key: 'change',
         value: function change() {
-            this.change_cb(this.value());
+            return this.change_cb(this.action_format(this.value()));
         }
     }], [{
+        key: 'preprocess_labels',
+        value: function preprocess_labels() {
+            Array.from(document.getElementsByTagName('LABEL')).filter(function (label) {
+                return label.htmlFor;
+            }).map(function (label) {
+                var node = document.getElementsByName(label.htmlFor)[0];
+                if (node) node.label = label;
+            });
+        }
+    }, {
         key: 'wire',
         value: function wire(conn) {
-            // preprocess all labels on the page
-            var labels = Array.from(document.getElementsByTagName('LABEL'));
-            var _iteratorNormalCompletion2 = true;
-            var _didIteratorError2 = false;
-            var _iteratorError2 = undefined;
+            this.preprocess_labels();
 
-            try {
-                for (var _iterator2 = labels[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                    var l = _step2.value;
+            Array.from(document.getElementsByTagName('INPUT')).filter(function (node) {
+                return node.databench_ui === undefined;
+            }).filter(function (node) {
+                return node.getAttribute('type') == 'range';
+            }).map(function (node) {
+                var s = new Slider(node, node.label);
+                console.log('Wiring slider ' + node + ' to action ' + s.action_name + '.');
 
-                    if (l.htmlFor) {
-                        var _n = document.getElementsByName(l.htmlFor)[0];
-                        if (_n) _n.label = l;
-                    }
-                }
-            } catch (err) {
-                _didIteratorError2 = true;
-                _iteratorError2 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                        _iterator2.return();
-                    }
-                } finally {
-                    if (_didIteratorError2) {
-                        throw _iteratorError2;
-                    }
-                }
-            }
-
-            var nodes = Array.from(document.getElementsByTagName('INPUT'));
-            var _iteratorNormalCompletion3 = true;
-            var _didIteratorError3 = false;
-            var _iteratorError3 = undefined;
-
-            try {
-                var _loop2 = function _loop2() {
-                    var n = _step3.value;
-
-                    if (n.getAttribute('type') != 'range') return 'continue';
-
-                    // construct signal
-                    var signal = null;
-                    if (n.dataset.signal) {
-                        signal = n.dataset.signal;
-                    } else if (n.dataset.instance) {
-                        signal = 'data';
-                    } else if (n.dataset.global) {
-                        signal = 'global_data';
-                    } else if (n.getAttribute('name')) {
-                        signal = n.getAttribute('name');
-                    }
-                    if (!signal) {
-                        console.log('Could not determine signal name for ' + n + '.');
-                        return {
-                            v: void 0
-                        };
-                    }
-
-                    console.log('Wiring slider ' + n + ' to signal ' + signal + '.');
-                    var s = new Slider(n, n.label);
-                    n.databench_ui = s;
-
-                    // handle events from frontend
-                    s.change_cb = function (value) {
-                        // construct message
-                        var message = s.value();
-                        if (n.dataset.message) {
-                            message = JSON.parse(n.dataset.message);
-                            message.value = s.value();
-                        }
-
-                        // process message in case signal bound to data or global_data
-                        if (signal == 'data') {
-                            message = _defineProperty({}, n.dataset.instance, message);
-                        } else if (signal == 'global_data') {
-                            message = _defineProperty({}, n.dataset.global, message);
-                        }
-
-                        conn.emit(signal, message);
-                    };
-
-                    // handle events from backend
-                    if (signal == 'data') {
-                        conn.on('data', function (message) {
-                            if (n.dataset.instance in message) {
-                                s.value(message[n.dataset.instance]);
-                            }
-                        });
-                    } else if (signal == 'global_data') {
-                        conn.on('global_data', function (message) {
-                            if (n.dataset.global in message) {
-                                s.value(message[n.dataset.global]);
-                            }
-                        });
-                    } else {
-                        conn.on(signal, function (message) {
-                            return s.value(message);
-                        });
-                    }
+                // handle events from frontend
+                s.change_cb = function (message) {
+                    return conn.emit(s.action_name, message);
                 };
 
-                for (var _iterator3 = nodes[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                    var _ret2 = _loop2();
-
-                    switch (_ret2) {
-                        case 'continue':
-                            continue;
-
-                        default:
-                            if ((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object") return _ret2.v;
-                    }
-                }
-            } catch (err) {
-                _didIteratorError3 = true;
-                _iteratorError3 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                        _iterator3.return();
-                    }
-                } finally {
-                    if (_didIteratorError3) {
-                        throw _iteratorError3;
-                    }
-                }
-            }
+                // handle events from backend
+                conn.on(s.wire_signal, function (message) {
+                    return s.value(message);
+                });
+            });
         }
     }]);
 
     return Slider;
-}();
+}(UIElement);
 
 },{}],4:[function(require,module,exports){
 var _global = (function() { return this; })();

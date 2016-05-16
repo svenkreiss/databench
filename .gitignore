@@ -27,9 +27,7 @@ var/
 .installed.cfg
 *.egg
 .eggs
-venv/
-venv26/
-venv3/
+venv*/
 .coverage*
 
 # Installer logs

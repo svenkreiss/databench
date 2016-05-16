@@ -3,7 +3,7 @@ Frontend
 
 This is section contains an overview of techniques and best practices that can
 be used on the frontend, followed by a short overview of the frontend API and
-a subsection on generic UI elements (buttons, sliders, etc).
+a section on UI elements (buttons, text boxes, sliders, etc).
 
 
 .. _frontend-overview:
@@ -13,21 +13,17 @@ Overview
 
 .. _customization:
 
-Customization (outdated)
-++++++++++++++++++++++++
+Customization
++++++++++++++
 
-You can customize the header in ``analyses/__init__.py``:
+You can customize the header in ``analyses/README.md``:
 
-.. code-block:: python
+.. code-block:: markdown
 
-    header_logo = '/analyses_static/logo-header.svg'
-    header_title = 'My-awesome-project-or-company-name'
+    title: Databench - Packaged Analyses
+    logo_url: /static/logo-header.svg
 
 Place the ``logo-header.svg`` file in ``analyses/static/``. Any standard image format like ``.png``, ``.jpeg`` and ``.svg`` is supported.
-
-In the html template, ``[[ analysis_description ]]`` returns the description
-string passed into :class:`databench.Analysis` which is usually the ``__doc__``
-string of your analysis Python file.
 
 
 Additional Views
@@ -82,51 +78,16 @@ Here is an example for making use of the ``head`` block:
     {% end %}
 
 
-Formatting: Math, Markdown and src Files (outdated)
-+++++++++++++++++++++++++++++++++++++++++++++++++++
+Extensions
+++++++++++
 
-The frontend also renders math expressions enclosed in ``\\(`` and ``\\)`` as
-inline math and as block math when they are enclosed in ``$$`` and ``$$``. It
-also renders Markdown when it is enclosed in ``{% filter markdown %}`` and
-``{% endfilter %}``. You can also include an external Markdown file with the
-``include_md(file)`` macro::
-
-    {% from 'macros.html' import include_md %}
-    [[ include_md('helloworld/README.md') ]]
-
-To include an external source code file, use the ``include_src(file, type)``
-macro.
+Math with MathJax, Twitter Bootstrap, Font Awesome and many more work together
+well with Databench in the frontend.
 
 
-Twitter Bootstrap and Font Awesome (outdated)
-+++++++++++++++++++++++++++++++++++++++++++++
 
-`Twitter Bootstrap <http://getbootstrap.com/>`_ is
-included so that responsive layouts of the form
-
-.. code-block:: html
-
-    <div class="row">
-        <div class="col-md-6">First column</div>
-        <div class="col-md-6">Second column</div>
-    </div>
-
-and many more things work out of the box.
-`Font Awesome <http://fortawesome.github.io/Font-Awesome/>`_ is also
-included so that you can add icons to your documentation. This also works
-within Markdown rendered text. Therefore, you can link to your GitHub project
-that hosts the analysis with
-
-.. code-block:: html
-
-    <i class="fa fa-fw fa-github"></i>
-    This [analysis is on GitHub](https://github.com/svenkreiss/databench_examples/tree/master/analyses/mpld3pi).
-
-which shows a GitHub icon and the Markdown rendered text with a link.
-
-
-Static Files (outdated)
-+++++++++++++++++++++++
+Static Files
+++++++++++++
 
 To add a static file to an analysis, place it in the analysis folder. Static
 files in this folder are exposed at the ``/<some_analysis>/static/`` url.
@@ -141,7 +102,7 @@ file ``angular.js`` to the folder ``analyses/angular/`` and include it in
 
 You can also add static files to *all* analyses by creating a folder
 ``analyses/static`` and placing the static file in this folder. The URL
-to access the files is ``/analyses_static/my_static_file.png``. This is
+to access the files is ``/static/my_static_file.png``. This is
 the same folder that is used for a custom header logo;
 see :ref:`customization`.
 
@@ -168,42 +129,21 @@ or require users to run ``cd analyses; npm install`` to install their own
 ``node_modules`` locally.
 
 
-.. _include-databench-js:
+Running the Backend at a Custom Location
+++++++++++++++++++++++++++++++++++++++++
 
-Including Databench's JavaScript Library (outdated)
-+++++++++++++++++++++++++++++++++++++++++++++++++++
-
-When using the ``base.html`` template, the databench library and a few more
-libraries are already loaded:
-
-.. code-block:: html
-
-    <script src="/static/jquery/jquery-2.1.1.min.js"></script>
-    <script src="/static/bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
-    <script src="/static/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
-    <script src="/static/d3/d3.v3.min.js"></script>
-    <script src="/static/mpld3/mpld3.v0.2.js"></script>
-    <script src="/static/databench.js"></script>
-
-When using your own html template, you need to include at least ``jQuery``
-and ``databench.js``.
-
-
-Running the Backend at a Custom Location (outdated)
-+++++++++++++++++++++++++++++++++++++++++++++++++++
-
-You can also include Databench in websites. For that, you need the
-Databench JavaScript library (explained above at :ref:`include-databench-js`)
-and you need to tell the frontend the location of your Databench backend:
+You can also include Databench in websites. You need the Databench JavaScript
+library and configure the location of your Databench backend:
 
 .. code-block:: javascript
 
-    var databench = Databench({
-        ws_url: 'ws://databench-examples.svenkreiss.com/simplepi/ws',
-    });
+    var d = Databench.Connection(
+        null,
+        'ws://databench-examples.trivial.io/simplepi/ws',
+    );
 
 which connects to the backend of the
-`public and live example of simplepi <http://databench-examples.svenkreiss.com/simplepi/>`_.
+`public and live example of simplepi <http://databench-examples.trivial.io/simplepi/>`_.
 When you connect to your own backend, you will have to invoke databench with
 
 .. code-block:: bash
@@ -218,8 +158,8 @@ isolated server.
 
 
 
-Databench JavaScript Frontend Library (outdated)
-------------------------------------------------
+Databench JavaScript Frontend Library
+-------------------------------------
 
 This is the API documentation for ``databench.js``.
 
@@ -258,58 +198,93 @@ This is the API documentation for ``databench.js``.
 
 .. _ui:
 
-UI (partially outdated)
----
+User Interface (UI)
+-------------------
 
-Below is the list of genericElements that are in :js:func:`Databench`.
-They all can be instantiated from
-JavaScript on the frontend. They are also created automatically for the
-following elements on the page:
+Below is the list of :js:func:`Databench.UIElements` that are in
+:js:func:`Databench`. The DOM nodes are "wired" manually or using
+:js:func:`Databench.ui.wire`.
 
-* :js:func:`Databench.genericElements.log`: a ``<pre>`` with an ``id`` starting with ``log``
-* :js:func:`Databench.genericElements.mpld3canvas`: a ``<div>`` with an ``id`` starting with ``mpld3canvas``. The exact ``id`` becomes the signal name.
-* :js:func:`Databench.genericElements.button`: a ``<button>`` with a ``data-signal-name`` attribute.
-* :js:func:`Databench.genericElements.slider`: any ``<input[type='range']>`` element. The ``name`` attribute is used as the signalName.
+* :js:class:`Databench.ui.Log`: node (usually a ``<pre>``) with ``id="log"``
+* :js:class:`Databench.ui.StatusLog`: node (usually a ``<div>``) with ``id="ws-alerts"``
+* :js:class:`Databench.ui.Button`: a ``<button>`` with an action name
+* :js:class:`Databench.ui.Text`: a ``<span>``, ``<p>``, ``<div>``, ``<i>`` or ``<b>`` with an action name
+* :js:class:`Databench.ui.TextInput`: a ``<input[type='text']>`` with an action name
+* :js:class:`Databench.ui.Slider`: a ``<input[type='range']>`` with an action name
+
+Action names are determined from ``name`` or ``data-action`` attributes.
 
 
-And here are the genericElements:
+.. js:class:: Databench.UIElement(node)
 
-.. js:function:: Databench.genericElements.log([id, signalName, limit, consoleFnName])
+    :param node: DOM element
 
-    :param id: ``id`` of a ``<pre>`` element.
-    :param string signalName: The signal to listen for.
-    :param int limit: Maximum number of lines to show (default=20).
-    :param string consoleFnName: Name of a method of ``console``, like
-        'log' (default).
+    Adds ``databench_ui`` to the DOM element with the UIElement that
+    wired this node.
 
-    This function provides log message handling from the frontend and
-    backend. By default, this looks at ``log`` messages from the backend and at
-    ``console.log()`` calls on the frontend. All messages will be shown in the
-    bound ``<pre>`` element and in the browser console. When no ``id`` is given, it will only show the messages in the browser console.
 
-.. js:function:: Databench.ui.Button(node)
+    .. js:attribute:: action_name
 
-    :param node: a document node (e.g. returned by ``document.getElementById('id_of_node')``).
+        Name of the action for this element. A default name is determined from
+        the DOM ``data-action`` attribute or from the ``name`` attribute and
+        can be overwritten.
 
-    The signalName can be extracted from an attribute ``data-signal-name``
-    and an optional message can be provided in JSON format in ``data-message``.
-    The signalName and the message are used for a :js:func:`Databench.emit`.
+    .. js:function:: action_format(value)
+
+        :param value: value of the element
+        :returns: a formatted message for an action
+
+        Overwrite this function to implement custom behavior.
+
+    .. js:attribute:: wire_signal
+
+        The default is ``{data: <action_name>}``. This can be changed.
+
+
+.. js:function:: Databench.ui.wire(connection)
+
+    Wires all elements. Skips elements containing ``data-skipwire="true"``.
+
+
+And here are the UI elements:
+
+.. js:class:: Databench.ui.Log(node, consoleFnName='log', limit=20, length_limit=250)
+
+    :param node: DOM element
+    :param string consoleFnName: name of a method of ``console``
+    :param int limit: maximum number of lines to show
+    :param int length_limit: maximum number of characters per line
+
+    .. js:function:: add(message, source='unknown')
+
+        adds a message and marks it from the given source
+
+
+.. js:class:: Databench.ui.StatusLog(node, formatter=StatusLog.default_alert)
+
+    :param node: DOM element
+    :param formatter: a function taking a message and a count of that message and returning an HTML string
+
+    .. js:function:: add(msg)
+
+        add a message
+
+
+.. js:class:: Databench.ui.Button(node)
+
+    :param node: DOM element
 
     This function adds actions to an HTML button. It adds a ``click`` event
-    handler and tracks the status of the action through the backend. The button
+    handler and tracks the status of the process through the backend. The button
     is set to active (the CSS class ``active`` is added) during the execution
-    in the backend.
+    on the backend.
 
-    :js:func:`wire`:
-    Wires all buttons that have a ``data-signal`` attribute.
-    If the element also has a ``data-message`` attribute formatted in JSON,
-    it will be send with the signals.
 
     **Example**: ``index.html``:
 
     .. code-block:: html
 
-        <button data-signal="run">Run</button>
+        <button data-action="run">Run</button>
 
     In ``analysis.py``, add
 
@@ -323,19 +298,31 @@ And here are the genericElements:
     automatically and connects it to the backend. No additional JavaScript
     code is required.
 
-.. js:function:: Databench.genericElements.slider(selector[, signalName])
 
-    :param selector: ``id`` or jQuery selector of an ``<input[type='range']>``
-        element.
-    :param string signalName: if not provided, it is taken from a
-        ``data-signal-name``, if that does not exist then from the ``name``
-        attribute and if that is also not given then it
-        is set to the id.
+.. js:class:: Databench.ui.Text(node)
 
-    The signalName can be extracted from an attribute ``data-signal-name`` or
-    ``name`` (which is more natural for ``<input>`` elements).
-    The signalName is used for :js:func:`Databench.emit` and the message is
-    an array only containing the value of the slider.
+    :param node: DOM element
+
+    .. js:attribute:: format_fn
+
+        overwrite this variable with a function that maps a signal to the
+        text that should be shown
+
+
+.. js:class:: Databench.ui.TextInput(node)
+
+    :param node: an ``<input>`` DOM element with ``type="text"``
+
+    .. js:attribute:: format_fn
+
+        overwrite this variable with a function that maps a signal to the
+        text that should be shown
+
+
+.. js:class:: Databench.ui.Slider(node, label_node)
+
+    :param node: an ``<input>`` DOM element with ``type="range"``
+    :param label_node: a corresponding ``<label>`` DOM element
 
     **Example**: ``index.html``:
 
@@ -351,8 +338,8 @@ And here are the genericElements:
 
         def on_samples(self, value):
             """Sets the number of samples to generate per run."""
-            self.samples = value
+            self.data['samples'] = value
 
-    to the ``Analysis`` class. In this form, Databench finds the slider
-    automatically and connects it to the backend. No additional JavaScript
-    code is required.
+    to the ``Analysis`` class. The Python code is for illustration only and can
+    be left out as assigning the ``value`` to the key with the name of the
+    action in ``self.data`` is the default behavior.

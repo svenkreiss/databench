@@ -11,7 +11,8 @@ export class Connection {
             if (msg != null)
                 return console.log(`connection error: ${msg}`);
         }
-        this.on_callbacks = {};
+        this.on_callbacks = [];
+        this._on_callbacks_optimized = null;
         this.onProcess_callbacks = {};
 
         this.ws_reconnect_attempt = 0;
@@ -26,6 +27,7 @@ export class Connection {
         this.ws_onopen = this.ws_onopen.bind(this);
         this.ws_onclose = this.ws_onclose.bind(this);
         this.ws_onmessage = this.ws_onmessage.bind(this);
+        this.optimize_on_callbacks = this.optimize_on_callbacks.bind(this);
         this.on = this.on.bind(this);
         this.emit = this.emit.bind(this);
         this.onProcess = this.onProcess.bind(this);
@@ -102,35 +104,52 @@ export class Connection {
         if (message.signal == '__process') {
             let id = message.load.id;
             let status = message.load.status;
-            this.onProcess_callbacks[id].map((cb) => cb(status));
+            this.onProcess_callbacks[id].map(cb => cb(status));
         }
 
         // normal message
-        if (message.signal in this.on_callbacks) {
-            this.on_callbacks[message.signal].map((cb) => cb(message.load));
+        if (this._on_callbacks_optimized === null)
+            this.optimize_on_callbacks();
+        if (message.signal in this._on_callbacks_optimized) {
+            this._on_callbacks_optimized[message.signal].map(
+                cb => cb(message.load)
+            );
         }
     }
 
+    optimize_on_callbacks() {
+        this._on_callbacks_optimized = {};
+        this.on_callbacks.map(({signal, callback}) => {
+            if (typeof signal === "string") {
+                if (!(signal in this._on_callbacks_optimized))
+                    this._on_callbacks_optimized[signal] = [];
+                this._on_callbacks_optimized[signal].push(callback);
+            }else if(typeof signal === "object") {
+                for (let signalName in signal) {
+                    let entryName = signal[signalName];
+                    let filtered_callback = data => {
+                        if (data.hasOwnProperty(entryName)) {
+                            callback(data[entryName]);
+                        }
+                    };
+
+                    if (!(signalName in this._on_callbacks_optimized))
+                        this._on_callbacks_optimized[signalName] = [];
+
+                    // only use the filtered callback if the entry was not empty
+                    if (entryName) {
+                        this._on_callbacks_optimized[signalName].push(filtered_callback);
+                    } else {
+                        this._on_callbacks_optimized[signalName].push(callback);
+                    }
+                }
+            }
+        });
+    }
 
     on(signal, callback) {
-        if (typeof(signal) === "string") {
-            if (!(signal in this.on_callbacks))
-                this.on_callbacks[signal] = [];
-            this.on_callbacks[signal].push(callback);
-        }else if(typeof(signal) === "object") {
-            for (let signalName in signal) {
-                let entryName = signal[signalName];
-                let filtered_callback = data => {
-                    if (data.hasOwnProperty(entryName)) {
-                        callback(data[entryName]);
-                    }
-                };
-
-                if (!(signalName in this.on_callbacks))
-                    this.on_callbacks[signalName] = [];
-                this.on_callbacks[signalName].push(filtered_callback);
-            }
-        }
+        this.on_callbacks.push({signal, callback});
+        this._on_callbacks_optimized = null;
         return this;
     }
 
