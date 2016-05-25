@@ -22,6 +22,8 @@ You can customize the header in ``analyses/README.md``:
 
     title: Databench - Packaged Analyses
     logo_url: /static/logo-header.svg
+    favicon_url: /static/myfavicon.ico
+    hide_read_docs: True
 
 Place the ``logo-header.svg`` file in ``analyses/static/``. Any standard image format like ``.png``, ``.jpeg`` and ``.svg`` is supported.
 

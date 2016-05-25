@@ -179,7 +179,7 @@ class Meta(object):
             self._info = {
                 'title': self.name,
                 'description': '',
-                'readme': readme.text,
+                'readme': readme.html,
             }
             self._info.update(readme.meta)
 

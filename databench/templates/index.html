@@ -2,10 +2,10 @@
 
 
 {% block content %}
-{% if description %}
-    {% raw description %}
-    <br />
+{% if description_html %}
+    {% raw description_html %}
 {% end %}
+
 <h1>List of Analyses</h1>
 <div class="d-boxes">
     {% for a in [aa for aa in analyses if aa.show_in_index] %}

@@ -104,15 +104,23 @@ class App(object):
         self.info['author'] = getattr(analyses, '__author__', None)
         self.info['version'] = getattr(analyses, '__version__', None)
         self.info['logo_url'] = getattr(analyses, 'logo_url', None)
+        self.info['favicon_url'] = getattr(analyses, 'favicon_url', None)
+        self.info['hide_read_docs'] = getattr(analyses, 'hide_read_docs', None)
         self.info['title'] = getattr(analyses, 'title', None)
 
         readme = Readme(analyses_path)
-        self.info['description'] = readme.text
+        self.info['description'] = readme.text.strip()
+        self.info['description_html'] = readme.html
         self.info.update(readme.meta)
 
         if self.info['logo_url'] is None:
             log.info('Analyses module does not specify a logo url.')
             self.info['logo_url'] = '/_static/logo.svg'
+        if self.info['favicon_url'] is None:
+            log.info('Analyses module does not specify a favicon url.')
+            self.info['favicon_url'] = '/_static/favicon.ico'
+        if self.info['hide_read_docs'] is None:
+            self.info['hide_read_docs'] = False
         if self.info['version'] is None:
             log.info('Analyses module does not specify a version.')
         if self.info['author'] is None:
@@ -236,6 +244,14 @@ class App(object):
             if 'logo_url' in self.info and \
                'logo_url' not in meta.info:
                 meta.info['logo_url'] = self.info['logo_url']
+
+            if 'favicon_url' in self.info and \
+               'favicon_url' not in meta.info:
+                meta.info['favicon_url'] = self.info['favicon_url']
+
+            if 'hide_read_docs' in self.info and \
+               'hide_read_docs' not in meta.info:
+                meta.info['hide_read_docs'] = self.info['hide_read_docs']
 
             if 'watch' in meta.info:
                 watch_lists.append(meta.info['watch'])

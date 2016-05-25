@@ -4,10 +4,10 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>{% block title %}{{ globals().get('title', 'Databench') }}{% end %}</title>
-        <meta name="description" content="{% block description %}globals().get('description', ''){% end %}">
+        <meta name="description" content="{% block description %}{{ globals().get('description', '') }}{% end %}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="shortcut icon" href="/_static/favicon.ico">
+        <link rel="shortcut icon" href="{% block favicon_url %}{{ globals().get('favicon_url', '') }}{% end %}">
         <link rel="stylesheet" href="/_static/databench.css?version={{ databench_version }}">
         {% block databench_head %}{% end %}
         {% block head %}{% end %}
@@ -28,12 +28,16 @@
                 {% end %}
             </div>
 
+            {% block page_footer %}
             <div class="d-footer">
                 <div class="text-right-sm">
-                    Read the <a href="http://databench.trivial.io/v0.4/">Databench Docs</a>.
+                    {% if not globals().get('hide_read_docs', False) %}
+                        Read the <a href="http://databench.trivial.io/v0.4/">Databench Docs</a>.
+                    {% end %}
                     <!-- This is version {{databench_version}}. -->
                 </div>
             </div>
+            {% end %}
         </div>
         {% end %}
 
