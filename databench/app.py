@@ -113,6 +113,21 @@ class App(object):
         self.info['description_html'] = readme.html
         self.info.update(readme.meta)
 
+        self.info['injection_head'] = ''
+        f_head = os.path.join(analyses_path, 'head.html')
+        if os.path.isfile(f_head):
+            with open(f_head, 'r') as f:
+                self.info['injection_head'] = f.read()
+            log.debug('watch file {}'.format(f_head))
+            tornado.autoreload.watch(f_head)
+        self.info['injection_footer'] = ''
+        f_footer = os.path.join(analyses_path, 'footer.html')
+        if os.path.isfile(f_footer):
+            with open(f_footer, 'r') as f:
+                self.info['injection_footer'] = f.read()
+            log.debug('watch file {}'.format(f_footer))
+            tornado.autoreload.watch(f_footer)
+
         if self.info['logo_url'] is None:
             log.info('Analyses module does not specify a logo url.')
             self.info['logo_url'] = '/_static/logo.svg'
@@ -252,6 +267,14 @@ class App(object):
             if 'hide_read_docs' in self.info and \
                'hide_read_docs' not in meta.info:
                 meta.info['hide_read_docs'] = self.info['hide_read_docs']
+
+            if 'injection_head' in self.info and \
+               'injection_head' not in meta.info:
+                meta.info['injection_head'] = self.info['injection_head']
+
+            if 'injection_footer' in self.info and \
+               'injection_footer' not in meta.info:
+                meta.info['injection_footer'] = self.info['injection_footer']
 
             if 'watch' in meta.info:
                 watch_lists.append(meta.info['watch'])

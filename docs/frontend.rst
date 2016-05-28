@@ -25,7 +25,15 @@ You can customize the header in ``analyses/README.md``:
     favicon_url: /static/myfavicon.ico
     hide_read_docs: True
 
-Place the ``logo-header.svg`` file in ``analyses/static/``. Any standard image format like ``.png``, ``.jpeg`` and ``.svg`` is supported.
+Place the ``logo-header.svg`` file in ``analyses/static/``. Any standard image
+format like ``.png``, ``.jpeg`` and ``.svg`` is supported.
+
+To modify the style globally (including the index page with the list of
+analysis) and to add a tracking snippet for analytics,
+you can inject code into the head and the bottom of the page.
+Inject code into the ``<head>`` section by creating a ``head.html`` file inside
+the analysis folder. Similarly, inject code into the bottom of the ``<body>``
+with a ``footer.html`` file.
 
 
 Additional Views
