@@ -8,8 +8,6 @@
     "test": "tests"
   },
   "dependencies": {
-    "bootstrap": "^3.3.6",
-    "jquery": "^2.2.0",
     "websocket": "^1.0.22"
   },
   "devDependencies": {
