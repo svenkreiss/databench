@@ -20,6 +20,3 @@ class Simple1(databench.Analysis):
             'first_param': first_param,
             'second_param': second_param,
         })
-
-
-META = databench.Meta('simple1', Simple1)

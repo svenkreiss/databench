@@ -1,8 +1,14 @@
 '''Automatically created by `scaffold-databench`.'''
 # flake8: noqa
 
-__version__ = '0.1.0'
 
-from .simple1 import analysis as simple1_a
-from .simple2 import analysis as simple2_a
-from .simple3 import analysis as simple3_a
+from .simple1.analysis import Simple1
+from .simple2.analysis import Simple2
+from .simple3.analysis import Simple3
+
+
+analyses = [
+    ('simple1', Simple1),
+    ('simple2', Simple2),
+    ('simple3', Simple3),
+]

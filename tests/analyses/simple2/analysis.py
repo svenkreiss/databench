@@ -17,6 +17,3 @@ class Simple2(databench.Analysis):
 
         time.sleep(1)
         self.data['status'] = 'acknowledged'
-
-
-META = databench.Meta('simple2', Simple2)
