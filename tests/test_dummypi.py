@@ -1,9 +1,12 @@
 """Simple test."""
 
+from __future__ import absolute_import
+
 import json
-import test_websocket
 import tornado.testing
 import unittest
+
+from . import test_websocket
 
 
 class MultipleConnections(test_websocket.WebSocketBaseTestCase):
