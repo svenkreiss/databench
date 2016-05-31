@@ -1,4 +1,4 @@
-.. image:: http://www.svenkreiss.com/databench/logo.svg
+.. image:: http://databench.trivial.io/en/latest/_static/logo-w600.png
     :target: http://databench.trivial.io
 
 Databench
