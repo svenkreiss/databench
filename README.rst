@@ -1,5 +1,6 @@
 .. image:: http://databench.trivial.io/en/latest/_static/logo-w600.png
     :target: http://databench.trivial.io
+    :width: 100px
 
 Databench
 =========
