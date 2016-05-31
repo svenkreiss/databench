@@ -22,7 +22,7 @@ log = logging.getLogger(__name__)
 
 
 WHITELIST_META_KEYS = [
-    'title', 'description', 'logo_url', 'favicon_url', 'hide_read_docs',
+    'title', 'description', 'logo_url', 'favicon_url', 'footer_html',
     'build', 'watch',
 ]
 

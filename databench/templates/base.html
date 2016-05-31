@@ -32,8 +32,10 @@
             {% block page_footer %}
             <div class="d-footer">
                 <div class="text-right-sm">
-                    {% if not globals().get('hide_read_docs', False) %}
+                    {% if not footer_html %}
                         Read the <a href="http://databench.trivial.io/v0.4/">Databench Docs</a>.
+                    {% else %}
+                        {% raw footer_html %}
                     {% end %}
                     <!-- This is Databench version {{databench_version}}. -->
                 </div>

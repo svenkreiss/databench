@@ -105,7 +105,7 @@ class App(object):
         self.info['version'] = getattr(analyses, '__version__', None)
         self.info['logo_url'] = getattr(analyses, 'logo_url', None)
         self.info['favicon_url'] = getattr(analyses, 'favicon_url', None)
-        self.info['hide_read_docs'] = getattr(analyses, 'hide_read_docs', None)
+        self.info['footer_html'] = getattr(analyses, 'footer_html', None)
         self.info['title'] = getattr(analyses, 'title', None)
 
         readme = Readme(analyses_path)
@@ -134,8 +134,8 @@ class App(object):
         if self.info['favicon_url'] is None:
             log.info('Analyses module does not specify a favicon url.')
             self.info['favicon_url'] = '/_static/favicon.ico'
-        if self.info['hide_read_docs'] is None:
-            self.info['hide_read_docs'] = False
+        if self.info['footer_html'] is None:
+            self.info['footer_html'] = None
         if self.info['version'] is None:
             log.info('Analyses module does not specify a version.')
         if self.info['author'] is None:
@@ -264,9 +264,9 @@ class App(object):
                'favicon_url' not in meta.info:
                 meta.info['favicon_url'] = self.info['favicon_url']
 
-            if 'hide_read_docs' in self.info and \
-               'hide_read_docs' not in meta.info:
-                meta.info['hide_read_docs'] = self.info['hide_read_docs']
+            if 'footer_html' in self.info and \
+               'footer_html' not in meta.info:
+                meta.info['footer_html'] = self.info['footer_html']
 
             if 'injection_head' in self.info and \
                'injection_head' not in meta.info:
