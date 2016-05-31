@@ -31,7 +31,7 @@ Now you can:
     # and open http://localhost:5000 in a web browser
 
     # run tests
-    nosetests -vv --with-coverage --cover-package=databench --cover-erase --cover-inclusive
+    nosetests -vv --with-coverage --cover-erase --cover-inclusive
 
 For new contributions, create a feature branch and submit a Pull Request.
 Don't forget to add yourself to ``AUTHORS.rst``.
