@@ -3,7 +3,7 @@
 
 from __future__ import absolute_import
 
-__version__ = "0.4a7"
+__version__ = "0.4a8"
 
 from .analysis import Meta, Analysis, sanitize_message
 from .analysis_zmq import MetaZMQ, AnalysisZMQ
