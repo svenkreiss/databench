@@ -7,6 +7,7 @@ from .analysis import Meta
 from .analysis_zmq import MetaZMQ
 from .readme import Readme
 import glob
+import importlib
 import logging
 import os
 import sys
@@ -24,10 +25,16 @@ log = logging.getLogger(__name__)
 
 
 class App(object):
-    """Databench app. Creates a Tornado app."""
+    """Databench app. Creates a Tornado app.
 
-    def __init__(self, zmq_port=None):
+    :param analyses_path:
+        (optional) An import path of the analyses.
 
+    :param zmq_port:
+        (optional) Force to use the given ZMQ port for publishing.
+    """
+
+    def __init__(self, analyses_path=None, zmq_port=None):
         self.info = {
             'title': 'Databench',
             'description': None,
@@ -35,6 +42,7 @@ class App(object):
             'version': None,
         }
         self.metas = []
+        self._get_analyses(analyses_path)
 
         self.routes = [
             (r'/(favicon\.ico)',
@@ -81,47 +89,58 @@ class App(object):
         )
 
         self.analyses_info()
-
         self.metas += self.meta_analyses()
         self.metas += self.meta_analyses_py(self.zmq_pub_stream, zmq_port)
         self.metas += self.meta_analyses_pyspark(self.zmq_pub_stream, zmq_port)
         self.metas += self.meta_analyses_go(self.zmq_pub_stream, zmq_port)
         self.register_metas()
 
-    def analyses_info(self):
-        """Add analyses from the analyses folder."""
-
-        if os.path.isfile('analyses/__init__.py'):
+    def _get_analyses(self, analyses_path):
+        if analyses_path:
+            analyses = importlib.import_module(analyses_path)
+            analyses_path = os.path.dirname(analyses.__file__)
+        elif os.path.isfile('analyses/__init__.py'):
+            orig_syspath = sys.path
             sys.path.append('.')
             import analyses
             analyses_path = 'analyses'
+            sys.path = orig_syspath
         else:
             log.warning('Did not find "analyses" module. '
                         'Using packaged analyses.')
             from databench import analyses_packaged as analyses
             analyses_path = 'databench/analyses_packaged'
 
-        self.info['author'] = getattr(analyses, '__author__', None)
-        self.info['version'] = getattr(analyses, '__version__', None)
-        self.info['logo_url'] = getattr(analyses, 'logo_url', None)
-        self.info['favicon_url'] = getattr(analyses, 'favicon_url', None)
-        self.info['footer_html'] = getattr(analyses, 'footer_html', None)
-        self.info['title'] = getattr(analyses, 'title', None)
+        self.analyses_path = analyses_path
+        self.analyses = analyses
+        print(self.analyses_path)
 
-        readme = Readme(analyses_path)
+        return analyses
+
+    def analyses_info(self):
+        """Add analyses from the analyses folder."""
+
+        self.info['author'] = getattr(self.analyses, '__author__', None)
+        self.info['version'] = getattr(self.analyses, '__version__', None)
+        self.info['logo_url'] = getattr(self.analyses, 'logo_url', None)
+        self.info['favicon_url'] = getattr(self.analyses, 'favicon_url', None)
+        self.info['footer_html'] = getattr(self.analyses, 'footer_html', None)
+        self.info['title'] = getattr(self.analyses, 'title', None)
+
+        readme = Readme(self.analyses_path)
         self.info['description'] = readme.text.strip()
         self.info['description_html'] = readme.html
         self.info.update(readme.meta)
 
         self.info['injection_head'] = ''
-        f_head = os.path.join(analyses_path, 'head.html')
+        f_head = os.path.join(self.analyses_path, 'head.html')
         if os.path.isfile(f_head):
             with open(f_head, 'r') as f:
                 self.info['injection_head'] = f.read()
             log.debug('watch file {}'.format(f_head))
             tornado.autoreload.watch(f_head)
         self.info['injection_footer'] = ''
-        f_footer = os.path.join(analyses_path, 'footer.html')
+        f_footer = os.path.join(self.analyses_path, 'footer.html')
         if os.path.isfile(f_footer):
             with open(f_footer, 'r') as f:
                 self.info['injection_footer'] = f.read()
@@ -145,7 +164,7 @@ class App(object):
             self.info['title'] = 'Databench'
 
         # if 'analyses' contains a 'static' folder, make it available
-        static_path = os.path.join(analyses_path, 'static')
+        static_path = os.path.join(self.analyses_path, 'static')
         if os.path.isdir(static_path):
             log.debug('Making {} available under /static/.'
                       ''.format(static_path))
@@ -159,7 +178,7 @@ class App(object):
             log.debug('Did not find an analyses/static/ folder.')
 
         # if 'analyses' contains a 'node_modules' folder, make it available
-        node_modules_path = os.path.join(analyses_path, 'node_modules')
+        node_modules_path = os.path.join(self.analyses_path, 'node_modules')
         if os.path.isdir(node_modules_path):
             log.debug('Making {} available under /node_modules/.'
                       ''.format(node_modules_path))
@@ -173,23 +192,14 @@ class App(object):
             log.debug('Did not find an analyses/node_modules/ folder.')
 
     def meta_analyses(self):
-        if os.path.isfile('analyses/__init__.py'):
-            sys.path.append('.')
-            import analyses
-        else:
-            log.debug('Did not find analyses. Using packaged analyses.')
-            from . import analyses_packaged as analyses
-
         metas = []
-        for name, analysis_class in analyses.analyses:
+        for name, analysis_class in self.analyses.analyses:
             log.debug('creating Meta for {}'.format(name))
             metas.append(Meta(name, analysis_class))
         return metas
 
     def meta_analyses_py(self, zmq_publish, zmq_port):
-        analysis_folders = glob.glob('analyses/*_py')
-        if not analysis_folders:
-            analysis_folders = glob.glob('databench/analyses_packaged/*_py')
+        analysis_folders = glob.glob(os.path.join(self.analyses_path, '*_py'))
 
         metas = []
         for analysis_folder in analysis_folders:
@@ -206,11 +216,8 @@ class App(object):
         return metas
 
     def meta_analyses_pyspark(self, zmq_publish, zmq_port):
-        analysis_folders = glob.glob('analyses/*_pyspark')
-        if not analysis_folders:
-            analysis_folders = glob.glob(
-                'databench/analyses_packaged/*_pyspark'
-            )
+        analysis_folders = glob.glob(os.path.join(self.analyses_path,
+                                                  '*_pyspark'))
 
         metas = []
         for analysis_folder in analysis_folders:
@@ -227,9 +234,7 @@ class App(object):
         return metas
 
     def meta_analyses_go(self, zmq_publish, zmq_port):
-        analysis_folders = glob.glob('analyses/*_go')
-        if not analysis_folders:
-            analysis_folders = glob.glob('databench/analyses_packaged/*_go')
+        analysis_folders = glob.glob(os.path.join(self.analyses_path, '*_go'))
 
         metas = []
         for analysis_folder in analysis_folders:

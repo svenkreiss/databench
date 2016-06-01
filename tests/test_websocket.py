@@ -2,7 +2,6 @@
 
 import databench
 import json
-import os
 import tornado.testing
 import unittest
 
@@ -94,19 +93,19 @@ class BasicsPy(Basics):
 
 
 class BasicsTestAnalyses(WebSocketBaseTestCase):
+    def get_app(self):
+        return databench.App('tests.analyses').tornado_app()
+
     def setUp(self):
-        self.orig_directory = os.getcwd()
-        os.chdir('tests')
         super(BasicsTestAnalyses, self).setUp()
 
     def tearDown(self):
         super(BasicsTestAnalyses, self).tearDown()
-        os.chdir(self.orig_directory)
 
     def test_index(self):
         response = self.fetch('/')
         self.assertEqual(response.code, 200)
-        self.assertIn(b'Simple1', response.body)
+        self.assertIn(b'simple1', response.body)
 
 
 if __name__ == '__main__':
