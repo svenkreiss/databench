@@ -32,6 +32,8 @@ def main():
     parser.add_argument('--port', dest='port',
                         type=int, default=int(os.environ.get('PORT', 5000)),
                         help='port for webserver')
+    parser.add_argument('--analyses', default=None,
+                        help='import path for analyses')
     parser.add_argument('--with-coverage', dest='with_coverage',
                         default=False, action='store_true',
                         help=argparse.SUPPRESS)
@@ -59,7 +61,7 @@ def main():
     logging.info('Databench {}'.format(DATABENCH_VERSION))
     logging.info('host={}, port={}'.format(args.host, args.port))
 
-    app = App().tornado_app(
+    app = App(args.analyses).tornado_app(
         debug=args.loglevel not in ('WARNING', 'ERROR', 'CRITICAL')
     )
     app.listen(args.port, args.host)
