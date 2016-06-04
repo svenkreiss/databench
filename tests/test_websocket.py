@@ -51,42 +51,6 @@ class Basics(object):
         self.assertEqual(r['signal'], '__connect')
         yield self.close(ws)
 
-    @tornado.testing.gen_test
-    def test_process(self):
-        ws = yield self.ws_connect('/{}/ws'.format(self.ANALYSIS))
-
-        yield ws.write_message('{"__connect": null}')
-        response = yield ws.read_message()
-        r = json.loads(response)
-        self.assertEqual(r['signal'], '__connect')
-        self.assertIn('analysis_id', r['load'])
-        response = yield ws.read_message()
-        r = json.loads(response)
-        self.assertEqual(r['signal'], 'data')
-
-        yield ws.write_message(
-            '{"signal":"test_fn", '
-            '"load":{"__process_id":123, "first_param":1}}'
-        )
-        response = yield ws.read_message()
-        r = json.loads(response)
-        self.assertEqual(r['signal'], '__process')
-        self.assertEqual(r['load']['id'], 123)
-        self.assertEqual(r['load']['status'], 'start')
-
-        response = yield ws.read_message()
-        r = json.loads(response)
-        self.assertEqual(r['signal'], 'test_fn')
-        self.assertEqual(r['load']['first_param'], 1)
-
-        response = yield ws.read_message()
-        r = json.loads(response)
-        self.assertEqual(r['signal'], '__process')
-        self.assertEqual(r['load']['id'], 123)
-        self.assertEqual(r['load']['status'], 'end')
-
-        yield self.close(ws)
-
 
 class BasicsDummypi(Basics, WebSocketBaseTestCase):
     ANALYSIS = 'dummypi'

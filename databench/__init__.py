@@ -10,3 +10,4 @@ from .analysis_zmq import MetaZMQ, AnalysisZMQ
 from .app import App
 from .datastore import Datastore
 from .readme import Readme
+from .testing import AnalysisTestCase

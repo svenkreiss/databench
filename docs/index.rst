@@ -51,7 +51,6 @@ Contents
 
    self
    quickstart
-   tutorial
    frontend
    backend
    deploy
@@ -65,12 +64,6 @@ The `GitHub page`_ provides a few ways for feedback in terms of *Issues* and *Pu
 
 .. _`GitHub page`: https://github.com/svenkreiss/databench
 .. _`send me an email`: mailto:me@svenkreiss.com
-
-
-.. Contributors
-.. ------------
-
-.. _include ../AUTHORS.rst
 
 
 License

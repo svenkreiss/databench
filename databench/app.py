@@ -97,8 +97,11 @@ class App(object):
 
     def _get_analyses(self, analyses_path):
         if analyses_path:
+            orig_syspath = sys.path
+            sys.path.append('.')
             analyses = importlib.import_module(analyses_path)
             analyses_path = os.path.dirname(analyses.__file__)
+            sys.path = orig_syspath
         elif os.path.isfile('analyses/__init__.py'):
             orig_syspath = sys.path
             sys.path.append('.')
@@ -113,7 +116,6 @@ class App(object):
 
         self.analyses_path = analyses_path
         self.analyses = analyses
-        print(self.analyses_path)
 
         return analyses
 
@@ -195,7 +197,8 @@ class App(object):
         metas = []
         for name, analysis_class in self.analyses.analyses:
             log.debug('creating Meta for {}'.format(name))
-            metas.append(Meta(name, analysis_class))
+            analysis_path = os.path.join(self.analyses_path, name)
+            metas.append(Meta(name, analysis_class, analysis_path))
         return metas
 
     def meta_analyses_py(self, zmq_publish, zmq_port):
@@ -212,6 +215,7 @@ class App(object):
                 ['python', '{}/analysis.py'.format(analysis_folder),
                  '--zmq-subscribe={}'.format(zmq_port)],
                 zmq_publish,
+                analysis_folder,
             ))
         return metas
 
@@ -230,6 +234,7 @@ class App(object):
                 ['pyspark', '{}/analysis.py'.format(analysis_folder),
                  '--zmq-subscribe={}'.format(zmq_port)],
                 zmq_publish,
+                analysis_folder,
             ))
         return metas
 
@@ -248,6 +253,7 @@ class App(object):
                 name,
                 [name, '--zmq-subscribe={}'.format(zmq_port)],
                 zmq_publish,
+                analysis_folder,
             ))
         return metas
 

@@ -7,7 +7,6 @@ import logging
 import os
 import random
 import string
-import sys
 import tornado.gen
 import tornado.web
 import tornado.websocket
@@ -145,32 +144,15 @@ class Meta(object):
     :type analysis_class: :class:`databench.Analysis`
     """
 
-    def __init__(self, name, analysis_class):
+    def __init__(self, name, analysis_class, analysis_path):
         self.name = name
         self.analysis_class = analysis_class
+        self.analysis_path = analysis_path
         self.show_in_index = True
-        self.request_args = None
 
-        self._analysis_path = None
         self._info = None
         self._routes = None
         self._thumbnail = None
-
-    @property
-    def analysis_path(self):
-        if self._analysis_path is None:
-            if os.path.isfile('analyses/__init__.py'):
-                sys.path.append('.')
-                import analyses
-            else:
-                log.debug('Did not find analyses. Using packaged analyses.')
-                from . import analyses_packaged as analyses
-            analyses_path = os.path.dirname(
-                os.path.realpath(analyses.__file__)
-            )
-            self._analysis_path = os.path.join(analyses_path, self.name)
-
-        return self._analysis_path
 
     @property
     def info(self):

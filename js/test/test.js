@@ -6,7 +6,7 @@ describe('Databench', function() {
     // create connection
     var c = new Databench.Connection(
       null,
-      'ws://localhost:5000/dummypi/ws'
+      'ws://localhost:5000/parameters/ws'
     ).connect();
 
     it('create a WebSocket connection', function () {
@@ -21,7 +21,7 @@ describe('Databench', function() {
       c.emit('test_fn', [1, 2]);
 
       setTimeout(function() {
-        assert.deepEqual({first_param: 1, second_param: 2}, d);
+        assert.deepEqual([1, 2], d);
         done();
       }, 100);
     });

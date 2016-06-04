@@ -16,7 +16,8 @@ class NodeClient(unittest.TestCase):
         # call os.setsid so that all subprocesses terminate when the
         # main process receives SIGTERM
         self.daemon = subprocess.Popen(['databench',
-                                        '--log={}'.format(LOGLEVEL)],
+                                        '--log={}'.format(LOGLEVEL),
+                                        '--analyses', 'tests.analyses'],
                                        close_fds=True,
                                        stdin=subprocess.PIPE,
                                        stdout=subprocess.PIPE,

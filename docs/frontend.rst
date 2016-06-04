@@ -18,7 +18,7 @@ Customization
 
 You can customize the header in ``analyses/README.md``:
 
-.. code-block:: markdown
+.. code-block:: none
 
     title: Databench - Packaged Analyses
     logo_url: /static/logo-header.svg

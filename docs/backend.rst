@@ -10,7 +10,7 @@ title, description, watch, build
 
 Example ``analyses/README.md``:
 
-.. code-block:: markdown
+.. code-block:: none
 
     <!--
     title: Databench Examples
@@ -61,11 +61,18 @@ Meta
 ----
 
 .. autoclass:: databench.Meta
-   :members: render_index
+   :members:
 
 
 Datastore
 ---------
 
 .. autoclass:: databench.Datastore
+   :members:
+
+
+AnalysisTestCase
+----------------
+
+.. autoclass:: databench.AnalysisTestCase
    :members:

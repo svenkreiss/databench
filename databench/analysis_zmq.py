@@ -99,8 +99,10 @@ class MetaZMQ(Meta):
 
     """
 
-    def __init__(self, name, executable, zmq_publish):
-        super(MetaZMQ, self).__init__(name, AnalysisZMQ)
+    def __init__(self, name, executable, zmq_publish,
+                 analysis_path):
+        super(MetaZMQ, self).__init__(name, AnalysisZMQ,
+                                      analysis_path)
 
         self.executable = executable
         self.zmq_publish = zmq_publish
