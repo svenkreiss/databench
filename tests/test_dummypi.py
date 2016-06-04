@@ -6,11 +6,11 @@ import json
 import tornado.testing
 import unittest
 
-from . import test_websocket
+from .test_websocket import WebSocketBaseTestCase
 
 
-class MultipleConnections(test_websocket.WebSocketBaseTestCase):
-    ANALYSIS = 'dummypi'
+class MultipleConnections(object):
+    ANALYSIS = None
 
     @tornado.testing.gen_test
     def test_run(self):
@@ -28,12 +28,16 @@ class MultipleConnections(test_websocket.WebSocketBaseTestCase):
             yield self.close(ws)
 
 
-class MultipleConnectionsPy(MultipleConnections):
+class MultipleConnectionsDummypi(MultipleConnections, WebSocketBaseTestCase):
+    ANALYSIS = 'dummypi'
+
+
+class MultipleConnectionsDummypiPy(MultipleConnections, WebSocketBaseTestCase):
     ANALYSIS = 'dummypi_py'
 
 
-class Parameters(test_websocket.WebSocketBaseTestCase):
-    ANALYSIS = 'dummypi'
+class Parameters(object):
+    ANALYSIS = None
 
     @tornado.testing.gen_test
     def test_parameter(self):
@@ -104,7 +108,11 @@ class Parameters(test_websocket.WebSocketBaseTestCase):
         yield self.close(ws)
 
 
-class ParametersPy(Parameters):
+class ParametersDummypi(Parameters, WebSocketBaseTestCase):
+    ANALYSIS = 'dummypi'
+
+
+class ParametersDummypiPy(Parameters, WebSocketBaseTestCase):
     ANALYSIS = 'dummypi_py'
 
 

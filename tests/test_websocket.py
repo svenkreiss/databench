@@ -34,8 +34,8 @@ class WebSocketBaseTestCase(tornado.testing.AsyncHTTPTestCase):
         yield tornado.gen.sleep(1.0)
 
 
-class Basics(WebSocketBaseTestCase):
-    ANALYSIS = 'dummypi'
+class Basics(object):
+    ANALYSIS = None
 
     def test_index(self):
         response = self.fetch('/')
@@ -88,19 +88,17 @@ class Basics(WebSocketBaseTestCase):
         yield self.close(ws)
 
 
-class BasicsPy(Basics):
+class BasicsDummypi(Basics, WebSocketBaseTestCase):
+    ANALYSIS = 'dummypi'
+
+
+class BasicsDummypiPy(Basics, WebSocketBaseTestCase):
     ANALYSIS = 'dummypi_py'
 
 
 class BasicsTestAnalyses(WebSocketBaseTestCase):
     def get_app(self):
         return databench.App('tests.analyses').tornado_app()
-
-    def setUp(self):
-        super(BasicsTestAnalyses, self).setUp()
-
-    def tearDown(self):
-        super(BasicsTestAnalyses, self).tearDown()
 
     def test_index(self):
         response = self.fetch('/')
