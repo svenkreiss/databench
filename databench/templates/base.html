@@ -32,7 +32,7 @@
             {% block page_footer %}
             <div class="d-footer">
                 <div class="text-right-sm">
-                    {% if not footer_html %}
+                    {% if footer_html is None %}
                         Read the <a href="http://databench.trivial.io/v0.4/">Databench Docs</a>.
                     {% else %}
                         {% raw footer_html %}

@@ -128,14 +128,14 @@ class Readme(object):
         -->
         """
         for l in self._text.split('\n'):
-            if ': ' not in l:
+            if ':' not in l:
                 continue
 
-            p = l.partition(': ')
+            p = l.partition(':')
             if p[0].lower() not in WHITELIST_META_KEYS:
                 continue
 
-            self._meta[p[0].lower()] = p[2]
+            self._meta[p[0].lower()] = p[2].strip()
 
         return self
 
