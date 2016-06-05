@@ -22,7 +22,11 @@ To understand the structure, this is a walk-through of the steps that just happe
 
 .. code-block:: python
 
-    from .helloworld import analysis as helloworld_a
+    from .helloworld.analysis import HelloWorld
+
+    analyses = [
+        ('helloworld', HelloWorld),
+    ]
 
 Next, create the helloworld backend in ``analyses/helloworld/analysis.py``:
 
@@ -37,8 +41,6 @@ Next, create the helloworld backend in ``analyses/helloworld/analysis.py``:
             """Run as soon as a browser connects to this."""
             self.data['status'] = 'Hello World'
 
-
-    META = databench.Meta('helloworld', HelloWorld)
 
 And the frontend in ``analyses/helloworld/index.html``:
 
