@@ -11,6 +11,11 @@ import tornado.gen
 import tornado.web
 import tornado.websocket
 
+try:
+    from urllib.parse import parse_qs  # Python 3
+except ImportError:
+    from urlparse import parse_qs  # Python 2
+
 from . import __version__ as DATABENCH_VERSION
 from .datastore import Datastore
 from .readme import Readme
@@ -284,6 +289,10 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
 
             self.meta.run_process(self.analysis, 'connect')
             log.info('Connected to analysis.')
+
+            if '__request_args' in msg and msg['__request_args']:
+                qs = parse_qs(msg['__request_args'].lstrip('?'))
+                self.meta.run_process(self.analysis, 'request_args', [qs])
             return
 
         if self.analysis is None:

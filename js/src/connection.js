@@ -3,9 +3,10 @@ if (typeof WebSocket === 'undefined') {
 }
 
 export class Connection {
-    constructor(analysis_id=null, ws_url=null) {
+    constructor(analysis_id=null, ws_url=null, request_args=null) {
         this.analysis_id = analysis_id;
         this.ws_url = ws_url ? ws_url : Connection.guess_ws_url();
+        this.request_args = (request_args == null && (typeof window !== 'undefined')) ? window.location.search : request_args;
 
         this.error_cb = (msg) => {
             if (msg != null)
@@ -69,7 +70,10 @@ export class Connection {
         this.ws_reconnect_attempt = 0;
         this.ws_reconnect_delay = 100.0;
         this.error_cb();  // clear errors
-        this.socket.send(JSON.stringify({'__connect': this.analysis_id}));
+        this.socket.send(JSON.stringify({
+            '__connect': this.analysis_id,
+            '__request_args': this.request_args,
+        }));
     }
 
     ws_onclose() {

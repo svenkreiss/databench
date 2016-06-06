@@ -19,11 +19,14 @@ var Connection = exports.Connection = function () {
     function Connection() {
         var analysis_id = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
         var ws_url = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+        var request_args = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
 
         _classCallCheck(this, Connection);
 
         this.analysis_id = analysis_id;
         this.ws_url = ws_url ? ws_url : Connection.guess_ws_url();
+        console.log(typeof window === 'undefined' ? 'undefined' : _typeof(window));
+        this.request_args = !request_args && (typeof window === 'undefined' ? 'undefined' : _typeof(window)) !== undefined ? window.location.search : request_args;
 
         this.error_cb = function (msg) {
             if (msg != null) return console.log('connection error: ' + msg);
@@ -78,7 +81,10 @@ var Connection = exports.Connection = function () {
             this.ws_reconnect_attempt = 0;
             this.ws_reconnect_delay = 100.0;
             this.error_cb(); // clear errors
-            this.socket.send(JSON.stringify({ '__connect': this.analysis_id }));
+            this.socket.send(JSON.stringify({
+                '__connect': this.analysis_id,
+                '__request_args': this.request_args
+            }));
         }
     }, {
         key: 'ws_onclose',
@@ -252,14 +258,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function wire(conn) {
-    StatusLog.wire(d);
-    Log.wire(d);
-    Button.wire(d);
-    TextInput.wire(d);
-    Text.wire(d);
-    Slider.wire(d);
-    return conn;
+function wire(connection) {
+    StatusLog.wire(connection);
+    Log.wire(connection);
+    Button.wire(connection);
+    TextInput.wire(connection);
+    Text.wire(connection);
+    Slider.wire(connection);
+    return connection;
 }
 
 var UIElement = function () {
@@ -282,6 +288,10 @@ var UIElement = function () {
         value: function determine_action_name(node) {
             // determine action name from HTML DOM
             var action = null;
+
+            if (node.dataset.skipwire === 'true' || node.dataset.skipwire === 'TRUE' || node.dataset.skipwire === '1') {
+                return null;
+            }
 
             if (node.dataset.action) {
                 action = node.dataset.action;
@@ -442,9 +452,9 @@ var StatusLog = exports.StatusLog = function (_UIElement2) {
         }
     }], [{
         key: 'default_alert',
-        value: function default_alert(msg, c) {
-            var c_format = c <= 1 ? '' : '<b>(' + c + ')</b> ';
-            return '<div class="alert alert-danger">' + c_format + msg + '</div>';
+        value: function default_alert(msg, count) {
+            var count_format = count <= 1 ? '' : '<b>(' + count + ')</b> ';
+            return '<div class="alert alert-danger">' + count_format + msg + '</div>';
         }
     }, {
         key: 'wire',
@@ -833,16 +843,20 @@ module.exports={
     ]
   ],
   "_from": "websocket@>=1.0.22 <2.0.0",
-  "_id": "websocket@1.0.22",
+  "_id": "websocket@1.0.23",
   "_inCache": true,
   "_installable": true,
   "_location": "/websocket",
-  "_nodeVersion": "3.3.1",
+  "_nodeVersion": "0.10.45",
+  "_npmOperationalInternal": {
+    "host": "packages-16-east.internal.npmjs.com",
+    "tmp": "tmp/websocket-1.0.23.tgz_1463625793005_0.4532310354989022"
+  },
   "_npmUser": {
     "email": "brian@worlize.com",
     "name": "theturtle32"
   },
-  "_npmVersion": "2.14.3",
+  "_npmVersion": "2.15.1",
   "_phantomChildren": {},
   "_requested": {
     "name": "websocket",
@@ -855,8 +869,8 @@ module.exports={
   "_requiredBy": [
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/websocket/-/websocket-1.0.22.tgz",
-  "_shasum": "8c33e3449f879aaf518297c9744cebf812b9e3d8",
+  "_resolved": "https://registry.npmjs.org/websocket/-/websocket-1.0.23.tgz",
+  "_shasum": "20de8ec4a7126b09465578cd5dbb29a9c296aac6",
   "_shrinkwrap": null,
   "_spec": "websocket@^1.0.22",
   "_where": "/Users/svenkreiss/tech/databench",
@@ -880,10 +894,10 @@ module.exports={
     }
   ],
   "dependencies": {
-    "debug": "~2.2.0",
-    "nan": "~2.0.5",
-    "typedarray-to-buffer": "~3.0.3",
-    "yaeti": "~0.0.4"
+    "debug": "^2.2.0",
+    "nan": "^2.3.3",
+    "typedarray-to-buffer": "^3.1.2",
+    "yaeti": "^0.0.4"
   },
   "description": "Websocket Client & Server Library implementing the WebSocket protocol as specified in RFC 6455.",
   "devDependencies": {
@@ -898,13 +912,13 @@ module.exports={
     "lib": "./lib"
   },
   "dist": {
-    "shasum": "8c33e3449f879aaf518297c9744cebf812b9e3d8",
-    "tarball": "https://registry.npmjs.org/websocket/-/websocket-1.0.22.tgz"
+    "shasum": "20de8ec4a7126b09465578cd5dbb29a9c296aac6",
+    "tarball": "https://registry.npmjs.org/websocket/-/websocket-1.0.23.tgz"
   },
   "engines": {
     "node": ">=0.8.0"
   },
-  "gitHead": "19108bbfd7d94a5cd02dbff3495eafee9e901ca4",
+  "gitHead": "ba2fa7e9676c456bcfb12ad160655319af66faed",
   "homepage": "https://github.com/theturtle32/WebSocket-Node",
   "keywords": [
     "websocket",
@@ -938,7 +952,7 @@ module.exports={
     "install": "(node-gyp rebuild 2> builderror.log) || (exit 0)",
     "test": "faucet test/unit"
   },
-  "version": "1.0.22"
+  "version": "1.0.23"
 }
 
 },{}]},{},[2])

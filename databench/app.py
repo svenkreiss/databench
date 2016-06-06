@@ -100,19 +100,19 @@ class App(object):
             orig_syspath = sys.path
             sys.path.append('.')
             analyses = importlib.import_module(analyses_path)
-            analyses_path = os.path.dirname(analyses.__file__)
+            analyses_path = os.path.abspath(os.path.dirname(analyses.__file__))
             sys.path = orig_syspath
         elif os.path.isfile('analyses/__init__.py'):
             orig_syspath = sys.path
             sys.path.append('.')
             import analyses
-            analyses_path = 'analyses'
+            analyses_path = os.path.abspath('analyses')
             sys.path = orig_syspath
         else:
             log.warning('Did not find "analyses" module. '
                         'Using packaged analyses.')
             from databench import analyses_packaged as analyses
-            analyses_path = 'databench/analyses_packaged'
+            analyses_path = os.path.abspath('databench/analyses_packaged')
 
         self.analyses_path = analyses_path
         self.analyses = analyses
