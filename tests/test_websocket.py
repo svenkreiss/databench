@@ -69,6 +69,16 @@ class BasicsTestAnalyses(WebSocketBaseTestCase):
         self.assertEqual(response.code, 200)
         self.assertIn(b'simple1', response.body)
 
+    def test_static_file(self):
+        response = self.fetch('/static/test_file.txt')
+        self.assertEqual(response.code, 200)
+        self.assertIn(b'placeholder', response.body)
+
+    def test_node_modules_file(self):
+        response = self.fetch('/node_modules/test_file.txt')
+        self.assertEqual(response.code, 200)
+        self.assertIn(b'placeholder', response.body)
+
 
 if __name__ == '__main__':
     unittest.main()
