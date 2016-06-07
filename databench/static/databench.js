@@ -25,8 +25,7 @@ var Connection = exports.Connection = function () {
 
         this.analysis_id = analysis_id;
         this.ws_url = ws_url ? ws_url : Connection.guess_ws_url();
-        console.log(typeof window === 'undefined' ? 'undefined' : _typeof(window));
-        this.request_args = !request_args && (typeof window === 'undefined' ? 'undefined' : _typeof(window)) !== undefined ? window.location.search : request_args;
+        this.request_args = request_args == null && typeof window !== 'undefined' ? window.location.search : request_args;
 
         this.error_cb = function (msg) {
             if (msg != null) return console.log('connection error: ' + msg);

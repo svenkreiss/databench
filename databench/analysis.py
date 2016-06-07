@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, unicode_literals, division
 
+import glob
 import json
 import logging
 import os
@@ -200,10 +201,11 @@ class Meta(object):
     @property
     def thumbnail(self):
         if self._thumbnail is None:
-            # detect whether thumbnail.png is present
-            if os.path.isfile(os.path.join(self.analysis_path,
-                                           'thumbnail.png')):
-                self._thumbnail = 'thumbnail.png'
+            # detect whether a thumbnail image is present
+            thumbnails = glob.glob(os.path.join(self.analysis_path,
+                                                'thumbnail.*'))
+            if len(thumbnails) >= 1:
+                self._thumbnail = thumbnails[0]
             else:
                 self._thumbnail = False
         return self._thumbnail
