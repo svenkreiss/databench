@@ -21,6 +21,7 @@ You can customize the header in ``analyses/README.md``:
 .. code-block:: none
 
     title: Databench - Packaged Analyses
+    description: my awesome analyses
     logo_url: /static/logo-header.svg
     favicon_url: /static/myfavicon.ico
     footer_html: Created by <a href="http://www.trivial.io">me</a>.

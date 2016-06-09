@@ -17,9 +17,9 @@
         {% block body %}
         <div class="d-container">
             <div class="d-header">
-                <h2><a href="/" class="text-muted">
+                <h2 id="d-title"><a href="/" class="text-muted">
                     {% block headerlogo %}
-                        <img src="{{ logo_url }}" />{{ title }}
+                        <img id="d-logo" src="{{ logo_url }}" />{{ title }}
                     {% end %}
                 </a></h2>
             </div>
