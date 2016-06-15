@@ -234,6 +234,12 @@ export class Text extends UIElement {
     }
 
     value(v) {
+        // reading value
+        if (v === undefined) return this.node.innerHTML;
+
+        // handle null
+        if (v === null) v = '';
+
         this.node.innerHTML = this.format_fn(v);
         return this;
     }
@@ -276,10 +282,11 @@ export class TextInput extends UIElement {
     }
 
     value(v) {
-        if (!v) {
-            // reading value
-            return this.node.value;
-        }
+        // reading value
+        if (v === undefined) return this.node.value;
+
+        // handle null
+        if (v === null) v = '';
 
         this.node.value = this.format_fn(v);
         return this;
@@ -352,8 +359,8 @@ export class Slider extends UIElement {
     }
 
     value(v) {
-        if (!v) {
-            // reading value
+        // reading value
+        if (v === undefined) {
             return this._slider_to_v(parseFloat(this.node.value));
         }
 

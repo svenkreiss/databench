@@ -17,6 +17,17 @@ class Parameters(object):
         yield self.close()
 
     @tornado.testing.gen_test
+    def test_empty_parameter(self):
+        yield self.ws_connect(self.analysis)
+
+        self.emit('test_fn', '')
+
+        r = yield self.read()
+        self.assertEqual(r, {'signal': 'test_fn', 'load': ['', 100]})
+
+        yield self.close()
+
+    @tornado.testing.gen_test
     def test_parameter(self):
         yield self.ws_connect(self.analysis)
 
