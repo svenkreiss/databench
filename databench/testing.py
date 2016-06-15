@@ -55,7 +55,7 @@ test/websocket_test.py
         yield tornado.gen.sleep(1.0)
 
     @tornado.gen.coroutine
-    def emit(self, action, message):
+    def emit(self, action, message='__nomessagetoken__'):
         """Emit an action with a message.
 
         :param action: name of an action

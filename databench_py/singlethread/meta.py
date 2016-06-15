@@ -35,7 +35,7 @@ class Meta(object):
 
         self.analysis = analysis_class(analysis_id)
 
-        def emit(signal, message):
+        def emit(signal, message='__nomessagetoken__'):
             self.emit(signal, message, analysis_id)
         self.analysis.set_emit_fn(emit)
 

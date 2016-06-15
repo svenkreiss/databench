@@ -18,8 +18,8 @@ class Analysis(object):
 
         self.data = Analysis.datastore_class(self.id_)
         self.data.on_change(self.data_change)
-        self.global_data = Analysis.datastore_class(type(self).__name__)
-        self.global_data.on_change(self.global_data_change)
+        self.class_data = Analysis.datastore_class(type(self).__name__)
+        self.class_data.on_change(self.class_data_change)
 
     def set_emit_fn(self, emit_fn):
         """Sets what the emit function for this analysis will be."""
@@ -39,5 +39,5 @@ class Analysis(object):
     def data_change(self, key, value):
         self.emit('data', {key: value})
 
-    def global_data_change(self, key, value):
-        self.emit('global_data', {key: value})
+    def class_data_change(self, key, value):
+        self.emit('class_data', {key: value})

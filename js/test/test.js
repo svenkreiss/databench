@@ -25,5 +25,18 @@ describe('Databench', function() {
         done();
       }, 100);
     });
+
+    it('action without message', function(done) {
+      this.timeout(5000);
+
+      var ack = false;
+      c.on('test_action_ack', function() { ack = true; });
+      c.emit('test_action');
+
+      setTimeout(function() {
+        assert.equal(ack, true);
+        done();
+      }, 100);
+    });
   });
 });

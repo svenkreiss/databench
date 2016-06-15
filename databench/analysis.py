@@ -301,18 +301,24 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
             log.warning('no analysis connected. Abort.')
             return
 
-        if 'signal' not in msg or 'load' not in msg:
+        if 'signal' not in msg:
             log.info('message not processed: {}'.format(message))
             return
 
-        self.meta.run_process(self.analysis, msg['signal'], msg['load'])
+        if 'load' not in msg:
+            self.meta.run_process(self.analysis, msg['signal'])
+        else:
+            self.meta.run_process(self.analysis, msg['signal'], msg['load'])
 
-    def emit(self, signal, message):
+    def emit(self, signal, message='__nomessagetoken__'):
         message = sanitize_message(message)
+
+        data = {'signal': signal}
+        if message != '__nomessagetoken__':
+            data['load'] = message
+
         try:
-            self.write_message(json.dumps(
-                {'signal': signal, 'load': message}
-            ).encode('utf-8'))
+            self.write_message(json.dumps(data).encode('utf-8'))
         except tornado.websocket.WebSocketClosedError:
             pass
 

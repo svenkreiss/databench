@@ -6,6 +6,17 @@ class Parameters(object):
     analysis = None
 
     @tornado.testing.gen_test
+    def test_no_parameter(self):
+        yield self.ws_connect(self.analysis)
+
+        self.emit('test_action')
+
+        r = yield self.read()
+        self.assertEqual(r, {'signal': 'test_action_ack'})
+
+        yield self.close()
+
+    @tornado.testing.gen_test
     def test_parameter(self):
         yield self.ws_connect(self.analysis)
 
