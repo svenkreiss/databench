@@ -13,8 +13,6 @@ Databench
     :target: https://coveralls.io/r/svenkreiss/databench
 .. image:: https://badge.fury.io/py/databench.svg
     :target: https://pypi.python.org/pypi/databench/
-.. image:: https://img.shields.io/pypi/dm/databench.svg
-    :target: https://pypi.python.org/pypi/databench/
 
 
 Documentation and License
