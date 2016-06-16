@@ -577,6 +577,12 @@ var Text = exports.Text = function (_UIElement4) {
     _createClass(Text, [{
         key: 'value',
         value: function value(v) {
+            // reading value
+            if (v === undefined) return this.node.innerHTML;
+
+            // handle null
+            if (v === null) v = '';
+
             this.node.innerHTML = this.format_fn(v);
             return this;
         }
@@ -633,10 +639,11 @@ var TextInput = exports.TextInput = function (_UIElement5) {
     }, {
         key: 'value',
         value: function value(v) {
-            if (!v) {
-                // reading value
-                return this.node.value;
-            }
+            // reading value
+            if (v === undefined) return this.node.value;
+
+            // handle null
+            if (v === null) v = '';
 
             this.node.value = this.format_fn(v);
             return this;
@@ -736,8 +743,8 @@ var Slider = exports.Slider = function (_UIElement6) {
     }, {
         key: 'value',
         value: function value(v) {
-            if (!v) {
-                // reading value
+            // reading value
+            if (v === undefined) {
                 return this._slider_to_v(parseFloat(this.node.value));
             }
 
