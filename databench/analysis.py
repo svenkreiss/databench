@@ -32,7 +32,7 @@ class Analysis(object):
 
     **Initialize:** add an ``on_connect(self)`` method to your analysis class.
 
-    *Request args:** ``request_args`` or GET parameters are processed with a
+    **Request args:** ``request_args`` or GET parameters are processed with a
     ``on_request_args(argv)`` method where ``argv`` is a dictionary of all
     arguments. Each value of the dictionary is a list of given values for this
     key even if this key only appeared once in the url.
@@ -216,7 +216,7 @@ class Meta(object):
     def run_process(self, analysis, action_name, message='__nomessagetoken__'):
         """Executes an action in the analysis with the given message.
 
-        It also handles the start and stop signals in case a process_id
+        It also handles the start and stop signals in case a ``__process_id``
         is given.
         """
 
