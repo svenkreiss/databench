@@ -29,6 +29,13 @@ def test_update():
     assert data_after == 'update'
 
 
+def test_delete():
+    d.update({'test': 'delete'})
+    assert data_after == 'delete'
+    del d['test']
+    assert 'test' not in d
+
+
 def test_set_skip_callback():
     global data_after
     d['test'] = 'before-set'

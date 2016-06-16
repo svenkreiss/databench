@@ -54,6 +54,12 @@ class Datastore(object):
         """return the value for the given key"""
         return Datastore.store[self.domain][key]
 
+    def __delitem__(self, key):
+        """delete the given key"""
+        del Datastore.store[self.domain][key]
+        for cb in Datastore.on_change_cb[self.domain]:
+            cb(key, None)
+
     def __contains__(self, key):
         """test whether key is set"""
         return key in Datastore.store[self.domain]

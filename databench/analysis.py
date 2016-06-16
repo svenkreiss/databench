@@ -30,10 +30,12 @@ class Analysis(object):
     This contains the analysis code. Every browser connection corresponds to
     and instance of this class.
 
-    **Initialize:** add an ``on_connect(self)`` or
-    ``on_connect(self, request_args)`` method to your analysis class. The
-    optional argument ``request_args`` contains a dictionary of parameters
-    from the request url.
+    **Initialize:** add an ``on_connect(self)`` method to your analysis class.
+
+    *Request args:** ``request_args`` or GET parameters are processed with a
+    ``on_request_args(argv)`` method where ``argv`` is a dictionary of all
+    arguments. Each value of the dictionary is a list of given values for this
+    key even if this key only appeared once in the url.
 
     **Actions:** are captured by specifying a class method starting
     with ``on_`` followed by the action name. To capture the action
@@ -70,8 +72,8 @@ class Analysis(object):
     scoped to all instances of this analysis by its class name.
 
     **Outgoing messages**: changes to the datastore are emitted to the
-    frontend and this path should usually not be modified (according to the
-    Flux model). However, databench does provide access to ``emit()``
+    frontend and this path should usually not be modified. However, databench
+    does provide access to ``emit()``
     method and to methods that modify a value for a key before it is send
     out with ``data_<key>(value)`` methods.
     """
