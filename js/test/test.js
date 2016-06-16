@@ -9,7 +9,7 @@ describe('Databench', function() {
       'ws://localhost:5000/parameters/ws'
     ).connect();
 
-    it('create a WebSocket connection', function () {
+    it('create a WebSocket connection', function() {
       assert.equal('object', typeof c);
     });
 
@@ -26,7 +26,7 @@ describe('Databench', function() {
       }, 100);
     });
 
-    it('echo an object', function (done) {
+    it('echo an object', function(done) {
       this.timeout(5000);
 
       var d;
@@ -39,7 +39,7 @@ describe('Databench', function() {
       }, 100);
     });
 
-    it('echo an empty string', function (done) {
+    it('echo an empty string', function(done) {
       this.timeout(5000);
 
       var d;
@@ -52,7 +52,7 @@ describe('Databench', function() {
       }, 100);
     });
 
-    it('echo a null parameter', function (done) {
+    it('echo a null parameter', function(done) {
       this.timeout(5000);
 
       var d;
