@@ -61,9 +61,14 @@ test/websocket_test.py
         :param action: name of an action
         :param message: payload for the action
         """
-        yield self.ws.write_message(
-            json.dumps({'signal': action, 'load': message})
-        )
+        if message == '__nomessagetoken__':
+            yield self.ws.write_message(
+                json.dumps({'signal': action})
+            )
+        else:
+            yield self.ws.write_message(
+                json.dumps({'signal': action, 'load': message})
+            )
 
     @tornado.gen.coroutine
     def read(self):
