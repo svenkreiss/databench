@@ -7,76 +7,67 @@ class Parameters(object):
 
     @tornado.testing.gen_test
     def test_no_parameter(self):
-        yield self.ws_connect(self.analysis)
+        c = yield self.ws_connect(self.analysis)
+        c.emit('test_action')
+        r = yield c.read()
+        yield c.close()
 
-        self.emit('test_action')
-
-        r = yield self.read()
         self.assertEqual(r, {'signal': 'test_action_ack'})
-
-        yield self.close()
 
     @tornado.testing.gen_test
     def test_empty_parameter(self):
-        yield self.ws_connect(self.analysis)
+        c = yield self.ws_connect(self.analysis)
+        c.emit('test_fn', '')
+        r = yield c.read()
+        yield c.close()
 
-        self.emit('test_fn', '')
-
-        r = yield self.read()
         self.assertEqual(r, {'signal': 'test_fn', 'load': ['', 100]})
-
-        yield self.close()
 
     @tornado.testing.gen_test
     def test_parameter(self):
-        yield self.ws_connect(self.analysis)
+        c = yield self.ws_connect(self.analysis)
+        c.emit('test_fn', 1)
+        r = yield c.read()
+        yield c.close()
 
-        self.emit('test_fn', 1)
-
-        r = yield self.read()
         self.assertEqual(r, {'signal': 'test_fn', 'load': [1, 100]})
-
-        yield self.close()
 
     @tornado.testing.gen_test
     def test_list(self):
-        yield self.ws_connect(self.analysis)
+        c = yield self.ws_connect(self.analysis)
+        c.emit('test_fn', [1, 2])
+        r = yield c.read()
+        yield c.close()
 
-        self.emit('test_fn', [1, 2])
-
-        r = yield self.read()
         self.assertEqual(r, {'signal': 'test_fn', 'load': [1, 2]})
-
-        yield self.close()
 
     @tornado.testing.gen_test
     def test_dict(self):
-        yield self.ws_connect(self.analysis)
+        c = yield self.ws_connect(self.analysis)
+        c.emit('test_fn', {'first_param': 1, 'second_param': 2})
+        r = yield c.read()
+        yield c.close()
 
-        self.emit('test_fn', {'first_param': 1, 'second_param': 2})
-
-        r = yield self.read()
         self.assertEqual(r, {'signal': 'test_fn', 'load': [1, 2]})
-
-        yield self.close()
 
     @tornado.testing.gen_test
     def test_process(self):
-        yield self.ws_connect(self.analysis)
+        c = yield self.ws_connect(self.analysis)
+        c.emit('test_fn', {'first_param': 1, '__process_id': 123})
+        r_start = yield c.read()
+        r = yield c.read()
+        r_end = yield c.read()
+        yield c.close()
 
-        self.emit('test_fn', {'first_param': 1, '__process_id': 123})
-        r = yield self.read()
-        self.assertEqual(r, {'signal': '__process',
-                             'load': {'id': 123, 'status': 'start'}})
-
-        r = yield self.read()
-        self.assertEqual(r, {'signal': 'test_fn', 'load': [1, 100]})
-
-        r = yield self.read()
-        self.assertEqual(r, {'signal': '__process',
-                             'load': {'id': 123, 'status': 'end'}})
-
-        yield self.close()
+        self.assertEqual(r_start,
+                         {'signal': '__process',
+                          'load': {'id': 123, 'status': 'start'}})
+        self.assertEqual(r,
+                         {'signal': 'test_fn',
+                          'load': [1, 100]})
+        self.assertEqual(r_end,
+                         {'signal': '__process',
+                          'load': {'id': 123, 'status': 'end'}})
 
 
 class ParametersTest(Parameters, databench.AnalysisTestCase):
