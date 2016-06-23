@@ -95,3 +95,28 @@ Now you can run the executable ``databench`` in your ``workingDir`` folder (outs
 You can find the result of this tutorial in the `helloworld analysis of the databench_examples`_ repo.
 
 .. _`helloworld analysis of the databench_examples`: https://github.com/svenkreiss/databench_examples
+
+
+Data flow
+---------
+
+At the lowest level, Databench communicates between frontend and backend by
+sending messages on a long-lived bidirectional WebSocket connection. That means
+that both frontend and backend can signal to the other end a change in state
+or transmit an action without being polled.
+
+Depending on where state is stored (and that can be mixed within an analysis),
+two models for data flow are often used. First, a model where state is stored
+in a Datastore in the backend. This datastore can be a store like Redis that is
+shared across instances of the Python backend.
+
+.. image:: images/dataflow_datastore_state.png
+   :alt: data flow with state stored in datastore
+
+Second, transient state -- state that is deleted at the end of a session
+and is usually concerned with the user's UI -- is stored in the frontend.
+In this case, the backend only sends actions but not state to the frontend.
+The frontend can also send actions to the backend.
+
+.. image:: images/dataflow_frontend_state.png
+   :alt: data flow with state stored in frontend
