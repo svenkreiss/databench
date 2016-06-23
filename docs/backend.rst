@@ -51,6 +51,12 @@ Example ``analyses/gulpfile.js`` for React and ES6:
     gulp.task('default', ['build']);
 
 
+SSL
+---
+
+Provide ``--ssl-certfile``, ``--ssl-keyfile`` and ``--ssl-port``.
+
+
 Analysis
 --------
 

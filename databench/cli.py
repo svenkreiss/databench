@@ -8,6 +8,7 @@ import argparse
 import logging
 import os
 import random
+import ssl
 import sys
 import tornado
 
@@ -34,6 +35,13 @@ def main():
                         help='port for webserver')
     parser.add_argument('--analyses', default=None,
                         help='import path for analyses')
+    parser.add_argument('--ssl-certfile', dest='ssl_certfile',
+                        help='SSL certificate file')
+    parser.add_argument('--ssl-keyfile', dest='ssl_keyfile',
+                        help='SSL key file')
+    parser.add_argument('--ssl-port', dest='ssl_port',
+                        type=int, default=int(os.environ.get('SSLPORT', 5001)),
+                        help='SSL port for webserver')
     parser.add_argument('--with-coverage', dest='with_coverage',
                         default=False, action='store_true',
                         help=argparse.SUPPRESS)
@@ -61,10 +69,19 @@ def main():
     logging.info('Databench {}'.format(DATABENCH_VERSION))
     logging.info('host={}, port={}'.format(args.host, args.port))
 
-    app = App(args.analyses).tornado_app(
-        debug=args.loglevel not in ('WARNING', 'ERROR', 'CRITICAL')
-    )
-    app.listen(args.port, args.host)
+    app = App(args.analyses)
+    # HTTP server
+    app_debug = args.loglevel not in ('WARNING', 'ERROR', 'CRITICAL')
+    tornado_app = app.tornado_app(debug=app_debug)
+    tornado_app.listen(args.port, args.host)
+    # HTTPS server
+    if args.ssl_certfile and args.ssl_keyfile:
+        ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+        ssl_ctx.load_cert_chain(args.ssl_certfile, args.ssl_keyfile)
+        ssl_server = tornado.httpserver.HTTPServer(tornado_app,
+                                                   ssl_options=ssl_ctx)
+        ssl_server.listen(args.ssl_port, args.host)
+
     try:
         tornado.ioloop.IOLoop.current().start()
     except KeyboardInterrupt:
