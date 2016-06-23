@@ -1,7 +1,7 @@
 from .app import App
 import json
 import tornado
-from tornado.testing import AsyncHTTPTestCase
+from tornado.testing import AsyncHTTPTestCase, AsyncHTTPSTestCase
 
 
 class TestConnection(object):
@@ -11,7 +11,7 @@ class TestConnection(object):
     @tornado.gen.coroutine
     def connect(self, url, compression_options=None):
         self.ws = yield tornado.websocket.websocket_connect(
-            url,
+            tornado.httpclient.HTTPRequest(url, validate_cert=False),
             # io_loop=self.io_loop,
             compression_options=compression_options)
 
@@ -78,6 +78,37 @@ test/websocket_test.py
         """
 
         url = 'ws://127.0.0.1:{}/{}/ws'.format(self.get_http_port(), analysis)
+        connection = yield TestConnection().connect(url, compression_options)
+
+        self.assertEqual(len(connection.analysis_id), 8)
+        raise tornado.gen.Return(connection)
+
+
+class AnalysisTestCaseSSL(AsyncHTTPSTestCase):
+    """Test scaffolding for an analysis with SSL.
+
+    ``analyses_path`` is the import path for the analyses.
+
+    Similar to tornado websocket unit tests:
+    see https://github.com/tornadoweb/tornado/blob/master/tornado/\
+test/websocket_test.py
+    """
+
+    analyses_path = None
+
+    def get_app(self):
+        return App(self.analyses_path).tornado_app()
+
+    @tornado.gen.coroutine
+    def ws_connect(self, analysis, compression_options=None):
+        """Open a WebSocket connection to an analysis.
+
+        Runs the handshake and sets ``connection.analysis_id``.
+
+        :param analysis: name of an analysis
+        """
+
+        url = 'wss://127.0.0.1:{}/{}/ws'.format(self.get_http_port(), analysis)
         connection = yield TestConnection().connect(url, compression_options)
 
         self.assertEqual(len(connection.analysis_id), 8)

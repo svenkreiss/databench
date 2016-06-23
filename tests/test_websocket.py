@@ -27,6 +27,14 @@ class BasicsDummypiPy(Basics, databench.AnalysisTestCase):
     analysis = 'dummypi_py'
 
 
+class BasicsDummypiSSL(Basics, databench.AnalysisTestCaseSSL):
+    analysis = 'dummypi'
+
+
+class BasicsDummypiPySSL(Basics, databench.AnalysisTestCaseSSL):
+    analysis = 'dummypi_py'
+
+
 class BasicsTestAnalyses(databench.AnalysisTestCase):
     analyses_path = 'tests.analyses'
 
