@@ -36,7 +36,7 @@ Some features are shown in the `live demos`_. They do not include examples with 
 
 .. _`first blog post`: http://www.svenkreiss.com/blog/databench-initial/
 .. _`slides from Hack and Tell NY`: https://speakerdeck.com/svenkreiss/databench
-.. _`live demos`: http://databench-examples.svenkreiss.com/
+.. _`live demos`: http://databench-examples.trivial.io/
 .. _`databench_examples`: https://github.com/svenkreiss/databench_examples
 .. _`markdown`: http://daringfireball.net/projects/markdown/syntax
 .. _`MathJax`: http://www.mathjax.org/
