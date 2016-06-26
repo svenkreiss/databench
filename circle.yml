@@ -13,6 +13,7 @@ dependencies:
 test:
   override:
     - flake8
+    - npm run lint
     - nosetests -vv --with-coverage --cover-erase --cover-inclusive
   post:
     - coveralls || true

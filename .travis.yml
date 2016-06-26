@@ -16,6 +16,7 @@ install:
  - export PATH=$PATH:/usr/lib/node_modules/.bin/
 script:
  - flake8
+ - npm run lint
  - nosetests -vv --with-coverage --cover-erase --cover-inclusive
 after_success:
  - coveralls || true

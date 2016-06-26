@@ -16,7 +16,11 @@
     "babel-preset-stage-1": "^6.5.0",
     "babelify": "^7.2.0",
     "browserify": "^13.0.0",
-    "eslint": "^2.0.0",
+    "eslint": "^2.13.1",
+    "eslint-config-airbnb": "^9.0.1",
+    "eslint-plugin-import": "^1.9.2",
+    "eslint-plugin-jsx-a11y": "^1.5.3",
+    "eslint-plugin-react": "^5.2.2",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-sourcemaps": "^1.6.0",
@@ -32,7 +36,8 @@
     }
   },
   "scripts": {
-    "test": "mocha js/test/test.js"
+    "test": "mocha js/test/test.js",
+    "lint": "eslint js/src/*.js"
   },
   "repository": {
     "type": "git",

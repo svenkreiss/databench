@@ -169,10 +169,11 @@ isolated server.
 
 
 
-Databench JavaScript Frontend Library
--------------------------------------
+JavaScript Library
+------------------
 
-This is the API documentation for ``databench.js``.
+This is the API documentation for ``databench.js`` which is exposed in the
+webserver at ``/_static/databench.js``.
 
 .. js:function:: Databench.Connection(analysis_id=null, ws_url=null)
 
@@ -209,8 +210,8 @@ This is the API documentation for ``databench.js``.
 
 .. _ui:
 
-User Interface (UI)
--------------------
+User Interface
+--------------
 
 Below is the list of :js:func:`Databench.UIElements` that are in
 :js:func:`Databench`. The DOM nodes are "wired" manually or using
@@ -219,7 +220,7 @@ Below is the list of :js:func:`Databench.UIElements` that are in
 * :js:class:`Databench.ui.Log`: node (usually a ``<pre>``) with ``id="log"``
 * :js:class:`Databench.ui.StatusLog`: node (usually a ``<div>``) with ``id="ws-alerts"``
 * :js:class:`Databench.ui.Button`: a ``<button>`` with an action name
-* :js:class:`Databench.ui.Text`: a ``<span>``, ``<p>``, ``<div>``, ``<i>`` or ``<b>`` with an action name
+* :js:class:`Databench.ui.Text`: a ``<span>``, ``<p>``, ``<div>``, ``<i>`` or ``<b>`` with a ``data-action`` attribute specifying the action name
 * :js:class:`Databench.ui.TextInput`: a ``<input[type='text']>`` with an action name
 * :js:class:`Databench.ui.Slider`: a ``<input[type='range']>`` with an action name
 
@@ -237,15 +238,13 @@ Action names are determined from ``name`` or ``data-action`` attributes.
     .. js:attribute:: action_name
 
         Name of the action for this element. A default name is determined from
-        the DOM ``data-action`` attribute or from the ``name`` attribute and
+        the ``data-action``, ``name`` or ``id`` attribute on the DOM node and
         can be overwritten.
 
-    .. js:function:: action_format(value)
+    .. js:attribute:: action_format
 
-        :param value: value of the element
-        :returns: a formatted message for an action
-
-        Overwrite this function to implement custom behavior.
+        A function mapping a default action to a custom action.
+        Overwrite this with a function to implement custom behavior.
 
     .. js:attribute:: wire_signal
 
@@ -316,18 +315,25 @@ And here are the UI elements:
 
     .. js:attribute:: format_fn
 
-        overwrite this variable with a function that maps a signal to the
-        text that should be shown
+        This attribute is assigned to a function that takes a value and
+        returns a formatted representation. Overwrite this attribute to
+        customize the behavior.
 
 
 .. js:class:: Databench.ui.TextInput(node)
 
     :param node: an ``<input>`` DOM element with ``type="text"``
 
+    .. js:attribute:: trigger_on_keyup
+
+        Default is ``false``. Changes are only triggered on ``change`` events.
+        Setting this to true will trigger on every ``keyup`` event of this element.
+
     .. js:attribute:: format_fn
 
-        overwrite this variable with a function that maps a signal to the
-        text that should be shown
+        This attribute is assigned to a function that takes a value and
+        returns a formatted representation. Overwrite this attribute to
+        customize the behavior.
 
 
 .. js:class:: Databench.ui.Slider(node, label_node)
@@ -335,13 +341,31 @@ And here are the UI elements:
     :param node: an ``<input>`` DOM element with ``type="range"``
     :param label_node: a corresponding ``<label>`` DOM element
 
+    The layout of the ``<label>`` and the slider needs to such that the slider
+    does not jump around when the label text changes.
+
+    .. js:attribute:: value_to_slider
+
+        is a attribute that takes a value and converts it to the
+            values used by the slider.
+
+    .. js:attribute:: slider_to_value
+
+        is a attribute that takes a slider value and converts it to
+            a value used by the backend.
+
+    .. js:attribute:: format_fn
+
+        This attribute is assigned to a function that takes a value and
+        returns a formatted representation. Overwrite this attribute to
+        customize the behavior.
+
     **Example**: ``index.html``:
 
     .. code-block:: html
 
         <label for="samples">Samples:</label>
-        <input type="range" name="samples" value="1000"
-            min="100" max="10000" step="100" />
+        <input type="range" id="samples" value="1000" min="100" max="10000" step="100" />
 
     In ``analysis.py``, add
 

@@ -1,0 +1,12 @@
+{
+    "extends": "airbnb",
+    "plugins": [
+        "react"
+    ],
+    "rules": {
+        "no-underscore-dangle": "off",
+        "camelcase": "off",
+        "no-console": "off",
+        "no-param-reassign": ["error", { "props": false }]
+    }
+}
