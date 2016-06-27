@@ -16,6 +16,7 @@
     "babel-preset-stage-1": "^6.5.0",
     "babelify": "^7.2.0",
     "browserify": "^13.0.0",
+    "esdoc": "^0.4.7",
     "eslint": "^2.13.1",
     "eslint-config-airbnb": "^9.0.1",
     "eslint-plugin-import": "^1.9.2",
@@ -37,7 +38,8 @@
   },
   "scripts": {
     "test": "mocha js/test/test.js",
-    "lint": "eslint js/src/*.js"
+    "lint": "eslint js/src/*.js",
+    "esdoc": "esdoc -c esdoc.json"
   },
   "repository": {
     "type": "git",

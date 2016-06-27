@@ -224,7 +224,7 @@ Below is the list of :js:func:`Databench.UIElements` that are in
 * :js:class:`Databench.ui.TextInput`: a ``<input[type='text']>`` with an action name
 * :js:class:`Databench.ui.Slider`: a ``<input[type='range']>`` with an action name
 
-Action names are determined from ``name`` or ``data-action`` attributes.
+Action names are determined from ``data-action``, ``name`` or ``id`` attributes.
 
 
 .. js:class:: Databench.UIElement(node)

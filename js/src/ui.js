@@ -1,5 +1,11 @@
+/** @module */
 
+/** Abstract class for user interface elements. */
 class UIElement {
+  /**
+   * Create a UI element.
+   * @param  {HTMLElement} node An HTML element.
+   */
   constructor(node) {
     this.node = node;
     this.node.databench_ui = this;
@@ -10,6 +16,11 @@ class UIElement {
     this.wire_signal = { data: this.action_name };
   }
 
+  /**
+   * Determine the name of the action that should be associated with the node.
+   * @param  {HTMLElement} node An HTML element.
+   * @return {string}      Name of action or null.
+   */
   static determine_action_name(node) {
     // determine action name from HTML DOM
     let action = null;
@@ -32,7 +43,15 @@ class UIElement {
   }
 }
 
+/** Log messages class. */
 export class Log extends UIElement {
+  /**
+   * Construct a log class.
+   * @param  {HTMLElement} node          Primary node.
+   * @param  {String} consoleFnName Name of console method to replace.
+   * @param  {Number} limit         Maximum number of messages to show.
+   * @param  {Number} length_limit  Maximum length of a message.
+   */
   constructor(node, consoleFnName = 'log', limit = 20, length_limit = 250) {
     super(node);
 
@@ -90,6 +109,7 @@ export class Log extends UIElement {
 }
 
 
+/** Visual element for console.log(). */
 export class StatusLog extends UIElement {
   constructor(node, formatter = StatusLog.default_alert) {
     super(node);
@@ -143,6 +163,7 @@ export class StatusLog extends UIElement {
 }
 
 
+/** A button. */
 export class Button extends UIElement {
   constructor(node) {
     super(node);
@@ -210,6 +231,7 @@ export class Button extends UIElement {
 }
 
 
+/** Data bound text elements. */
 export class Text extends UIElement {
   constructor(node) {
     super(node);
@@ -247,8 +269,12 @@ export class Text extends UIElement {
   }
 }
 
-
+/** Make an input element of type text interactive. */
 export class TextInput extends UIElement {
+  /**
+   * Create a TextInput UIElement.
+   * @param {HTMLElement} node The node to connect.
+   */
   constructor(node) {
     super(node);
 
@@ -299,6 +325,7 @@ export class TextInput extends UIElement {
 }
 
 
+/** A range slider. */
 export class Slider extends UIElement {
   constructor(node, label_node) {
     super(node);
@@ -374,6 +401,11 @@ export class Slider extends UIElement {
   }
 }
 
+/**
+ * Wire all the UI elements to the backend.
+ * @param  {Connection} connection A Databench.Connection instance.
+ * @return {Connection}            The same connection.
+ */
 export function wire(connection) {
   StatusLog.wire(connection);
   Log.wire(connection);

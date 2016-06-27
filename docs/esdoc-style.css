@@ -1,0 +1,11 @@
+h3 { background: none; font-weight: bold; }
+h4 { font-weight: normal; display: inline; }
+
+.inherited-summary { display: none; }
+[data-ice="constructorSummary"] { display: none; }
+[data-ice="staticMethodSummary"] { display: none; }
+[data-ice="override"] { display: none; }
+
+.content .detail > div[data-ice="extendsChain"] { margin: 0 0 15px 10px; font-style: italic; }
+.content .detail > div[data-ice="extendsChain"] > div { display: inline; margin: 0 0.5em; }
+.content .detail h4 + :not(pre) { margin-left: 0; }
