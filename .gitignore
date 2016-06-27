@@ -9,6 +9,7 @@ __pycache__/
 node_modules/
 js/node_client/*.js
 js/node_client/*.js.map
+-_.html
 
 # Distribution / packaging
 .Python

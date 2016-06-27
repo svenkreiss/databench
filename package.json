@@ -40,7 +40,7 @@
     "test": "mocha js/test/test.js",
     "lint": "eslint js/src/*.js",
     "esdoc": "esdoc -c esdoc.json",
-    "jsdoc": "jsdoc js/src/*.js -d docs/static/jsdoc/"
+    "jsdoc": "jsdoc --verbose js/src/*.js -d docs/static/jsdoc/"
   },
   "repository": {
     "type": "git",
