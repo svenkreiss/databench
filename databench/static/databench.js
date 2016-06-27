@@ -11,43 +11,43 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var WebSocket = void 0;
 if (typeof WebSocket === 'undefined') {
-  // eslint-disable-line
-  var WebSocket = require('websocket').w3cwebsocket; // eslint-disable-line
+  WebSocket = require('websocket').w3cwebsocket; // eslint-disable-line
 }
 
 var Connection = exports.Connection = function () {
   function Connection() {
-    var analysis_id = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
-    var ws_url = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
-    var request_args = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
+    var analysisId = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+    var wsUrl = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+    var requestArgs = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
 
     _classCallCheck(this, Connection);
 
-    this.analysis_id = analysis_id;
-    this.ws_url = ws_url || Connection.guess_ws_url();
-    this.request_args = request_args == null && typeof window !== 'undefined' ? window.location.search : request_args;
+    this.analysisId = analysisId;
+    this.wsUrl = wsUrl || Connection.guessWSUrl();
+    this.requestArgs = requestArgs == null && typeof window !== 'undefined' ? window.location.search : requestArgs;
 
-    this.error_cb = function (msg) {
+    this.errorCB = function (msg) {
       return msg != null ? console.log('connection error: ' + msg) : null;
     };
-    this.on_callbacks = [];
-    this._on_callbacks_optimized = null;
-    this.onProcess_callbacks = {};
+    this.onCallbacks = [];
+    this._onCallbacksOptimized = null;
+    this.onProcessCallbacks = {};
 
-    this.ws_reconnect_attempt = 0;
-    this.ws_reconnect_delay = 100.0;
+    this.wsReconnectAttempt = 0;
+    this.wsReconnectDelay = 100.0;
 
     this.socket = null;
-    this.socket_check_open = null;
+    this.socketCheckOpen = null;
 
     // bind methods
     this.connect = this.connect.bind(this);
-    this.ws_check_open = this.ws_check_open.bind(this);
-    this.ws_onopen = this.ws_onopen.bind(this);
-    this.ws_onclose = this.ws_onclose.bind(this);
-    this.ws_onmessage = this.ws_onmessage.bind(this);
-    this.optimize_on_callbacks = this.optimize_on_callbacks.bind(this);
+    this.wsCheckOpen = this.wsCheckOpen.bind(this);
+    this.wsOnOpen = this.wsOnOpen.bind(this);
+    this.wsOnClose = this.wsOnClose.bind(this);
+    this.wsOnMessage = this.wsOnMessage.bind(this);
+    this.optimizeOnCallbacks = this.optimizeOnCallbacks.bind(this);
     this.on = this.on.bind(this);
     this.emit = this.emit.bind(this);
     this.onProcess = this.onProcess.bind(this);
@@ -56,63 +56,63 @@ var Connection = exports.Connection = function () {
   _createClass(Connection, [{
     key: 'connect',
     value: function connect() {
-      this.socket = new WebSocket(this.ws_url); // eslint-disable-line
+      this.socket = new WebSocket(this.wsUrl);
 
-      this.socket_check_open = setInterval(this.ws_check_open, 2000);
-      this.socket.onopen = this.ws_onopen;
-      this.socket.onclose = this.ws_onclose;
-      this.socket.onmessage = this.ws_onmessage;
+      this.socketCheckOpen = setInterval(this.wsCheckOpen, 2000);
+      this.socket.onopen = this.wsOnOpen;
+      this.socket.onclose = this.wsOnClose;
+      this.socket.onmessage = this.wsOnMessage;
       return this;
     }
   }, {
-    key: 'ws_check_open',
-    value: function ws_check_open() {
+    key: 'wsCheckOpen',
+    value: function wsCheckOpen() {
       if (this.socket.readyState === this.socket.CONNECTING) {
         return;
       }
       if (this.socket.readyState !== this.socket.OPEN) {
-        this.error_cb('Connection could not be opened. ' + 'Please <a href="javascript:location.reload(true);" ' + 'class="alert-link">reload</a> this page to try again.');
+        this.errorCB('Connection could not be opened. ' + 'Please <a href="javascript:location.reload(true);" ' + 'class="alert-link">reload</a> this page to try again.');
       }
-      clearInterval(this.socket_check_open);
+      clearInterval(this.socketCheckOpen);
     }
   }, {
-    key: 'ws_onopen',
-    value: function ws_onopen() {
-      this.ws_reconnect_attempt = 0;
-      this.ws_reconnect_delay = 100.0;
-      this.error_cb(); // clear errors
+    key: 'wsOnOpen',
+    value: function wsOnOpen() {
+      this.wsReconnectAttempt = 0;
+      this.wsReconnectDelay = 100.0;
+      this.errorCB(); // clear errors
       this.socket.send(JSON.stringify({
-        __connect: this.analysis_id,
-        __request_args: this.request_args
+        __connect: this.analysisId,
+        __requestArgs: this.requestArgs
       }));
     }
   }, {
-    key: 'ws_onclose',
-    value: function ws_onclose() {
-      clearInterval(this.socket_check_open);
+    key: 'wsOnClose',
+    value: function wsOnClose() {
+      clearInterval(this.socketCheckOpen);
 
-      this.ws_reconnect_attempt += 1;
-      this.ws_reconnect_delay *= 2;
+      this.wsReconnectAttempt += 1;
+      this.wsReconnectDelay *= 2;
 
-      if (this.ws_reconnect_attempt > 3) {
-        this.error_cb('Connection closed. ' + 'Please <a href="javascript:location.reload(true);" ' + 'class="alert-link">reload</a> this page to reconnect.');
+      if (this.wsReconnectAttempt > 3) {
+        this.errorCB('Connection closed. ' + 'Please <a href="javascript:location.reload(true);" ' + 'class="alert-link">reload</a> this page to reconnect.');
         return;
       }
 
-      var actual_delay = 0.7 * this.ws_reconnect_delay + 0.3 * Math.random() * this.ws_reconnect_delay;
-      console.log('WebSocket reconnect attempt ' + this.ws_reconnect_attempt + ' ' + ('in ' + actual_delay.toFixed(0) + 'ms.'));
-      setTimeout(this.connect, actual_delay);
+      var actualDelay = 0.7 * this.wsReconnectDelay + 0.3 * Math.random() * this.wsReconnectDelay;
+      console.log('WebSocket reconnect attempt ' + this.wsReconnectAttempt + ' ' + ('in ' + actualDelay.toFixed(0) + 'ms.'));
+      setTimeout(this.connect, actualDelay);
     }
   }, {
-    key: 'ws_onmessage',
-    value: function ws_onmessage(event) {
+    key: 'wsOnMessage',
+    value: function wsOnMessage(event) {
       var _this = this;
 
       var message = JSON.parse(event.data);
 
       // connect response
       if (message.signal === '__connect') {
-        this.analysis_id = message.load.analysis_id;
+        this.analysisId = message.load.analysisId;
       }
 
       // processes
@@ -120,53 +120,53 @@ var Connection = exports.Connection = function () {
         (function () {
           var id = message.load.id;
           var status = message.load.status;
-          _this.onProcess_callbacks[id].map(function (cb) {
+          _this.onProcessCallbacks[id].map(function (cb) {
             return cb(status);
           });
         })();
       }
 
       // normal message
-      if (this._on_callbacks_optimized === null) this.optimize_on_callbacks();
-      if (message.signal in this._on_callbacks_optimized) {
-        this._on_callbacks_optimized[message.signal].map(function (cb) {
+      if (this._onCallbacksOptimized === null) this.optimizeOnCallbacks();
+      if (message.signal in this._onCallbacksOptimized) {
+        this._onCallbacksOptimized[message.signal].map(function (cb) {
           return cb(message.load);
         });
       }
     }
   }, {
-    key: 'optimize_on_callbacks',
-    value: function optimize_on_callbacks() {
+    key: 'optimizeOnCallbacks',
+    value: function optimizeOnCallbacks() {
       var _this2 = this;
 
-      this._on_callbacks_optimized = {};
-      this.on_callbacks.forEach(function (_ref) {
+      this._onCallbacksOptimized = {};
+      this.onCallbacks.forEach(function (_ref) {
         var signal = _ref.signal;
         var callback = _ref.callback;
 
         if (typeof signal === 'string') {
-          if (!(signal in _this2._on_callbacks_optimized)) {
-            _this2._on_callbacks_optimized[signal] = [];
+          if (!(signal in _this2._onCallbacksOptimized)) {
+            _this2._onCallbacksOptimized[signal] = [];
           }
-          _this2._on_callbacks_optimized[signal].push(callback);
+          _this2._onCallbacksOptimized[signal].push(callback);
         } else if ((typeof signal === 'undefined' ? 'undefined' : _typeof(signal)) === 'object') {
           Object.keys(signal).forEach(function (signalName) {
             var entryName = signal[signalName];
-            var filtered_callback = function filtered_callback(data) {
+            var filteredCallback = function filteredCallback(data) {
               if (data.hasOwnProperty(entryName)) {
                 callback(data[entryName]);
               }
             };
 
-            if (!(signalName in _this2._on_callbacks_optimized)) {
-              _this2._on_callbacks_optimized[signalName] = [];
+            if (!(signalName in _this2._onCallbacksOptimized)) {
+              _this2._onCallbacksOptimized[signalName] = [];
             }
 
             // only use the filtered callback if the entry was not empty
             if (entryName) {
-              _this2._on_callbacks_optimized[signalName].push(filtered_callback);
+              _this2._onCallbacksOptimized[signalName].push(filteredCallback);
             } else {
-              _this2._on_callbacks_optimized[signalName].push(callback);
+              _this2._onCallbacksOptimized[signalName].push(callback);
             }
           });
         }
@@ -175,8 +175,8 @@ var Connection = exports.Connection = function () {
   }, {
     key: 'on',
     value: function on(signal, callback) {
-      this.on_callbacks.push({ signal: signal, callback: callback });
-      this._on_callbacks_optimized = null;
+      this.onCallbacks.push({ signal: signal, callback: callback });
+      this._onCallbacksOptimized = null;
       return this;
     }
   }, {
@@ -196,20 +196,20 @@ var Connection = exports.Connection = function () {
   }, {
     key: 'onProcess',
     value: function onProcess(processID, callback) {
-      if (!(processID in this.onProcess_callbacks)) {
-        this.onProcess_callbacks[processID] = [];
+      if (!(processID in this.onProcessCallbacks)) {
+        this.onProcessCallbacks[processID] = [];
       }
-      this.onProcess_callbacks[processID].push(callback);
+      this.onProcessCallbacks[processID].push(callback);
       return this;
     }
   }], [{
-    key: 'guess_ws_url',
-    value: function guess_ws_url() {
-      var ws_protocol = 'ws';
-      if (location.origin.startsWith('https://')) ws_protocol = 'wss';
+    key: 'guessWSUrl',
+    value: function guessWSUrl() {
+      var WSProtocol = 'ws';
+      if (location.origin.startsWith('https://')) WSProtocol = 'wss';
 
       var path = location.pathname.substring(0, location.pathname.lastIndexOf('/'));
-      return ws_protocol + '://' + document.domain + ':' + location.port + path + '/ws';
+      return WSProtocol + '://' + document.domain + ':' + location.port + path + '/ws';
     }
   }]);
 
@@ -260,24 +260,42 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+/**
+ * User interface module.
+ */
+
+/** Abstract class for user interface elements. */
+
 var UIElement = function () {
+  /**
+   * Create a UI element.
+   * @param  {HTMLElement} node An HTML element.
+   */
+
   function UIElement(node) {
     _classCallCheck(this, UIElement);
 
     this.node = node;
-    this.node.databench_ui = this;
+    this.node.databenchUI = this;
 
-    this.action_name = UIElement.determine_action_name(node);
-    this.action_format = function (value) {
+    this.actionName = UIElement.determineActionName(node);
+    this.actionFormat = function (value) {
       return value;
     };
 
-    this.wire_signal = { data: this.action_name };
+    this.wireSignal = { data: this.actionName };
   }
 
+  /**
+   * Determine the name of the action that should be associated with the node.
+   * @param  {HTMLElement} node An HTML element.
+   * @return {string}      Name of action or null.
+   */
+
+
   _createClass(UIElement, null, [{
-    key: 'determine_action_name',
-    value: function determine_action_name(node) {
+    key: 'determineActionName',
+    value: function determineActionName(node) {
       // determine action name from HTML DOM
       var action = null;
 
@@ -300,13 +318,24 @@ var UIElement = function () {
   return UIElement;
 }();
 
+/** Log messages class. */
+
+
 var Log = exports.Log = function (_UIElement) {
   _inherits(Log, _UIElement);
+
+  /**
+   * Construct a log class.
+   * @param  {HTMLElement} node     Primary node.
+   * @param  {String} consoleFnName Name of console method to replace.
+   * @param  {Number} limit         Maximum number of messages to show.
+   * @param  {Number} lengthLimit   Maximum length of a message.
+   */
 
   function Log(node) {
     var consoleFnName = arguments.length <= 1 || arguments[1] === undefined ? 'log' : arguments[1];
     var limit = arguments.length <= 2 || arguments[2] === undefined ? 20 : arguments[2];
-    var length_limit = arguments.length <= 3 || arguments[3] === undefined ? 250 : arguments[3];
+    var lengthLimit = arguments.length <= 3 || arguments[3] === undefined ? 250 : arguments[3];
 
     _classCallCheck(this, Log);
 
@@ -314,11 +343,11 @@ var Log = exports.Log = function (_UIElement) {
 
     _this.consoleFnName = consoleFnName;
     _this.limit = limit;
-    _this.length_limit = length_limit;
+    _this.lengthLimit = lengthLimit;
     _this._messages = [];
 
     // more sensible default for this case
-    _this.wire_signal = { log: null };
+    _this.wireSignal = { log: null };
 
     // bind methods
     _this.render = _this.render.bind(_this);
@@ -343,7 +372,7 @@ var Log = exports.Log = function (_UIElement) {
       }this.node.innerText = this._messages.map(function (m) {
         return m.join('');
       }).map(function (m) {
-        return m.length > _this2.length_limit ? m.substr(0, _this2.length_limit) + ' ...' : m;
+        return m.length > _this2.lengthLimit ? m.substr(0, _this2.lengthLimit) + ' ...' : m;
       }).join('\n');
 
       return this;
@@ -354,11 +383,14 @@ var Log = exports.Log = function (_UIElement) {
       var source = arguments.length <= 1 || arguments[1] === undefined ? 'unknown' : arguments[1];
 
       var msg = typeof message === 'string' ? message : JSON.stringify(message);
-      var padded_source = ' '.repeat(Math.max(0, 8 - source.length)) + source;
-      this._messages.push([padded_source + ': ' + msg]);
+      var paddedSource = ' '.repeat(Math.max(0, 8 - source.length)) + source;
+      this._messages.push([paddedSource + ': ' + msg]);
       this.render();
       return this;
     }
+
+    /** Wire all logs. */
+
   }], [{
     key: 'wire',
     value: function wire(conn) {
@@ -366,14 +398,14 @@ var Log = exports.Log = function (_UIElement) {
       var source = arguments.length <= 2 || arguments[2] === undefined ? 'backend' : arguments[2];
       var consoleFnName = arguments.length <= 3 || arguments[3] === undefined ? 'log' : arguments[3];
       var limit = arguments.length <= 4 || arguments[4] === undefined ? 20 : arguments[4];
-      var length_limit = arguments.length <= 5 || arguments[5] === undefined ? 250 : arguments[5];
+      var lengthLimit = arguments.length <= 5 || arguments[5] === undefined ? 250 : arguments[5];
 
       var node = document.getElementById(id);
       if (node == null) return this;
 
       console.log('Wiring element id=' + id + '.');
-      var l = new Log(node, consoleFnName, limit, length_limit);
-      conn.on(l.wire_signal, function (message) {
+      var l = new Log(node, consoleFnName, limit, lengthLimit);
+      conn.on(l.wireSignal, function (message) {
         return l.add(message, source);
       });
       return this;
@@ -383,11 +415,14 @@ var Log = exports.Log = function (_UIElement) {
   return Log;
 }(UIElement);
 
+/** Visual element for console.log(). */
+
+
 var StatusLog = exports.StatusLog = function (_UIElement2) {
   _inherits(StatusLog, _UIElement2);
 
   function StatusLog(node) {
-    var formatter = arguments.length <= 1 || arguments[1] === undefined ? StatusLog.default_alert : arguments[1];
+    var formatter = arguments.length <= 1 || arguments[1] === undefined ? StatusLog.defaultAlert : arguments[1];
 
     _classCallCheck(this, StatusLog);
 
@@ -397,7 +432,7 @@ var StatusLog = exports.StatusLog = function (_UIElement2) {
     _this3._messages = new Map();
 
     // to avoid confusion, void meaningless parent variable
-    _this3.wire_signal = null;
+    _this3.wireSignal = null;
 
     // bind methods
     _this3.render = _this3.render.bind(_this3);
@@ -437,29 +472,35 @@ var StatusLog = exports.StatusLog = function (_UIElement2) {
       this.render();
       return this;
     }
+
+    /** Wire all status logs. */
+
   }], [{
-    key: 'default_alert',
-    value: function default_alert(msg, count) {
-      var count_format = count <= 1 ? '' : '<b>(' + count + ')</b> ';
-      return '<div class="alert alert-danger">' + count_format + msg + '</div>';
+    key: 'defaultAlert',
+    value: function defaultAlert(msg, count) {
+      var countFormat = count <= 1 ? '' : '<b>(' + count + ')</b> ';
+      return '<div class="alert alert-danger">' + countFormat + msg + '</div>';
     }
   }, {
     key: 'wire',
     value: function wire(conn) {
       var id = arguments.length <= 1 || arguments[1] === undefined ? 'ws-alerts' : arguments[1];
-      var formatter = arguments.length <= 2 || arguments[2] === undefined ? StatusLog.default_alert : arguments[2];
+      var formatter = arguments.length <= 2 || arguments[2] === undefined ? StatusLog.defaultAlert : arguments[2];
 
       var node = document.getElementById(id);
       if (node == null) return;
 
       console.log('Wiring element id=' + id + '.');
       var l = new StatusLog(node, formatter);
-      conn.error_cb = l.add;
+      conn.errorCB = l.add;
     }
   }]);
 
   return StatusLog;
 }(UIElement);
+
+/** A button. */
+
 
 var Button = exports.Button = function (_UIElement3) {
   _inherits(Button, _UIElement3);
@@ -472,7 +513,7 @@ var Button = exports.Button = function (_UIElement3) {
     _this5.IDLE = 0;
     _this5.ACTIVE = 2;
 
-    _this5.click_cb = function (processID) {
+    _this5.clickCB = function (processID) {
       return console.log('click on ' + _this5.node + ' with ' + processID);
     };
     _this5._state = _this5.IDLE;
@@ -504,7 +545,7 @@ var Button = exports.Button = function (_UIElement3) {
       if (this._state !== this.IDLE) return this;
 
       var processID = Math.floor(Math.random() * 0x100000);
-      this.click_cb(processID);
+      this.clickCB(processID);
       return this;
     }
   }, {
@@ -516,17 +557,20 @@ var Button = exports.Button = function (_UIElement3) {
       this.render();
       return this;
     }
+
+    /** Wire all buttons. */
+
   }], [{
     key: 'wire',
     value: function wire(conn) {
       Array.from(document.getElementsByTagName('BUTTON')).filter(function (node) {
-        return node.databench_ui === undefined;
+        return node.databenchUI === undefined;
       }).forEach(function (node) {
         var b = new Button(node);
-        console.log('Wiring button ' + node + ' to action ' + b.action_name + '.');
+        console.log('Wiring button ' + node + ' to action ' + b.actionName + '.');
 
         // set up click callback
-        b.click_cb = function (processID) {
+        b.clickCB = function (processID) {
           // set up process callback
           conn.onProcess(processID, function (status) {
             return b.state(
@@ -534,7 +578,8 @@ var Button = exports.Button = function (_UIElement3) {
             { start: b.ACTIVE, end: b.IDLE }[status]);
           });
 
-          conn.emit(b.action_name, b.action_format({ __process_id: processID }));
+          conn.emit(b.actionName, b.actionFormat({
+            __process_id: processID }));
         };
       });
     }
@@ -542,6 +587,14 @@ var Button = exports.Button = function (_UIElement3) {
 
   return Button;
 }(UIElement);
+
+/**
+ * Data bound text elements.
+ * @extends {UIElement}
+ */
+
+
+// eslint-disable-line camelcase
 
 var Text = exports.Text = function (_UIElement4) {
   _inherits(Text, _UIElement4);
@@ -551,7 +604,7 @@ var Text = exports.Text = function (_UIElement4) {
 
     var _this6 = _possibleConstructorReturn(this, Object.getPrototypeOf(Text).call(this, node));
 
-    _this6.format_fn = function (value) {
+    _this6.formatFn = function (value) {
       return value;
     };
 
@@ -566,24 +619,32 @@ var Text = exports.Text = function (_UIElement4) {
       // reading value
       if (v === undefined) return this.node.innerHTML;
 
-      this.node.innerHTML = this.format_fn(v || '');
+      this.node.innerHTML = this.formatFn(v || '');
       return this;
     }
+
+    /**
+     * Wire all text.
+     * @param  {Connection} conn Connection to use.
+     * @static
+     * @memberof ui.Text
+     */
+
   }], [{
     key: 'wire',
     value: function wire(conn) {
       [].concat(_toConsumableArray(Array.from(document.getElementsByTagName('SPAN'))), _toConsumableArray(Array.from(document.getElementsByTagName('P'))), _toConsumableArray(Array.from(document.getElementsByTagName('DIV'))), _toConsumableArray(Array.from(document.getElementsByTagName('I'))), _toConsumableArray(Array.from(document.getElementsByTagName('B')))).filter(function (node) {
-        return node.databench_ui === undefined;
+        return node.databenchUI === undefined;
       }).filter(function (node) {
         return node.dataset.action !== undefined;
       }).filter(function (node) {
-        return UIElement.determine_action_name(node) !== null;
+        return UIElement.determineActionName(node) !== null;
       }).forEach(function (node) {
         var t = new Text(node);
-        console.log('Wiring text ' + node + ' to action ' + t.action_name + '.');
+        console.log('Wiring text ' + node + ' to action ' + t.actionName + '.');
 
         // handle events from backend
-        conn.on(t.wire_signal, function (message) {
+        conn.on(t.wireSignal, function (message) {
           return t.value(message);
         });
       });
@@ -593,41 +654,56 @@ var Text = exports.Text = function (_UIElement4) {
   return Text;
 }(UIElement);
 
+/** Make an input element of type text interactive. */
+
+
 var TextInput = exports.TextInput = function (_UIElement5) {
   _inherits(TextInput, _UIElement5);
+
+  /**
+   * Create a TextInput UIElement.
+   * @param {HTMLElement} node The node to connect.
+   */
 
   function TextInput(node) {
     _classCallCheck(this, TextInput);
 
     var _this7 = _possibleConstructorReturn(this, Object.getPrototypeOf(TextInput).call(this, node));
 
-    _this7.trigger_on_keyup = false;
-    _this7.format_fn = function (value) {
+    _this7._triggerOnKeyUp = false;
+    _this7.formatFn = function (value) {
       return value;
     };
-    _this7.change_cb = function (value) {
+    _this7.changeCB = function (value) {
       return console.log('change of ' + _this7.node + ': ' + value);
     };
 
     // bind methods
     _this7.change = _this7.change.bind(_this7);
-    _this7.keyup = _this7.keyup.bind(_this7);
+    _this7.triggerOnKeyUp = _this7.triggerOnKeyUp.bind(_this7);
     _this7.value = _this7.value.bind(_this7);
 
     _this7.node.addEventListener('change', _this7.change, false);
-    _this7.node.addEventListener('keyup', _this7.keyup, false);
     return _this7;
   }
 
   _createClass(TextInput, [{
     key: 'change',
     value: function change() {
-      return this.change_cb(this.action_format(this.value()));
+      return this.changeCB(this.actionFormat(this.value()));
     }
   }, {
-    key: 'keyup',
-    value: function keyup() {
-      if (this.trigger_on_keyup) this.change();
+    key: 'triggerOnKeyUp',
+    value: function triggerOnKeyUp(v) {
+      if (v !== false && !this._triggerOnKeyUp) {
+        this.node.addEventListener('keyup', this.change, false);
+        this._triggerOnKeyUp = true;
+      }
+
+      if (v === false && this._triggerOnKeyUp) {
+        this.node.removeEventListener('keyup', this.change, false);
+        this._triggerOnKeyUp = false;
+      }
     }
   }, {
     key: 'value',
@@ -635,27 +711,30 @@ var TextInput = exports.TextInput = function (_UIElement5) {
       // reading value
       if (v === undefined) return this.node.value;
 
-      this.node.value = this.format_fn(v || '');
+      this.node.value = this.formatFn(v || '');
       return this;
     }
+
+    /** Wire all text inputs. */
+
   }], [{
     key: 'wire',
     value: function wire(conn) {
       Array.from(document.getElementsByTagName('INPUT')).filter(function (node) {
-        return node.databench_ui === undefined;
+        return node.databenchUI === undefined;
       }).filter(function (node) {
         return node.getAttribute('type') === 'text';
       }).forEach(function (node) {
         var t = new TextInput(node);
-        console.log('Wiring text input ' + node + ' to action ' + t.action_name + '.');
+        console.log('Wiring text input ' + node + ' to action ' + t.actionName + '.');
 
         // handle events from frontend
-        t.change_cb = function (message) {
-          return conn.emit(t.action_name, message);
+        t.changeCB = function (message) {
+          return conn.emit(t.actionName, message);
         };
 
         // handle events from backend
-        conn.on(t.wire_signal, function (message) {
+        conn.on(t.wireSignal, function (message) {
           return t.value(message);
         });
       });
@@ -665,26 +744,29 @@ var TextInput = exports.TextInput = function (_UIElement5) {
   return TextInput;
 }(UIElement);
 
+/** A range slider. */
+
+
 var Slider = exports.Slider = function (_UIElement6) {
   _inherits(Slider, _UIElement6);
 
-  function Slider(node, label_node) {
+  function Slider(node, labelNode) {
     _classCallCheck(this, Slider);
 
     var _this8 = _possibleConstructorReturn(this, Object.getPrototypeOf(Slider).call(this, node));
 
-    _this8.label_node = label_node;
-    _this8.label_html = label_node ? label_node.innerHTML : null;
-    _this8.change_cb = function (value) {
+    _this8.labelNode = labelNode;
+    _this8.labelHtml = labelNode ? labelNode.innerHTML : null;
+    _this8.changeCB = function (value) {
       return console.log('slider value change: ' + value);
     };
-    _this8.value_to_slider = function (value) {
+    _this8.valueToSlider = function (value) {
       return value;
     };
-    _this8.slider_to_value = function (s) {
+    _this8.sliderToValue = function (s) {
       return s;
     };
-    _this8.format_fn = function (value) {
+    _this8.formatFn = function (value) {
       return value;
     };
 
@@ -703,8 +785,8 @@ var Slider = exports.Slider = function (_UIElement6) {
     key: 'render',
     value: function render() {
       var v = this.value();
-      if (this.label_node) {
-        this.label_node.innerHTML = this.label_html + ' ' + this.format_fn(v);
+      if (this.labelNode) {
+        this.labelNode.innerHTML = this.labelHtml + ' ' + this.formatFn(v);
       }
       return this;
     }
@@ -713,24 +795,27 @@ var Slider = exports.Slider = function (_UIElement6) {
     value: function value(v) {
       // reading value
       if (v === undefined) {
-        return this.slider_to_value(parseFloat(this.node.value));
+        return this.sliderToValue(parseFloat(this.node.value));
       }
 
-      var new_slider_value = this.value_to_slider(v);
-      if (this.node.value === new_slider_value) return this;
+      var newSliderValue = this.valueToSlider(v);
+      if (this.node.value === newSliderValue) return this;
 
-      this.node.value = new_slider_value;
+      this.node.value = newSliderValue;
       this.render();
       return this;
     }
   }, {
     key: 'change',
     value: function change() {
-      return this.change_cb(this.action_format(this.value()));
+      return this.changeCB(this.actionFormat(this.value()));
     }
+
+    /** Preprocess labels before wiring. */
+
   }], [{
-    key: 'preprocess_labels',
-    value: function preprocess_labels() {
+    key: 'preprocessLabels',
+    value: function preprocessLabels() {
       Array.from(document.getElementsByTagName('LABEL')).filter(function (label) {
         return label.htmlFor;
       }).forEach(function (label) {
@@ -738,26 +823,29 @@ var Slider = exports.Slider = function (_UIElement6) {
         if (node) node.label = label;
       });
     }
+
+    /** Wire all sliders. */
+
   }, {
     key: 'wire',
     value: function wire(conn) {
-      this.preprocess_labels();
+      this.preprocessLabels();
 
       Array.from(document.getElementsByTagName('INPUT')).filter(function (node) {
-        return node.databench_ui === undefined;
+        return node.databenchUI === undefined;
       }).filter(function (node) {
         return node.getAttribute('type') === 'range';
       }).forEach(function (node) {
         var slider = new Slider(node, node.label);
-        console.log('Wiring slider ' + node + ' to action ' + slider.action_name + '.');
+        console.log('Wiring slider ' + node + ' to action ' + slider.actionName + '.');
 
         // handle events from frontend
-        slider.change_cb = function (message) {
-          return conn.emit(slider.action_name, message);
+        slider.changeCB = function (message) {
+          return conn.emit(slider.actionName, message);
         };
 
         // handle events from backend
-        conn.on(slider.wire_signal, function (message) {
+        conn.on(slider.wireSignal, function (message) {
           return slider.value(message);
         });
       });
@@ -766,6 +854,13 @@ var Slider = exports.Slider = function (_UIElement6) {
 
   return Slider;
 }(UIElement);
+
+/**
+ * Wire all the UI elements to the backend.
+ * @param  {Connection} connection A Databench.Connection instance.
+ * @return {Connection}            The same connection.
+ */
+
 
 function wire(connection) {
   StatusLog.wire(connection);

@@ -1,4 +1,7 @@
-/** @module */
+/**
+ * User interface module.
+ */
+
 
 /** Abstract class for user interface elements. */
 class UIElement {
@@ -8,12 +11,12 @@ class UIElement {
    */
   constructor(node) {
     this.node = node;
-    this.node.databench_ui = this;
+    this.node.databenchUI = this;
 
-    this.action_name = UIElement.determine_action_name(node);
-    this.action_format = value => value;
+    this.actionName = UIElement.determineActionName(node);
+    this.actionFormat = value => value;
 
-    this.wire_signal = { data: this.action_name };
+    this.wireSignal = { data: this.actionName };
   }
 
   /**
@@ -21,7 +24,7 @@ class UIElement {
    * @param  {HTMLElement} node An HTML element.
    * @return {string}      Name of action or null.
    */
-  static determine_action_name(node) {
+  static determineActionName(node) {
     // determine action name from HTML DOM
     let action = null;
 
@@ -47,21 +50,21 @@ class UIElement {
 export class Log extends UIElement {
   /**
    * Construct a log class.
-   * @param  {HTMLElement} node          Primary node.
+   * @param  {HTMLElement} node     Primary node.
    * @param  {String} consoleFnName Name of console method to replace.
    * @param  {Number} limit         Maximum number of messages to show.
-   * @param  {Number} length_limit  Maximum length of a message.
+   * @param  {Number} lengthLimit   Maximum length of a message.
    */
-  constructor(node, consoleFnName = 'log', limit = 20, length_limit = 250) {
+  constructor(node, consoleFnName = 'log', limit = 20, lengthLimit = 250) {
     super(node);
 
     this.consoleFnName = consoleFnName;
     this.limit = limit;
-    this.length_limit = length_limit;
+    this.lengthLimit = lengthLimit;
     this._messages = [];
 
     // more sensible default for this case
-    this.wire_signal = { log: null };
+    this.wireSignal = { log: null };
 
     // bind methods
     this.render = this.render.bind(this);
@@ -80,8 +83,8 @@ export class Log extends UIElement {
 
     this.node.innerText = this._messages
       .map(m => m.join(''))
-      .map(m => ((m.length > this.length_limit)
-                 ? `${m.substr(0, this.length_limit)} ...`
+      .map(m => ((m.length > this.lengthLimit)
+                 ? `${m.substr(0, this.lengthLimit)} ...`
                  : m))
       .join('\n');
 
@@ -90,20 +93,21 @@ export class Log extends UIElement {
 
   add(message, source = 'unknown') {
     const msg = typeof message === 'string' ? message : JSON.stringify(message);
-    const padded_source = ' '.repeat(Math.max(0, 8 - source.length)) + source;
-    this._messages.push([`${padded_source}: ${msg}`]);
+    const paddedSource = ' '.repeat(Math.max(0, 8 - source.length)) + source;
+    this._messages.push([`${paddedSource}: ${msg}`]);
     this.render();
     return this;
   }
 
+  /** Wire all logs. */
   static wire(conn, id = 'log', source = 'backend', consoleFnName = 'log',
-              limit = 20, length_limit = 250) {
+              limit = 20, lengthLimit = 250) {
     const node = document.getElementById(id);
     if (node == null) return this;
 
     console.log(`Wiring element id=${id}.`);
-    const l = new Log(node, consoleFnName, limit, length_limit);
-    conn.on(l.wire_signal, message => l.add(message, source));
+    const l = new Log(node, consoleFnName, limit, lengthLimit);
+    conn.on(l.wireSignal, message => l.add(message, source));
     return this;
   }
 }
@@ -111,23 +115,23 @@ export class Log extends UIElement {
 
 /** Visual element for console.log(). */
 export class StatusLog extends UIElement {
-  constructor(node, formatter = StatusLog.default_alert) {
+  constructor(node, formatter = StatusLog.defaultAlert) {
     super(node);
 
     this.formatter = formatter;
     this._messages = new Map();
 
     // to avoid confusion, void meaningless parent variable
-    this.wire_signal = null;
+    this.wireSignal = null;
 
     // bind methods
     this.render = this.render.bind(this);
     this.add = this.add.bind(this);
   }
 
-  static default_alert(msg, count) {
-    const count_format = count <= 1 ? '' : `<b>(${count})</b> `;
-    return `<div class="alert alert-danger">${count_format}${msg}</div>`;
+  static defaultAlert(msg, count) {
+    const countFormat = count <= 1 ? '' : `<b>(${count})</b> `;
+    return `<div class="alert alert-danger">${countFormat}${msg}</div>`;
   }
 
   render() {
@@ -152,13 +156,14 @@ export class StatusLog extends UIElement {
     return this;
   }
 
-  static wire(conn, id = 'ws-alerts', formatter = StatusLog.default_alert) {
+  /** Wire all status logs. */
+  static wire(conn, id = 'ws-alerts', formatter = StatusLog.defaultAlert) {
     const node = document.getElementById(id);
     if (node == null) return;
 
     console.log(`Wiring element id=${id}.`);
     const l = new StatusLog(node, formatter);
-    conn.error_cb = l.add;
+    conn.errorCB = l.add;
   }
 }
 
@@ -171,7 +176,7 @@ export class Button extends UIElement {
     this.IDLE = 0;
     this.ACTIVE = 2;
 
-    this.click_cb = (processID) => console.log(`click on ${this.node} with ${processID}`);
+    this.clickCB = (processID) => console.log(`click on ${this.node} with ${processID}`);
     this._state = this.IDLE;
 
     // bind methods
@@ -197,7 +202,7 @@ export class Button extends UIElement {
     if (this._state !== this.IDLE) return this;
 
     const processID = Math.floor(Math.random() * 0x100000);
-    this.click_cb(processID);
+    this.clickCB(processID);
     return this;
   }
 
@@ -209,34 +214,40 @@ export class Button extends UIElement {
     return this;
   }
 
+  /** Wire all buttons. */
   static wire(conn) {
     Array.from(document.getElementsByTagName('BUTTON'))
-      .filter(node => node.databench_ui === undefined)
+      .filter(node => node.databenchUI === undefined)
       .forEach(node => {
         const b = new Button(node);
-        console.log(`Wiring button ${node} to action ${b.action_name}.`);
+        console.log(`Wiring button ${node} to action ${b.actionName}.`);
 
         // set up click callback
-        b.click_cb = (processID) => {
+        b.clickCB = (processID) => {
           // set up process callback
           conn.onProcess(processID, status => b.state(
             // map process status to state
             { start: b.ACTIVE, end: b.IDLE }[status]
           ));
 
-          conn.emit(b.action_name, b.action_format({ __process_id: processID }));
+          conn.emit(b.actionName, b.actionFormat({
+            __process_id: processID,  // eslint-disable-line camelcase
+          }));
         };
       });
   }
 }
 
 
-/** Data bound text elements. */
+/**
+ * Data bound text elements.
+ * @extends {UIElement}
+ */
 export class Text extends UIElement {
   constructor(node) {
     super(node);
 
-    this.format_fn = value => value;
+    this.formatFn = value => value;
 
     // bind methods
     this.value = this.value.bind(this);
@@ -246,25 +257,31 @@ export class Text extends UIElement {
     // reading value
     if (v === undefined) return this.node.innerHTML;
 
-    this.node.innerHTML = this.format_fn(v || '');
+    this.node.innerHTML = this.formatFn(v || '');
     return this;
   }
 
+  /**
+   * Wire all text.
+   * @param  {Connection} conn Connection to use.
+   * @static
+   * @memberof ui.Text
+   */
   static wire(conn) {
     [...Array.from(document.getElementsByTagName('SPAN')),
      ...Array.from(document.getElementsByTagName('P')),
      ...Array.from(document.getElementsByTagName('DIV')),
      ...Array.from(document.getElementsByTagName('I')),
      ...Array.from(document.getElementsByTagName('B'))]
-      .filter(node => node.databench_ui === undefined)
+      .filter(node => node.databenchUI === undefined)
       .filter(node => node.dataset.action !== undefined)
-      .filter(node => UIElement.determine_action_name(node) !== null)
+      .filter(node => UIElement.determineActionName(node) !== null)
       .forEach(node => {
         const t = new Text(node);
-        console.log(`Wiring text ${node} to action ${t.action_name}.`);
+        console.log(`Wiring text ${node} to action ${t.actionName}.`);
 
         // handle events from backend
-        conn.on(t.wire_signal, message => t.value(message));
+        conn.on(t.wireSignal, message => t.value(message));
       });
   }
 }
@@ -278,48 +295,56 @@ export class TextInput extends UIElement {
   constructor(node) {
     super(node);
 
-    this.trigger_on_keyup = false;
-    this.format_fn = value => value;
-    this.change_cb = value => console.log(`change of ${this.node}: ${value}`);
+    this._triggerOnKeyUp = false;
+    this.formatFn = value => value;
+    this.changeCB = value => console.log(`change of ${this.node}: ${value}`);
 
     // bind methods
     this.change = this.change.bind(this);
-    this.keyup = this.keyup.bind(this);
+    this.triggerOnKeyUp = this.triggerOnKeyUp.bind(this);
     this.value = this.value.bind(this);
 
     this.node.addEventListener('change', this.change, false);
-    this.node.addEventListener('keyup', this.keyup, false);
   }
 
   change() {
-    return this.change_cb(this.action_format(this.value()));
+    return this.changeCB(this.actionFormat(this.value()));
   }
 
-  keyup() {
-    if (this.trigger_on_keyup) this.change();
+  triggerOnKeyUp(v) {
+    if (v !== false && !this._triggerOnKeyUp) {
+      this.node.addEventListener('keyup', this.change, false);
+      this._triggerOnKeyUp = true;
+    }
+
+    if (v === false && this._triggerOnKeyUp) {
+      this.node.removeEventListener('keyup', this.change, false);
+      this._triggerOnKeyUp = false;
+    }
   }
 
   value(v) {
     // reading value
     if (v === undefined) return this.node.value;
 
-    this.node.value = this.format_fn(v || '');
+    this.node.value = this.formatFn(v || '');
     return this;
   }
 
+  /** Wire all text inputs. */
   static wire(conn) {
     Array.from(document.getElementsByTagName('INPUT'))
-      .filter(node => node.databench_ui === undefined)
+      .filter(node => node.databenchUI === undefined)
       .filter(node => node.getAttribute('type') === 'text')
       .forEach(node => {
         const t = new TextInput(node);
-        console.log(`Wiring text input ${node} to action ${t.action_name}.`);
+        console.log(`Wiring text input ${node} to action ${t.actionName}.`);
 
         // handle events from frontend
-        t.change_cb = message => conn.emit(t.action_name, message);
+        t.changeCB = message => conn.emit(t.actionName, message);
 
         // handle events from backend
-        conn.on(t.wire_signal, message => t.value(message));
+        conn.on(t.wireSignal, message => t.value(message));
       });
   }
 }
@@ -327,15 +352,15 @@ export class TextInput extends UIElement {
 
 /** A range slider. */
 export class Slider extends UIElement {
-  constructor(node, label_node) {
+  constructor(node, labelNode) {
     super(node);
 
-    this.label_node = label_node;
-    this.label_html = label_node ? label_node.innerHTML : null;
-    this.change_cb = value => console.log(`slider value change: ${value}`);
-    this.value_to_slider = value => value;
-    this.slider_to_value = s => s;
-    this.format_fn = value => value;
+    this.labelNode = labelNode;
+    this.labelHtml = labelNode ? labelNode.innerHTML : null;
+    this.changeCB = value => console.log(`slider value change: ${value}`);
+    this.valueToSlider = value => value;
+    this.sliderToValue = s => s;
+    this.formatFn = value => value;
 
     // bind methods
     this.render = this.render.bind(this);
@@ -349,8 +374,8 @@ export class Slider extends UIElement {
 
   render() {
     const v = this.value();
-    if (this.label_node) {
-      this.label_node.innerHTML = `${this.label_html} ${this.format_fn(v)}`;
+    if (this.labelNode) {
+      this.labelNode.innerHTML = `${this.labelHtml} ${this.formatFn(v)}`;
     }
     return this;
   }
@@ -358,22 +383,23 @@ export class Slider extends UIElement {
   value(v) {
     // reading value
     if (v === undefined) {
-      return this.slider_to_value(parseFloat(this.node.value));
+      return this.sliderToValue(parseFloat(this.node.value));
     }
 
-    const new_slider_value = this.value_to_slider(v);
-    if (this.node.value === new_slider_value) return this;
+    const newSliderValue = this.valueToSlider(v);
+    if (this.node.value === newSliderValue) return this;
 
-    this.node.value = new_slider_value;
+    this.node.value = newSliderValue;
     this.render();
     return this;
   }
 
   change() {
-    return this.change_cb(this.action_format(this.value()));
+    return this.changeCB(this.actionFormat(this.value()));
   }
 
-  static preprocess_labels() {
+  /** Preprocess labels before wiring. */
+  static preprocessLabels() {
     Array.from(document.getElementsByTagName('LABEL'))
       .filter(label => label.htmlFor)
       .forEach(label => {
@@ -382,21 +408,22 @@ export class Slider extends UIElement {
       });
   }
 
+  /** Wire all sliders. */
   static wire(conn) {
-    this.preprocess_labels();
+    this.preprocessLabels();
 
     Array.from(document.getElementsByTagName('INPUT'))
-      .filter(node => node.databench_ui === undefined)
+      .filter(node => node.databenchUI === undefined)
       .filter(node => node.getAttribute('type') === 'range')
       .forEach(node => {
         const slider = new Slider(node, node.label);
-        console.log(`Wiring slider ${node} to action ${slider.action_name}.`);
+        console.log(`Wiring slider ${node} to action ${slider.actionName}.`);
 
         // handle events from frontend
-        slider.change_cb = message => conn.emit(slider.action_name, message);
+        slider.changeCB = message => conn.emit(slider.actionName, message);
 
         // handle events from backend
-        conn.on(slider.wire_signal, message => slider.value(message));
+        conn.on(slider.wireSignal, message => slider.value(message));
       });
   }
 }

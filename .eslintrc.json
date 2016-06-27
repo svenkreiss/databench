@@ -5,7 +5,7 @@
     ],
     "rules": {
         "no-underscore-dangle": "off",
-        "camelcase": "off",
+        "camelcase": ["error", {"properties": "always"}],
         "no-console": "off",
         "no-param-reassign": ["error", { "props": false }]
     }

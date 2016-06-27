@@ -1,6 +1,6 @@
 {
   "source": "./js/src",
-  "destination": "./docs/js",
+  "destination": "./docs/static/esdoc",
   "styles": ["./docs/esdoc-style.css"],
   "undocumentIdentifier": false
 }
