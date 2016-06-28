@@ -26,6 +26,7 @@
     "gulp-babel": "^6.1.2",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-uglify": "^1.5.2",
+    "jsdoc": "^3.4.0",
     "mocha": "^2.4.5",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
@@ -40,7 +41,7 @@
     "test": "mocha -t 5000 --no-colors --use_strict js/test/test.js",
     "lint": "eslint js/src/*.js",
     "esdoc": "esdoc -c esdoc.json",
-    "jsdoc": "jsdoc --verbose js/src/*.js -d docs/static/jsdoc/"
+    "jsdoc": "jsdoc --verbose js/src/*.js -d docs/jsdoc/"
   },
   "repository": {
     "type": "git",

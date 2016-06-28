@@ -10,6 +10,8 @@ node_modules/
 js/node_client/*.js
 js/node_client/*.js.map
 -_.html
+docs/jsdoc
+docs/esdoc
 
 # Distribution / packaging
 .Python

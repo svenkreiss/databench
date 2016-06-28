@@ -9,7 +9,7 @@ dependencies:
     - pip install --upgrade pip
     - "pip install -e .[tests]"
     - pip install python-coveralls
-    - npm install -g mocha gulp
+    - npm install -g mocha gulp jsdoc
 test:
   override:
     - flake8
@@ -17,3 +17,4 @@ test:
     - nosetests -vv --with-coverage --cover-erase --cover-inclusive
   post:
     - coveralls || true
+    - npm run jsdoc && ghp-import -n -p docs/jsdoc
