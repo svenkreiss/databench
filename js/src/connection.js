@@ -3,7 +3,15 @@ if (typeof WebSocket === 'undefined') {
   WebSocket = require('websocket').w3cwebsocket;  // eslint-disable-line
 }
 
-export class Connection {
+/** Connection to the backend. */
+class Connection {
+  /**
+   * Create a connection to the backend with a WebSocket.
+   * @param  {String} [analysisId=null]  Specify an analysis id or null to have one generated.
+   * @param  {String} [wsUrl=null]       URL of WebSocket endpoint or null to guess it.
+   * @param  {String} [requestArgs=null] `search` part of request url or null to take from
+   *                                     `window.location.search`.
+   */
   constructor(analysisId = null, wsUrl = null, requestArgs = null) {
     this.analysisId = analysisId;
     this.wsUrl = wsUrl || Connection.guessWSUrl();
@@ -41,6 +49,7 @@ export class Connection {
     return `${WSProtocol}://${document.domain}:${location.port}${path}/ws`;
   }
 
+  /** initialize connection */
   connect() {
     this.socket = new WebSocket(this.wsUrl);
 
@@ -151,12 +160,24 @@ export class Connection {
     });
   }
 
+  /**
+   * Register a callback that listens for a signal.
+   * @param  {string|Object}   signal   Signal name to listen for.
+   * @param  {Function}        callback A callback function that takes the attached data.
+   * @return {Connection}      this
+   */
   on(signal, callback) {
     this.onCallbacks.push({ signal, callback });
     this._onCallbacksOptimized = null;
     return this;
   }
 
+  /**
+   * Emit a signal to the backend.
+   * @param  {string}                   signalName A signal name. Usually an action name.
+   * @param  {string|Object|Array|null} message    Payload attached to the action.
+   * @return {Connection}                          this
+   */
   emit(signalName, message) {
     if (this.socket == null || this.socket.readyState !== this.socket.OPEN) {
       setTimeout(() => this.emit(signalName, message), 5);
@@ -174,3 +195,5 @@ export class Connection {
     return this;
   }
 }
+
+export { Connection };

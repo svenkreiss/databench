@@ -1,6 +1,4 @@
-/**
- * User interface module.
- */
+/** @module ui */
 
 
 /** Abstract class for user interface elements. */
@@ -47,7 +45,7 @@ class UIElement {
 }
 
 /** Log messages class. */
-export class Log extends UIElement {
+class Log extends UIElement {
   /**
    * Construct a log class.
    * @param  {HTMLElement} node     Primary node.
@@ -114,7 +112,7 @@ export class Log extends UIElement {
 
 
 /** Visual element for console.log(). */
-export class StatusLog extends UIElement {
+class StatusLog extends UIElement {
   constructor(node, formatter = StatusLog.defaultAlert) {
     super(node);
 
@@ -169,7 +167,7 @@ export class StatusLog extends UIElement {
 
 
 /** A button. */
-export class Button extends UIElement {
+class Button extends UIElement {
   constructor(node) {
     super(node);
 
@@ -243,7 +241,7 @@ export class Button extends UIElement {
  * Data bound text elements.
  * @extends {UIElement}
  */
-export class Text extends UIElement {
+class Text extends UIElement {
   constructor(node) {
     super(node);
 
@@ -286,8 +284,9 @@ export class Text extends UIElement {
   }
 }
 
+
 /** Make an input element of type text interactive. */
-export class TextInput extends UIElement {
+class TextInput extends UIElement {
   /**
    * Create a TextInput UIElement.
    * @param {HTMLElement} node The node to connect.
@@ -351,7 +350,7 @@ export class TextInput extends UIElement {
 
 
 /** A range slider. */
-export class Slider extends UIElement {
+class Slider extends UIElement {
   constructor(node, labelNode) {
     super(node);
 
@@ -433,7 +432,7 @@ export class Slider extends UIElement {
  * @param  {Connection} connection A Databench.Connection instance.
  * @return {Connection}            The same connection.
  */
-export function wire(connection) {
+function wire(connection) {
   StatusLog.wire(connection);
   Log.wire(connection);
   Button.wire(connection);
@@ -442,3 +441,5 @@ export function wire(connection) {
   Slider.wire(connection);
   return connection;
 }
+
+export { StatusLog, Log, Button, TextInput, Text, Slider, wire };
