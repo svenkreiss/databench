@@ -71,7 +71,7 @@ export class Connection {
     this.errorCB();  // clear errors
     this.socket.send(JSON.stringify({
       __connect: this.analysisId,
-      __requestArgs: this.requestArgs,
+      __request_args: this.requestArgs,  // eslint-disable-line camelcase
     }));
   }
 

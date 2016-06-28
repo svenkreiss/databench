@@ -1,69 +1,82 @@
-var assert = require('assert');
-var Databench = require('./../node_client/main');
+/* global describe it */
+const assert = require('assert');
+const Databench = require('./../node_client/main');
 
-describe('Databench', function() {
-  describe('Connection', function () {
+
+describe('Databench', () => {
+  describe('Connection', () => {
     // create connection
-    var c = new Databench.Connection(
+    const c = new Databench.Connection(
       null,
       'ws://localhost:5000/parameters/ws'
     ).connect();
 
-    it('create a WebSocket connection', function() {
+    it('create a WebSocket connection', () => {
       assert.equal('object', typeof c);
     });
 
-    it('action without message', function(done) {
-      this.timeout(5000);
-
-      var ack = false;
-      c.on('test_action_ack', function() { ack = true; });
+    it('action without message', (done) => {
+      c.on('test_action_ack', () => { done(); });
       c.emit('test_action');
-
-      setTimeout(function() {
-        assert.equal(ack, true);
-        done();
-      }, 100);
     });
 
-    it('echo an object', function(done) {
-      this.timeout(5000);
-
-      var d;
-      c.on('test_fn', function(data) { d = data; });
+    it('echo an object', done => {
+      c.on('test_fn', data => {
+        assert.deepEqual([1, 2], data);
+        done();
+      });
       c.emit('test_fn', [1, 2]);
-
-      setTimeout(function() {
-        assert.deepEqual([1, 2], d);
-        done();
-      }, 100);
     });
+  });
 
-    it('echo an empty string', function(done) {
-      this.timeout(5000);
 
-      var d;
-      c.on('test_fn', function(data) { d = data; });
+  describe('Connection for empty string', () => {
+    // create connection
+    const c = new Databench.Connection(
+      null,
+      'ws://localhost:5000/parameters/ws'
+    ).connect();
+
+    it('echo an empty string', done => {
+      c.on('test_fn', dataEmpty => {
+        assert.deepEqual(['', 100], dataEmpty);
+        done();
+      });
       c.emit('test_fn', '');
-
-      setTimeout(function() {
-        assert.deepEqual(['', 100], d);
-        done();
-      }, 100);
     });
+  });
 
-    it('echo a null parameter', function(done) {
-      this.timeout(5000);
+  describe('Connection for null', () => {
+    // create connection
+    const c = new Databench.Connection(
+      null,
+      'ws://localhost:5000/parameters/ws'
+    ).connect();
 
-      var d;
-      c.on('test_fn', function(data) { d = data; });
+    it('echo a null parameter', done => {
+      c.on('test_fn', dataNull => {
+        assert.deepEqual([null, 100], dataNull);
+        done();
+      });
       c.emit('test_fn', null);
+    });
+  });
 
-      setTimeout(function() {
-        assert.deepEqual([null, 100], d);
-        done();
-      }, 100);
+  describe('Request Args', () => {
+    // create connection
+    const c = new Databench.Connection(
+      null,
+      'ws://localhost:5000/requestargs/ws',
+      '?data=requestargtest'
+    );
+
+    it('create a WebSocket connection', () => {
+      assert.equal('object', typeof c);
     });
 
+    it('request args test', done => {
+      c.on('ack', () => done());
+      c.connect();
+    });
   });
 });

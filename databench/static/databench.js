@@ -83,11 +83,11 @@ var Connection = exports.Connection = function () {
       this.errorCB(); // clear errors
       this.socket.send(JSON.stringify({
         __connect: this.analysisId,
-        __requestArgs: this.requestArgs
-      }));
+        __request_args: this.requestArgs }));
     }
   }, {
     key: 'wsOnClose',
+    // eslint-disable-line camelcase
     value: function wsOnClose() {
       clearInterval(this.socketCheckOpen);
 

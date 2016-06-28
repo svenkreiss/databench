@@ -37,7 +37,7 @@
     }
   },
   "scripts": {
-    "test": "mocha js/test/test.js",
+    "test": "mocha -t 5000 --no-colors --use_strict js/test/test.js",
     "lint": "eslint js/src/*.js",
     "esdoc": "esdoc -c esdoc.json",
     "jsdoc": "jsdoc --verbose js/src/*.js -d docs/static/jsdoc/"
