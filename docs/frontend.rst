@@ -85,7 +85,7 @@ Here is an example for making use of the ``head`` block:
         <style>p { font-family: serif; }</style>
 
         <!-- Add a css file (put my-style.css into analyses/scaffold/): -->
-        <link rel="stylesheet" type="text/css" href="static/my-style.css">
+        <link rel="stylesheet" type="text/css" href="/static/my-style.css">
     {% end %}
 
 
@@ -172,8 +172,9 @@ isolated server.
 JavaScript Library
 ------------------
 
-This is the API documentation for ``databench.js`` which is exposed in the
-webserver at ``/_static/databench.js``.
+This is an overview of the API of ``databench.js`` which is exposed in the
+webserver at ``/_static/databench.js``. Please also see the
+`complete API reference <http://www.svenkreiss.com/databench/>`_.
 
 .. js:function:: Databench.Connection(analysis_id=null, ws_url=null)
 

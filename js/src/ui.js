@@ -49,9 +49,9 @@ class Log extends UIElement {
   /**
    * Construct a log class.
    * @param  {HTMLElement} node     Primary node.
-   * @param  {String} consoleFnName Name of console method to replace.
-   * @param  {Number} limit         Maximum number of messages to show.
-   * @param  {Number} lengthLimit   Maximum length of a message.
+   * @param  {String} [consoleFnName='log'] Name of console method to replace.
+   * @param  {Number} [limit=20]            Maximum number of messages to show.
+   * @param  {Number} [lengthLimit=250]     Maximum length of a message.
    */
   constructor(node, consoleFnName = 'log', limit = 20, lengthLimit = 250) {
     super(node);
@@ -168,6 +168,10 @@ class StatusLog extends UIElement {
 
 /** A button. */
 class Button extends UIElement {
+  /**
+   * Bind button.
+   * @param  {HTMLElement} node DOM node to connect.
+   */
   constructor(node) {
     super(node);
 
@@ -351,6 +355,11 @@ class TextInput extends UIElement {
 
 /** A range slider. */
 class Slider extends UIElement {
+  /**
+   * Data bind a slider.
+   * @param  {HTMLElement} node      DOM node to bind.
+   * @param  {HTMLElement} labelNode DOM node label that corresponds to the slider.
+   */
   constructor(node, labelNode) {
     super(node);
 

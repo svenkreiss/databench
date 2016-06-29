@@ -35,6 +35,8 @@ def main():
                         help='port for webserver')
     parser.add_argument('--analyses', default=None,
                         help='import path for analyses')
+    parser.add_argument('--build', default=False, action='store_true',
+                        help='run the build command and exit')
     parser.add_argument('--ssl-certfile', dest='ssl_certfile',
                         help='SSL certificate file')
     parser.add_argument('--ssl-keyfile', dest='ssl_keyfile',
@@ -70,6 +72,13 @@ def main():
     logging.info('host={}, port={}'.format(args.host, args.port))
 
     app = App(args.analyses)
+
+    # check whether this is just a quick build
+    if args.build:
+        logging.info('Build mode: running build command and exit.')
+        app.build()
+        return
+
     # HTTP server
     app_debug = args.loglevel not in ('WARNING', 'ERROR', 'CRITICAL')
     tornado_app = app.tornado_app(debug=app_debug)

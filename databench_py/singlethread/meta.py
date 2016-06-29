@@ -96,7 +96,7 @@ class Meta(object):
         It also handles the start and stop signals in case an process_id
         is given.
 
-        This method is exactly the same as in databench.Analysis.
+        This method is similar to the method in databench.Analysis.
         """
 
         # detect process_id
@@ -109,18 +109,28 @@ class Meta(object):
             analysis.emit('__process', {'id': process_id, 'status': 'start'})
 
         fn_name = 'on_{}'.format(action_name)
-        log.debug('kernel calling {}'.format(fn_name))
-        fn = getattr(analysis, fn_name)
-        # Check whether this is a list (positional arguments)
-        # or a dictionary (keyword arguments).
-        if isinstance(message, list):
-            fn(*message)
-        elif isinstance(message, dict):
-            fn(**message)
-        elif message == '__nomessagetoken__':
-            fn()
+        if hasattr(analysis, fn_name):
+            log.debug('kernel calling {}'.format(fn_name))
+            fn = getattr(analysis, fn_name)
+            # Check whether this is a list (positional arguments)
+            # or a dictionary (keyword arguments).
+            if isinstance(message, list):
+                fn(*message)
+            elif isinstance(message, dict):
+                fn(**message)
+            elif message == '__nomessagetoken__':
+                fn()
+            else:
+                fn(message)
         else:
-            fn(message)
+            # default is to store action name and data as key and value
+            # in analysis.data
+            analysis.data[action_name] = (
+                message
+                if message != '__nomessagetoken__'
+                else None
+            )
+
         log.debug('kernel done {}'.format(fn_name))
 
         if process_id:

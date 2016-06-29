@@ -5,9 +5,6 @@ Backend
 Readme configurations
 ---------------------
 
-title, description, watch, build
-
-
 Example ``analyses/README.md``:
 
 .. code-block:: none
@@ -49,6 +46,16 @@ Example ``analyses/gulpfile.js`` for React and ES6:
 
 
     gulp.task('default', ['build']);
+
+
+Autoreload
+----------
+
+Uses http://www.tornadoweb.org/en/stable/autoreload.html in the backend which
+is only activated Databench is run with ``--log INFO`` or ``--log DEBUG``.
+
+To run a single build (i.e. before deploying a production setting for
+Databench), use the ``--build`` command line option.
 
 
 SSL

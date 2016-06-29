@@ -15,7 +15,7 @@
     </head>
     <body>
         {% block body %}
-        <div class="d-container">
+        <div class="{% block d-container-class %}d-container{% end %}">
             <div class="d-header">
                 <h2 id="d-title"><a href="/" class="text-muted">
                     {% block headerlogo %}

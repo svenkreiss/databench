@@ -16,7 +16,17 @@ if (typeof WebSocket === 'undefined') {
   WebSocket = require('websocket').w3cwebsocket; // eslint-disable-line
 }
 
-var Connection = exports.Connection = function () {
+/** Connection to the backend. */
+
+var Connection = function () {
+  /**
+   * Create a connection to the backend with a WebSocket.
+   * @param  {String} [analysisId=null]  Specify an analysis id or null to have one generated.
+   * @param  {String} [wsUrl=null]       URL of WebSocket endpoint or null to guess it.
+   * @param  {String} [requestArgs=null] `search` part of request url or null to take from
+   *                                     `window.location.search`.
+   */
+
   function Connection() {
     var analysisId = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
     var wsUrl = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
@@ -55,6 +65,9 @@ var Connection = exports.Connection = function () {
 
   _createClass(Connection, [{
     key: 'connect',
+
+
+    /** initialize connection */
     value: function connect() {
       this.socket = new WebSocket(this.wsUrl);
 
@@ -172,6 +185,14 @@ var Connection = exports.Connection = function () {
         }
       });
     }
+
+    /**
+     * Register a callback that listens for a signal.
+     * @param  {string|Object}   signal   Signal name to listen for.
+     * @param  {Function}        callback A callback function that takes the attached data.
+     * @return {Connection}      this
+     */
+
   }, {
     key: 'on',
     value: function on(signal, callback) {
@@ -179,6 +200,14 @@ var Connection = exports.Connection = function () {
       this._onCallbacksOptimized = null;
       return this;
     }
+
+    /**
+     * Emit a signal to the backend.
+     * @param  {string}                   signalName A signal name. Usually an action name.
+     * @param  {string|Object|Array|null} message    Payload attached to the action.
+     * @return {Connection}                          this
+     */
+
   }, {
     key: 'emit',
     value: function emit(signalName, message) {
@@ -216,6 +245,8 @@ var Connection = exports.Connection = function () {
   return Connection;
 }();
 
+exports.Connection = Connection;
+
 },{"websocket":4}],2:[function(require,module,exports){
 'use strict';
 
@@ -250,8 +281,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-exports.wire = wire;
-
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -260,9 +289,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-/**
- * User interface module.
- */
+/** @module ui */
 
 /** Abstract class for user interface elements. */
 
@@ -321,15 +348,15 @@ var UIElement = function () {
 /** Log messages class. */
 
 
-var Log = exports.Log = function (_UIElement) {
+var Log = function (_UIElement) {
   _inherits(Log, _UIElement);
 
   /**
    * Construct a log class.
    * @param  {HTMLElement} node     Primary node.
-   * @param  {String} consoleFnName Name of console method to replace.
-   * @param  {Number} limit         Maximum number of messages to show.
-   * @param  {Number} lengthLimit   Maximum length of a message.
+   * @param  {String} [consoleFnName='log'] Name of console method to replace.
+   * @param  {Number} [limit=20]            Maximum number of messages to show.
+   * @param  {Number} [lengthLimit=250]     Maximum length of a message.
    */
 
   function Log(node) {
@@ -418,7 +445,7 @@ var Log = exports.Log = function (_UIElement) {
 /** Visual element for console.log(). */
 
 
-var StatusLog = exports.StatusLog = function (_UIElement2) {
+var StatusLog = function (_UIElement2) {
   _inherits(StatusLog, _UIElement2);
 
   function StatusLog(node) {
@@ -502,8 +529,13 @@ var StatusLog = exports.StatusLog = function (_UIElement2) {
 /** A button. */
 
 
-var Button = exports.Button = function (_UIElement3) {
+var Button = function (_UIElement3) {
   _inherits(Button, _UIElement3);
+
+  /**
+   * Bind button.
+   * @param  {HTMLElement} node DOM node to connect.
+   */
 
   function Button(node) {
     _classCallCheck(this, Button);
@@ -596,7 +628,7 @@ var Button = exports.Button = function (_UIElement3) {
 
 // eslint-disable-line camelcase
 
-var Text = exports.Text = function (_UIElement4) {
+var Text = function (_UIElement4) {
   _inherits(Text, _UIElement4);
 
   function Text(node) {
@@ -657,7 +689,7 @@ var Text = exports.Text = function (_UIElement4) {
 /** Make an input element of type text interactive. */
 
 
-var TextInput = exports.TextInput = function (_UIElement5) {
+var TextInput = function (_UIElement5) {
   _inherits(TextInput, _UIElement5);
 
   /**
@@ -747,8 +779,14 @@ var TextInput = exports.TextInput = function (_UIElement5) {
 /** A range slider. */
 
 
-var Slider = exports.Slider = function (_UIElement6) {
+var Slider = function (_UIElement6) {
   _inherits(Slider, _UIElement6);
+
+  /**
+   * Data bind a slider.
+   * @param  {HTMLElement} node      DOM node to bind.
+   * @param  {HTMLElement} labelNode DOM node label that corresponds to the slider.
+   */
 
   function Slider(node, labelNode) {
     _classCallCheck(this, Slider);
@@ -871,6 +909,14 @@ function wire(connection) {
   Slider.wire(connection);
   return connection;
 }
+
+exports.StatusLog = StatusLog;
+exports.Log = Log;
+exports.Button = Button;
+exports.TextInput = TextInput;
+exports.Text = Text;
+exports.Slider = Slider;
+exports.wire = wire;
 
 },{}],4:[function(require,module,exports){
 var _global = (function() { return this; })();
