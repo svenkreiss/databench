@@ -4,12 +4,18 @@ machine:
   node:
     version: 5.7.0
 
+general:
+  branches:
+    ignore:
+      - gh-pages
+
 dependencies:
   pre:
     - pip install --upgrade pip
     - "pip install -e .[tests]"
     - pip install python-coveralls
     - npm install -g mocha gulp jsdoc
+
 test:
   override:
     - flake8
