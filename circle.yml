@@ -14,7 +14,8 @@ dependencies:
     - pip install --upgrade pip
     - "pip install -e .[tests]"
     - pip install python-coveralls
-    - npm install -g mocha gulp jsdoc
+    - npm install -g mocha
+    - npm run build
 
 test:
   override:

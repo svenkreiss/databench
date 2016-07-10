@@ -1,3 +1,5 @@
+databench/static/databench.js
+databench/static/databench.js.map
 build_test.txt
 
 # Byte-compiled / optimized / DLL files
@@ -9,8 +11,7 @@ __pycache__/
 
 # node
 node_modules/
-js/node_client/*.js
-js/node_client/*.js.map
+js/build
 -_.html
 docs/jsdoc
 docs/esdoc

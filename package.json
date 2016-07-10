@@ -38,6 +38,7 @@
     }
   },
   "scripts": {
+    "build": "gulp",
     "test": "mocha -t 5000 --no-colors --use_strict js/test/test.js",
     "lint": "eslint js/src/*.js",
     "esdoc": "esdoc -c esdoc.json",

@@ -8,7 +8,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var uglify = require('gulp-uglify');
 
 
-gulp.task('browser', function () {
+gulp.task('browser', function() {
   var bundler = browserify({ entries: 'js/src/main.js', debug: true });
   bundler.transform('babelify', { presets: ['es2015', 'stage-1'] });
 
@@ -18,7 +18,8 @@ gulp.task('browser', function () {
     .pipe(sourcemaps.init({ loadMaps: true }))
     // .pipe(uglify())
     .pipe(sourcemaps.write('./'))
-    .pipe(gulp.dest('databench/static'));
+    .pipe(gulp.dest('js/build/browser/'))
+    .pipe(gulp.dest('databench/static/'));
 });
 
 
@@ -27,7 +28,7 @@ gulp.task('node_client', function() {
     .pipe(sourcemaps.init())
     .pipe(babel({presets: ['es2015', 'stage-1']}))
     .pipe(sourcemaps.write('./'))
-    .pipe(gulp.dest('js/node_client/'));
+    .pipe(gulp.dest('js/build/node_client/'));
 });
 
 

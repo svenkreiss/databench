@@ -1,6 +1,6 @@
 /* global describe it */
 const assert = require('assert');
-const Databench = require('./../node_client/main');
+const Databench = require('./../build/node_client/main');
 
 
 describe('Databench', () => {
