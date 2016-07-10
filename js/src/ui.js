@@ -1,4 +1,7 @@
-/** @module ui */
+/**
+ * UI elements.
+ * @module ui
+ */
 
 
 /** Abstract class for user interface elements. */
@@ -12,9 +15,16 @@ class UIElement {
     this.node.databenchUI = this;
 
     this.actionName = UIElement.determineActionName(node);
-    this.actionFormat = value => value;
-
     this.wireSignal = { data: this.actionName };
+  }
+
+  /**
+   * Formats the payload of an action.
+   * @param  {any} value Original payload.
+   * @return {any}       Modified payload.
+   */
+  actionFormat(value) {
+    return value;
   }
 
   /**
@@ -63,10 +73,6 @@ class Log extends UIElement {
 
     // more sensible default for this case
     this.wireSignal = { log: null };
-
-    // bind methods
-    this.render = this.render.bind(this);
-    this.add = this.add.bind(this);
 
     // capture events from frontend
     const _consoleFnOriginal = console[consoleFnName];
@@ -121,10 +127,6 @@ class StatusLog extends UIElement {
 
     // to avoid confusion, void meaningless parent variable
     this.wireSignal = null;
-
-    // bind methods
-    this.render = this.render.bind(this);
-    this.add = this.add.bind(this);
   }
 
   static defaultAlert(msg, count) {
@@ -177,16 +179,17 @@ class Button extends UIElement {
 
     this.IDLE = 0;
     this.ACTIVE = 2;
-
-    this.clickCB = (processID) => console.log(`click on ${this.node} with ${processID}`);
     this._state = this.IDLE;
 
-    // bind methods
-    this.render = this.render.bind(this);
-    this.click = this.click.bind(this);
-    this.state = this.state.bind(this);
+    this.node.addEventListener('click', this.click.bind(this), false);
+  }
 
-    this.node.addEventListener('click', this.click, false);
+  /**
+   * Called on click events.
+   * @param  {int} processID a random id for the process that could be started
+   */
+  clickCB(processID) {
+    return console.log(`click on ${this.node} with ${processID}`);
   }
 
   render() {
@@ -246,13 +249,13 @@ class Button extends UIElement {
  * @extends {UIElement}
  */
 class Text extends UIElement {
-  constructor(node) {
-    super(node);
-
-    this.formatFn = value => value;
-
-    // bind methods
-    this.value = this.value.bind(this);
+  /**
+   * Format the value.
+   * @param  {any} value Value as represented in the backend.
+   * @return {string}       Formatted representation of the value.
+   */
+  formatFn(value) {
+    return value;
   }
 
   value(v) {
@@ -266,8 +269,6 @@ class Text extends UIElement {
   /**
    * Wire all text.
    * @param  {Connection} conn Connection to use.
-   * @static
-   * @memberof ui.Text
    */
   static wire(conn) {
     [...Array.from(document.getElementsByTagName('SPAN')),
@@ -299,15 +300,25 @@ class TextInput extends UIElement {
     super(node);
 
     this._triggerOnKeyUp = false;
-    this.formatFn = value => value;
-    this.changeCB = value => console.log(`change of ${this.node}: ${value}`);
 
-    // bind methods
-    this.change = this.change.bind(this);
-    this.triggerOnKeyUp = this.triggerOnKeyUp.bind(this);
-    this.value = this.value.bind(this);
+    this.node.addEventListener('change', this.change.bind(this), false);
+  }
 
-    this.node.addEventListener('change', this.change, false);
+  /**
+   * Format the value.
+   * @param  {any} value Value as represented in the backend.
+   * @return {string}       Formatted representation of the value.
+   */
+  formatFn(value) {
+    return value;
+  }
+
+  /**
+   * Callback that is triggered on frontend changes.
+   * @param  {any} value A formatted action.
+   */
+  changeCB(value) {
+    return console.log(`change of ${this.node}: ${value}`);
   }
 
   change() {
@@ -357,27 +368,54 @@ class TextInput extends UIElement {
 class Slider extends UIElement {
   /**
    * Data bind a slider.
-   * @param  {HTMLElement} node      DOM node to bind.
-   * @param  {HTMLElement} labelNode DOM node label that corresponds to the slider.
+   * @param  {HTMLElement}  node      DOM node to bind.
+   * @param  {HTMLElement?} labelNode DOM node label that corresponds to the slider.
    */
   constructor(node, labelNode) {
     super(node);
 
     this.labelNode = labelNode;
     this.labelHtml = labelNode ? labelNode.innerHTML : null;
-    this.changeCB = value => console.log(`slider value change: ${value}`);
-    this.valueToSlider = value => value;
-    this.sliderToValue = s => s;
-    this.formatFn = value => value;
 
-    // bind methods
-    this.render = this.render.bind(this);
-    this.value = this.value.bind(this);
-    this.change = this.change.bind(this);
-
-    this.node.addEventListener('input', this.render, false);
-    this.node.addEventListener('change', this.change, false);
+    this.node.addEventListener('input', this.render.bind(this), false);
+    this.node.addEventListener('change', this.change.bind(this), false);
     this.render();
+  }
+
+  /**
+   * Callback with changes to the slider value.
+   * @param  {Number} value   Value from a sliderToValue() transform.
+   */
+  changeCB(value) {
+    return console.log(`slider value change: ${value}`);
+  }
+
+  /**
+   * Transform a backend value to a slider value.
+   * @param  {number} value Value as stored in backend.
+   * @return {int}          Value for the HTML range element.
+   */
+  valueToSlider(value) {
+    return value;
+  }
+
+  /**
+   * Transform a value from the HTML range element to a value that should be stored.
+   * @param  {int}    s Value from HTML range element.
+   * @return {number}   Value to store.
+   */
+  sliderToValue(s) {
+    return s;
+  }
+
+  /**
+   * How a value should be represented.
+   * For example, this can add units or convert from radians to degrees.
+   * @param  {number}         value Input value as it is stored in the backend.
+   * @return {string|number}        Representation of a value.
+   */
+  formatFn(value) {
+    return value;
   }
 
   render() {

@@ -92,8 +92,9 @@ Here is an example for making use of the ``head`` block:
 Extensions
 ++++++++++
 
-Math with MathJax, Twitter Bootstrap, Font Awesome and many more work together
-well with Databench in the frontend.
+Databench is supposed to go out of your way and work well with many
+frontend frameworks and tools. For example, it works well with Twitter
+Bootstrap, Font Awesome, MathJax, and many more.
 
 
 
