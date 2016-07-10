@@ -16,7 +16,7 @@ install:
  - npm install -g npm
  - npm -v
  - npm install
- - export PATH=$PATH:/usr/lib/node_modules/.bin/
+ - npm run build
 script:
  - flake8
  - npm run lint
