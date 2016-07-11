@@ -107,12 +107,13 @@ class Log extends UIElement {
   static wire(conn, id = 'log', source = 'backend', consoleFnName = 'log',
               limit = 20, lengthLimit = 250) {
     const node = document.getElementById(id);
-    if (node == null) return this;
+    if (node == null) return;
+    if (UIElement.determineActionName(node) == null) return;
 
-    console.log(`Wiring element id=${id}.`);
+    console.log(`Wiring element ${node} with id=${id}.`);
     const l = new Log(node, consoleFnName, limit, lengthLimit);
     conn.on(l.wireSignal, message => l.add(message, source));
-    return this;
+    return;
   }
 }
 
@@ -160,10 +161,11 @@ class StatusLog extends UIElement {
   static wire(conn, id = 'ws-alerts', formatter = StatusLog.defaultAlert) {
     const node = document.getElementById(id);
     if (node == null) return;
+    if (UIElement.determineActionName(node) == null) return;
 
-    console.log(`Wiring element id=${id}.`);
+    console.log(`Wiring element ${node} with id=${id}.`);
     const l = new StatusLog(node, formatter);
-    conn.errorCB = l.add;
+    conn.errorCB = l.add.bind(l);
   }
 }
 
@@ -223,6 +225,7 @@ class Button extends UIElement {
   static wire(conn) {
     Array.from(document.getElementsByTagName('BUTTON'))
       .filter(node => node.databenchUI === undefined)
+      .filter(node => UIElement.determineActionName(node) !== null)
       .forEach(node => {
         const b = new Button(node);
         console.log(`Wiring button ${node} to action ${b.actionName}.`);
@@ -350,6 +353,7 @@ class TextInput extends UIElement {
     Array.from(document.getElementsByTagName('INPUT'))
       .filter(node => node.databenchUI === undefined)
       .filter(node => node.getAttribute('type') === 'text')
+      .filter(node => UIElement.determineActionName(node) !== null)
       .forEach(node => {
         const t = new TextInput(node);
         console.log(`Wiring text input ${node} to action ${t.actionName}.`);
@@ -461,6 +465,7 @@ class Slider extends UIElement {
     Array.from(document.getElementsByTagName('INPUT'))
       .filter(node => node.databenchUI === undefined)
       .filter(node => node.getAttribute('type') === 'range')
+      .filter(node => UIElement.determineActionName(node) !== null)
       .forEach(node => {
         const slider = new Slider(node, node.label);
         console.log(`Wiring slider ${node} to action ${slider.actionName}.`);
