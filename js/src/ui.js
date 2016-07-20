@@ -11,6 +11,10 @@
  * to determine the action name from an HTML tag and a way to modify the message
  * that is sent with actions of wired elements.
  *
+ * The constructor adds the variables `actionName` and `wireSignal` using
+ * {@link module:ui~UIElement.determineActionName|determineActionName()} and
+ * {@link module:ui~UIElement.determineWireSignal|determineWireSignal()}
+ * respectively.
  * It also adds `this` UI element to the DOM node at `databenchUI`.
  */
 class UIElement {
@@ -22,7 +26,7 @@ class UIElement {
     this.node.databenchUI = this;
 
     this.actionName = UIElement.determineActionName(node);
-    this.wireSignal = { data: this.actionName };
+    this.wireSignal = UIElement.determineWireSignal(node);
   }
 
   /**
@@ -41,7 +45,7 @@ class UIElement {
    * to the HTML tag. If that is not found, the action name is determined from
    * the tag's `data-action`, `name` or `id` attribute (in that order).
    *
-   * @param  {HTMLElement} node An HTML element.
+   * @param  {HTMLElement} node A HTML element.
    * @return {string}      Name of action or null.
    */
   static determineActionName(node) {
@@ -63,6 +67,47 @@ class UIElement {
     }
 
     return action;
+  }
+
+  /**
+   * Determine the name of the signal that should be listened to from the backend.
+   *
+   * If the HTML tag as a `data-skipwire=true` attribute, this is forced to be
+   * null. Otherwise the signal name is determined from the `data-signal`,
+   * `data-action`, `name` or `id` attribute (in that order.)
+   * For all attributes apart from `data-signal`, the value is wrapped in an
+   * object like `{ data: value-of-attribute }`. The `data-signal` value
+   * can contain a `:` which will be used to create an object as well. That means
+   * that `data-signal="data:myvalue"` gives the same result as `data-action="myvalue"`.
+   *
+   * @param  {HTMLElement} node A HTML element.
+   * @return {string}           Name of a signal or null.
+   */
+  static determineWireSignal(node) {
+    // determine signal name from HTML DOM
+    let signal = null;
+
+    if (node.dataset.skipwire === 'true' ||
+      node.dataset.skipwire === 'TRUE' ||
+      node.dataset.skipwire === '1') {
+      return null;
+    }
+
+    if (node.dataset.signal) {
+      signal = node.dataset.signal;
+      if (signal.indexOf(':') >= 1) {
+        const [key, value] = signal.split(':', 2);
+        signal = { [key]: value };
+      }
+    } else if (node.dataset.action) {
+      signal = { data: node.dataset.action };
+    } else if (node.getAttribute('name')) {
+      signal = { data: node.getAttribute('name') };
+    } else if (node.getAttribute('id')) {
+      signal = { data: node.getAttribute('id') };
+    }
+
+    return signal;
   }
 }
 
@@ -98,7 +143,7 @@ class Log extends UIElement {
   }
 
   render() {
-    while (this._messages.length > this.limit) this._messages.shift();
+    while (this._messages.length > this.limitNumber) this._messages.shift();
 
     this.node.innerText = this._messages
       .map(m => m.join(''))
@@ -125,7 +170,7 @@ class Log extends UIElement {
     if (node == null) return;
     if (UIElement.determineActionName(node) == null) return;
 
-    console.log(`Wiring element ${node} with id=${id}.`);
+    console.log('Wiring log to ', node, `with id=${id}.`);
     const l = new Log(node, consoleFnName, limitNumber, limitLength);
     conn.on(l.wireSignal, message => l.add(message, source));
     return;
@@ -192,7 +237,7 @@ class StatusLog extends UIElement {
     if (node == null) return;
     if (UIElement.determineActionName(node) == null) return;
 
-    console.log(`Wiring element ${node} with id=${id}.`);
+    console.log('Wiring status log', node, `to element with id=${id}.`);
     const l = new StatusLog(node, formatter);
     conn.errorCB = l.add.bind(l);
   }
@@ -276,7 +321,7 @@ class Button extends UIElement {
       .filter(node => UIElement.determineActionName(node) !== null)
       .forEach(node => {
         const b = new Button(node);
-        console.log(`Wiring button ${node} to action ${b.actionName}.`);
+        console.log('Wiring button', node, `to action ${b.actionName}.`);
 
         // set up click callback
         b.clickCB = (processID) => {
@@ -334,7 +379,7 @@ class Text extends UIElement {
       .filter(node => UIElement.determineActionName(node) !== null)
       .forEach(node => {
         const t = new Text(node);
-        console.log(`Wiring text ${node} to action ${t.actionName}.`);
+        console.log('Wiring text', node, `to action ${t.actionName}.`);
 
         // handle events from backend
         conn.on(t.wireSignal, message => t.value(message));
@@ -415,7 +460,7 @@ class TextInput extends UIElement {
       .filter(node => UIElement.determineActionName(node) !== null)
       .forEach(node => {
         const t = new TextInput(node);
-        console.log(`Wiring text input ${node} to action ${t.actionName}.`);
+        console.log('Wiring text input', node, `to action ${t.actionName}.`);
 
         // handle events from frontend
         t.changeCB = message => conn.emit(t.actionName, message);
@@ -541,7 +586,7 @@ class Slider extends UIElement {
       .filter(node => UIElement.determineActionName(node) !== null)
       .forEach(node => {
         const slider = new Slider(node, node.label);
-        console.log(`Wiring slider ${node} to action ${slider.actionName}.`);
+        console.log('Wiring slider', node, `to action ${slider.actionName}.`);
 
         // handle events from frontend
         slider.changeCB = message => conn.emit(slider.actionName, message);
@@ -552,23 +597,71 @@ class Slider extends UIElement {
   }
 }
 
+
+/**
+ * Connect an `<img>` with a signal name to the backend.
+ *
+ * The signal message is placed directly into the `src` attribute of the image
+ * tag. For matplotlib, that formatting can be done with the utility function
+ * `fig_to_src()` (see example below).
+ *
+ * @example
+ * // in index.html, add
+ * <img alt="my plot" data-signal="mpl" />
+ *
+ * // in analysis.py, add
+ * import matplotlib.pyplot as plt
+ * ...
+ * fig = plt.figure()
+ * ...
+ * self.emit('mpl', databench.fig_to_src(fig))
+ */
+class Image extends UIElement {
+  /** Reads and sets the value. */
+  value(v) {
+    if (v === undefined) return this.node.src;
+
+    this.node.src = v || '';
+    return this;
+  }
+
+  /** Wire all text inputs. */
+  static wire(conn) {
+    Array.from(document.getElementsByTagName('IMG'))
+      .filter(node => node.databenchUI === undefined)
+      .filter(node => node.dataset.signal !== undefined)
+      .filter(node => UIElement.determineWireSignal(node) !== null)
+      .forEach(node => {
+        const img = new Image(node);
+        console.log('Wiring image', node, `to signal ${img.wireSignal}.`);
+
+        // handle events from backend
+        conn.on(img.wireSignal, message => img.value(message));
+      });
+  }
+}
+
+
 /**
  * Wire all the UI elements to the backend. The action name is determined by
  * {@link module:ui~UIElement.determineActionName|UIElement.determineActionName()}
  * and the action message can be modified by overwriting
- * {@link module:ui~UIElement#actionFormat|UIElement.actionFormat()}.
+ * {@link module:ui~UIElement#actionFormat|UIElement.actionFormat()}. The signal
+ * name is determined by
+ * {@link module:ui~UIElement.determineWireSignal|UIElement.determineWireSignal()}.
  *
  * @param  {Connection} connection A Databench.Connection instance.
  * @return {Connection}            The same connection.
  */
 function wire(connection) {
   StatusLog.wire(connection);
-  Log.wire(connection);
   Button.wire(connection);
   TextInput.wire(connection);
   Text.wire(connection);
   Slider.wire(connection);
+  Image.wire(connection);
+  Log.wire(connection);
   return connection;
 }
 
-export { StatusLog, Log, Button, TextInput, Text, Slider, wire };
+export { StatusLog, Log, Button, TextInput, Text, Slider, Image, wire };

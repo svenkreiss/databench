@@ -3,8 +3,8 @@
 from __future__ import absolute_import, unicode_literals, division
 
 from . import __version__ as DATABENCH_VERSION
-from .analysis import Meta
-from .analysis_zmq import MetaZMQ
+from .meta import Meta
+from .meta_zmq import MetaZMQ
 from .readme import Readme
 import glob
 import importlib
