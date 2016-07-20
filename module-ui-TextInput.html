@@ -31,7 +31,7 @@
         <h2>
             <span class="ancestors"><a href="module-ui.html">ui</a>~</span>TextInput</h2>
         
-            <div class="class-description">Make an input element of type text interactive.</div>
+            <div class="class-description"><p>Make an <code>&lt;input[type='text']&gt;</code> with an action name interactive.</p></div>
         
     
 </header>
@@ -50,10 +50,6 @@
     
 
 
-
-<div class="description">
-    Create a TextInput UIElement.
-</div>
 
 
 
@@ -104,7 +100,7 @@
 
             
 
-            <td class="description last">The node to connect.</td>
+            <td class="description last"><p>The node to connect.</p></td>
         </tr>
 
     
@@ -142,11 +138,6 @@
 
     
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ui.js.html">ui.js</a>, <a href="ui.js.html#line297">line 297</a>
-    </li></ul></dd>
     
 
     
@@ -201,7 +192,7 @@
 
 
 <div class="description">
-    Wire all text inputs.
+    <p>Wire all text inputs.</p>
 </div>
 
 
@@ -242,11 +233,6 @@
 
     
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ui.js.html">ui.js</a>, <a href="ui.js.html#line352">line 352</a>
-    </li></ul></dd>
     
 
     
@@ -283,7 +269,7 @@
 
 
 <div class="description">
-    Callback that is triggered on frontend changes.
+    <p>Callback that is triggered on frontend changes.</p>
 </div>
 
 
@@ -335,7 +321,7 @@
 
             
 
-            <td class="description last">A formatted action.</td>
+            <td class="description last"><p>A formatted action.</p></td>
         </tr>
 
     
@@ -373,11 +359,6 @@
 
     
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ui.js.html">ui.js</a>, <a href="ui.js.html#line323">line 323</a>
-    </li></ul></dd>
     
 
     
@@ -414,7 +395,7 @@
 
 
 <div class="description">
-    Format the value.
+    <p>Format the value.</p>
 </div>
 
 
@@ -466,7 +447,7 @@
 
             
 
-            <td class="description last">Value as represented in the backend.</td>
+            <td class="description last"><p>Value as represented in the backend.</p></td>
         </tr>
 
     
@@ -505,10 +486,155 @@
     
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ui.js.html">ui.js</a>, <a href="ui.js.html#line315">line 315</a>
-    </li></ul></dd>
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Formatted representation of the value.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="triggerOnKeyUp"><span class="type-signature"></span>triggerOnKeyUp<span class="signature">(v)</span><span class="type-signature"> &rarr; {TextInput}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>The default is <code>false</code>, which means that the callback is only triggered on
+<code>change</code> events (i.e. pressing enter or unfocusing the element).
+Setting this to true will trigger on every <code>keyup</code> event of this element.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>v</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Whether to trigger on <code>keyup</code> events. Default is true.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
     
 
     
@@ -534,7 +660,7 @@
 
         
 <div class="param-desc">
-    Formatted representation of the value.
+    <p>self</p>
 </div>
 
 
@@ -545,13 +671,90 @@
     </dt>
     <dd>
         
-<span class="param-type">string</span>
+<span class="param-type">TextInput</span>
 
 
     </dd>
 </dl>
 
     
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="value"><span class="type-signature"></span>value<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Reads and sets the value.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -577,7 +780,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Jul 11 2016 02:31:14 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
 </footer>
 
 <script> prettyPrint(); </script>

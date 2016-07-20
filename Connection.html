@@ -30,7 +30,13 @@
     
         <h2>Connection</h2>
         
-            <div class="class-description">Connection to the backend.</div>
+            <div class="class-description"><p>Connection to the backend.</p>
+<p>The standard template is to create a connection first, then use it to
+wire all UI elements, to add custom callback functions and at last to run
+<a href="Connection.html#connect">connect()</a> to create a WebSocket connection to the backend
+server (see example below).</p>
+<p>The other two essential functions to know about are
+<a href="Connection.html#on">on()</a> and <a href="Connection.html#emit">emit()</a>.</p></div>
         
     
 </header>
@@ -49,10 +55,6 @@
     
 
 
-
-<div class="description">
-    Create a connection to the backend with a WebSocket.
-</div>
 
 
 
@@ -123,7 +125,9 @@
                 </td>
             
 
-            <td class="description last">Specify an analysis id or null to have one generated.</td>
+            <td class="description last"><p>Specify an analysis id or null to have one generated.
+                                    The connection will try to connect to a previously created
+                                    analysis with that id.</p></td>
         </tr>
 
     
@@ -162,7 +166,7 @@
                 </td>
             
 
-            <td class="description last">URL of WebSocket endpoint or null to guess it.</td>
+            <td class="description last"><p>URL of WebSocket endpoint or null to guess it.</p></td>
         </tr>
 
     
@@ -201,8 +205,8 @@
                 </td>
             
 
-            <td class="description last">`search` part of request url or null to take from
-                                    `window.location.search`.</td>
+            <td class="description last"><p><code>search</code> part of request url or null to take from
+                                    <code>window.location.search</code>.</p></td>
         </tr>
 
     
@@ -241,11 +245,6 @@
     
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="connection.js.html">connection.js</a>, <a href="connection.js.html#line7">line 7</a>
-    </li></ul></dd>
-    
 
     
 
@@ -266,6 +265,14 @@
 
 
 
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>var d = new Databench.Connection();
+Databench.ui.wire(d);
+// put custom d.on() methods here
+d.connect();</code></pre>
 
 
 
@@ -299,7 +306,7 @@
 
 
 <div class="description">
-    initialize connection
+    <p>initialize connection</p>
 </div>
 
 
@@ -341,11 +348,6 @@
     
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="connection.js.html">connection.js</a>, <a href="connection.js.html#line53">line 53</a>
-    </li></ul></dd>
-    
 
     
 
@@ -381,7 +383,7 @@
 
 
 <div class="description">
-    Emit a signal to the backend.
+    <p>Emit a signal/action to the backend.</p>
 </div>
 
 
@@ -433,7 +435,7 @@
 
             
 
-            <td class="description last">A signal name. Usually an action name.</td>
+            <td class="description last"><p>A signal name. Usually an action name.</p></td>
         </tr>
 
     
@@ -465,7 +467,7 @@
 
             
 
-            <td class="description last">Payload attached to the action.</td>
+            <td class="description last"><p>Payload attached to the action.</p></td>
         </tr>
 
     
@@ -504,11 +506,6 @@
     
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="connection.js.html">connection.js</a>, <a href="connection.js.html#line181">line 181</a>
-    </li></ul></dd>
-    
 
     
 
@@ -533,7 +530,7 @@
 
         
 <div class="param-desc">
-    this
+    <p>this</p>
 </div>
 
 
@@ -566,7 +563,12 @@
 
 
 <div class="description">
-    Register a callback that listens for a signal.
+    <p>Register a callback that listens for a signal.</p>
+<p>The signal can be a simple string (the name for a signal/action), but it
+can also be an Object of the form <code>{data: 'current_value'}</code> which would
+trigger on <code>data</code> actions that are sending a JSON dictionary that contains
+the key <code>current_value</code>. In this case, the value that is
+given to the callback function is the value assigned to <code>current_value</code>.</p>
 </div>
 
 
@@ -621,7 +623,7 @@
 
             
 
-            <td class="description last">Signal name to listen for.</td>
+            <td class="description last"><p>Signal name to listen for.</p></td>
         </tr>
 
     
@@ -644,7 +646,7 @@
 
             
 
-            <td class="description last">A callback function that takes the attached data.</td>
+            <td class="description last"><p>A callback function that takes the attached data.</p></td>
         </tr>
 
     
@@ -683,11 +685,6 @@
     
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="connection.js.html">connection.js</a>, <a href="connection.js.html#line169">line 169</a>
-    </li></ul></dd>
-    
 
     
 
@@ -712,7 +709,7 @@
 
         
 <div class="param-desc">
-    this
+    <p>this</p>
 </div>
 
 
@@ -730,6 +727,19 @@
 </dl>
 
     
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>d.on('data', value => { console.log(value); });
+// If the backend sends an action called 'data' with a message
+// {current_value: 3.0}, this function would log `{current_value: 3.0}`.</code></pre>
+
+    <pre class="prettyprint"><code>d.on({data: 'current_value'}, value => { console.log(value); });
+// If the backend sends an action called 'data' with a
+// message {current_value: 3.0}, this function would log `3.0`.
+// This callback is not triggered when the message does not contain a
+// `current_value` key.</code></pre>
 
 
 
@@ -755,7 +765,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Jul 11 2016 02:31:14 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
 </footer>
 
 <script> prettyPrint(); </script>
