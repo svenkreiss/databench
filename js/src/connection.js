@@ -3,11 +3,28 @@ if (typeof WebSocket === 'undefined') {
   WebSocket = require('websocket').w3cwebsocket;  // eslint-disable-line
 }
 
-/** Connection to the backend. */
+/**
+ * Connection to the backend.
+ *
+ * The standard template is to create a connection first, then use it to
+ * wire all UI elements, to add custom callback functions and at last to run
+ * {@link Connection#connect|connect()} to create a WebSocket connection to the backend
+ * server (see example below).
+ *
+ * The other two essential functions to know about are
+ * {@link Connection#on|on()} and {@link Connection#emit|emit()}.
+ *
+ * @example
+ * var d = new Databench.Connection();
+ * Databench.ui.wire(d);
+ * // put custom d.on() methods here
+ * d.connect();
+ */
 class Connection {
   /**
-   * Create a connection to the backend with a WebSocket.
    * @param  {String} [analysisId=null]  Specify an analysis id or null to have one generated.
+   *                                     The connection will try to connect to a previously created
+   *                                     analysis with that id.
    * @param  {String} [wsUrl=null]       URL of WebSocket endpoint or null to guess it.
    * @param  {String} [requestArgs=null] `search` part of request url or null to take from
    *                                     `window.location.search`.
@@ -162,6 +179,25 @@ class Connection {
 
   /**
    * Register a callback that listens for a signal.
+   *
+   * The signal can be a simple string (the name for a signal/action), but it
+   * can also be an Object of the form `{data: 'current_value'}` which would
+   * trigger on `data` actions that are sending a JSON dictionary that contains
+   * the key `current_value`. In this case, the value that is
+   * given to the callback function is the value assigned to `current_value`.
+   *
+   * @example
+   * d.on('data', value => { console.log(value); });
+   * // If the backend sends an action called 'data' with a message
+   * // {current_value: 3.0}, this function would log `{current_value: 3.0}`.
+   *
+   * @example
+   * d.on({data: 'current_value'}, value => { console.log(value); });
+   * // If the backend sends an action called 'data' with a
+   * // message {current_value: 3.0}, this function would log `3.0`.
+   * // This callback is not triggered when the message does not contain a
+   * // `current_value` key.
+   *
    * @param  {string|Object}   signal   Signal name to listen for.
    * @param  {Function}        callback A callback function that takes the attached data.
    * @return {Connection}      this
@@ -173,7 +209,7 @@ class Connection {
   }
 
   /**
-   * Emit a signal to the backend.
+   * Emit a signal/action to the backend.
    * @param  {string}                   signalName A signal name. Usually an action name.
    * @param  {string|Object|Array|null} message    Payload attached to the action.
    * @return {Connection}                          this

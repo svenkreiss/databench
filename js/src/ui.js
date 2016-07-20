@@ -1,13 +1,20 @@
 /**
- * UI elements.
+ * This is a basic set of UI elements to create analyses without having to add
+ * frontend frameworks like Angular or React.
+ *
  * @module ui
  */
 
 
-/** Abstract class for user interface elements. */
+/**
+ * Abstract class for user interface elements which provides general helpers
+ * to determine the action name from an HTML tag and a way to modify the message
+ * that is sent with actions of wired elements.
+ *
+ * It also adds `this` UI element to the DOM node at `databenchUI`.
+ */
 class UIElement {
   /**
-   * Create a UI element.
    * @param  {HTMLElement} node An HTML element.
    */
   constructor(node) {
@@ -29,6 +36,11 @@ class UIElement {
 
   /**
    * Determine the name of the action that should be associated with the node.
+   *
+   * This can be forced to be `null` by adding a `data-skipwire=true` attribute
+   * to the HTML tag. If that is not found, the action name is determined from
+   * the tag's `data-action`, `name` or `id` attribute (in that order).
+   *
    * @param  {HTMLElement} node An HTML element.
    * @return {string}      Name of action or null.
    */
@@ -54,21 +66,24 @@ class UIElement {
   }
 }
 
-/** Log messages class. */
+/**
+ * Shows all `console.log()` messages and `log` actions from backend.
+ *
+ * Usually wired to a `<pre id="log">` element.
+ */
 class Log extends UIElement {
   /**
-   * Construct a log class.
    * @param  {HTMLElement} node     Primary node.
    * @param  {String} [consoleFnName='log'] Name of console method to replace.
-   * @param  {Number} [limit=20]            Maximum number of messages to show.
-   * @param  {Number} [lengthLimit=250]     Maximum length of a message.
+   * @param  {Number} [limitNumber=20]      Maximum number of messages to show.
+   * @param  {Number} [limitLength=250]     Maximum length of a message.
    */
-  constructor(node, consoleFnName = 'log', limit = 20, lengthLimit = 250) {
+  constructor(node, consoleFnName = 'log', limitNumber = 20, limitLength = 250) {
     super(node);
 
     this.consoleFnName = consoleFnName;
-    this.limit = limit;
-    this.lengthLimit = lengthLimit;
+    this.limitNumber = limitNumber;
+    this.limitLength = limitLength;
     this._messages = [];
 
     // more sensible default for this case
@@ -87,8 +102,8 @@ class Log extends UIElement {
 
     this.node.innerText = this._messages
       .map(m => m.join(''))
-      .map(m => ((m.length > this.lengthLimit)
-                 ? `${m.substr(0, this.lengthLimit)} ...`
+      .map(m => ((m.length > this.limitLength)
+                 ? `${m.substr(0, this.limitLength)} ...`
                  : m))
       .join('\n');
 
@@ -105,21 +120,29 @@ class Log extends UIElement {
 
   /** Wire all logs. */
   static wire(conn, id = 'log', source = 'backend', consoleFnName = 'log',
-              limit = 20, lengthLimit = 250) {
+              limitNumber = 20, limitLength = 250) {
     const node = document.getElementById(id);
     if (node == null) return;
     if (UIElement.determineActionName(node) == null) return;
 
     console.log(`Wiring element ${node} with id=${id}.`);
-    const l = new Log(node, consoleFnName, limit, lengthLimit);
+    const l = new Log(node, consoleFnName, limitNumber, limitLength);
     conn.on(l.wireSignal, message => l.add(message, source));
     return;
   }
 }
 
 
-/** Visual element for console.log(). */
+/**
+ * Visual representation of alerts like connection failures.
+ *
+ * Usually wired to a `<div id="ws-alerts">` element.
+ */
 class StatusLog extends UIElement {
+  /**
+   * @param  {HTMLElement} node      HTML node.
+   * @param  {function}    formatter Formats a message and a count to a string.
+   */
   constructor(node, formatter = StatusLog.defaultAlert) {
     super(node);
 
@@ -130,6 +153,12 @@ class StatusLog extends UIElement {
     this.wireSignal = null;
   }
 
+  /**
+   * The default formatter function
+   * @param  {string} msg   A message.
+   * @param  {number} count Count of the message.
+   * @return {string}       HTML formatted version of the inputs.
+   */
   static defaultAlert(msg, count) {
     const countFormat = count <= 1 ? '' : `<b>(${count})</b> `;
     return `<div class="alert alert-danger">${countFormat}${msg}</div>`;
@@ -170,10 +199,28 @@ class StatusLog extends UIElement {
 }
 
 
-/** A button. */
+/**
+ * A button, and usually wired to any `<button>` with an action name.
+ *
+ * This button also binds to process IDs of the backend. That means
+ * that the button is disabled (using the CSS class `disabled`) while the
+ * backend is processing the action that got started when it was clicked.
+ * A simple example is below.
+ *
+ * @example
+ * // in index.html, add:
+ * <button data-action="run">Run</button>
+ *
+ * // in analysis.py, add:
+ * def on_run(self):
+ *     """Run when button is pressed."""
+ *     pass
+ *
+ * // In this form, Databench finds the button automatically and connects it
+ * // to the backend. No additional JavaScript code is required.
+ */
 class Button extends UIElement {
   /**
-   * Bind button.
    * @param  {HTMLElement} node DOM node to connect.
    */
   constructor(node) {
@@ -187,7 +234,8 @@ class Button extends UIElement {
   }
 
   /**
-   * Called on click events.
+   * Called on click events. When a button is wired, this function is overwritten
+   * with the actual function that is triggered on click events.
    * @param  {int} processID a random id for the process that could be started
    */
   clickCB(processID) {
@@ -249,7 +297,9 @@ class Button extends UIElement {
 
 /**
  * Data bound text elements.
- * @extends {UIElement}
+ *
+ * Wired to ``<span>``, ``<p>``, ``<div>``, ``<i>`` and ``<b>`` tags with a
+ * ``data-action`` attribute specifying the action name.
  */
 class Text extends UIElement {
   /**
@@ -261,8 +311,8 @@ class Text extends UIElement {
     return value;
   }
 
+  /** Reads and sets the value. */
   value(v) {
-    // reading value
     if (v === undefined) return this.node.innerHTML;
 
     this.node.innerHTML = this.formatFn(v || '');
@@ -293,10 +343,9 @@ class Text extends UIElement {
 }
 
 
-/** Make an input element of type text interactive. */
+/** Make an `<input[type='text']>` with an action name interactive. */
 class TextInput extends UIElement {
   /**
-   * Create a TextInput UIElement.
    * @param {HTMLElement} node The node to connect.
    */
   constructor(node) {
@@ -309,7 +358,7 @@ class TextInput extends UIElement {
 
   /**
    * Format the value.
-   * @param  {any} value Value as represented in the backend.
+   * @param  {any}    value Value as represented in the backend.
    * @return {string}       Formatted representation of the value.
    */
   formatFn(value) {
@@ -328,20 +377,30 @@ class TextInput extends UIElement {
     return this.changeCB(this.actionFormat(this.value()));
   }
 
+  /**
+   * The default is `false`, which means that the callback is only triggered on
+   * `change` events (i.e. pressing enter or unfocusing the element).
+   * Setting this to true will trigger on every `keyup` event of this element.
+   *
+   * @param  {boolean}   v Whether to trigger on `keyup` events. Default is true.
+   * @return {TextInput}   self
+   */
   triggerOnKeyUp(v) {
     if (v !== false && !this._triggerOnKeyUp) {
-      this.node.addEventListener('keyup', this.change, false);
+      this.node.addEventListener('keyup', this.change.bind(this), false);
       this._triggerOnKeyUp = true;
     }
 
     if (v === false && this._triggerOnKeyUp) {
-      this.node.removeEventListener('keyup', this.change, false);
+      this.node.removeEventListener('keyup', this.change.bind(this), false);
       this._triggerOnKeyUp = false;
     }
+
+    return this;
   }
 
+  /** Reads and sets the value. */
   value(v) {
-    // reading value
     if (v === undefined) return this.node.value;
 
     this.node.value = this.formatFn(v || '');
@@ -368,10 +427,24 @@ class TextInput extends UIElement {
 }
 
 
-/** A range slider. */
+/**
+ * Make all `<input[type='range']>` with an action name interactive.
+ *
+ * @example
+ * // in index.html, add:
+ * <label for="samples">Samples:</label>
+ * <input type="range" id="samples" value="1000" min="100" max="10000" step="100" />
+ *
+ * // in analysis.py, add:
+ * def on_samples(self, value):
+ *     """Sets the number of samples to generate per run."""
+ *     self.data['samples'] = value
+ *
+ * // The Python code is for illustration only and can be left out as this is
+ * // the default behavior.
+ */
 class Slider extends UIElement {
   /**
-   * Data bind a slider.
    * @param  {HTMLElement}  node      DOM node to bind.
    * @param  {HTMLElement?} labelNode DOM node label that corresponds to the slider.
    */
@@ -430,8 +503,8 @@ class Slider extends UIElement {
     return this;
   }
 
+  /** Reads and sets the value. */
   value(v) {
-    // reading value
     if (v === undefined) {
       return this.sliderToValue(parseFloat(this.node.value));
     }
@@ -480,7 +553,11 @@ class Slider extends UIElement {
 }
 
 /**
- * Wire all the UI elements to the backend.
+ * Wire all the UI elements to the backend. The action name is determined by
+ * {@link module:ui~UIElement.determineActionName|UIElement.determineActionName()}
+ * and the action message can be modified by overwriting
+ * {@link module:ui~UIElement#actionFormat|UIElement.actionFormat()}.
+ *
  * @param  {Connection} connection A Databench.Connection instance.
  * @return {Connection}            The same connection.
  */

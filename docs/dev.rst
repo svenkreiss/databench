@@ -1,25 +1,25 @@
 Development
 -----------
 
-To contribute to Databench, fork the GitHub repository and clone it to your
-local machine. Then install your local version in editable mode into a
-``virtualenv``:
+To contribute to Databench, fork the GitHub repository and then follow these
+steps:
 
 .. code-block:: bash
 
-	# inside an empty directory:
-	git clone https://github.com/<username>/databench.git .
+    # clone the repository to your local machine
+    git clone https://github.com/<username>/databench.git
+    cd databench
 
-	virtualenv venv
-	source venv/bin/activate
-	pip install -e .[tests]
+    # create a virtual environment and activate it
+    virtualenv venv
+    source venv/bin/activate
+    # install this version in editable mode
+    pip install -e .[tests]
 
-    # js dependencies
-    npm install -g gulp
+    # install JavaScript dependencies
     npm install
-
-    # install pre-commit hook to check linting
-    flake8 --install-hook
+    # build the JavaScript
+    npm run build
 
 
 Now you can:
@@ -27,11 +27,22 @@ Now you can:
 .. code-block:: bash
 
     # run Databench
-	gulp && databench --log DEBUG
+    databench --log DEBUG
     # and open http://localhost:5000 in a web browser
 
     # run tests
     nosetests -vv --with-coverage --cover-erase --cover-inclusive
 
+    # lint Python
+    flake8
+
+    # lint JavaScript
+    npm run lint
+
+    # create JavaScript docs at docs/jsdoc/index.html
+    npm run jsdoc
+
+    # create Python docs at docs/_build/html/index.html
+    cd docs; make html
+
 For new contributions, create a feature branch and submit a Pull Request.
-Don't forget to add yourself to ``AUTHORS.rst``.

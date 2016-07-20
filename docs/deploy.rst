@@ -2,7 +2,7 @@
 Deployment
 ----------
 
-The standard use case is to run ``databench`` locally. However, Databench can also be deployed on servers/platforms that support deploying Flask and WebSockets.
+The standard use case is to run ``databench`` locally. However, Databench can also be deployed on servers/platforms that support deploying WebSocket applications.
 
 
 Heroku
@@ -14,38 +14,22 @@ You need a ``Procfile`` file
 
 	web: databench
 
-and a ``requirements.txt`` file
-
-.. code-block:: python
-
-	Flask==0.10.1
-	Flask-Sockets==0.1
-	Jinja2==2.7.3
-	MarkupSafe==0.23
-	Werkzeug==0.9.6
-	gevent==1.0.1
-	gevent-websocket==0.9.3
-	greenlet==0.4.3
-	itsdangerous==0.24
-	python-dateutil==2.2
-	six==1.7.3
-	wsgiref==0.1.2
-	mpld3==0.2
-	matplotlib==1.3.1
-
-	git+https://github.com/svenkreiss/databench.git
-
-which already includes the most common dependencies. Databench will pick up the environment variable ``PORT`` which will be used for Flask.
-
-Currently, WebSockets are still a Heroku labs feature. It is enabled with
-
-.. code-block:: bash
-
-	$ heroku labs:enable websockets
-
+and your ``requirements.txt`` file.
+Databench will pick up the environment variable ``PORT``.
 An example repository that is deployed on Heroku is `databench_examples_viewer`_.
 
 .. _`databench_examples_viewer`: https://github.com/svenkreiss/databench_examples_viewer
+
+
+Local Docker
+++++++++++++
+
+It is helpful to build and run the Docker image locally when developing:
+
+.. code-block:: bash
+
+    docker build --tag=databench .
+    docker run --rm -p 0.0.0.0:5000:5000 -i -t databench
 
 
 AWS Elastic Beanstalk
@@ -79,11 +63,3 @@ Troubleshooting
 * If deployments become even slower, check ``/var/log/docker-ps.log`` (part of the logs). It could be that some other docker image is still building in the background from a previous ``eb push``.
 * ``eb start`` might timeout in your terminal. The Web interface usually shows "updating" a bit longer and it should finish within 10 minutes. The timeout does not affect the underlying build process.
 
-
-Local Docker
-++++++++++++
-
-It is helpful to build and run the Docker image locally when developing. This is not necessary when you just want to deploy your analyses to AWS. On a Mac, make sure you run ``boot2docker up`` first. Then:
-
-* ``docker build --tag=databench .``
-* ``docker run --rm -p 0.0.0.0:5000:5000 -i -t databench``

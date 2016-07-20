@@ -22,17 +22,17 @@ Some features are shown in the `live demos`_. They do not include examples with 
 .. image:: images/flowers_demo.png
    :alt: Preview of flowers demo.
    :height: 270
-   :target: http://databench-examples.svenkreiss.com/flowers/
+   :target: http://databench-examples.trivial.io/flowers/
 
 .. image:: images/bagofcharsd3.png
    :alt: Preview of bag-of-chars demo.
    :height: 270
-   :target: http://databench-examples.svenkreiss.com/bagofcharsd3/
+   :target: http://databench-examples.trivial.io/bagofcharsd3/
 
 .. image:: images/simplepi_demo.png
    :alt: Preview of simplepi demo.
    :height: 270
-   :target: http://databench-examples.svenkreiss.com/simplepi/
+   :target: http://databench-examples.trivial.io/simplepi/
 
 .. _`first blog post`: http://www.svenkreiss.com/blog/databench-initial/
 .. _`slides from Hack and Tell NY`: https://speakerdeck.com/svenkreiss/databench
@@ -57,20 +57,10 @@ Contents
    dev
 
 
-Feedback
---------
-
-The `GitHub page`_ provides a few ways for feedback in terms of *Issues* and *Pull Requests* and I am happy to receive and incorporate those. Or you can `send me an email`_.
-
-.. _`GitHub page`: https://github.com/svenkreiss/databench
-.. _`send me an email`: mailto:me@svenkreiss.com
-
-
 License
 -------
 
-Databench was written by Sven Kreiss and made available under the
-`MIT license`_.
+Databench was made available under the `MIT license`_.
 
 .. _`MIT license`: https://github.com/svenkreiss/databench/blob/master/LICENSE
 
