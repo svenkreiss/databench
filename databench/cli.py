@@ -37,16 +37,19 @@ def main():
                         help='import path for analyses')
     parser.add_argument('--build', default=False, action='store_true',
                         help='run the build command and exit')
-    parser.add_argument('--ssl-certfile', dest='ssl_certfile',
-                        help='SSL certificate file')
-    parser.add_argument('--ssl-keyfile', dest='ssl_keyfile',
-                        help='SSL key file')
-    parser.add_argument('--ssl-port', dest='ssl_port',
-                        type=int, default=int(os.environ.get('SSLPORT', 5001)),
-                        help='SSL port for webserver')
     parser.add_argument('--with-coverage', dest='with_coverage',
                         default=False, action='store_true',
                         help=argparse.SUPPRESS)
+
+    ssl_args = parser.add_argument_group('SSL')
+    ssl_args.add_argument('--ssl-certfile', dest='ssl_certfile',
+                          help='SSL certificate file')
+    ssl_args.add_argument('--ssl-keyfile', dest='ssl_keyfile',
+                          help='SSL key file')
+    ssl_args.add_argument('--ssl-port', dest='ssl_port',
+                          type=int, default=int(os.environ.get('SSLPORT', 5001)),
+                          help='SSL port for webserver')
+
     args = parser.parse_args()
 
     # coverage

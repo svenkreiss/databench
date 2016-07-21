@@ -96,6 +96,13 @@ class App(object):
         self.register_metas()
 
     def _get_analyses(self, analyses_path):
+        def is_databench_init_file(filename):
+            with open(filename, 'r') as f:
+                for line in f:
+                    if 'analyses=' in line.replace(' ', ''):
+                        return True
+            return False
+
         if analyses_path:
             orig_syspath = sys.path
             sys.path.append('.')
@@ -107,6 +114,13 @@ class App(object):
             sys.path.append('.')
             import analyses
             analyses_path = os.path.abspath('analyses')
+            sys.path = orig_syspath
+        elif (os.path.isfile('__init__.py') and
+              is_databench_init_file('__init__.py')):
+            orig_syspath = sys.path
+            sys.path.append('..')
+            import analyses
+            analyses_path = os.path.abspath('.')
             sys.path = orig_syspath
         else:
             log.warning('Did not find "analyses" module. '
