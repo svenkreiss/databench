@@ -2,21 +2,37 @@ Backend
 =======
 
 
-Readme configurations
----------------------
+Analyses Configurations
+-----------------------
 
-Example ``analyses/README.md``:
+Example ``analyses/index.yaml``:
+
+.. literalinclude:: ../databench/analyses_packaged/index.yaml
+    :language: yaml
+
+Defaults at the global level for ``index.yaml``:
 
 .. code-block:: none
 
-    <!--
-    title: Databench Examples
-    description: Describe all the analyses.
-    build: cd analyses; gulp
-    watch: analyses/js/**/*.jsx
-    -->
+    title: Databench
+    description: null
+    description_html: null
+    author: null
+    version: null
+    logo_url: /_static/logo.svg
+    favicon_url: /_static/favicon.ico
+    footer_html: null
+    injection_head: ''
+    injection_footer: ''
+    build: null
+    watch: null
 
-    Some helpful text.
+    analyses:
+      ...
+
+The entries ``injection_head`` and ``injection_footer`` can be overwritten by
+placing a ``head.html`` and ``footer.html`` in the analysis folder. This can
+be used to insert analytics tracking code.
 
 
 Example ``analyses/gulpfile.js`` for React and ES6:

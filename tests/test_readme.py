@@ -1,41 +1,29 @@
 import databench
+import unittest
 
 
-def test_md():
-    data = databench.Readme('tests/analyses/simple1')  # contains README.md
-    print(data.meta)
-    print(data.text)
-    assert data.meta['title'] == 'Simple1'
-    assert data.meta['description'] == 'A short description of this analysis.'
-    assert data.meta['watch'] == '*.md'
+class TestReadme(unittest.TestCase):
+    def test_md(self):
+        # contains README.md
+        data = databench.Readme('tests/analyses/simple1')
+        self.assertIn('This is the text in the `README.md` file.', data.text)
+        self.assertIn('<p>This is the text in the <code>README.md</code> '
+                      'file.</p>', data.html)
 
+    def test_rst(self):
+        # contains README.rst
+        data = databench.Readme('tests/analyses/simple2')
+        self.assertEqual('Rest of readme.\n', data.text)
+        self.assertIn('<p>Rest of readme.</p>', data.html)
 
-def test_rst():
-    data = databench.Readme('tests/analyses/simple2')  # contains README.rst
-    print(data.meta)
-    print(data.text)
-    assert data.meta['title'] == 'testtitle'
-    assert data.meta['description'] == 'testdescription of a test'
+    def test_no_readme(self):
+        # contains no README
+        data = databench.Readme('tests/analyses/simple3')
+        self.assertEqual('', data.text)
+        self.assertEqual('', data.html)
 
-
-def test_no_readme():
-    data = databench.Readme('tests/analyses/simple3')  # contains no README
-    print(data.meta)
-    print(data.text)
-    assert 'title' not in data.meta
-    assert 'description' not in data.meta
-
-
-def test_unknown_dir():
-    data = databench.Readme('tests/does_not_exist')  # directory does not exist
-    print(data.meta)
-    print(data.text)
-    assert 'title' not in data.meta
-    assert 'description' not in data.meta
-
-
-if __name__ == '__main__':
-    test_md()
-    test_rst()
-    test_no_readme()
-    test_unknown_dir()
+    def test_unknown_dir(self):
+        # directory does not exist
+        data = databench.Readme('tests/does_not_exist')
+        self.assertEqual('', data.text)
+        self.assertEqual('', data.html)

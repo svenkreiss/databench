@@ -39,24 +39,9 @@ class Meta(object):
         self.name = name
         self.analysis_class = analysis_class
         self.analysis_path = analysis_path
-        self.show_in_index = True
 
-        self._info = None
+        self.info = {}
         self._routes = None
-        self._thumbnail = None
-
-    @property
-    def info(self):
-        if self._info is None:
-            readme = Readme(self.analysis_path)
-            self._info = {
-                'title': self.name,
-                'description': '',
-                'readme': readme.html,
-            }
-            self._info.update(readme.meta)
-
-        return self._info
 
     @property
     def routes(self):
@@ -82,18 +67,6 @@ class Meta(object):
                   'info': self.info}),
             ]
         return self._routes
-
-    @property
-    def thumbnail(self):
-        if self._thumbnail is None:
-            # detect whether a thumbnail image is present
-            thumbnails = glob.glob(os.path.join(self.analysis_path,
-                                                'thumbnail.*'))
-            if len(thumbnails) >= 1:
-                self._thumbnail = thumbnails[0]
-            else:
-                self._thumbnail = False
-        return self._thumbnail
 
     @tornado.gen.coroutine
     def run_process(self, analysis, action_name, message='__nomessagetoken__'):

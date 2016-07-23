@@ -39,8 +39,10 @@ pre {
     padding: 10px;
     word-break: break-all;
     word-wrap: break-word;
-    white-space: pre-wrap;
     background-color: #f5f5f5;
+}
+#log {
+    white-space: pre-wrap;
 }
 
 code {
@@ -48,7 +50,6 @@ code {
     font-size: 90%;
     color: #c33;
     background-color: #f5f5f5;
-    white-space: nowrap;
     border-radius: 4px;
 }
 

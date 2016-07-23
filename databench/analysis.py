@@ -65,6 +65,8 @@ class Analysis(object):
     out with ``data_<key>(value)`` methods.
     """
 
+    _databench_analysis = True
+
     def __init__(self, id_=None):
         self.id_ = id_ if id_ else Analysis.__create_id()
         self.emit = lambda s, pl: log.error('emit called before Analysis '

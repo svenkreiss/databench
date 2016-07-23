@@ -1,6 +1,6 @@
 databench/static/databench.js
 databench/static/databench.js.map
-build_test.txt
+tests/analyses/build_test.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

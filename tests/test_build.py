@@ -4,7 +4,7 @@ import unittest
 
 
 class Build(unittest.TestCase):
-    def file_id(self, filename='build_test.txt'):
+    def file_id(self, filename='tests/analyses/build_test.txt'):
         if os.path.exists(filename):
             return '{}'.format(os.path.getmtime(filename))
         return 'file_not_found'

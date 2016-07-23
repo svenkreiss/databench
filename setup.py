@@ -23,6 +23,7 @@ setup(
 
     install_requires=[
         'tornado>=4.3',
+        'pyyaml>=3.11',
         'pyzmq>=4.3.1',
     ],
     entry_points={

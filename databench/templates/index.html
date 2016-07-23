@@ -7,12 +7,12 @@
 
 <h1 id="d-list-of-analyses">List of Analyses</h1>
 <div class="d-boxes">
-    {% for a in [aa for aa in analyses if aa.show_in_index] %}
-    <a class="d-box" href="/{{a.name}}/">
-    {% if a.thumbnail %}
-        <img src="/{{a.name}}/static/{{a.thumbnail}}" class="d-analysis-thumbnail" />
+    {% for a in [aa for aa in analyses if aa['show_in_index']] %}
+    <a class="d-box" href="/{{a['name']}}/">
+    {% if a['thumbnail'] %}
+        <img src="/{{a['name']}}/static/{{a['thumbnail']}}" class="d-analysis-thumbnail" />
     {% end %}
-    {{a.info['title']}}{% if a.info['description'] %}<span class="text-muted">: {{ a.info['description'] }}</span>{% end %}
+    {{a['title']}}{% if a['description'] %}<span class="text-muted">: {{ a['description'] }}</span>{% end %}
     </a>
     {% end %}
 </div>

@@ -3,6 +3,7 @@
 from __future__ import absolute_import, unicode_literals, division
 
 from . import __version__ as DATABENCH_VERSION
+from .analysis import Analysis
 from .meta import Meta
 from .meta_zmq import MetaZMQ
 from .readme import Readme
@@ -10,9 +11,11 @@ import glob
 import importlib
 import logging
 import os
+import subprocess
 import sys
 import tornado.autoreload
 import tornado.web
+import yaml
 import zmq.eventloop
 
 try:
@@ -38,8 +41,14 @@ class App(object):
         self.info = {
             'title': 'Databench',
             'description': None,
+            'description_html': None,
             'author': None,
             'version': None,
+            'logo_url': '/_static/logo.svg',
+            'favicon_url': '/_static/favicon.ico',
+            'footer_html': None,
+            'injection_head': '',
+            'injection_footer': '',
         }
         self.metas = []
         self._get_analyses(analyses_path)
@@ -75,6 +84,7 @@ class App(object):
             socket.close()
             context.destroy()
             log.debug('determined: zmq_port={}'.format(zmq_port))
+        self.zmq_port = zmq_port
 
         self.spawned_analyses = {}
 
@@ -89,34 +99,24 @@ class App(object):
         )
 
         self.analyses_info()
-        self.metas += self.meta_analyses()
-        self.metas += self.meta_analyses_py(self.zmq_pub_stream, zmq_port)
-        self.metas += self.meta_analyses_pyspark(self.zmq_pub_stream, zmq_port)
-        self.metas += self.meta_analyses_go(self.zmq_pub_stream, zmq_port)
+        self.meta_analyses()
         self.register_metas()
 
     def _get_analyses(self, analyses_path):
-        def is_databench_init_file(filename):
-            with open(filename, 'r') as f:
-                for line in f:
-                    if 'analyses=' in line.replace(' ', ''):
-                        return True
-            return False
-
-        if analyses_path:
+        if analyses_path:  # analyses path supplied manually
             orig_syspath = sys.path
             sys.path.append('.')
             analyses = importlib.import_module(analyses_path)
             analyses_path = os.path.abspath(os.path.dirname(analyses.__file__))
             sys.path = orig_syspath
-        elif os.path.isfile('analyses/__init__.py'):
+        elif (os.path.isfile('analyses/__init__.py') and
+              os.path.isfile('analyses/index.yaml')):  # cwd outside analyses
             orig_syspath = sys.path
             sys.path.append('.')
             import analyses
             analyses_path = os.path.abspath('analyses')
             sys.path = orig_syspath
-        elif (os.path.isfile('__init__.py') and
-              is_databench_init_file('__init__.py')):
+        elif os.path.isfile('index.yaml'):  # cwd is inside analyses
             orig_syspath = sys.path
             sys.path.append('..')
             import analyses
@@ -135,49 +135,29 @@ class App(object):
 
     def analyses_info(self):
         """Add analyses from the analyses folder."""
-
-        self.info['author'] = getattr(self.analyses, '__author__', None)
-        self.info['version'] = getattr(self.analyses, '__version__', None)
-        self.info['logo_url'] = getattr(self.analyses, 'logo_url', None)
-        self.info['favicon_url'] = getattr(self.analyses, 'favicon_url', None)
-        self.info['footer_html'] = getattr(self.analyses, 'footer_html', None)
-        self.info['title'] = getattr(self.analyses, 'title', None)
+        f_config = os.path.join(self.analyses_path, 'index.yaml')
+        tornado.autoreload.watch(f_config)
+        with open(f_config, 'r') as f:
+            config = yaml.safe_load(f)
+            self.info.update(config)
 
         readme = Readme(self.analyses_path)
-        self.info['description'] = readme.text.strip()
+        if self.info['description'] is None:
+            self.info['description'] = readme.text.strip()
         self.info['description_html'] = readme.html
-        self.info.update(readme.meta)
 
-        self.info['injection_head'] = ''
         f_head = os.path.join(self.analyses_path, 'head.html')
         if os.path.isfile(f_head):
             with open(f_head, 'r') as f:
                 self.info['injection_head'] = f.read()
             log.debug('watch file {}'.format(f_head))
             tornado.autoreload.watch(f_head)
-        self.info['injection_footer'] = ''
         f_footer = os.path.join(self.analyses_path, 'footer.html')
         if os.path.isfile(f_footer):
             with open(f_footer, 'r') as f:
                 self.info['injection_footer'] = f.read()
             log.debug('watch file {}'.format(f_footer))
             tornado.autoreload.watch(f_footer)
-
-        if self.info['logo_url'] is None:
-            log.info('Analyses module does not specify a logo url.')
-            self.info['logo_url'] = '/_static/logo.svg'
-        if self.info['favicon_url'] is None:
-            log.info('Analyses module does not specify a favicon url.')
-            self.info['favicon_url'] = '/_static/favicon.ico'
-        if self.info['footer_html'] is None:
-            self.info['footer_html'] = None
-        if self.info['version'] is None:
-            log.info('Analyses module does not specify a version.')
-        if self.info['author'] is None:
-            log.info('Analyses module does not specify an author.')
-        if self.info['title'] is None:
-            log.info('Analyses module does not specify a title.')
-            self.info['title'] = 'Databench'
 
         # if 'analyses' contains a 'static' folder, make it available
         static_path = os.path.join(self.analyses_path, 'static')
@@ -208,124 +188,152 @@ class App(object):
             log.debug('Did not find an analyses/node_modules/ folder.')
 
     def meta_analyses(self):
-        metas = []
-        for name, analysis_class in self.analyses.analyses:
-            log.debug('creating Meta for {}'.format(name))
-            analysis_path = os.path.join(self.analyses_path, name)
-            metas.append(Meta(name, analysis_class, analysis_path))
-        return metas
-
-    def meta_analyses_py(self, zmq_publish, zmq_port):
-        analysis_folders = glob.glob(os.path.join(self.analyses_path, '*_py'))
-
-        metas = []
-        for analysis_folder in analysis_folders:
-            name = analysis_folder.rpartition('/')[2]
-            if name[0] in ('.', '_'):
+        for analysis_info in self.info['analyses']:
+            name = analysis_info.get('name', None)
+            if name is None:
                 continue
-            log.debug('creating MetaZMQ for {}'.format(name))
-            metas.append(MetaZMQ(
-                name,
-                ['python', '{}/analysis.py'.format(analysis_folder),
-                 '--zmq-subscribe={}'.format(zmq_port)],
-                zmq_publish,
-                analysis_folder,
-            ))
-        return metas
-
-    def meta_analyses_pyspark(self, zmq_publish, zmq_port):
-        analysis_folders = glob.glob(os.path.join(self.analyses_path,
-                                                  '*_pyspark'))
-
-        metas = []
-        for analysis_folder in analysis_folders:
-            name = analysis_folder.rpartition('/')[2]
-            if name[0] in ('.', '_'):
+            path = os.path.join(self.analyses_path, name)
+            if not os.path.isdir(path):
+                log.warning('directory {} not found'.format(path))
                 continue
-            log.debug('creating MetaZMQ for {}'.format(name))
-            metas.append(MetaZMQ(
-                name,
-                ['pyspark', '{}/analysis.py'.format(analysis_folder),
-                 '--zmq-subscribe={}'.format(zmq_port)],
-                zmq_publish,
-                analysis_folder,
-            ))
-        return metas
+            analysis_kernel = analysis_info.get('kernel', None)
+            if analysis_kernel is None:
+                self.meta_analysis_nokernel(name, path)
+            elif analysis_kernel == 'py':
+                self.meta_analysis_py(name, path)
+            elif analysis_kernel == 'pyspark':
+                self.meta_analysis_pyspark(name, path)
+            elif analysis_kernel == 'go':
+                self.meta_analysis_go(name, path)
 
-    def meta_analyses_go(self, zmq_publish, zmq_port):
-        analysis_folders = glob.glob(os.path.join(self.analyses_path, '*_go'))
+    def meta_analysis_nokernel(self, name, path):
+        try:
+            analysis_file = importlib.import_module('.' + name + '.analysis',
+                                                    self.analyses.__name__)
+        except ImportError:
+            log.warning('could not import analysis {}'.format(name),
+                        exc_info=True)
+            return
+        items = [getattr(analysis_file, item)
+                 for item in dir(analysis_file)
+                 if not item.startswith('__')]
+        classes = [ac for ac in items
+                   if hasattr(ac, '_databench_analysis')]
+        if not classes:
+            log.warning('no Analysis class found for {}'.format(name))
+            return
+        log.debug('creating Meta for {}'.format(name))
+        self.metas.append(Meta(name, classes[0], path))
 
-        metas = []
-        for analysis_folder in analysis_folders:
-            name = analysis_folder.rpartition('/')[2]
-            if name[0] in ('.', '_'):
-                continue
-            log.info('installing {}'.format(name))
-            os.system('cd {}; go install'.format(analysis_folder))
-            log.debug('creating MetaZMQ for {}'.format(name))
-            metas.append(MetaZMQ(
-                name,
-                [name, '--zmq-subscribe={}'.format(zmq_port)],
-                zmq_publish,
-                analysis_folder,
-            ))
-        return metas
+    def meta_analysis_py(self, name, path):
+        log.debug('creating MetaZMQ for {}'.format(name))
+        self.metas.append(MetaZMQ(
+            name,
+            ['python', os.path.join(path, 'analysis.py'),
+             '--zmq-subscribe={}'.format(self.zmq_port)],
+            self.zmq_pub_stream,
+            path,
+        ))
+
+    def meta_analysis_pyspark(self, name, path):
+        log.debug('creating MetaZMQ for {}'.format(name))
+        self.metas.append(MetaZMQ(
+            name,
+            ['pyspark', '{}/analysis.py'.format(path),
+             '--zmq-subscribe={}'.format(self.zmq_port)],
+            self.zmq_pub_stream,
+            path,
+        ))
+
+    def meta_analysis_go(self, name, path):
+        log.info('installing {}'.format(name))
+        os.system('cd {}; go install'.format(path))
+        log.debug('creating MetaZMQ for {}'.format(name))
+        self.metas.append(MetaZMQ(
+            name,
+            [name, '--zmq-subscribe={}'.format(self.zmq_port)],
+            self.zmq_pub_stream,
+            path,
+        ))
 
     def register_metas(self):
         """register metas"""
-        watch_lists = []
-        if 'watch' in self.info:
-            watch_lists.append(self.info['watch'])
 
+        # concatenate some attributes to global lists:
+        aggregated = {'build': [], 'watch': []}
+        for attribute, values in aggregated.items():
+            for info in self.info['analyses'] + [self.info]:
+                if attribute in info:
+                    values.append(info[attribute])
+
+        # distribute info to the metas
+        distribute = ('logo_url', 'favicon_url', 'footer_html',
+                      'injection_head', 'injection_footer')
+        analysis_infos = {info['name']: info for info in self.info['analyses']}
+        self.info['analyses'] = []  # rewrite self.info['analyses']
         for meta in self.metas:
             log.info('Registering meta information {}'.format(meta.name))
+
+            # grab routes
             self.routes += meta.routes
 
-            if 'logo_url' in self.info and \
-               'logo_url' not in meta.info:
-                meta.info['logo_url'] = self.info['logo_url']
+            # gathering info
+            # detect whether a thumbnail image is present
+            thumbnail = False
+            thumbnails = glob.glob(os.path.join(meta.analysis_path,
+                                                'thumbnail.*'))
+            if len(thumbnails) >= 1:
+                thumbnail = thumbnails[0]
+            # analysis readme
+            readme = Readme(meta.analysis_path)
 
-            if 'favicon_url' in self.info and \
-               'favicon_url' not in meta.info:
-                meta.info['favicon_url'] = self.info['favicon_url']
+            # distribute info
+            info = {
+                'title': meta.name,
+                'readme': readme.html,
+                'description': readme.text.strip(),
+                'show_in_index': True,
+                'thumbnail': thumbnail,
+            }
+            info.update(analysis_infos[meta.name])
 
-            if 'footer_html' in self.info and \
-               'footer_html' not in meta.info:
-                meta.info['footer_html'] = self.info['footer_html']
-
-            if 'injection_head' in self.info and \
-               'injection_head' not in meta.info:
-                meta.info['injection_head'] = self.info['injection_head']
-
-            if 'injection_footer' in self.info and \
-               'injection_footer' not in meta.info:
-                meta.info['injection_footer'] = self.info['injection_footer']
-
-            if 'watch' in meta.info:
-                watch_lists.append(meta.info['watch'])
+            for attribute in distribute:
+                if attribute in self.info and \
+                   attribute not in info:
+                    info[attribute] = self.info[attribute]
+            meta.info.update(info)
+            self.info['analyses'].append(info)
 
         # process files to watch for autoreload
-        if watch_lists:
-            log.info('watching additional files: {}'.format(watch_lists))
+        if aggregated['watch']:
+            log.info('watching additional files: {}'
+                     ''.format(aggregated['watch']))
+
+            cwd = os.getcwd()
+            os.chdir(self.analyses_path)
             if glob2:
-                files = glob2.glob(','.join(watch_lists))
+                files = glob2.glob(','.join(aggregated['watch']))
             else:
-                files = glob.glob(','.join(watch_lists))
-                if any('**' in w for w in watch_lists):
+                files = glob.glob(','.join(aggregated['watch']))
+                if any('**' in w for w in aggregated['watch']):
                     log.warning('Please run "pip install glob2" to properly '
                                 'process watch patterns with "**".')
+            os.chdir(cwd)
+
             for fn in files:
                 log.debug('watch file {}'.format(fn))
                 tornado.autoreload.watch(fn)
 
+        # save build commands
+        self.build_cmds = aggregated['build']
+
     def build(self):
         """Run the build command specified in the Readme."""
-        if 'build' not in self.info:
-            return
-
-        cmd = self.info['build']
-        log.debug('building this command: {}'.format(cmd))
-        os.system(cmd)
+        for cmd in self.build_cmds:
+            log.info('building this command: {}'.format(cmd))
+            full_cmd = 'cd {}; {}'.format(self.analyses_path, cmd)
+            log.debug('full command: {}'.format(full_cmd))
+            subprocess.call(full_cmd, shell=True)
 
     def tornado_app(self, debug=False, template_path=None, **kwargs):
         if template_path is None:
@@ -354,7 +362,6 @@ class IndexHandler(tornado.web.RequestHandler):
         """Render the List-of-Analyses overview page."""
         return self.render(
             'index.html',
-            analyses=self.metas,
             databench_version=DATABENCH_VERSION,
             **self.info
         )

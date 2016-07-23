@@ -21,12 +21,6 @@ except ImportError:  # pragma: no cover
 log = logging.getLogger(__name__)
 
 
-WHITELIST_META_KEYS = [
-    'title', 'description', 'logo_url', 'favicon_url', 'footer_html',
-    'build', 'watch',
-]
-
-
 class Readme(object):
     """Readme reader and meta data extractor.
 
@@ -43,13 +37,11 @@ class Readme(object):
 
         self._text = None
         self._html = None
-        self._meta = None
         self.watch = watch
 
     def _read(self, encoding='utf8', encoding_errors='ignore'):
         self._text = ''
         self._html = ''
-        self._meta = {}
 
         if not os.path.exists(self.directory):
             return
@@ -69,8 +61,6 @@ class Readme(object):
             self._text = f.read()
 
         if readme_file.lower().endswith('.md'):
-            self.extract_md_meta()
-
             if markdown is not None:
                 self._html = markdown(self._text)
 
@@ -84,7 +74,6 @@ class Readme(object):
                 ) + self._text  # pragma: no cover
 
         if readme_file.lower().endswith('.rst'):
-            self.extract_rst_meta()
             if rst is not None:
                 self._html = rst(self._text,
                                  writer_name='html')['html_body']
@@ -107,59 +96,3 @@ class Readme(object):
             self._read()
 
         return self._html
-
-    @property
-    def meta(self):
-        if self._text is None:
-            self._read()
-
-        return self._meta
-
-    def extract_md_meta(self):
-        """Extract meta data from markdown files.
-
-        Searches for lines like:
-
-        <!--
-        Title: MyTitle
-        Description: hello bla
-        logo_url: /path/to/logo.png
-        build: gulp
-        -->
-        """
-        for l in self._text.split('\n'):
-            if ':' not in l:
-                continue
-
-            p = l.partition(':')
-            if p[0].lower() not in WHITELIST_META_KEYS:
-                continue
-
-            self._meta[p[0].lower()] = p[2].strip()
-
-        return self
-
-    def extract_rst_meta(self):
-        """Extract meta data from rst files.
-
-        Searches for lines like:
-
-        .. title: MyTitle
-        .. description: hello bla
-        .. logo_url: /path/to/logo.png
-        .. build: gulp
-        """
-        for l in self._text.split('\n'):
-            if not l.startswith('..') or ': ' not in l:
-                continue
-
-            # remove the leading '.. '
-            l = l[3:]
-
-            p = l.partition(': ')
-            if p[0].lower() not in WHITELIST_META_KEYS:
-                continue
-
-            self._meta[p[0].lower()] = p[2]
-
-        return self
