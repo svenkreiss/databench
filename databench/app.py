@@ -158,33 +158,42 @@ class App(object):
             log.debug('watch file {}'.format(f_footer))
             tornado.autoreload.watch(f_footer)
 
-        # if 'analyses' contains a 'static' folder, make it available
-        static_path = os.path.join(self.analyses_path, 'static')
-        if os.path.isdir(static_path):
-            log.debug('Making {} available under /static/.'
-                      ''.format(static_path))
-
+        # If 'analyses' or current directory contains a 'static' folder,
+        # make it available.
+        static_path = next((
+            p
+            for p in (os.path.join(self.analyses_path, 'static'),
+                      os.path.join(os.getcwd(), 'static'))
+            if os.path.isdir(p)
+        ), None)
+        if static_path is not None:
+            log.debug('Making {} available at /static/.'.format(static_path))
             self.routes.append((
                 r'/static/(.*)',
                 tornado.web.StaticFileHandler,
                 {'path': static_path},
             ))
         else:
-            log.debug('Did not find an analyses/static/ folder.')
+            log.debug('Did not find a static folder.')
 
-        # if 'analyses' contains a 'node_modules' folder, make it available
-        node_modules_path = os.path.join(self.analyses_path, 'node_modules')
-        if os.path.isdir(node_modules_path):
-            log.debug('Making {} available under /node_modules/.'
+        # If 'analyses' or current directory contains a 'node_modules' folder,
+        # make it available.
+        node_modules_path = next((
+            p
+            for p in (os.path.join(self.analyses_path, 'node_modules'),
+                      os.path.join(os.getcwd(), 'node_modules'))
+            if os.path.isdir(p)
+        ), None)
+        if node_modules_path is not None:
+            log.debug('Making {} available at /node_modules/.'
                       ''.format(node_modules_path))
-
             self.routes.append((
                 r'/node_modules/(.*)',
                 tornado.web.StaticFileHandler,
                 {'path': node_modules_path},
             ))
         else:
-            log.debug('Did not find an analyses/node_modules/ folder.')
+            log.debug('Did not find a node_modules folder.')
 
     def meta_analyses(self):
         for analysis_info in self.info['analyses']:
@@ -329,7 +338,7 @@ class App(object):
     def build(self):
         """Run the build command specified in the Readme."""
         for cmd in self.build_cmds:
-            log.info('building this command: {}'.format(cmd))
+            log.info('building command: {}'.format(cmd))
             full_cmd = 'cd {}; {}'.format(self.analyses_path, cmd)
             log.debug('full command: {}'.format(full_cmd))
             subprocess.call(full_cmd, shell=True)

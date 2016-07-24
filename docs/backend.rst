@@ -34,34 +34,25 @@ The entries ``injection_head`` and ``injection_footer`` can be overwritten by
 placing a ``head.html`` and ``footer.html`` in the analysis folder. This can
 be used to insert analytics tracking code.
 
+Examples for customization:
 
-Example ``analyses/gulpfile.js`` for React and ES6:
+.. code-block:: none
 
-.. code-block:: javascript
+    title: Databench - Packaged Analyses
+    description: my awesome analyses
+    logo_url: /static/logo-header.svg
+    favicon_url: /static/myfavicon.ico
+    footer_html: Created by <a href="http://www.trivial.io">me</a>.
 
-    var gulp = require('gulp');
-    var browserify = require('browserify');
-    var babelify = require('babelify');
-    var source = require('vinyl-source-stream');
-    var buffer = require('vinyl-buffer');
-    var sourcemaps = require('gulp-sourcemaps');
-    // var uglify = require('gulp-uglify');
+Place the ``logo-header.svg`` file in ``analyses/static/``. Any standard image
+format like ``.png``, ``.jpeg`` and ``.svg`` is supported.
 
-
-    gulp.task('build', function () {
-        browserify({entries: 'js/index.jsx', extensions: ['.jsx'], debug: true})
-            .transform('babelify', {presets: ['es2015', 'stage-1', 'react']})
-            .bundle()
-            .pipe(source('bundle.js'))
-            .pipe(buffer())
-            .pipe(sourcemaps.init({ loadMaps: true }))
-            // .pipe(uglify())
-            .pipe(sourcemaps.write('./'))
-            .pipe(gulp.dest('static'));
-    });
-
-
-    gulp.task('default', ['build']);
+To modify the style globally (including the index page with the list of
+analysis) and to add a tracking snippet for analytics,
+you can inject code into the head and the bottom of the page.
+Inject code into the ``<head>`` section by creating a ``head.html`` file inside
+the analysis folder. Similarly, inject code into the bottom of the ``<body>``
+with a ``footer.html`` file.
 
 
 Autoreload

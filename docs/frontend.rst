@@ -11,32 +11,6 @@ a section on UI elements (buttons, text boxes, sliders, etc).
 Overview
 --------
 
-.. _customization:
-
-Customization
-+++++++++++++
-
-You can customize the header in ``analyses/README.md``:
-
-.. code-block:: none
-
-    title: Databench - Packaged Analyses
-    description: my awesome analyses
-    logo_url: /static/logo-header.svg
-    favicon_url: /static/myfavicon.ico
-    footer_html: Created by <a href="http://www.trivial.io">me</a>.
-
-Place the ``logo-header.svg`` file in ``analyses/static/``. Any standard image
-format like ``.png``, ``.jpeg`` and ``.svg`` is supported.
-
-To modify the style globally (including the index page with the list of
-analysis) and to add a tracking snippet for analytics,
-you can inject code into the head and the bottom of the page.
-Inject code into the ``<head>`` section by creating a ``head.html`` file inside
-the analysis folder. Similarly, inject code into the bottom of the ``<body>``
-with a ``footer.html`` file.
-
-
 Additional Views
 ++++++++++++++++
 
@@ -105,7 +79,7 @@ Static Files
 To add a static file to an analysis, place it in the analysis folder. Static
 files in this folder are exposed at the ``/<some_analysis>/static/`` url.
 For example, to add ``angular.js`` to an analysis of the name *angular*
-(see for example the `angular analysis in the Databench examples <https://github.com/svenkreiss/databench_examples/tree/master/analyses/angular>`_), add the
+(see for example the `angular analysis in the Databench examples`_), add the
 file ``angular.js`` to the folder ``analyses/angular/`` and include it in
 ``index.html`` with:
 
@@ -123,11 +97,11 @@ see :ref:`customization`.
 Node Modules
 ++++++++++++
 
-Put inside of ``analyses`` folder.
+Databench looks for a ``static`` and a ``node_modules`` folder first in the
+analyses folder and then in the current working directory.
 
 .. code-block:: bash
 
-    cd analyses
     npm init  # creates package.json interactively
     npm install --save d3  # install d3 and add as dependency to packages.json
 
@@ -137,9 +111,8 @@ to then access it with
 
     <script src="/node_modules/d3/d3.min.js"></script>
 
-in html. You can check that JavaScript file into your version control
-or require users to run ``cd analyses; npm install`` to install their own
-``node_modules`` locally.
+in html. The `databench_examples repository`_ contains analyses that use
+static files and Node packages.
 
 
 Running the Backend at a Custom Location
@@ -155,8 +128,7 @@ library and configure the location of your Databench backend:
         'ws://databench-examples.trivial.io/simplepi/ws',
     );
 
-which connects to the backend of the
-`public and live example of simplepi <http://databench-examples.trivial.io/simplepi/>`_.
+which connects to the backend of the `public and live example of simplepi`_.
 When you connect to your own backend, you will have to invoke databench with
 
 .. code-block:: bash
@@ -176,4 +148,9 @@ JavaScript API
 --------------
 
 ``databench.js`` is exposed at ``/_static/databench.js``. Please see the
-`complete JS API reference <http://www.svenkreiss.com/databench/>`_.
+`complete JS API reference`_.
+
+.. _`angular analysis in the Databench examples`: https://github.com/svenkreiss/databench_examples/tree/master/analyses/angular
+.. _`databench_examples repository`: https://github.com/svenkreiss/databench_examples/
+.. _`complete JS API reference`: http://www.svenkreiss.com/databench/
+.. _`public and live example of simplepi`: http://databench-examples.trivial.io/simplepi/
