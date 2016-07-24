@@ -34,7 +34,11 @@
             <div class="class-description"><p>Abstract class for user interface elements which provides general helpers
 to determine the action name from an HTML tag and a way to modify the message
 that is sent with actions of wired elements.</p>
-<p>It also adds <code>this</code> UI element to the DOM node at <code>databenchUI</code>.</p></div>
+<p>The constructor adds the variables <code>actionName</code> and <code>wireSignal</code> using
+<a href="module-ui-UIElement.html#.determineActionName">determineActionName()</a> and
+<a href="module-ui-UIElement.html#.determineWireSignal">determineWireSignal()</a>
+respectively.
+It also adds <code>this</code> UI element to the DOM node at <code>databenchUI</code>.</p></div>
         
     
 </header>
@@ -250,7 +254,7 @@ the tag's <code>data-action</code>, <code>name</code> or <code>id</code> attribu
 
             
 
-            <td class="description last"><p>An HTML element.</p></td>
+            <td class="description last"><p>A HTML element.</p></td>
         </tr>
 
     
@@ -314,6 +318,161 @@ the tag's <code>data-action</code>, <code>name</code> or <code>id</code> attribu
         
 <div class="param-desc">
     <p>Name of action or null.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".determineWireSignal"><span class="type-signature">(static) </span>determineWireSignal<span class="signature">(node)</span><span class="type-signature"> &rarr; {string}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Determine the name of the signal that should be listened to from the backend.</p>
+<p>If the HTML tag as a <code>data-skipwire=true</code> attribute, this is forced to be
+null. Otherwise the signal name is determined from the <code>data-signal</code>,
+<code>data-action</code>, <code>name</code> or <code>id</code> attribute (in that order.)
+For all attributes apart from <code>data-signal</code>, the value is wrapped in an
+object like <code>{ data: value-of-attribute }</code>. The <code>data-signal</code> value
+can contain a <code>:</code> which will be used to create an object as well. That means
+that <code>data-signal=&quot;data:myvalue&quot;</code> gives the same result as <code>data-action=&quot;myvalue&quot;</code>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>node</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A HTML element.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Name of a signal or null.</p>
 </div>
 
 
@@ -498,7 +657,7 @@ the tag's <code>data-action</code>, <code>name</code> or <code>id</code> attribu
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ui.html">ui</a></li></ul><h3>Classes</h3><ul><li><a href="Connection.html">Connection</a></li><li><a href="module-ui-Button.html">Button</a></li><li><a href="module-ui-Log.html">Log</a></li><li><a href="module-ui-Slider.html">Slider</a></li><li><a href="module-ui-StatusLog.html">StatusLog</a></li><li><a href="module-ui-Text.html">Text</a></li><li><a href="module-ui-TextInput.html">TextInput</a></li><li><a href="module-ui-UIElement.html">UIElement</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ui.html">ui</a></li></ul><h3>Classes</h3><ul><li><a href="Connection.html">Connection</a></li><li><a href="module-ui-Button.html">Button</a></li><li><a href="module-ui-Image.html">Image</a></li><li><a href="module-ui-Log.html">Log</a></li><li><a href="module-ui-Slider.html">Slider</a></li><li><a href="module-ui-StatusLog.html">StatusLog</a></li><li><a href="module-ui-Text.html">Text</a></li><li><a href="module-ui-TextInput.html">TextInput</a></li><li><a href="module-ui-UIElement.html">UIElement</a></li></ul>
 </nav>
 
 <br class="clear">
