@@ -1,7 +1,6 @@
 """Command line tool to scaffold a new analysis environment."""
 
 import argparse
-import glob
 import logging
 import os
 import shutil

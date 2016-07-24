@@ -2,7 +2,6 @@
 
 from __future__ import absolute_import, unicode_literals, division
 
-import glob
 import json
 import logging
 import os
@@ -16,7 +15,6 @@ except ImportError:
     from urlparse import parse_qs  # Python 2
 
 from . import __version__ as DATABENCH_VERSION
-from .readme import Readme
 from .utils import sanitize_message
 
 log = logging.getLogger(__name__)

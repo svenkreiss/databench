@@ -7,7 +7,7 @@ install:
  # install Python dependencies
  - pip install --upgrade pip
  - pip -V
- - "pip install -e .[tests]"
+ - "pip install -e .[tests,markup]"
  - pip install python-coveralls
  # install Node 6
  - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install 6

@@ -46,8 +46,8 @@ def main():
                           help='SSL certificate file')
     ssl_args.add_argument('--ssl-keyfile', dest='ssl_keyfile',
                           help='SSL key file')
-    ssl_args.add_argument('--ssl-port', dest='ssl_port',
-                          type=int, default=int(os.environ.get('SSLPORT', 5001)),
+    ssl_args.add_argument('--ssl-port', dest='ssl_port', type=int,
+                          default=int(os.environ.get('SSLPORT', 5001)),
                           help='SSL port for webserver')
 
     args = parser.parse_args()
