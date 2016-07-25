@@ -17,6 +17,7 @@ except ImportError:
 from . import __version__ as DATABENCH_VERSION
 from .utils import sanitize_message
 
+PING_INTERVAL = 15000
 log = logging.getLogger(__name__)
 
 
@@ -119,7 +120,15 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
     def initialize(self, meta):
         self.meta = meta
         self.analysis = None
+        self.ping_callback = tornado.ioloop.PeriodicCallback(self.do_ping,
+                                                             PING_INTERVAL)
         tornado.autoreload.add_reload_hook(self.on_close)
+
+    def do_ping(self):
+        if self.ws_connection is None:
+            self.ping_callback.stop()
+            return
+        self.ping(b'')
 
     def open(self):
         log.debug('WebSocket connection opened.')
