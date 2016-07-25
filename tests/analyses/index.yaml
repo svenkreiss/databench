@@ -27,3 +27,5 @@ analyses:
     title: Simple2
   - name: simple3
     title: Simple3
+  - name: connection_interruption
+    title: Connection Interruption

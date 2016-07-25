@@ -128,7 +128,7 @@ class Connection {
 
     // connect response
     if (message.signal === '__connect') {
-      this.analysisId = message.load.analysisId;
+      this.analysisId = message.load.analysis_id;
     }
 
     // processes

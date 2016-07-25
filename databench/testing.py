@@ -5,7 +5,9 @@ from tornado.testing import AsyncHTTPTestCase, AsyncHTTPSTestCase
 
 
 class TestConnection(object):
-    def __init__(self):
+    def __init__(self, analysis_id=None, request_args=None):
+        self.analysis_id = analysis_id
+        self.request_args = request_args
         self.ws = None
 
     @tornado.gen.coroutine
@@ -15,7 +17,10 @@ class TestConnection(object):
             # io_loop=self.io_loop,
             compression_options=compression_options)
 
-        yield self.ws.write_message('{"__connect": null}')
+        yield self.ws.write_message(json.dumps({
+            '__connect': self.analysis_id,
+            '__request_args': self.request_args,
+        }))
         r = yield self.read()
         self.analysis_id = r['load']['analysis_id']
         raise tornado.gen.Return(self)
@@ -69,16 +74,21 @@ test/websocket_test.py
         return App(self.analyses_path).tornado_app()
 
     @tornado.gen.coroutine
-    def ws_connect(self, analysis, compression_options=None):
+    def ws_connect(self, analysis,
+                   analysis_id=None, request_args=None,
+                   compression_options=None):
         """Open a WebSocket connection to an analysis.
 
         Runs the handshake and sets ``connection.analysis_id``.
 
-        :param analysis: name of an analysis
+        :param str analysis: name of an analysis
+        :param str analysis_id: ID of an analysis
+        :param str request_args: request args
         """
 
         url = 'ws://127.0.0.1:{}/{}/ws'.format(self.get_http_port(), analysis)
-        connection = yield TestConnection().connect(url, compression_options)
+        connection = yield (TestConnection(analysis_id, request_args)
+                            .connect(url, compression_options))
 
         self.assertEqual(len(connection.analysis_id), 8)
         raise tornado.gen.Return(connection)

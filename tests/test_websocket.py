@@ -52,3 +52,16 @@ class BasicsTestAnalyses(databench.AnalysisTestCase):
         response = self.fetch('/node_modules/test_file.txt')
         self.assertEqual(response.code, 200)
         self.assertIn(b'placeholder', response.body)
+
+    @tornado.testing.gen_test
+    def test_connection_interruption(self):
+        connection1 = yield self.ws_connect('connection_interruption')
+        yield connection1.close()
+        analysis_id1 = connection1.analysis_id
+        self.assertEqual(len(analysis_id1), 8)
+
+        connection2 = yield self.ws_connect('connection_interruption',
+                                            analysis_id1)
+        yield connection2.close()
+        analysis_id2 = connection2.analysis_id
+        self.assertEqual(analysis_id1, analysis_id2)
