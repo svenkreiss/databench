@@ -26,6 +26,13 @@ def sanitize_message(m):
 
 
 def fig_to_src(figure, image_format='png', dpi=80):
+    """Convert a matplotlib figure to an inline HTML image.
+
+    :param matplotlib.Figure figure: Figure to display.
+    :param str image_format: png (default) or svg
+    :param int dpi: dots-per-inch for raster graphics.
+    :rtype: str
+    """
     if image_format == 'png':
         f = io.BytesIO()
         figure.savefig(f, format=image_format, dpi=dpi)

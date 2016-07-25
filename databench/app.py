@@ -106,28 +106,25 @@ class App(object):
             orig_syspath = sys.path
             sys.path.append('.')
             analyses = importlib.import_module(analyses_path)
-            analyses_path = os.path.abspath(os.path.dirname(analyses.__file__))
             sys.path = orig_syspath
         elif (os.path.isfile('analyses/__init__.py') and
               os.path.isfile('analyses/index.yaml')):  # cwd outside analyses
             orig_syspath = sys.path
             sys.path.append('.')
             import analyses
-            analyses_path = os.path.abspath('analyses')
             sys.path = orig_syspath
         elif os.path.isfile('index.yaml'):  # cwd is inside analyses
             orig_syspath = sys.path
             sys.path.append('..')
             import analyses
-            analyses_path = os.path.abspath('.')
             sys.path = orig_syspath
         else:
             log.warning('Did not find "analyses" module. '
                         'Using packaged analyses.')
             from databench import analyses_packaged as analyses
-            analyses_path = os.path.abspath('databench/analyses_packaged')
 
-        self.analyses_path = analyses_path
+        self.analyses_path = os.path.abspath(
+            os.path.dirname(analyses.__file__))
         self.analyses = analyses
 
         return analyses
@@ -135,6 +132,7 @@ class App(object):
     def analyses_info(self):
         """Add analyses from the analyses folder."""
         f_config = os.path.join(self.analyses_path, 'index.yaml')
+        print(f_config)
         tornado.autoreload.watch(f_config)
         with open(f_config, 'r') as f:
             config = yaml.safe_load(f)

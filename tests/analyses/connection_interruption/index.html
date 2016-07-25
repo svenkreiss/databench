@@ -28,6 +28,13 @@
 
     d.emit('state', 'test');
 
+    setTimeout(function() {
+        d.socket.close();
+        setTimeout(function() {
+            d.emit('state', 'test2');
+        }, 1000);
+    }, 1000);
+
     d.connect();
 </script>
 {% end %}

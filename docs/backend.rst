@@ -91,6 +91,12 @@ Datastore
    :members:
 
 
+Utils
+-----
+
+.. autofunction:: databench.fig_to_src
+
+
 AnalysisTestCase
 ----------------
 
