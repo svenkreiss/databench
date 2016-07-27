@@ -97,8 +97,14 @@ Utils
 .. autofunction:: databench.fig_to_src
 
 
-AnalysisTestCase
-----------------
+testing
+-------
 
-.. autoclass:: databench.AnalysisTestCase
+.. autoclass:: databench.testing.AnalysisTestCase
+   :members:
+
+.. autoclass:: databench.testing.AnalysisTestCaseSSL
+   :members:
+
+.. autoclass:: databench.testing.Connection
    :members:

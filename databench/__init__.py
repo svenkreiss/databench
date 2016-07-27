@@ -12,5 +12,5 @@ from .datastore import Datastore
 from .meta import Meta
 from .meta_zmq import MetaZMQ
 from .readme import Readme
-from .testing import AnalysisTestCase, AnalysisTestCaseSSL
+from . import testing
 from .utils import sanitize_message, fig_to_src

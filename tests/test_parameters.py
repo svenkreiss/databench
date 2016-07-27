@@ -1,4 +1,4 @@
-import databench
+from databench.testing import AnalysisTestCase
 import tornado.testing
 
 
@@ -7,8 +7,9 @@ class Parameters(object):
 
     @tornado.testing.gen_test
     def test_no_parameter(self):
-        c = yield self.ws_connect(self.analysis)
-        c.emit('test_action')
+        c = self.connection(self.analysis)
+        yield c.connect()
+        yield c.emit('test_action')
         r = yield c.read()
         yield c.close()
 
@@ -16,8 +17,9 @@ class Parameters(object):
 
     @tornado.testing.gen_test
     def test_empty_parameter(self):
-        c = yield self.ws_connect(self.analysis)
-        c.emit('test_fn', '')
+        c = self.connection(self.analysis)
+        yield c.connect()
+        yield c.emit('test_fn', '')
         r = yield c.read()
         yield c.close()
 
@@ -25,8 +27,9 @@ class Parameters(object):
 
     @tornado.testing.gen_test
     def test_parameter(self):
-        c = yield self.ws_connect(self.analysis)
-        c.emit('test_fn', 1)
+        c = self.connection(self.analysis)
+        yield c.connect()
+        yield c.emit('test_fn', 1)
         r = yield c.read()
         yield c.close()
 
@@ -34,8 +37,9 @@ class Parameters(object):
 
     @tornado.testing.gen_test
     def test_list(self):
-        c = yield self.ws_connect(self.analysis)
-        c.emit('test_fn', [1, 2])
+        c = self.connection(self.analysis)
+        yield c.connect()
+        yield c.emit('test_fn', [1, 2])
         r = yield c.read()
         yield c.close()
 
@@ -43,8 +47,9 @@ class Parameters(object):
 
     @tornado.testing.gen_test
     def test_dict(self):
-        c = yield self.ws_connect(self.analysis)
-        c.emit('test_fn', {'first_param': 1, 'second_param': 2})
+        c = self.connection(self.analysis)
+        yield c.connect()
+        yield c.emit('test_fn', {'first_param': 1, 'second_param': 2})
         r = yield c.read()
         yield c.close()
 
@@ -52,8 +57,9 @@ class Parameters(object):
 
     @tornado.testing.gen_test
     def test_process(self):
-        c = yield self.ws_connect(self.analysis)
-        c.emit('test_fn', {'first_param': 1, '__process_id': 123})
+        c = self.connection(self.analysis)
+        yield c.connect()
+        yield c.emit('test_fn', {'first_param': 1, '__process_id': 123})
         r_start = yield c.read()
         r = yield c.read()
         r_end = yield c.read()
@@ -69,12 +75,22 @@ class Parameters(object):
                          {'signal': '__process',
                           'load': {'id': 123, 'status': 'end'}})
 
+    @tornado.testing.gen_test
+    def test_data(self):
+        data = {}
+        c = self.connection(self.analysis)
+        c.on('data', lambda d: data.update(d))
+        yield c.connect()
+        yield c.emit('test_data', ['light', 'red'])
+        yield c.read()
+        self.assertEqual({'light': 'red'}, data)
 
-class ParametersTest(Parameters, databench.AnalysisTestCase):
+
+class ParametersTest(Parameters, AnalysisTestCase):
     analyses_path = 'tests.analyses'
     analysis = 'parameters'
 
 
-class ParametersPyTest(Parameters, databench.AnalysisTestCase):
+class ParametersPyTest(Parameters, AnalysisTestCase):
     analyses_path = 'tests.analyses'
     analysis = 'parameters_py'

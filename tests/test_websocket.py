@@ -1,6 +1,6 @@
 """Websocket test."""
 
-import databench
+from databench.testing import AnalysisTestCase, AnalysisTestCaseSSL
 import tornado.testing
 
 
@@ -14,28 +14,29 @@ class Basics(object):
 
     @tornado.testing.gen_test
     def test_connect(self):
-        c = yield self.ws_connect(self.analysis)
+        c = self.connection(self.analysis)
+        yield c.connect()
         yield c.close()
         self.assertEqual(len(c.analysis_id), 8)
 
 
-class BasicsDummypi(Basics, databench.AnalysisTestCase):
+class BasicsDummypi(Basics, AnalysisTestCase):
     analysis = 'dummypi'
 
 
-class BasicsDummypiPy(Basics, databench.AnalysisTestCase):
+class BasicsDummypiPy(Basics, AnalysisTestCase):
     analysis = 'dummypi_py'
 
 
-class BasicsDummypiSSL(Basics, databench.AnalysisTestCaseSSL):
+class BasicsDummypiSSL(Basics, AnalysisTestCaseSSL):
     analysis = 'dummypi'
 
 
-class BasicsDummypiPySSL(Basics, databench.AnalysisTestCaseSSL):
+class BasicsDummypiPySSL(Basics, AnalysisTestCaseSSL):
     analysis = 'dummypi_py'
 
 
-class BasicsTestAnalyses(databench.AnalysisTestCase):
+class BasicsTestAnalyses(AnalysisTestCase):
     analyses_path = 'tests.analyses'
 
     def test_index(self):
@@ -55,13 +56,14 @@ class BasicsTestAnalyses(databench.AnalysisTestCase):
 
     @tornado.testing.gen_test
     def test_connection_interruption(self):
-        connection1 = yield self.ws_connect('connection_interruption')
+        connection1 = self.connection('connection_interruption')
+        yield connection1.connect()
         yield connection1.close()
         analysis_id1 = connection1.analysis_id
         self.assertEqual(len(analysis_id1), 8)
 
-        connection2 = yield self.ws_connect('connection_interruption',
-                                            analysis_id1)
+        connection2 = self.connection('connection_interruption', analysis_id1)
+        yield connection2.connect()
         yield connection2.close()
         analysis_id2 = connection2.analysis_id
         self.assertEqual(analysis_id1, analysis_id2)

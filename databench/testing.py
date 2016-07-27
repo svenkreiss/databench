@@ -1,19 +1,30 @@
 from .app import App
+from collections import defaultdict
 import json
 import tornado
 from tornado.testing import AsyncHTTPTestCase, AsyncHTTPSTestCase
 
 
-class TestConnection(object):
-    def __init__(self, analysis_id=None, request_args=None):
+class Connection(object):
+    """WebSocket client connection to backend.
+
+    :param str url: WebSocket url.
+    :param str analysis_id: An id.
+    :param str request_args: Request args.
+    """
+    def __init__(self, url, analysis_id=None, request_args=None):
+        self.url = url
         self.analysis_id = analysis_id
         self.request_args = request_args
+
         self.ws = None
+        self.on_process_callbacks = defaultdict(list)
+        self.on_callbacks = defaultdict(list)
 
     @tornado.gen.coroutine
-    def connect(self, url, compression_options=None):
+    def connect(self, compression_options=None):
         self.ws = yield tornado.websocket.websocket_connect(
-            tornado.httpclient.HTTPRequest(url, validate_cert=False),
+            tornado.httpclient.HTTPRequest(self.url, validate_cert=False),
             # io_loop=self.io_loop,
             compression_options=compression_options)
 
@@ -55,7 +66,30 @@ class TestConnection(object):
     def read(self):
         """Read a message from the websocket connection."""
         response = yield self.ws.read_message()
-        raise tornado.gen.Return(json.loads(response))
+        message = json.loads(response)
+
+        # processes
+        if 'signal' in message and message['signal'] == '__process':
+            id_ = message['load']['id']
+            status = message['load']['status']
+            for cb in self.on_process_callbacks[id_]:
+                cb(status)
+
+        # normal message
+        if 'signal' in message:
+            for cb in self.on_callbacks[message['signal']]:
+                if 'load' in message:
+                    cb(message['load'])
+                else:
+                    cb()
+
+        raise tornado.gen.Return(message)
+
+    def on(self, signal, callback):
+        self.on_callbacks[signal].append(callback)
+
+    def on_process(self, process_id, callback):
+        self.on_process_callbacks[process_id].append(callback)
 
 
 class AnalysisTestCase(AsyncHTTPTestCase):
@@ -73,25 +107,14 @@ test/websocket_test.py
     def get_app(self):
         return App(self.analyses_path).tornado_app()
 
-    @tornado.gen.coroutine
-    def ws_connect(self, analysis,
-                   analysis_id=None, request_args=None,
-                   compression_options=None):
-        """Open a WebSocket connection to an analysis.
+    def connection(self, analysis_name, analysis_id=None, request_args=None):
+        """Create a WebSocket connection to the backend.
 
-        Runs the handshake and sets ``connection.analysis_id``.
-
-        :param str analysis: name of an analysis
-        :param str analysis_id: ID of an analysis
-        :param str request_args: request args
+        :rtype: Connection
         """
-
-        url = 'ws://127.0.0.1:{}/{}/ws'.format(self.get_http_port(), analysis)
-        connection = yield (TestConnection(analysis_id, request_args)
-                            .connect(url, compression_options))
-
-        self.assertEqual(len(connection.analysis_id), 8)
-        raise tornado.gen.Return(connection)
+        url = 'ws://127.0.0.1:{}/{}/ws'.format(self.get_http_port(),
+                                               analysis_name)
+        return Connection(url, analysis_id, request_args)
 
 
 class AnalysisTestCaseSSL(AsyncHTTPSTestCase):
@@ -109,17 +132,11 @@ test/websocket_test.py
     def get_app(self):
         return App(self.analyses_path).tornado_app()
 
-    @tornado.gen.coroutine
-    def ws_connect(self, analysis, compression_options=None):
-        """Open a WebSocket connection to an analysis.
+    def connection(self, analysis_name, analysis_id=None, request_args=None):
+        """Create a WebSocket connection to the backend.
 
-        Runs the handshake and sets ``connection.analysis_id``.
-
-        :param analysis: name of an analysis
+        :rtype: Connection
         """
-
-        url = 'wss://127.0.0.1:{}/{}/ws'.format(self.get_http_port(), analysis)
-        connection = yield TestConnection().connect(url, compression_options)
-
-        self.assertEqual(len(connection.analysis_id), 8)
-        raise tornado.gen.Return(connection)
+        url = 'wss://127.0.0.1:{}/{}/ws'.format(self.get_http_port(),
+                                                analysis_name)
+        return Connection(url, analysis_id, request_args)

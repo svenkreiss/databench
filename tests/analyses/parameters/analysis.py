@@ -10,3 +10,7 @@ class Parameters(databench.Analysis):
     def on_test_action(self):
         """process an action without a message"""
         self.emit('test_action_ack')
+
+    def on_test_data(self, key, value):
+        """process an action without a message"""
+        self.data[key] = value

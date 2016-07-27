@@ -1,4 +1,4 @@
-import databench
+from databench.testing import AnalysisTestCase
 import tornado.testing
 
 
@@ -9,7 +9,8 @@ class MultipleConnections(object):
         connections = []
 
         for _ in range(4):
-            connection = yield self.ws_connect(self.analysis)
+            connection = self.connection(self.analysis)
+            yield connection.connect()
             connections.append(connection)
 
         for connection in connections:
@@ -19,9 +20,9 @@ class MultipleConnections(object):
             yield connection.close()
 
 
-class MultipleDummypi(MultipleConnections, databench.AnalysisTestCase):
+class MultipleDummypi(MultipleConnections, AnalysisTestCase):
     analysis = 'dummypi'
 
 
-class MultipleDummypiPy(MultipleConnections, databench.AnalysisTestCase):
+class MultipleDummypiPy(MultipleConnections, AnalysisTestCase):
     analysis = 'dummypi_py'

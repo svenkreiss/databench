@@ -12,6 +12,10 @@ class Parameters_Py(databench_py.Analysis):
         """process an action without a message"""
         self.emit('test_action_ack')
 
+    def on_test_data(self, key, value):
+        """process an action without a message"""
+        self.data[key] = value
+
 
 if __name__ == "__main__":
     analysis = databench_py.singlethread.Meta('parameters_py', Parameters_Py)

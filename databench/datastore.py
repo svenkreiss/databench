@@ -6,7 +6,7 @@ log = logging.getLogger(__name__)
 
 
 class Datastore(object):
-    """key-value data store
+    """Key-value data store.
 
     An in-memory and in-process (not persistent) key-value store. It behaves in
     many ways like a dictionary.
@@ -23,7 +23,7 @@ class Datastore(object):
         self.domain = domain
 
     def on_change(self, callback):
-        """register a change callback
+        """Register a change callback.
 
         :param callback:
             A callback function that takes in a key and a value.
@@ -32,7 +32,7 @@ class Datastore(object):
         return self
 
     def __setitem__(self, key, value):
-        """set value for given key
+        """Set value for given key.
 
         Allows for assignments of the form ``d[key] = value``. The value is
         copied using ``copy.deepcopy(value)`` before it is stored. Callbacks
@@ -51,17 +51,17 @@ class Datastore(object):
         return self
 
     def __getitem__(self, key):
-        """return the value for the given key"""
+        """Return the value for the given key."""
         return Datastore.store[self.domain][key]
 
     def __delitem__(self, key):
-        """delete the given key"""
+        """Delete the given key."""
         del Datastore.store[self.domain][key]
         for cb in Datastore.on_change_cb[self.domain]:
             cb(key, None)
 
     def __contains__(self, key):
-        """test whether key is set"""
+        """Test whether key is set."""
         return key in Datastore.store[self.domain]
 
     def update(self, key_value_pairs):
@@ -74,7 +74,7 @@ class Datastore(object):
             self[k] = v
 
     def init(self, key_value_pairs):
-        """initialize datastore
+        """Initialize datastore.
 
         Only sets values for keys that are not in the datastore already.
         No callbacks are called.
