@@ -132,7 +132,6 @@ class App(object):
     def analyses_info(self):
         """Add analyses from the analyses folder."""
         f_config = os.path.join(self.analyses_path, 'index.yaml')
-        print(f_config)
         tornado.autoreload.watch(f_config)
         with open(f_config, 'r') as f:
             config = yaml.safe_load(f)

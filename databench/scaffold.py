@@ -57,6 +57,13 @@ def create_analyses(name, kernel=None):
 
     # index.yaml
     index_path = os.path.join(os.getcwd(), 'analyses', 'index.yaml')
+    if not os.path.exists(index_path):
+        with open(index_path, 'w') as f:
+            f.write('title: My Analyses\n')
+            f.write('version: \'0.1.0\'\n')
+            f.write('\n')
+            f.write('analyses:\n')
+
     if kernel is None:
         with open(index_path, 'a') as f:
             f.write('  # automatically inserted by scaffold-databench\n')
