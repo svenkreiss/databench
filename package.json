@@ -1,11 +1,11 @@
 {
-  "name": "databench",
+  "name": "Databench",
   "version": "0.4.0",
   "description": "Realtime data analysis tool.",
-  "main": "js/src/main.js",
+  "main": "js/build/node_client/main.js",
   "directories": {
-    "doc": "docs",
-    "test": "tests"
+    "doc": "docs/jsdoc",
+    "test": "js/tests"
   },
   "dependencies": {
     "websocket": "^1.0.22"
@@ -39,7 +39,7 @@
   },
   "scripts": {
     "build": "gulp",
-    "test": "mocha -t 5000 --no-colors --use_strict js/test/test.js",
+    "test": "mocha -t 5000 --no-colors --use_strict js/tests/test.js",
     "lint": "eslint js/src/*.js",
     "esdoc": "esdoc -c esdoc.json",
     "jsdoc": "jsdoc --verbose --readme js/docs/index.md js/src/*.js -d docs/jsdoc/ -c js/docs/conf.json"

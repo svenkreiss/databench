@@ -35,6 +35,10 @@ class Connection {
     this.requestArgs = (requestArgs == null && (typeof window !== 'undefined')) ?
                         window.location.search : requestArgs;
 
+    if (!this.wsUrl) {
+      throw Error('Need a wsUrl.');
+    }
+
     this.errorCB = msg => (msg != null ? console.log(`connection error: ${msg}`) : null);
     this.onCallbacks = [];
     this._onCallbacksOptimized = null;
@@ -45,23 +49,11 @@ class Connection {
 
     this.socket = null;
     this.socketCheckOpen = null;
-
-    // bind methods
-    this.connect = this.connect.bind(this);
-    this.wsCheckOpen = this.wsCheckOpen.bind(this);
-    this.wsOnOpen = this.wsOnOpen.bind(this);
-    this.wsOnClose = this.wsOnClose.bind(this);
-    this.wsOnMessage = this.wsOnMessage.bind(this);
-    this.optimizeOnCallbacks = this.optimizeOnCallbacks.bind(this);
-    this.on = this.on.bind(this);
-    this.emit = this.emit.bind(this);
-    this.onProcess = this.onProcess.bind(this);
   }
 
   static guessWSUrl() {
-    let WSProtocol = 'ws';
-    if (location.origin.startsWith('https://')) WSProtocol = 'wss';
-
+    if (typeof location === 'undefined') return null;
+    const WSProtocol = location.origin.startsWith('https://') ? 'wss' : 'ws';
     const path = location.pathname.substring(0, location.pathname.lastIndexOf('/'));
     return `${WSProtocol}://${document.domain}:${location.port}${path}/ws`;
   }
@@ -70,10 +62,10 @@ class Connection {
   connect() {
     this.socket = new WebSocket(this.wsUrl);
 
-    this.socketCheckOpen = setInterval(this.wsCheckOpen, 2000);
-    this.socket.onopen = this.wsOnOpen;
-    this.socket.onclose = this.wsOnClose;
-    this.socket.onmessage = this.wsOnMessage;
+    this.socketCheckOpen = setInterval(this.wsCheckOpen.bind(this), 2000);
+    this.socket.onopen = this.wsOnOpen.bind(this);
+    this.socket.onclose = this.wsOnClose.bind(this);
+    this.socket.onmessage = this.wsOnMessage.bind(this);
     return this;
   }
 
@@ -120,7 +112,7 @@ class Connection {
                         this.wsReconnectDelay;
     console.log(`WebSocket reconnect attempt ${this.wsReconnectAttempt} ` +
                 `in ${actualDelay.toFixed(0)}ms.`);
-    setTimeout(this.connect, actualDelay);
+    setTimeout(this.connect.bind(this), actualDelay);
   }
 
   wsOnMessage(event) {
