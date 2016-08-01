@@ -3,7 +3,7 @@
 
 from __future__ import absolute_import
 
-__version__ = "0.4b4"
+__version__ = "0.4b5"
 
 from .analysis import Analysis
 from .analysis_zmq import AnalysisZMQ
