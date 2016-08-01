@@ -14,15 +14,20 @@ analyses:
     description: An analysis for unit testing action parameters.
   - name: simple1
     title: Simple1
-    watch: 'simple1/*.md'
+    watch:
+      - simple1/*.md
   - name: simple1_py
     kernel: py
     title: Simple1 with Python Kernel
-    watch: simple1_py/*.html,simple1_py/*.py
+    watch:
+      - simple1_py/*.html
+      - simple1_py/*.py
   - name: simple1_pyspark
     kernel: pyspark
     title: Simple1 with PySpark Kernel
-    watch: simple1_pyspark/*.html,simple1_pyspark/*.py
+    watch:
+      - simple1_pyspark/*.html
+      - simple1_pyspark/*.py
   - name: simple2
     title: Simple2
   - name: simple3

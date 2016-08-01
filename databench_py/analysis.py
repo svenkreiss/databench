@@ -37,7 +37,11 @@ class Analysis(object):
     """Data callbacks."""
 
     def data_change(self, key, value):
+        if hasattr(self, 'data_{}'.format(key)):
+            value = getattr(self, 'data_{}'.format(key))(value)
         self.emit('data', {key: value})
 
     def class_data_change(self, key, value):
+        if hasattr(self, 'class_data_{}'.format(key)):
+            value = getattr(self, 'class_data_{}'.format(key))(value)
         self.emit('class_data', {key: value})

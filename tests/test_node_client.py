@@ -17,7 +17,8 @@ class NodeClient(unittest.TestCase):
         # main process receives SIGTERM
         self.daemon = subprocess.Popen(['databench',
                                         '--log={}'.format(LOGLEVEL),
-                                        '--analyses', 'tests.analyses'],
+                                        '--analyses', 'tests.analyses',
+                                        '--coverage', '.coverage'],
                                        close_fds=True,
                                        stdin=subprocess.PIPE,
                                        stdout=subprocess.PIPE,

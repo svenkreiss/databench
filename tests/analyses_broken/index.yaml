@@ -1,0 +1,9 @@
+title: Broken Analyses
+build: touch build_test.txt
+
+analyses:
+  - name: doesnotexist
+    title: Does Not Exist
+  - name: doesnotexistatall
+    title: Does Not Exist At All
+  - title: noname

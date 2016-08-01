@@ -2,22 +2,19 @@
 
 import databench
 import ssl
-import tornado.testing
 
 
-class App(tornado.testing.AsyncHTTPTestCase):
-    def get_app(self):
-        return databench.App().tornado_app()
-
+class App(databench.testing.AnalysisTestCase):
     def test_index(self):
         response = self.fetch('/')
         self.assertEqual(response.code, 200)
 
+    def test_dummypi(self):
+        response = self.fetch('/dummypi/')
+        self.assertEqual(response.code, 200)
 
-class SSLApp(tornado.testing.AsyncHTTPSTestCase):
-    def get_app(self):
-        return databench.App().tornado_app()
 
+class SSLApp(databench.testing.AnalysisTestCaseSSL):
     def test_index(self):
         response = self.fetch('/')
         self.assertEqual(response.code, 200)

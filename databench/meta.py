@@ -122,6 +122,7 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
         self.analysis = None
         self.ping_callback = tornado.ioloop.PeriodicCallback(self.do_ping,
                                                              PING_INTERVAL)
+        self.ping_callback.start()
         tornado.autoreload.add_reload_hook(self.on_close)
 
     def do_ping(self):
@@ -175,6 +176,7 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
         else:
             self.meta.run_process(self.analysis, msg['signal'], msg['load'])
 
+    @tornado.gen.coroutine
     def emit(self, signal, message='__nomessagetoken__'):
         message = sanitize_message(message)
 

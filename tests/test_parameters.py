@@ -85,6 +85,36 @@ class Parameters(object):
         yield c.read()
         self.assertEqual({'light': 'red'}, data)
 
+    @tornado.testing.gen_test
+    def test_data_with_data_cb(self):
+        data = {}
+        c = self.connection(self.analysis)
+        c.on('data', lambda d: data.update(d))
+        yield c.connect()
+        yield c.emit('test_data', ['light2', 'red'])
+        yield c.read()
+        self.assertEqual({'light2': 'red-modified'}, data)
+
+    @tornado.testing.gen_test
+    def test_class_data(self):
+        data = {}
+        c = self.connection(self.analysis)
+        c.on('class_data', lambda d: data.update(d))
+        yield c.connect()
+        yield c.emit('test_class_data', ['light', 'red'])
+        yield c.read()
+        self.assertEqual({'light': 'red'}, data)
+
+    @tornado.testing.gen_test
+    def test_class_data_with_data_cb(self):
+        data = {}
+        c = self.connection(self.analysis)
+        c.on('class_data', lambda d: data.update(d))
+        yield c.connect()
+        yield c.emit('test_class_data', ['light2', 'red'])
+        yield c.read()
+        self.assertEqual({'light2': 'red-modified'}, data)
+
 
 class ParametersTest(Parameters, AnalysisTestCase):
     analyses_path = 'tests.analyses'

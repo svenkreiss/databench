@@ -274,7 +274,9 @@ class App(object):
         # distribute info to the metas
         distribute = ('logo_url', 'favicon_url', 'footer_html',
                       'injection_head', 'injection_footer')
-        analysis_infos = {info['name']: info for info in self.info['analyses']}
+        analysis_infos = {info['name']: info
+                          for info in self.info['analyses']
+                          if 'name' in info}
         self.info['analyses'] = []  # rewrite self.info['analyses']
         for meta in self.metas:
             log.info('Registering meta information {}'.format(meta.name))
@@ -311,16 +313,16 @@ class App(object):
 
         # process files to watch for autoreload
         if aggregated['watch']:
-            log.info('watching additional files: {}'
-                     ''.format(aggregated['watch']))
+            to_watch = [expr for w in aggregated['watch'] for expr in w]
+            log.info('watching additional files: {}'.format(to_watch))
 
             cwd = os.getcwd()
             os.chdir(self.analyses_path)
             if glob2:
-                files = glob2.glob(','.join(aggregated['watch']))
+                files = [fn for expr in to_watch for fn in glob2.glob(expr)]
             else:
-                files = glob.glob(','.join(aggregated['watch']))
-                if any('**' in w for w in aggregated['watch']):
+                files = [fn for expr in to_watch for fn in glob.glob(expr)]
+                if any('**' in expr for expr in to_watch):
                     log.warning('Please run "pip install glob2" to properly '
                                 'process watch patterns with "**".')
             os.chdir(cwd)

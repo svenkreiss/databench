@@ -7,7 +7,6 @@ from __future__ import absolute_import
 import argparse
 import logging
 import os
-import random
 import ssl
 import sys
 import tornado
@@ -37,8 +36,7 @@ def main():
                         help='import path for analyses')
     parser.add_argument('--build', default=False, action='store_true',
                         help='run the build command and exit')
-    parser.add_argument('--with-coverage', dest='with_coverage',
-                        default=False, action='store_true',
+    parser.add_argument('--coverage', default=False,
                         help=argparse.SUPPRESS)
 
     ssl_args = parser.add_argument_group('SSL')
@@ -54,12 +52,9 @@ def main():
 
     # coverage
     cov = None
-    if args.with_coverage:
+    if args.coverage:
         import coverage
-        cov = coverage.coverage(
-            data_suffix=str(int(random.random() * 999999.0)),
-            source=['databench'],
-        )
+        cov = coverage.Coverage(data_file=args.coverage, data_suffix=True)
         cov.start()
 
     # this is included here so that is included in coverage
@@ -80,6 +75,9 @@ def main():
     if args.build:
         logging.info('Build mode: running build command and exit.')
         app.build()
+        if cov:
+            cov.stop()
+            cov.save()
         return
 
     # HTTP server
@@ -97,10 +95,10 @@ def main():
     try:
         tornado.ioloop.IOLoop.current().start()
     except KeyboardInterrupt:
+        tornado.ioloop.IOLoop.current().stop()
         if cov:
             cov.stop()
             cov.save()
-        tornado.ioloop.IOLoop.current().stop()
 
 
 if __name__ == '__main__':

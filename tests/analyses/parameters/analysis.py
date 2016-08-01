@@ -12,5 +12,15 @@ class Parameters(databench.Analysis):
         self.emit('test_action_ack')
 
     def on_test_data(self, key, value):
-        """process an action without a message"""
+        """Store some test data."""
         self.data[key] = value
+
+    def on_test_class_data(self, key, value):
+        """Store key-value in class data."""
+        self.class_data[key] = value
+
+    def data_light2(self, value):
+        return '{}-modified'.format(value)
+
+    def class_data_light2(self, value):
+        return '{}-modified'.format(value)
