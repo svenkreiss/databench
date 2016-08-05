@@ -69,6 +69,13 @@ class Connection {
     return this;
   }
 
+  /** close connection */
+  disconnect() {
+    this.socket.onclose = null;
+    this.socket.close();
+    this.socket = null;
+  }
+
   wsCheckOpen() {
     if (this.socket.readyState === this.socket.CONNECTING) {
       return;

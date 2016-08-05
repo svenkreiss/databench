@@ -1,6 +1,6 @@
 {
   "name": "databench",
-  "version": "0.4.0",
+  "version": "0.4.0-beta.1",
   "description": "Realtime data analysis tool.",
   "main": "js/build/node_client/main.js",
   "directories": {
@@ -38,6 +38,7 @@
     }
   },
   "scripts": {
+    "prepublish": "gulp",
     "build": "gulp",
     "test": "mocha -t 5000 --no-colors --use_strict js/tests/test.js",
     "lint": "eslint js/src/*.js",
