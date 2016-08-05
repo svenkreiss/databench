@@ -32,40 +32,41 @@ class Meta(object):
     :param analysis_class:
         Object that should be instantiated for every new websocket connection.
     :type analysis_class: :class:`databench.Analysis`
+
+    :param str analysis_path: Path of the analysis class.
+
+    :param list extra_routes: [(route, handler, data), ...]
     """
 
-    def __init__(self, name, analysis_class, analysis_path):
+    def __init__(self, name, analysis_class, analysis_path, extra_routes):
         self.name = name
         self.analysis_class = analysis_class
         self.analysis_path = analysis_path
 
         self.info = {}
-        self._routes = None
+        self.routes = [
+            (r'/{}/static/(.*)'.format(self.name),
+             tornado.web.StaticFileHandler,
+             {'path': self.analysis_path}),
 
-    @property
-    def routes(self):
-        if self._routes is None:
-            self._routes = [
-                (r'/{}/static/(.*)'.format(self.name),
-                 tornado.web.StaticFileHandler,
-                 {'path': self.analysis_path}),
+            (r'/{}/ws'.format(self.name),
+             FrontendHandler,
+             {'meta': self}),
 
-                (r'/{}/ws'.format(self.name),
-                 FrontendHandler,
-                 {'meta': self}),
+            (r'/{}/(?P<template_name>.+\.html)'.format(self.name),
+             RenderTemplate,
+             {'template_path': self.analysis_path,
+              'info': self.info}),
 
-                (r'/{}/(?P<template_name>.+\.html)'.format(self.name),
-                 RenderTemplate,
-                 {'template_path': self.analysis_path,
-                  'info': self.info}),
-
-                (r'/{}/'.format(self.name),
-                 RenderTemplate,
-                 {'template_name': 'index.html',
-                  'template_path': self.analysis_path,
-                  'info': self.info}),
-            ]
-        return self._routes
+            (r'/{}/'.format(self.name),
+             RenderTemplate,
+             {'template_name': 'index.html',
+              'template_path': self.analysis_path,
+              'info': self.info}),
+        ] + [
+            (r'/{}/{}'.format(self.name, route), handler, data)
+            for route, handler, data in extra_routes
+        ]
 
     @tornado.gen.coroutine
     def run_process(self, analysis, action_name, message='__nomessagetoken__'):

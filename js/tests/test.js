@@ -79,4 +79,30 @@ describe('Databench', () => {
       c.connect();
     });
   });
+
+  describe('disconnect', () => {
+    // create connection
+    const c = new Databench.Connection(
+      null,
+      'ws://localhost:5000/requestargs/ws',
+      '?data=requestargtest'
+    );
+
+    it('create a WebSocket connection', () => {
+      assert.equal('object', typeof c);
+    });
+
+    it('connect', () => {
+      c.connect();
+    });
+
+    it('disconnect', () => {
+      c.disconnect();
+    });
+
+    it('reconnect', done => {
+      c.on('ack', () => done());
+      c.connect();
+    });
+  });
 });

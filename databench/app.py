@@ -102,18 +102,20 @@ class App(object):
         self.register_metas()
 
     def _get_analyses(self, analyses_path):
-        if analyses_path:  # analyses path supplied manually
+        if analyses_path:
+            # analyses path supplied manually
             orig_syspath = sys.path
             sys.path.append('.')
             analyses = importlib.import_module(analyses_path)
             sys.path = orig_syspath
-        elif (os.path.isfile('analyses/__init__.py') and
-              os.path.isfile('analyses/index.yaml')):  # cwd outside analyses
+        elif os.path.isfile(os.path.join('analyses', 'index.yaml')):
+            # cwd outside analyses
             orig_syspath = sys.path
             sys.path.append('.')
             import analyses
             sys.path = orig_syspath
-        elif os.path.isfile('index.yaml'):  # cwd is inside analyses
+        elif os.path.isfile('index.yaml'):
+            # cwd is inside analyses
             orig_syspath = sys.path
             sys.path.append('..')
             import analyses
@@ -228,7 +230,12 @@ class App(object):
             log.warning('no Analysis class found for {}'.format(name))
             return
         log.debug('creating Meta for {}'.format(name))
-        self.metas.append(Meta(name, classes[0], path))
+        self.metas.append(Meta(
+            name,
+            classes[0],
+            path,
+            self.extra_routes(name, path),
+        ))
 
     def meta_analysis_py(self, name, path):
         log.debug('creating MetaZMQ for {}'.format(name))
@@ -238,6 +245,7 @@ class App(object):
              '--zmq-subscribe={}'.format(self.zmq_port)],
             self.zmq_pub_stream,
             path,
+            self.extra_routes(name, path),
         ))
 
     def meta_analysis_pyspark(self, name, path):
@@ -248,6 +256,7 @@ class App(object):
              '--zmq-subscribe={}'.format(self.zmq_port)],
             self.zmq_pub_stream,
             path,
+            self.extra_routes(name, path),
         ))
 
     def meta_analysis_go(self, name, path):
@@ -259,7 +268,20 @@ class App(object):
             [name, '--zmq-subscribe={}'.format(self.zmq_port)],
             self.zmq_pub_stream,
             path,
+            self.extra_routes(name, path),
         ))
+
+    def extra_routes(self, name, path):
+        if not os.path.isfile(os.path.join(path, 'routes.py')):
+            return []
+
+        routes_file = importlib.import_module('.' + name + '.routes',
+                                              self.analyses.__name__)
+
+        if not hasattr(routes_file, 'ROUTES'):
+            log.warning('no extra routes found for {}'.format(name))
+            return []
+        return routes_file.ROUTES
 
     def register_metas(self):
         """register metas"""
