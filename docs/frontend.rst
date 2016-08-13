@@ -91,7 +91,7 @@ You can also add static files to *all* analyses by creating a folder
 ``analyses/static`` and placing the static file in this folder. The URL
 to access the files is ``/static/my_static_file.png``. This is
 the same folder that is used for a custom header logo;
-see :ref:`customization`.
+see :ref:`analyses_configurations`.
 
 
 Node Modules

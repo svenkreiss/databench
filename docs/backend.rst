@@ -1,6 +1,7 @@
 Backend
 =======
 
+.. _analyses_configurations:
 
 Analyses Configurations
 -----------------------
@@ -53,6 +54,17 @@ you can inject code into the head and the bottom of the page.
 Inject code into the ``<head>`` section by creating a ``head.html`` file inside
 the analysis folder. Similarly, inject code into the bottom of the ``<body>``
 with a ``footer.html`` file.
+
+
+Routes
+------
+
+Add a ``routes.py`` file to your analysis with extra Tornado request handlers
+and register them in a ``ROUTES`` variable. This is an example of a
+``routes.py`` file:
+
+.. literalinclude:: ../tests/analyses/simple2/routes.py
+    :language: python
 
 
 Autoreload
