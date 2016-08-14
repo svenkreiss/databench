@@ -1,57 +1,46 @@
-"""Calculating \\(\\pi\\) the simple way, but this is called
-dummypi to avoid conflict with simplepi in the databench_examples repo."""
+from __future__ import division
 
 import math
-from time import sleep
-from random import random
+import random
+import tornado.gen
 
 import databench
 
 
-class Analysis(databench.Analysis):
+class Dummypi(databench.Analysis):
 
-    def __init__(self):
-        self.samples = 500
+    def on_connect(self):
+        self.data['samples'] = 1000
 
+    @tornado.gen.coroutine
     def on_run(self):
         """Run when button is pressed."""
 
         inside = 0
-        for i in xrange(self.samples):
-            sleep(0.001)
-            r1, r2 = (random(), random())
-            if r1*r1 + r2*r2 < 1.0:
+        for draws in range(1, self.data['samples']):
+            yield tornado.gen.sleep(0.001)
+
+            # generate points and check whether they are inside the unit circle
+            r1 = random.random()
+            r2 = random.random()
+            if r1 ** 2 + r2 ** 2 < 1.0:
                 inside += 1
 
-            if (i+1) % 100 == 0:
-                draws = i+1
-                self.emit('log', {
-                    'draws': draws,
-                    'inside': inside,
-                    'r1': r1,
-                    'r2': r2,
-                })
+            # every 100 iterations, update status
+            if draws % 100 != 0:
+                continue
 
-                p = float(inside)/draws
-                uncertainty = 4.0*math.sqrt(draws*p*(1.0 - p)) / draws
-                self.emit('status', {
-                    'pi-estimate': 4.0*inside/draws,
-                    'pi-uncertainty': uncertainty
-                })
+            # debug
+            self.emit('log', {'draws': draws, 'inside': inside})
+
+            # calculate pi and its uncertainty given the current draws
+            p = inside / draws
+            uncertainty = 4.0 * math.sqrt(draws * p * (1.0 - p)) / draws
+
+            # send status to frontend
+            self.data['pi'] = {
+                'estimate': 4.0 * inside / draws,
+                'uncertainty': uncertainty,
+            }
 
         self.emit('log', {'action': 'done'})
-
-    def on_samples(self, value):
-        """Sets the number of samples to generate per run."""
-        self.samples = value
-
-    def on_test_fn(self, first_param, second_param=100):
-        """Echo params."""
-        print(first_param, second_param)
-        self.emit('test_fn', {
-            'first_param': first_param,
-            'second_param': second_param,
-        })
-
-
-META = databench.Meta('dummypi', __name__, __doc__, Analysis)

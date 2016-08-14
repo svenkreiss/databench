@@ -1,0 +1,40 @@
+{% extends "analysis.html" %}
+
+
+{% block analysis %}
+<h3>Analysis Output</h3>
+<p>The current state: <span id="state">unknown</span></p>
+<p>The current count: <span id="count">unknown</span></p>
+{% end %}
+
+
+
+{% block footer %}
+<script>
+    // initialize Databench's frontend library
+    var d = new Databench.Connection();
+    Databench.ui.wire(d);
+
+    // listen for updates to 'status' in 'data'
+    d.on({data: 'state'}, function(state) {
+        console.log(`received ${JSON.stringify(state)}`);
+        document.getElementById('state').innerHTML = state;
+    });
+
+    d.on({data: 'count'}, function(count) {
+        console.log(`received ${JSON.stringify(count)}`);
+        document.getElementById('count').innerHTML = `count: ${count}`;
+    });
+
+    d.emit('state', 'test');
+
+    setTimeout(function() {
+        d.socket.close();
+        setTimeout(function() {
+            d.emit('state', 'test2');
+        }, 1000);
+    }, 1000);
+
+    d.connect();
+</script>
+{% end %}

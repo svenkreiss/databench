@@ -1,0 +1,15 @@
+.*
+build/
+databench/
+databench_py/
+dist/
+docs/
+logo/
+tests/
+*.egg-info
+*.py
+MANIFEST.in
+circle.yml
+esdoc.json
+setup.cfg
+venv*/

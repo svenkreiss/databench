@@ -1,11 +1,9 @@
-Install dependencies for making docs:
+Create the docs locally:
 
-    pip install -r requirements_docs.txt
-
-Build local docs:
-
+    cd docs
+    pip install -r requirements.txt
     make html
 
-Build docs for the public github-pages:
+This only works in Python 2. Sphinx and Jinja2 are not Python 3 compatible.
 
-    make ghpages
+Public docs are build from certain branches of the GitHub repository using readthedocs.

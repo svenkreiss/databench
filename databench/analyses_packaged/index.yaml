@@ -1,0 +1,24 @@
+title: Databench - Packaged Analyses
+description: Analyses that come packaged with Databench.
+
+analyses:
+  - name: dummypi
+    title: Dummy π
+    description: Calculating π the simple way, but this is called dummypi to avoid conflict with simplepi in the databench_examples repo.
+  - name: scaffold
+    title: Scaffold
+    description: A short description of this analysis.
+  - name: dummypi_py
+    kernel: py
+    title: Dummy π with Python Language Kernel
+    description: Calculating π the simple way, but this is called dummypi to avoid conflict with simplepi in the databench_examples repo. This is using a Python Language Kernel running in a separate process.
+    watch:
+      - dummypi_py/*.html
+      - dummypi_py/*.py
+  - name: scaffold_py
+    kernel: py
+    title: Scaffold_Py
+    description: A short description of this analysis.
+    watch:
+      - scaffold_py/*.html
+      - scaffold_py/*.py

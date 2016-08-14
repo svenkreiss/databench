@@ -3,7 +3,9 @@
 Quickstart
 ==========
 
-Install ``databench`` as shown at the top of the :ref:`overview` page. To start a new analysis called *helloworld*, use ``scaffold-databench helloworld`` which creates a directory structure like this:
+Install ``databench`` as shown at the top of the :ref:`overview` page. To start
+a new analysis called *helloworld*, use ``scaffold-databench helloworld`` which
+creates a directory structure like this:
 
 .. code-block:: bash
 
@@ -16,37 +18,75 @@ Install ``databench`` as shown at the top of the :ref:`overview` page. To start 
                 - index.html
                 - thumbnail.png (optional)
 
-At this point you are all set up and can run ``databench``, view the analysis in a browser at http://localhost:5000 and start modifying the analysis source code.
+At this point you are all set up and can run ``databench``, view the analysis
+in a browser at http://localhost:5000 and start modifying the analysis source code.
 
-
-Analysis Structure
-------------------
-
-To understand the structure, this is a walk-through of the steps that just happened in ``scaffold-databench``. First, tell the analyses module that we created a new analysis called *helloworld* in the ``analyses/__init__.py`` file:
+To understand the structure, this is a walk-through of the steps that just
+happened in ``scaffold-databench``. First, tell the analyses module that we
+created a new analysis called *helloworld* in the ``analyses/__init__.py`` file:
 
 .. code-block:: python
 
-    import helloworld.analysis
+    from .helloworld.analysis import HelloWorld
+
+    analyses = [
+        ('helloworld', HelloWorld),
+    ]
 
 Next, create the helloworld backend in ``analyses/helloworld/analysis.py``:
 
 .. code-block:: python
 
-    """Hello World for Databench."""
-
     import databench
 
 
-    class Analysis(databench.Analysis):
+    class HelloWorld(databench.Analysis):
 
         def on_connect(self):
             """Run as soon as a browser connects to this."""
-            self.emit('status', {'message': 'Hello World'})
+            self.data['status'] = 'Hello World'
 
-
-    META = databench.Meta('helloworld', __name__, __doc__, Analysis)
 
 And the frontend in ``analyses/helloworld/index.html``:
+
+.. code-block:: html
+
+    {% extends "analysis.html" %}
+
+
+    {% block analysis %}
+    <p id="output"></p>
+    {% end %}
+
+
+    {% block footer %}
+    <script>
+        var d = new Databench.Connection();
+
+        d.on('data', function(data) {
+            document.getElementById('output').innerHTML = data.status;
+        });
+
+        d.connect();
+    </script>
+    {% end %}
+
+Now you can run the executable ``databench`` in your ``workingDir`` folder
+(outside of ``analyses``) which creates a webserver and you can open
+http://localhost:5000 in your webbrowser. The command line options ``--host``
+and ``--port`` set the host and port of the webserver ``--log`` changes the
+loglevel. For example, calling ``databench --log=DEBUG`` enables all messages;
+the options are ``NOTSET``, ``DEBUG``, ``INFO``, ``WARNING``, ``ERROR`` and
+``CRITICAL``. Running databench in ``WARNING`` or ``INFO`` enables autoreloading
+on code changes. You can also create a ``requirements.txt`` file containing
+other Python packages your analysis needs. An example of this setup is the
+`databench_examples`_ repository.
+
+.. _`databench_examples`: https://github.com/svenkreiss/databench_examples
+
+
+**Without a template**: The analysis can also be run without a template. You
+can replace ``index.html`` with
 
 .. code-block:: html
 
@@ -56,44 +96,44 @@ And the frontend in ``analyses/helloworld/index.html``:
     <body>
         <p id="output"></p>
 
-        <script src="/static/jquery/jquery-2.1.1.min.js"></script>
-        <script src="/static/databench.js"></script>
+        <script src="/_static/databench.js"></script>
         <script>
-            var databench = Databench();
-            databench.on('status', function(json) {
-                document.getElementById('output').innerHTML =
-                    json.message;
+            var d = new Databench.Connection();
+
+            d.on('data', function(data) {
+                document.getElementById('output').innerHTML = data.status;
             });
+
+            d.connect();
         </script>
     </body>
     </html>
 
-Now you can run the executable ``databench`` in your ``workingDir`` folder (outside of analyses) which creates a webserver and you can open http://localhost:5000 in your webbrowser. The command line options ``--host`` and ``--port`` set the host and port of the webserver ``--log`` changes the loglevel. For example, calling ``databench --log=DEBUG`` enables all messages; the options are ``NOTSET``, ``DEBUG``, ``INFO``, ``WARNING``, ``ERROR`` and ``CRITICAL``. You can also create a ``requirements.txt`` file containing other Python packages your analysis needs. An example of this setup is the `databench_examples`_ repository.
+You can find the result of this tutorial in the `helloworld analysis of the databench_examples`_ repo.
 
-.. _`databench_examples`: https://github.com/svenkreiss/databench_examples
-
-
-**Using the** ``base.html`` **Template:** To provide some basic header and footer for an analysis, the ``base.html`` template is available. It is not required to use it, but it includes a range of default libraries that might come in handy. To use it, change the ``index.html`` to
-
-.. code-block:: html
-
-    {% extends "base.html" %}
+.. _`helloworld analysis of the databench_examples`: https://github.com/svenkreiss/databench_examples
 
 
-    {% block title %}Hello World{% endblock %}
+Data flow
+---------
 
+At the lowest level, Databench communicates between frontend and backend by
+sending messages on a long-lived bidirectional WebSocket connection. That means
+that both frontend and backend can signal to the other end a change in state
+or transmit an action without being polled.
 
-    {% block content %}
-    <p id="output"></p>
-    {% endblock %}
+Depending on where state is stored (and that can be mixed within an analysis),
+two models for data flow are often used. First, a model where state is stored
+in a Datastore in the backend. This datastore can be a store like Redis that is
+shared across instances of the Python backend.
 
+.. image:: images/dataflow_datastore_state.png
+   :alt: data flow with state stored in datastore
 
-    {% block footerscripts %}
-    <script>
-        var databench = Databench();
-        databench.on('status', function(json) {
-            document.getElementById('output').innerHTML =
-                json.message;
-        });
-    </script>
-    {% endblock %}
+Second, transient state -- state that is deleted at the end of a session
+and is usually concerned with the user's UI -- is stored in the frontend.
+In this case, the backend only sends actions but not state to the frontend.
+The frontend can also send actions to the backend.
+
+.. image:: images/dataflow_frontend_state.png
+   :alt: data flow with state stored in frontend

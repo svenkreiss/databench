@@ -1,10 +1,10 @@
-.. image:: http://www.svenkreiss.com/databench/logo.svg
-    :target: http://www.svenkreiss.com/databench/v0.3/
+.. image:: https://raw.githubusercontent.com/svenkreiss/databench/master/logo/logo-w100.png
+    :target: http://databench.trivial.io
 
 Databench
 =========
 
-    Data analysis tool using Flask, WebSockets and d3.js. Live demos are at
+    Data analysis tool using Tornado and WebSockets. Live demos are at
     `databench-examples.trivial.io <http://databench-examples.trivial.io>`_.
 
 .. image:: https://travis-ci.org/svenkreiss/databench.svg
@@ -13,14 +13,12 @@ Databench
     :target: https://coveralls.io/r/svenkreiss/databench
 .. image:: https://badge.fury.io/py/databench.svg
     :target: https://pypi.python.org/pypi/databench/
-.. image:: https://img.shields.io/pypi/dm/databench.svg
-    :target: https://pypi.python.org/pypi/databench/
 
 
 Documentation and License
 -------------------------
 
-| `Tutorial, user guide and API documentation <http://databench.trivial.io/v0.3/>`_.
+| `Tutorial, user guide and API documentation <http://databench.trivial.io>`_.
 | Databench was written by Sven Kreiss and made available under the `MIT license <https://github.com/svenkreiss/databench/blob/master/LICENSE>`_.
 
 

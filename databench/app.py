@@ -1,249 +1,396 @@
-"""Main Flask App."""
+"""Main App."""
 
-import os
-import sys
-import glob
-import codecs
-import logging
-import traceback
-import zmq.green as zmq
+from __future__ import absolute_import, unicode_literals, division
 
-import flask_sockets
-from gevent import pywsgi
-from flask.ext.markdown import Markdown
-from flask import Flask, render_template, send_from_directory
-from geventwebsocket.handler import WebSocketHandler
-
-from .analysis import Meta, MetaZMQ
 from . import __version__ as DATABENCH_VERSION
+from .meta import Meta
+from .meta_zmq import MetaZMQ
+from .readme import Readme
+import glob
+import importlib
+import logging
+import os
+import subprocess
+import sys
+import tornado.autoreload
+import tornado.web
+import yaml
+import zmq.eventloop
+
+try:
+    import glob2
+except ImportError:
+    glob2 = None
+
+zmq.eventloop.ioloop.install()
+log = logging.getLogger(__name__)
 
 
 class App(object):
-    """Similar to a Flask app. The actual Flask instance is injected.
+    """Databench app. Creates a Tornado app.
 
-    Args:
-        name (str): Name of the app.
-        host (str): Host name.
-        port (int): Port number.
-        flask_app (flask.Flask, optional): An instance of flask.Flask.
-        delimiters (dict): Configuration option for the delimiters used for the
-            server-side templates. You can specify strings for
-            ``variable_start_string``, ``variable_end_string``,
-            ``block_start_string``, ``block_end_string``,
-            ``comment_start_string``, ``comment_end_string``.
+    :param analyses_path:
+        (optional) An import path of the analyses.
 
+    :param zmq_port:
+        (optional) Force to use the given ZMQ port for publishing.
     """
 
-    def __init__(self, import_name, host='0.0.0.0', port=5000, flask_app=None,
-                 delimiters=None):
-
-        if flask_app is None:
-            self.flask_app = Flask(import_name)
-        else:
-            self.flask_app = flask_app
-
-        self.host = host
-        self.port = port
-
-        self.sockets = flask_sockets.Sockets(self.flask_app)
-
-        self.header = {
-            'logo': '/static/logo.svg',
+    def __init__(self, analyses_path=None, zmq_port=None):
+        self.info = {
             'title': 'Databench',
-            'databench_version': DATABENCH_VERSION,
+            'description': None,
+            'description_html': None,
+            'author': None,
+            'version': None,
+            'logo_url': '/_static/logo.svg',
+            'favicon_url': '/_static/favicon.ico',
+            'footer_html': None,
+            'injection_head': '',
+            'injection_footer': '',
         }
-        self.description = None
-        self.analyses_author = None
-        self.analyses_version = None
+        self.metas = []
+        self._get_analyses(analyses_path)
+
+        self.routes = [
+            (r'/(favicon\.ico)',
+             tornado.web.StaticFileHandler,
+             {'path': 'static/favicon.ico'}),
+
+            (r'/_static/(.*)',
+             tornado.web.StaticFileHandler,
+             {'path': os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                   'static')}),
+
+            (r'/_node_modules/(.*)',
+             tornado.web.StaticFileHandler,
+             {'path': os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                   'node_modules')}),
+
+            (r'/',
+             IndexHandler,
+             {'info': self.info, 'metas': self.metas}),
+        ]
+
+        # check whether we have to determine zmq_port ourselves first
+        if zmq_port is None:
+            context = zmq.Context()
+            socket = context.socket(zmq.PUB)
+            zmq_port = socket.bind_to_random_port(
+                'tcp://127.0.0.1',
+                min_port=3000, max_port=9000,
+            )
+            socket.close()
+            context.destroy()
+            log.debug('determined: zmq_port={}'.format(zmq_port))
+        self.zmq_port = zmq_port
 
         self.spawned_analyses = {}
 
-        self.flask_app.debug = True
-        self.flask_app.use_reloader = True
-        self.flask_app.config['SECRET_KEY'] = 'ajksdfjhkasdfj'  # change
+        self.zmq_pub_ctx = zmq.Context()
+        self.zmq_pub = self.zmq_pub_ctx.socket(zmq.PUB)
+        self.zmq_pub.bind('tcp://127.0.0.1:{}'.format(zmq_port))
+        log.debug('main publishing to port {}'.format(zmq_port))
 
-        if delimiters:
-            self.custom_delimiters(delimiters)
-        self.add_jinja2_highlight()
-        self.add_read_file()
-        self.add_markdown()
-
-        zmq_publish = zmq.Context().socket(zmq.PUB)
-        zmq_publish.bind('tcp://127.0.0.1:'+str(port+3041))
-        logging.debug('main publishing to port '+str(port+3041))
-
-        self.register_analyses_py(zmq_publish)
-        self.register_analyses_pyspark(zmq_publish)
-        self.register_analyses_go(zmq_publish)
-        self.import_analyses()
-        self.register_analyses()
-
-        self.flask_app.add_url_rule('/', 'render_index', self.render_index)
-
-    def run(self):
-        """Entry point to run the app."""
-        # self.flask_app.run(host=self.host, port=self.port)
-        server = pywsgi.WSGIServer((self.host, self.port),
-                                   self.flask_app,
-                                   handler_class=WebSocketHandler)
-        server.serve_forever()
-
-    def custom_delimiters(self, delimiters):
-        """Change the standard jinja2 delimiters to allow those delimiters be
-        used by frontend template engines."""
-        options = self.flask_app.jinja_options.copy()
-        options.update(delimiters)
-        self.flask_app.jinja_options = options
-
-    def add_jinja2_highlight(self):
-        """Add jinja2 highlighting."""
-        self.flask_app.jinja_options['extensions'].append(
-            'jinja2_highlight.HighlightExtension'
+        self.zmq_pub_stream = zmq.eventloop.zmqstream.ZMQStream(
+            self.zmq_pub,
+            tornado.ioloop.IOLoop.current(),
         )
 
-    def add_read_file(self):
-        """Add read_file capability."""
-        def read_file(filename):
-            folder = os.getcwd()+'/analyses/'
-            if not os.path.isdir(folder):
-                folder = os.getcwd()+'/databench/analyses_packaged/'
-            return codecs.open(
-                folder+filename,
-                'r',
-                'utf-8'
-            ).readlines()
-        self.flask_app.jinja_env.globals['read_file'] = read_file
+        self.analyses_info()
+        self.meta_analyses()
+        self.register_metas()
 
-    def add_markdown(self):
-        """Add Markdown capability."""
-        Markdown(self.flask_app,
-                 extensions=['fenced_code'],
-                 output_format='html5',
-                 safe_mode=False)
-
-    def register_analyses_py(self, zmq_publish):
-        analysis_folders = glob.glob('analyses/*_py')
-        if not analysis_folders:
-            analysis_folders = glob.glob('databench/analyses_packaged/*_py')
-
-        for analysis_folder in analysis_folders:
-            name = analysis_folder[analysis_folder.rfind('/')+1:]
-            if name[0] in ['.', '_']:
-                continue
-            logging.debug('creating MetaZMQ for '+name)
-            MetaZMQ(name, __name__, "ZMQ Analysis py",
-                    ['python', analysis_folder+'/analysis.py'],
-                    zmq_publish)
-
-    def register_analyses_pyspark(self, zmq_publish):
-        analysis_folders = glob.glob('analyses/*_pyspark')
-        if not analysis_folders:
-            analysis_folders = glob.glob(
-                'databench/analyses_packaged/*_pyspark'
-            )
-
-        for analysis_folder in analysis_folders:
-            name = analysis_folder[analysis_folder.rfind('/')+1:]
-            if name[0] in ['.', '_']:
-                continue
-            logging.debug('creating MetaZMQ for '+name)
-            MetaZMQ(name, __name__, "ZMQ Analysis py",
-                    ['pyspark', analysis_folder+'/analysis.py'],
-                    zmq_publish)
-
-    def register_analyses_go(self, zmq_publish):
-        analysis_folders = glob.glob('analyses/*_go')
-        if not analysis_folders:
-            analysis_folders = glob.glob('databench/analyses_packaged/*_go')
-
-        for analysis_folder in analysis_folders:
-            name = analysis_folder[analysis_folder.rfind('/')+1:]
-            if name[0] in ['.', '_']:
-                continue
-            logging.info('installing '+name)
-            os.system('cd '+analysis_folder+'; go install')
-            logging.debug('creating MetaZMQ for '+name)
-            MetaZMQ(name, __name__, "ZMQ Analysis go",
-                    [name], zmq_publish)
-
-    def import_analyses(self):
-        """Add analyses from the analyses folder."""
-
-        sys.path.append('.')
-        try:
+    def _get_analyses(self, analyses_path):
+        if analyses_path:
+            # analyses path supplied manually
+            orig_syspath = sys.path
+            sys.path.append('.')
+            analyses = importlib.import_module(analyses_path)
+            sys.path = orig_syspath
+        elif os.path.isfile(os.path.join('analyses', 'index.yaml')):
+            # cwd outside analyses
+            orig_syspath = sys.path
+            sys.path.append('.')
             import analyses
-        except ImportError, e:
-            if str(e) != 'No module named analyses':
-                traceback.print_exc(file=sys.stdout)
-                raise e
-
-            print "Did not find 'analyses' module."
-            logging.debug('sys.path: '+str(sys.path))
-            logging.debug('os.path.dirname(os.path.realpath(__file__)): ' +
-                          os.path.dirname(os.path.realpath(__file__)))
-            logging.debug('os.getcwd: '+os.getcwd())
-
-            print "Using packaged analyses."
+            sys.path = orig_syspath
+        elif os.path.isfile('index.yaml'):
+            # cwd is inside analyses
+            orig_syspath = sys.path
+            sys.path.append('..')
+            import analyses
+            sys.path = orig_syspath
+        else:
+            log.warning('Did not find "analyses" module. '
+                        'Using packaged analyses.')
             from databench import analyses_packaged as analyses
 
-        self.description = analyses.__doc__
-        try:
-            self.analyses_author = analyses.__author__
-        except AttributeError:
-            logging.info('Analyses module does not have an author string.')
-        try:
-            self.analyses_version = analyses.__version__
-        except AttributeError:
-            logging.info('Analyses module does not have a version string.')
-        try:
-            self.header['logo'] = analyses.header_logo
-        except AttributeError:
-            logging.info('Analyses module does not specify a logo.')
-        try:
-            self.header['title'] = analyses.header_title
-        except AttributeError:
-            logging.info('Analyses module does not specify a header title.')
+        self.analyses_path = os.path.abspath(
+            os.path.dirname(analyses.__file__))
+        self.analyses = analyses
 
-        # if main analyses folder contains a 'static' folder, make it available
-        static_path = os.getcwd()+'/'+'analyses/static'
-        if not os.path.isdir(static_path):
-            static_path = os.getcwd()+'/'+'databench/analyses_packaged/static'
-        if os.path.isdir(static_path):
-            logging.debug('Making '+static_path+' available under '
-                          'analyses_static/.')
+        return analyses
 
-            def analyses_static(filename):
-                return send_from_directory(static_path, filename)
+    def analyses_info(self):
+        """Add analyses from the analyses folder."""
+        f_config = os.path.join(self.analyses_path, 'index.yaml')
+        tornado.autoreload.watch(f_config)
+        with open(f_config, 'r') as f:
+            config = yaml.safe_load(f)
+            self.info.update(config)
 
-            self.flask_app.add_url_rule('/analyses_static/<path:filename>',
-                                        'analyses_static', analyses_static)
+        readme = Readme(self.analyses_path)
+        if self.info['description'] is None:
+            self.info['description'] = readme.text.strip()
+        self.info['description_html'] = readme.html
+
+        f_head = os.path.join(self.analyses_path, 'head.html')
+        if os.path.isfile(f_head):
+            with open(f_head, 'r') as f:
+                self.info['injection_head'] = f.read()
+            log.debug('watch file {}'.format(f_head))
+            tornado.autoreload.watch(f_head)
+        f_footer = os.path.join(self.analyses_path, 'footer.html')
+        if os.path.isfile(f_footer):
+            with open(f_footer, 'r') as f:
+                self.info['injection_footer'] = f.read()
+            log.debug('watch file {}'.format(f_footer))
+            tornado.autoreload.watch(f_footer)
+
+        # If 'analyses' or current directory contains a 'static' folder,
+        # make it available.
+        static_path = next((
+            p
+            for p in (os.path.join(self.analyses_path, 'static'),
+                      os.path.join(os.getcwd(), 'static'))
+            if os.path.isdir(p)
+        ), None)
+        if static_path is not None:
+            log.debug('Making {} available at /static/.'.format(static_path))
+            self.routes.append((
+                r'/static/(.*)',
+                tornado.web.StaticFileHandler,
+                {'path': static_path},
+            ))
         else:
-            logging.debug('Did not find an analyses/static/ folder. ' +
-                          'Checked: '+static_path)
+            log.debug('Did not find a static folder.')
 
-    def register_analyses(self):
-        """Register analyses (analyses need to be imported first)."""
+        # If 'analyses' or current directory contains a 'node_modules' folder,
+        # make it available.
+        node_modules_path = next((
+            p
+            for p in (os.path.join(self.analyses_path, 'node_modules'),
+                      os.path.join(os.getcwd(), 'node_modules'))
+            if os.path.isdir(p)
+        ), None)
+        if node_modules_path is not None:
+            log.debug('Making {} available at /node_modules/.'
+                      ''.format(node_modules_path))
+            self.routes.append((
+                r'/node_modules/(.*)',
+                tornado.web.StaticFileHandler,
+                {'path': node_modules_path},
+            ))
+        else:
+            log.debug('Did not find a node_modules folder.')
 
-        for meta in Meta.all_instances:
-            print 'Registering analysis meta information ' + meta.name + \
-                  ' as blueprint in flask.'
-            self.flask_app.register_blueprint(
-                meta.blueprint,
-                url_prefix='/'+meta.name
+    def meta_analyses(self):
+        for analysis_info in self.info['analyses']:
+            name = analysis_info.get('name', None)
+            if name is None:
+                continue
+            path = os.path.join(self.analyses_path, name)
+            if not os.path.isdir(path):
+                log.warning('directory {} not found'.format(path))
+                continue
+            analysis_kernel = analysis_info.get('kernel', None)
+            if analysis_kernel is None:
+                self.meta_analysis_nokernel(name, path)
+            elif analysis_kernel == 'py':
+                self.meta_analysis_py(name, path)
+            elif analysis_kernel == 'pyspark':
+                self.meta_analysis_pyspark(name, path)
+            elif analysis_kernel == 'go':
+                self.meta_analysis_go(name, path)
+
+    def meta_analysis_nokernel(self, name, path):
+        try:
+            analysis_file = importlib.import_module('.' + name + '.analysis',
+                                                    self.analyses.__name__)
+        except ImportError:
+            log.warning('could not import analysis {}'.format(name),
+                        exc_info=True)
+            return
+        items = [getattr(analysis_file, item)
+                 for item in dir(analysis_file)
+                 if not item.startswith('__')]
+        classes = [ac for ac in items
+                   if hasattr(ac, '_databench_analysis')]
+        if not classes:
+            log.warning('no Analysis class found for {}'.format(name))
+            return
+        log.debug('creating Meta for {}'.format(name))
+        self.metas.append(Meta(
+            name,
+            classes[0],
+            path,
+            self.extra_routes(name, path),
+        ))
+
+    def meta_analysis_py(self, name, path):
+        log.debug('creating MetaZMQ for {}'.format(name))
+        self.metas.append(MetaZMQ(
+            name,
+            ['python', os.path.join(path, 'analysis.py'),
+             '--zmq-subscribe={}'.format(self.zmq_port)],
+            self.zmq_pub_stream,
+            path,
+            self.extra_routes(name, path),
+        ))
+
+    def meta_analysis_pyspark(self, name, path):
+        log.debug('creating MetaZMQ for {}'.format(name))
+        self.metas.append(MetaZMQ(
+            name,
+            ['pyspark', '{}/analysis.py'.format(path),
+             '--zmq-subscribe={}'.format(self.zmq_port)],
+            self.zmq_pub_stream,
+            path,
+            self.extra_routes(name, path),
+        ))
+
+    def meta_analysis_go(self, name, path):
+        log.info('installing {}'.format(name))
+        os.system('cd {}; go install'.format(path))
+        log.debug('creating MetaZMQ for {}'.format(name))
+        self.metas.append(MetaZMQ(
+            name,
+            [name, '--zmq-subscribe={}'.format(self.zmq_port)],
+            self.zmq_pub_stream,
+            path,
+            self.extra_routes(name, path),
+        ))
+
+    def extra_routes(self, name, path):
+        if not os.path.isfile(os.path.join(path, 'routes.py')):
+            return []
+
+        routes_file = importlib.import_module('.' + name + '.routes',
+                                              self.analyses.__name__)
+
+        if not hasattr(routes_file, 'ROUTES'):
+            log.warning('no extra routes found for {}'.format(name))
+            return []
+        return routes_file.ROUTES
+
+    def register_metas(self):
+        """register metas"""
+
+        # concatenate some attributes to global lists:
+        aggregated = {'build': [], 'watch': []}
+        for attribute, values in aggregated.items():
+            for info in self.info['analyses'] + [self.info]:
+                if attribute in info:
+                    values.append(info[attribute])
+
+        # distribute info to the metas
+        distribute = ('logo_url', 'favicon_url', 'footer_html',
+                      'injection_head', 'injection_footer')
+        analysis_infos = {info['name']: info
+                          for info in self.info['analyses']
+                          if 'name' in info}
+        self.info['analyses'] = []  # rewrite self.info['analyses']
+        for meta in self.metas:
+            log.info('Registering meta information {}'.format(meta.name))
+
+            # grab routes
+            self.routes += meta.routes
+
+            # gathering info
+            # detect whether a thumbnail image is present
+            thumbnail = False
+            thumbnails = glob.glob(os.path.join(meta.analysis_path,
+                                                'thumbnail.*'))
+            if len(thumbnails) >= 1:
+                thumbnail = thumbnails[0]
+            # analysis readme
+            readme = Readme(meta.analysis_path)
+
+            # distribute info
+            info = {
+                'title': meta.name,
+                'readme': readme.html,
+                'description': readme.text.strip(),
+                'show_in_index': True,
+                'thumbnail': thumbnail,
+            }
+            info.update(analysis_infos[meta.name])
+
+            for attribute in distribute:
+                if attribute in self.info and \
+                   attribute not in info:
+                    info[attribute] = self.info[attribute]
+            meta.info.update(info)
+            self.info['analyses'].append(info)
+
+        # process files to watch for autoreload
+        if aggregated['watch']:
+            to_watch = [expr for w in aggregated['watch'] for expr in w]
+            log.info('watching additional files: {}'.format(to_watch))
+
+            cwd = os.getcwd()
+            os.chdir(self.analyses_path)
+            if glob2:
+                files = [fn for expr in to_watch for fn in glob2.glob(expr)]
+            else:
+                files = [fn for expr in to_watch for fn in glob.glob(expr)]
+                if any('**' in expr for expr in to_watch):
+                    log.warning('Please run "pip install glob2" to properly '
+                                'process watch patterns with "**".')
+            os.chdir(cwd)
+
+            for fn in files:
+                log.debug('watch file {}'.format(fn))
+                tornado.autoreload.watch(fn)
+
+        # save build commands
+        self.build_cmds = aggregated['build']
+
+    def build(self):
+        """Run the build command specified in the Readme."""
+        for cmd in self.build_cmds:
+            log.info('building command: {}'.format(cmd))
+            full_cmd = 'cd {}; {}'.format(self.analyses_path, cmd)
+            log.debug('full command: {}'.format(full_cmd))
+            subprocess.call(full_cmd, shell=True)
+
+    def tornado_app(self, debug=False, template_path=None, **kwargs):
+        if template_path is None:
+            template_path = os.path.join(
+                os.path.dirname(os.path.realpath(__file__)),
+                'templates',
             )
 
-            logging.debug('Connect websockets to '+meta.name+'.')
-            meta.wire_sockets(self.sockets, url_prefix='/'+meta.name)
-            logging.debug('Set header information.')
-            meta.header = self.header
+        if debug:
+            self.build()
 
-    def render_index(self):
+        return tornado.web.Application(
+            self.routes,
+            debug=debug,
+            template_path=template_path,
+            **kwargs
+        )
+
+
+class IndexHandler(tornado.web.RequestHandler):
+    def initialize(self, info, metas):
+        self.info = info
+        self.metas = metas
+
+    def get(self):
         """Render the List-of-Analyses overview page."""
-        return render_template(
+        return self.render(
             'index.html',
-            analyses=Meta.all_instances,
-            analyses_author=self.analyses_author,
-            analyses_version=self.analyses_version,
-            header=self.header,
-            description=self.description,
+            databench_version=DATABENCH_VERSION,
+            **self.info
         )

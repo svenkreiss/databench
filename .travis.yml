@@ -1,10 +1,25 @@
 language: python
 python:
- - "2.6"
  - "2.7"
+ - "3.4"
+ - "3.5"
 install:
- - "pip install -r requirements_analyses.txt"
- - "pip install python-coveralls coverage"
-script: "travis_retry python setup.py nosetests --with-coverage --cover-package=databench --cover-erase"
+ # install Python dependencies
+ - pip install --upgrade pip
+ - pip -V
+ - "pip install -e .[tests,markup]"
+ - pip install python-coveralls
+ # install Node 6
+ - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install 6
+ - node -v
+ # install Node dependencies
+ - npm install -g npm
+ - npm -v
+ - npm install
+ - npm run build
+script:
+ - flake8
+ - npm run lint
+ - nosetests -vv --with-coverage --cover-erase --cover-inclusive
 after_success:
-  - coveralls
+ - coveralls || true

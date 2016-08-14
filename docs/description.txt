@@ -1,5 +1,3 @@
 Databench is a data analysis tool using
-<a href="http://flask.pocoo.org/">Flask</a>,
-WebSockets and
-<a href="http://d3js.org/">d3.js</a>.
-Check out the <a href="http://databench-examples.svenkreiss.com/">live demos</a>.
+Tornado and WebSockets.
+Check out the <a href="http://databench-examples.trivial.io">live demos</a>.

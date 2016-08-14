@@ -1,0 +1,9 @@
+{% extends "analysis.html" %}
+
+{% block footer %}
+<script>
+var d = new Databench.Connection();
+d.on('ack', function(data) { console.log(data); });
+d.connect();
+</script>
+{% end %}

@@ -1,20 +1,28 @@
-{% from 'macros.html' import include_md %}
-{% extends "base.html" %}
+{% extends "analysis.html" %}
 
 
-{% block title %}Scaffold_Py{% endblock %}
+{% block analysis %}
+<h3>Analysis Output</h3>
+<p>The current status: <span id="status">unknown</span></p>
+{% end %}
 
 
-{% block content %}
-[[ include_md('scaffold_py/README.md') ]]
 
-<hr />
-<pre id="log"></pre>
-{% endblock %}
-
-
-{% block footerscripts %}
+{% block footer %}
 <script>
-	var databench = Databench();
+    // initialize Databench's frontend library
+    var d = new Databench.Connection();
+    Databench.ui.wire(d);
+
+    // listen for updates to 'status' in 'data'
+    d.on({data: 'status'}, function(status) {
+        console.log(`received ${JSON.stringify(status)}`);
+        document.getElementById('status').innerHTML = status;
+
+        // send 'ack' action back:
+        d.emit('ack', 'thanks for sending ready');
+    });
+
+    d.connect();
 </script>
-{% endblock %}
+{% end %}

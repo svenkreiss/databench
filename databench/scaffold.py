@@ -1,79 +1,92 @@
-#!/usr/bin/env python
-
 """Command line tool to scaffold a new analysis environment."""
 
-import os
 import argparse
+import logging
+import os
+import shutil
+
+# for Python 2 compatibility
+try:
+    input = raw_input
+except NameError:
+    pass
+
+log = logging.getLogger(__name__)
 
 
 def check_folders(name):
     """Only checks and asks questions. Nothing is written to disk."""
 
     if os.getcwd().endswith('analyses'):
-        correct = raw_input('You are in an analyses folder. This will create '
-                            'another analyses folder inside this one. Do '
-                            'you want to continue? (y/N)')
+        correct = input('You are in an analyses folder. This will create '
+                        'another analyses folder inside this one. Do '
+                        'you want to continue? (y/N)')
         if correct != 'y':
             return False
 
-    if not os.path.exists(os.getcwd()+'/analyses'):
-        correct = raw_input('This is the first analysis here. Do '
-                            'you want to continue? (y/N)')
+    if not os.path.exists(os.path.join(os.getcwd(), 'analyses')):
+        correct = input('This is the first analysis here. Do '
+                        'you want to continue? (y/N)')
         if correct != 'y':
             return False
 
-    if os.path.exists(os.getcwd()+'/analyses/'+name):
-        correct = raw_input('An analysis with this name exists already. Do '
-                            'you want to continue? (y/N)')
+    if os.path.exists(os.path.join(os.getcwd(), 'analyses', name)):
+        correct = input('An analysis with this name exists already. Do '
+                        'you want to continue? (y/N)')
         if correct != 'y':
             return False
 
     return True
 
 
-def create_analyses(name, suffix):
-    """If it does not exist already, it creates the top level analyses folder
-    and it's __init__.py file."""
+def create_analyses(name, kernel=None):
+    """Create an analysis with given name and suffix.
 
-    if not os.path.exists(os.getcwd()+'/analyses'):
+    If it does not exist already, it creates the top level analyses folder
+    and it's __init__.py and index.yaml file.
+    """
+
+    if not os.path.exists(os.path.join(os.getcwd(), 'analyses')):
         os.system("mkdir analyses")
 
-    if not os.path.exists(os.getcwd()+'/analyses/__init__.py'):
-        with open('analyses/__init__.py', 'w') as f:
-            f.write('"""Analyses folder created by `scaffold-databench`. '
-                    'Modify me. This text is in `analyses/__init__.py`.'
-                    '\n\nSources: '
-                    '[github.com/username/project]'
-                    '(http://github.com/username/project)"""\n\n')
-            f.write('__version__ = "0.0.1"\n')
-            f.write('__author__ = "Change Me Please <change@meplease.com>"\n')
+    # __init__.py
+    init_path = os.path.join(os.getcwd(), 'analyses', '__init__.py')
+    if not os.path.exists(init_path):
+        with open(init_path, 'w') as f:
+            pass
+
+    # index.yaml
+    index_path = os.path.join(os.getcwd(), 'analyses', 'index.yaml')
+    if not os.path.exists(index_path):
+        with open(index_path, 'w') as f:
+            f.write('title: My Analyses\n')
+            f.write('version: \'0.1.0\'\n')
             f.write('\n')
+            f.write('analyses:\n')
 
-    if not suffix:
-        with open('analyses/__init__.py', 'r') as f:
-            existing = f.readlines()
-        if 'import '+name+'.analysis\n' in existing:
-            print 'WARNING: analysis is already imported in __init__.py.'
-        else:
-            with open('analyses/__init__.py', 'a') as fa:
-                fa.write('import '+name+'.analysis\n')
+    if kernel is None:
+        with open(index_path, 'a') as f:
+            f.write('  # automatically inserted by scaffold-databench\n')
+            f.write('  - name: {}\n'.format(name))
+            f.write('    title: {}\n'.format(name.title()))
+            f.write('    description: A new analysis.\n')
 
 
-def copy_scaffold_file(src, dest, name):
+def copy_scaffold_file(src, dest, name, scaffold_name):
     if os.path.exists(dest):
-        print 'WARNING: file '+dest+' exists alread. Skipping.'
+        log.warning('File {} exists already. Skipping.'.format(dest))
         return
 
+    # binary copy for unknown file endings
+    if not any(src.endswith(e) for e in ('.py', '.html', '.md', '.rst')):
+        log.info('Binary copy {} to {}.'.format(src, dest))
+        shutil.copyfile(src, dest)
+        return
+
+    # text file copy
+    log.info('Copy {} to {}.'.format(src, dest))
     with open(src, 'r') as f:
         lines = f.readlines()
-
-    if not lines:
-        print 'FATAL: source '+src+' is empty.'
-        raise
-
-    # scaffold name
-    scaffold_name = src[:src.rfind('/')]
-    scaffold_name = scaffold_name[scaffold_name.rfind('/')+1:]
 
     # replace
     lines = [l.replace(scaffold_name, name) for l in lines]
@@ -84,59 +97,57 @@ def copy_scaffold_file(src, dest, name):
             f.write(l)
 
 
-def create_analysis(name, suffix, src_dir):
+def create_analysis(name, kernel, src_dir, scaffold_name):
     """Create analysis files."""
 
     # analysis folder
-    folder = os.getcwd()+'/analyses/'+name
+    folder = os.path.join(os.getcwd(), 'analyses', name)
     if not os.path.exists(folder):
-        os.system('mkdir '+folder)
+        os.makedirs(folder)
     else:
-        print 'WARNING: analysis folder '+folder+' already exists.'
-
-    # __init__.py
-    if not suffix:
-        os.system('touch '+folder+'/__init__.py')
+        log.warning('Analysis folder {} already exists.'.format(folder))
 
     # copy all other files
-    for f in ['analysis.py', 'index.html', 'README.md', 'thumbnail.png']:
-        copy_scaffold_file(src_dir+'/'+f, folder+'/'+f, name)
+    for f in os.listdir(src_dir):
+        if f in ('__pycache__',) or \
+           any(f.endswith(ending) for ending in ('.pyc',)):
+            continue
+        copy_scaffold_file(os.path.join(src_dir, f),
+                           os.path.join(folder, f),
+                           name, scaffold_name)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('analysis_name',
+    parser.add_argument('name',
                         help='Name of the analysis to be created.')
+    parser.add_argument('--kernel', default=None,
+                        help='Language kernel.',
+                        choices=('py', 'pypsark', 'go'))
     parser.add_argument('-y', dest='yes', default=False, action='store_true',
                         help='Answer all questions with yes. Be careful.')
     args = parser.parse_args()
 
-    if not (args.yes or check_folders(args.analysis_name)):
+    if not (args.yes or check_folders(args.name)):
         return
 
-    suffix = args.analysis_name.split('_')[-1]
-    if suffix not in ['py', 'pyspark', 'spark', 'go', 'lua', 'julia', 'r']:
-        suffix = None
-
     # sanitize analysis name
-    if '-' in args.analysis_name:
-        print('Analysis names with dashes are not supported '
-              '(because they are not supported in Python module names). '
-              'Abort.')
+    if '-' in args.name:
+        parser.error('Analysis names with dashes are not supported '
+                     '(because they are not supported in Python names). '
+                     'Abort.')
         return
 
     # this is a hack to obtain the src directory
-    import databench.analyses_packaged.scaffold.analysis
-    src_file = databench.analyses_packaged.scaffold.analysis.__file__
-    src_dir = src_file[:src_file.rfind('/')]
+    import databench.analyses_packaged.scaffold
+    src_dir = os.path.dirname(databench.analyses_packaged.__file__)
 
-    if suffix in ['py', 'pyspark']:
-        src_dir += '_py'
+    if args.kernel in ('py', 'pyspark'):
+        scaffold_name = 'scaffold_py'
+    else:
+        scaffold_name = 'scaffold'
+    src_dir = os.path.join(src_dir, scaffold_name)
 
-    create_analyses(args.analysis_name, suffix)
-    create_analysis(args.analysis_name, suffix, src_dir)
-    print("Done.")
-
-
-if __name__ == "__main__":
-    main()
+    create_analyses(args.name, args.kernel)
+    create_analysis(args.name, args.kernel, src_dir, scaffold_name)
+    log.info("Done.")

@@ -1,73 +1,28 @@
-<!-- This is an HTML file that gets processed by Jinja2
-(http://jinja.pocoo.org/docs/dev/). Jinja2 block commands are included in
-curly braces and percent signs and inline commands in double angular brackets.
-Everything outside these commands is just plain HTML. -->
-{% from 'macros.html' import include_md %}
-{% extends "base.html" %}
+{% extends "analysis.html" %}
 
 
-{% block head %}
-<!-- CHANGEME. This block is inserted into the page head. -->
-<!--
-    Add inline CSS to the page:
-    <style>p { font-family: serif; }</style>
-
-    Add a css file (put my-style.css into analyses/scaffold/):
-    <link rel="stylesheet" type="text/css" href="/scaffold/static/my-style.css">
-
-    Add a js library (put my-library.js into analyses/scaffold/):
-    <script src="/scaffold/static/my-library.js"></script>
-
-    You can also add a js library to footerscripts (see below) to have it load
-    after the page content.
--->
-{% endblock %}
-
-
-<!-- CHANGEME. This sets the content of the HTML <title> element. -->
-{% block title %}Scaffold{% endblock %}
-
-
-
-{% block content %}
-<!-- The description of the analysis is in README.md. The macro include_md()
-pulls that description in and converts it to html to be shown also here. -->
-[[ include_md('scaffold/README.md') ]]
-
-<hr />
-<!-- CHANGEME. Put your analysis HTML here. -->
+{% block analysis %}
 <h3>Analysis Output</h3>
-<p>The backend's <i>ready</i> signal:
-    <span id="backend_ready_msg">nothing yet</span>
-</p>
-
-<hr />
-<!-- This log output below is just nice to have when starting to design an
-analysis. Feel free to delete the line below. -->
-<h3>Log</h3>
-<pre id="log"></pre>
-{% endblock content %}
+<p>The current status: <span id="status">unknown</span></p>
+{% end %}
 
 
 
-{% block footerscripts %}
-<!-- CHANGEME.
-    Add a js library (put my-library.js into analyses/scaffold/):
-    <script src="/scaffold/static/my-library.js"></script>
--->
+{% block footer %}
 <script>
-    // Initialize Databench's frontend library.
-	var databench = Databench();
+    // initialize Databench's frontend library
+    var d = new Databench.Connection();
+    Databench.ui.wire(d);
 
-    // CHANGEME. Customize the code below.
-    // Interact with the backend. Listen for the 'ready' signal like this:
-    databench.on('ready', function(data) {
-        $('#backend_ready_msg').text(data);
-        console.log('Ready message received and set as the text of element '+
-                    '#backend_ready_msg. Now sending message back to backend.')
+    // listen for updates to 'status' in 'data'
+    d.on({data: 'status'}, function(status) {
+        console.log(`received ${JSON.stringify(status)}`);
+        document.getElementById('status').innerHTML = status;
 
-        // Send something to the backend in return:
-        databench.emit('got_ready_signal', 'thanks for sending ready signal');
+        // send 'ack' action back:
+        d.emit('ack', 'thanks for sending ready');
     });
+
+    d.connect();
 </script>
-{% endblock footerscripts %}
+{% end %}
