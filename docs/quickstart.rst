@@ -12,6 +12,7 @@ creates a directory structure like this:
     - workingDir/
         - analyses/
             - __init__.py
+            - index.yaml
             - helloworld/
                 - __init__.py
                 - analysis.py
@@ -22,16 +23,18 @@ At this point you are all set up and can run ``databench``, view the analysis
 in a browser at http://localhost:5000 and start modifying the analysis source code.
 
 To understand the structure, this is a walk-through of the steps that just
-happened in ``scaffold-databench``. First, tell the analyses module that we
-created a new analysis called *helloworld* in the ``analyses/__init__.py`` file:
+happened in ``scaffold-databench``. First, add the analyses to the
+``analyses/index.yaml`` file:
 
 .. code-block:: python
 
-    from .helloworld.analysis import HelloWorld
+    title: My Analyses
+    description: Describing my analyses with words.
 
-    analyses = [
-        ('helloworld', HelloWorld),
-    ]
+    analyses:
+      - name: helloworld
+        title: Hello World!
+        description: A hello world example.
 
 Next, create the helloworld backend in ``analyses/helloworld/analysis.py``:
 
