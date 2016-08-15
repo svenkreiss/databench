@@ -1,7 +1,5 @@
-include README.rst AUTHORS.rst LICENSE
+include README.rst HISTORY.rst LICENSE
 recursive-include databench/templates *.html
-recursive-include databench/static *.css *.js *.map *.ico *.svg
-recursive-include databench/node_modules *.css *.js *.map
+recursive-include databench/static *.css *.js *.js.map *.ico *.svg
 recursive-include databench/analyses_packaged *
 recursive-exclude databench/analyses_packaged *.pyc .DS_Store
-recursive-include tests *.py
