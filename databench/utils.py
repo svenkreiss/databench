@@ -37,15 +37,26 @@ def fig_to_src(figure, image_format='png', dpi=80):
         f = io.BytesIO()
         figure.savefig(f, format=image_format, dpi=dpi)
         f.seek(0)
+        return png_to_src(f.read())
 
-        prefix = 'data:image/png;base64,'
-        data = base64.b64encode(f.read()).decode()
     elif image_format == 'svg':
         f = io.StringIO()
         figure.savefig(f, format=image_format, dpi=dpi)
         f.seek(0)
+        return svg_to_src(f.read())
 
-        prefix = 'data:image/svg+xml;utf8,'
-        data = f.read()
 
-    return prefix + data
+def png_to_src(png):
+    """Convert a PNG string to a format that can be passed into a src.
+
+    :rtype: str
+    """
+    return 'data:image/png;base64,' + base64.b64encode(png).decode()
+
+
+def svg_to_src(svg):
+    """Convert an SVG string to a format that can be passed into a src.
+
+    :rtype: str
+    """
+    return 'data:image/svg+xml;utf8,' + svg

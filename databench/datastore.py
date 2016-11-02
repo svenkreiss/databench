@@ -38,9 +38,13 @@ class Datastore(object):
         copied using ``copy.deepcopy(value)`` before it is stored. Callbacks
         are skipped if the value is already assigned to the key.
         """
-        if key in Datastore.store[self.domain] and \
-           Datastore.store[self.domain][key] == value:
-            return self
+        try:
+            if key in Datastore.store[self.domain] and \
+               Datastore.store[self.domain][key] == value:
+                return self
+        except ValueError:
+            # Some types, e.g. numpy arrays, cannot be compared.
+            pass
 
         value = copy.deepcopy(value)
 
