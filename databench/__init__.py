@@ -3,7 +3,7 @@
 
 from __future__ import absolute_import
 
-__version__ = '0.4.1'
+__version__ = '0.4.2'
 
 from .analysis import Analysis
 from .analysis_zmq import AnalysisZMQ
@@ -13,4 +13,4 @@ from .meta import Meta
 from .meta_zmq import MetaZMQ
 from .readme import Readme
 from . import testing
-from .utils import sanitize_message, fig_to_src
+from .utils import sanitize_message, fig_to_src, png_to_src, svg_to_src

@@ -3,9 +3,16 @@
 import base64
 import io
 
+try:
+    import numpy as np
+except ImportError:
+    np = None
+
 
 def sanitize_message(m):
-    if isinstance(m, int) or isinstance(m, float):
+    if isinstance(m, int) or isinstance(m, float) or \
+       (np is not None and (isinstance(m, np.integer) or
+                            isinstance(m, np.float))):
         if m != m:
             m = 'NaN'
         elif m == float('inf'):
@@ -20,7 +27,7 @@ def sanitize_message(m):
             m[i] = sanitize_message(m[i])
     elif isinstance(m, (set, tuple)):
         m = [sanitize_message(e) for e in m]
-    elif hasattr(m, 'tolist'):  # for np.array
+    elif hasattr(m, 'tolist') and hasattr(m, '__iter__'):  # for np.array
         m = [sanitize_message(e) for e in m]
     return m
 
