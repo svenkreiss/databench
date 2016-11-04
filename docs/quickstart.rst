@@ -26,7 +26,7 @@ To understand the structure, this is a walk-through of the steps that just
 happened in ``scaffold-databench``. First, add the analyses to the
 ``analyses/index.yaml`` file:
 
-.. code-block:: python
+.. code-block:: yaml
 
     title: My Analyses
     description: Describing my analyses with words.

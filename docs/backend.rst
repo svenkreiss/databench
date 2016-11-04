@@ -107,6 +107,8 @@ Utils
 -----
 
 .. autofunction:: databench.fig_to_src
+.. autofunction:: databench.png_to_src
+.. autofunction:: databench.svg_to_src
 
 
 testing
