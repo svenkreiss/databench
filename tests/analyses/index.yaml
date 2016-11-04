@@ -9,6 +9,8 @@ analyses:
     kernel: py
     title: Parameters with Python Kernel
     description: An analysis for unit testing action parameters.
+  - name: cmdargs
+    title: Command Line Arguments
   - name: requestargs
     title: RequestArgs
     description: An analysis for unit testing action parameters.
