@@ -1,0 +1,27 @@
+machine:
+  python:
+    version: 3.5.1
+  node:
+    version: 5.7.0
+
+general:
+  branches:
+    ignore:
+      - gh-pages
+
+dependencies:
+  pre:
+    - pip install --upgrade pip
+    - "pip install -e .[tests,markup]"
+    - pip install python-coveralls
+    - npm install
+    - npm run build
+
+test:
+  override:
+    - flake8
+    - npm run lint
+    - nosetests -vv --with-coverage --cover-erase --cover-inclusive
+  post:
+    - coveralls || true
+    - npm run jsdoc && ghp-import -n -p docs/jsdoc
