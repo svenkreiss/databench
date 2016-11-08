@@ -36,14 +36,6 @@ def test_delete():
     assert 'test' not in d
 
 
-def test_set_skip_callback():
-    global data_after
-    d['test'] = 'before-set'
-    data_after = 'skip-callback'
-    d['test'] = 'before-set'
-    assert data_after == 'skip-callback'
-
-
 def test_list():
     d['test'] = ['list']
     assert data_after == ['list']
