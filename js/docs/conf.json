@@ -11,7 +11,12 @@
     "templates": {
         "default": {
             "outputSourceFiles": false,
-            "includeDate": false
+            "includeDate": false,
+            "staticFiles": {
+                "include": [
+                    "./circle.yml"
+                ]
+            }
         }
     }
 }

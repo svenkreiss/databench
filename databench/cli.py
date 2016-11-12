@@ -48,7 +48,7 @@ def main():
                           default=int(os.environ.get('SSLPORT', 5001)),
                           help='SSL port for webserver')
 
-    args = parser.parse_args()
+    args, unknown_args = parser.parse_known_args()
 
     # coverage
     cov = None
@@ -68,8 +68,10 @@ def main():
     logging.info('Python {}'.format(sys.version))
     logging.info('Databench {}'.format(DATABENCH_VERSION))
     logging.info('host={}, port={}'.format(args.host, args.port))
+    if unknown_args:
+        logging.warn('Unrecognized arguments: {}'.format(unknown_args))
 
-    app = App(args.analyses)
+    app = App(args.analyses, cmd_args=unknown_args)
 
     # check whether this is just a quick build
     if args.build:

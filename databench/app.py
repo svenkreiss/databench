@@ -36,7 +36,7 @@ class App(object):
         (optional) Force to use the given ZMQ port for publishing.
     """
 
-    def __init__(self, analyses_path=None, zmq_port=None):
+    def __init__(self, analyses_path=None, zmq_port=None, cmd_args=None):
         self.info = {
             'title': 'Databench',
             'description': None,
@@ -50,6 +50,7 @@ class App(object):
             'injection_footer': '',
         }
         self.metas = []
+        self.cmd_args = cmd_args
         self._get_analyses(analyses_path)
 
         self.routes = [
@@ -235,6 +236,7 @@ class App(object):
             classes[0],
             path,
             self.extra_routes(name, path),
+            self.cmd_args,
         ))
 
     def meta_analysis_py(self, name, path):

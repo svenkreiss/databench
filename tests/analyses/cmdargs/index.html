@@ -1,0 +1,24 @@
+{% extends "analysis.html" %}
+
+
+{% block analysis %}
+<h3>Analysis Output</h3>
+<p>Command line arguments: <span id="cmdargs">unknown</span></p>
+{% end %}
+
+
+
+{% block footer %}
+<script>
+    // initialize Databench's frontend library
+    var d = new Databench.Connection();
+    Databench.ui.wire(d);
+    d.connect();
+
+    // listen for updates to 'status' in 'data'
+    d.on({data: 'cmd_args'}, function(args) {
+        console.log('received ', args);
+        document.getElementById('cmdargs').innerHTML = args;
+    });
+</script>
+{% end %}

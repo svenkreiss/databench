@@ -80,6 +80,26 @@ describe('Databench', () => {
     });
   });
 
+  describe('Cmd Args', () => {
+    // create connection
+    const c = new Databench.Connection(
+      null,
+      'ws://localhost:5000/cmdargs/ws'
+    );
+
+    it('create a WebSocket connection', () => {
+      assert.equal('object', typeof c);
+    });
+
+    it('command args test', done => {
+      c.on({ data: 'cmd_args' }, (args) => {
+        assert.deepEqual(['--some-test-flag'], args);
+        done();
+      });
+      c.connect();
+    });
+  });
+
   describe('disconnect', () => {
     // create connection
     const c = new Databench.Connection(

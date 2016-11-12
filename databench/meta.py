@@ -38,10 +38,12 @@ class Meta(object):
     :param list extra_routes: [(route, handler, data), ...]
     """
 
-    def __init__(self, name, analysis_class, analysis_path, extra_routes):
+    def __init__(self, name, analysis_class, analysis_path, extra_routes,
+                 cmd_args=None):
         self.name = name
         self.analysis_class = analysis_class
         self.analysis_path = analysis_path
+        self.cmd_args = cmd_args
 
         self.info = {}
         self.routes = [
@@ -158,6 +160,10 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
 
             self.meta.run_process(self.analysis, 'connect')
             log.info('Connected to analysis.')
+
+            if self.meta.cmd_args is not None:
+                self.meta.run_process(self.analysis, 'cmd_args',
+                                      [self.meta.cmd_args])
 
             if '__request_args' in msg and msg['__request_args']:
                 qs = parse_qs(msg['__request_args'].lstrip('?'))

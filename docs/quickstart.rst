@@ -140,3 +140,12 @@ The frontend can also send actions to the backend.
 
 .. image:: images/dataflow_frontend_state.png
    :alt: data flow with state stored in frontend
+
+
+Parameters
+----------
+
+Command line parameters: add an ``on_cmd_args(self, args)`` method to the
+analysis.
+
+Request arguments: add an ``on_request_args(self, args)`` method.
