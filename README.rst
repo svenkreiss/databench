@@ -1,5 +1,6 @@
 .. image:: https://raw.githubusercontent.com/svenkreiss/databench/master/logo/logo-w100.png
     :target: http://databench.trivial.io
+    :class: hideinsphinx
 
 Databench
 =========

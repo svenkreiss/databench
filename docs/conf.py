@@ -141,7 +141,7 @@ html_theme_options = {
    'analytics_id': 'UA-4070485-2',
    'extra_nav_links': [
       ('Links', [
-        ('Live Demos', 'http://databench-examples.svenkreiss.com'),
+        ('Live Demos', 'http://databench-examples.trivial.io'),
         ('Examples', 'https://github.com/svenkreiss/databench_examples'),
         ('Databench on GitHub', 'https://github.com/svenkreiss/databench'),
         ('Issue Tracker', 'https://github.com/svenkreiss/databench/issues'),
