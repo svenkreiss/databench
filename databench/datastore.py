@@ -35,17 +35,8 @@ class Datastore(object):
         """Set value for given key.
 
         Allows for assignments of the form ``d[key] = value``. The value is
-        copied using ``copy.deepcopy(value)`` before it is stored. Callbacks
-        are skipped if the value is already assigned to the key.
+        copied using ``copy.deepcopy(value)`` before it is stored.
         """
-        try:
-            if key in Datastore.store[self.domain] and \
-               Datastore.store[self.domain][key] == value:
-                return self
-        except ValueError:
-            # Some types, e.g. numpy arrays, cannot be compared.
-            pass
-
         value = copy.deepcopy(value)
 
         Datastore.store[self.domain][key] = value
