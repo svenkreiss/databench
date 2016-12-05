@@ -2,6 +2,9 @@
 
 
 {% block analysis %}
+{% raw readme %}
+<div id="databench-alerts"></div>
+
 <div class="row">
     <div class="col-md-3">
         <label for="samples">Samples:</label>
@@ -12,19 +15,15 @@
         <button class="btn btn-primary" data-action="run">Run</button>
     </div>
 </div>
-<div style="font-size: 400%"><i>π = <span id="pi">0.0 ± 1.0</span></i></div>
+<div style="font-size: 400%">
+    <em>π = <span id="pi">0.0 ± 1.0</span></em>
+</div>
+
+<pre id="log"></pre>
 {% end %}
 
 
 {% block footer %}
-<script>
-    var d = new Databench.Connection();
-    Databench.ui.wire(d);
-
-    d.on({data: 'pi'}, function(pi) {
-        document.getElementById('pi').innerHTML = pi.estimate.toFixed(3)+' ± '+pi.uncertainty.toFixed(3);
-    });
-
-    d.connect();
-</script>
+<script src="/_static/databench.js?v={{ databench_version }}"></script>
+<script src="/dummypi/static/analysis.js?v={{ version }}"></script>
 {% end %}
