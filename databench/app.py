@@ -42,7 +42,7 @@ class App(object):
             'description': None,
             'description_html': None,
             'author': None,
-            'version': None,
+            'version': '0.0.0',
             'logo_url': '/_static/logo.svg',
             'favicon_url': '/_static/favicon.ico',
             'footer_html': None,
@@ -297,7 +297,7 @@ class App(object):
 
         # distribute info to the metas
         distribute = ('logo_url', 'favicon_url', 'footer_html',
-                      'injection_head', 'injection_footer')
+                      'injection_head', 'injection_footer', 'version')
         analysis_infos = {info['name']: info
                           for info in self.info['analyses']
                           if 'name' in info}

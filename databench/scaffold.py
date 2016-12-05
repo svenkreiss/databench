@@ -78,7 +78,8 @@ def copy_scaffold_file(src, dest, name, scaffold_name):
         return
 
     # binary copy for unknown file endings
-    if not any(src.endswith(e) for e in ('.py', '.html', '.md', '.rst')):
+    if not any(src.endswith(e)
+               for e in ('.py', '.js', '.html', '.md', '.rst')):
         log.info('Binary copy {} to {}.'.format(src, dest))
         shutil.copyfile(src, dest)
         return
