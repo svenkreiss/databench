@@ -59,8 +59,9 @@ def create_analyses(name, kernel=None):
     index_path = os.path.join(os.getcwd(), 'analyses', 'index.yaml')
     if not os.path.exists(index_path):
         with open(index_path, 'w') as f:
-            f.write('title: My Analyses\n')
-            f.write('version: \'0.1.0\'\n')
+            f.write('title: Analyses\n')
+            f.write('description: A short description.\n')
+            f.write('version: 0.1.0\n')
             f.write('\n')
             f.write('analyses:\n')
 

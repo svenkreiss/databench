@@ -1,5 +1,6 @@
 title: Databench - Packaged Analyses
 description: Analyses that come packaged with Databench.
+version: 0.0.1
 
 analyses:
   - name: dummypi
