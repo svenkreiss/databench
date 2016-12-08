@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+
+{% block head %}
+<link rel="stylesheet" href="/_static/databench.css?version={{ databench_version }}">
+{% end %}
+
+
 {% block content %}
 {% if description_html %}
     {% raw description_html %}

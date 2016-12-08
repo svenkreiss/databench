@@ -8,7 +8,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link rel="shortcut icon" href="{% block favicon_url %}{{ globals().get('favicon_url', '') }}{% end %}">
-        <link rel="stylesheet" href="/_static/databench.css?version={{ databench_version }}">
         {% block databench_head %}{% end %}
         {% block injection_head %}{% raw injection_head %}{% end %}
         {% block head %}{% end %}

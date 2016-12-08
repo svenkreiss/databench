@@ -1,6 +1,11 @@
 {% extends "analysis.html" %}
 
 
+{% block head %}
+<link rel="stylesheet" href="/_static/databench.css?version={{ databench_version }}">
+{% end %}
+
+
 {% block analysis %}
 {% raw readme %}
 <div id="databench-alerts"></div>
