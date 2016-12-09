@@ -22,9 +22,10 @@ setup(
     include_package_data=True,
 
     install_requires=[
-        'tornado>=4.3',
+        'future>=0.15',
         'pyyaml>=3.11',
         'pyzmq>=4.3.1',
+        'tornado>=4.3',
     ],
     entry_points={
         'console_scripts': [
@@ -35,16 +36,16 @@ setup(
 
     extras_require={
         'markup': [
-            'markdown>=2.6.5',
             'docutils>=0.12',
+            'markdown>=2.6.5',
         ],
         'tests': [
+            'coverage>=4.1b2',
             'flake8==2.5.4',  # pinned due to error with version 3.0
             'ghp-import>=0.4.1',
             'hacking>=0.11.0',
             'matplotlib>=1.5.1',
             'nose>=1.3.4',
-            'coverage>=4.1b2',
             'requests>=2.9.1',
             'websocket-client>=0.35.0',
         ],
