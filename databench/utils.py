@@ -12,9 +12,9 @@ except ImportError:
 def json_encoder_default(obj):
     """Handle more data types than the default JSON encoder.
 
-    Specifically, it treats a `set` and a numpy array like a `list`.
+    Specifically, it treats a ``set`` and a numpy array like a ``list``.
 
-    Example: `json.dumps(obj, default=json_encoder_default)`
+    Example usage: ``json.dumps(obj, default=json_encoder_default)``
     """
     if np is not None:
         if isinstance(obj, np.integer):
