@@ -1,15 +1,10 @@
 """Command line tool to scaffold a new analysis environment."""
 
 import argparse
+from future.builtins import input
 import logging
 import os
 import shutil
-
-# for Python 2 compatibility
-try:
-    input = raw_input
-except NameError:
-    pass
 
 log = logging.getLogger(__name__)
 

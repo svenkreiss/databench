@@ -15,7 +15,7 @@ except ImportError:
     from urlparse import parse_qs  # Python 2
 
 from . import __version__ as DATABENCH_VERSION
-from .utils import sanitize_message
+from .utils import json_encoder_default
 
 PING_INTERVAL = 15000
 log = logging.getLogger(__name__)
@@ -185,14 +185,14 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
 
     @tornado.gen.coroutine
     def emit(self, signal, message='__nomessagetoken__'):
-        message = sanitize_message(message)
-
         data = {'signal': signal}
         if message != '__nomessagetoken__':
             data['load'] = message
 
         try:
-            self.write_message(json.dumps(data).encode('utf-8'))
+            self.write_message(
+                json.dumps(data, default=json_encoder_default).encode('utf-8')
+            )
         except tornado.websocket.WebSocketClosedError:
             pass
 

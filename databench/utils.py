@@ -9,27 +9,26 @@ except ImportError:
     np = None
 
 
-def sanitize_message(m):
-    if isinstance(m, int) or isinstance(m, float) or \
-       (np is not None and (isinstance(m, np.integer) or
-                            isinstance(m, np.float))):
-        if m != m:
-            m = 'NaN'
-        elif m == float('inf'):
-            m = 'inf'
-        elif m == float('-inf'):
-            m = '-inf'
-    elif isinstance(m, list):
-        for i, e in enumerate(m):
-            m[i] = sanitize_message(e)
-    elif isinstance(m, dict):
-        for i in m:
-            m[i] = sanitize_message(m[i])
-    elif isinstance(m, (set, tuple)):
-        m = [sanitize_message(e) for e in m]
-    elif hasattr(m, 'tolist') and hasattr(m, '__iter__'):  # for np.array
-        m = [sanitize_message(e) for e in m]
-    return m
+def json_encoder_default(obj):
+    """Handle more data types than the default JSON encoder.
+
+    Specifically, it treats a `set` and a numpy array like a `list`.
+
+    Example: `json.dumps(obj, default=json_encoder_default)`
+    """
+    if np is not None:
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.float):
+            return float(obj)
+
+    if isinstance(obj, set):
+        return list(obj)
+    elif hasattr(obj, 'tolist') and hasattr(obj, '__iter__'):
+        # for np.array
+        return obj.tolist()
+
+    return obj
 
 
 def fig_to_src(figure, image_format='png', dpi=80):
