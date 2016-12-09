@@ -101,6 +101,7 @@ label {
 .alert {
     border:1px solid #aaa;
     border-radius: 4px;
+    margin: 1em 0;
     padding: 15px;
 }
 
