@@ -143,7 +143,7 @@ class App(object):
             config = yaml.safe_load(f)
             self.info.update(config)
         if self.debug:
-            self.info['version'] += '.debug{:04X}'.format(
+            self.info['version'] += '.debug-{:04X}'.format(
                 int(random.random() * 0xffff))
 
         readme = Readme(self.analyses_path)
@@ -349,9 +349,11 @@ class App(object):
             cwd = os.getcwd()
             os.chdir(self.analyses_path)
             if glob2:
-                files = [fn for expr in to_watch for fn in glob2.glob(expr)]
+                files = [os.path.join(self.analyses_path, fn)
+                         for expr in to_watch for fn in glob2.glob(expr)]
             else:
-                files = [fn for expr in to_watch for fn in glob.glob(expr)]
+                files = [os.path.join(self.analyses_path, fn)
+                         for expr in to_watch for fn in glob.glob(expr)]
                 if any('**' in expr for expr in to_watch):
                     log.warning('Please run "pip install glob2" to properly '
                                 'process watch patterns with "**".')

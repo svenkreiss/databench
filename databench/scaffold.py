@@ -66,6 +66,9 @@ def create_analyses(name, kernel=None):
             f.write('  - name: {}\n'.format(name))
             f.write('    title: {}\n'.format(name.title()))
             f.write('    description: A new analysis.\n')
+            f.write('    watch:\n')
+            f.write('      - {}/*.js\n'.format(name))
+            f.write('      - {}/*.html\n'.format(name))
 
 
 def copy_scaffold_file(src, dest, name, scaffold_name):

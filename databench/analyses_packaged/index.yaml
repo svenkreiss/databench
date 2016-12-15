@@ -6,14 +6,21 @@ analyses:
   - name: dummypi
     title: Dummy π
     description: Calculating π the simple way, but this is called dummypi to avoid conflict with simplepi in the databench_examples repo.
+    watch:
+      - dummypi/*.js
+      - dummypi/*.html
   - name: scaffold
     title: Scaffold
     description: A short description of this analysis.
+    watch:
+      - scaffold/*.js
+      - scaffold/*.html
   - name: dummypi_py
     kernel: py
     title: Dummy π with Python Language Kernel
     description: Calculating π the simple way, but this is called dummypi to avoid conflict with simplepi in the databench_examples repo. This is using a Python Language Kernel running in a separate process.
     watch:
+      - dummypi_py/*.js
       - dummypi_py/*.html
       - dummypi_py/*.py
   - name: scaffold_py
@@ -21,5 +28,6 @@ analyses:
     title: Scaffold_Py
     description: A short description of this analysis.
     watch:
+      - scaffold_py/*.js
       - scaffold_py/*.html
       - scaffold_py/*.py
