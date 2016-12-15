@@ -71,7 +71,8 @@ def main():
     if unknown_args:
         logging.warn('Unrecognized arguments: {}'.format(unknown_args))
 
-    app = App(args.analyses, cmd_args=unknown_args)
+    app_debug = args.loglevel not in ('WARNING', 'ERROR', 'CRITICAL')
+    app = App(args.analyses, cmd_args=unknown_args, debug=app_debug)
 
     # check whether this is just a quick build
     if args.build:
@@ -83,8 +84,7 @@ def main():
         return
 
     # HTTP server
-    app_debug = args.loglevel not in ('WARNING', 'ERROR', 'CRITICAL')
-    tornado_app = app.tornado_app(debug=app_debug)
+    tornado_app = app.tornado_app()
     tornado_app.listen(args.port, args.host)
     # HTTPS server
     if args.ssl_certfile and args.ssl_keyfile:
