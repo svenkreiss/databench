@@ -1,11 +1,14 @@
+/* global Databench */
+/* global document */
+
 // initialize Databench's frontend library
-var d = new Databench.Connection();
-Databench.ui.wire(d);
+const databench = new Databench.Connection();
+Databench.ui.wire(databench);
 
 // listen for updates to 'status' in 'data'
-d.on({data: 'status'}, function(status) {
+databench.on({ data: 'status' }, (status) => {
   console.log(`received ${JSON.stringify(status)}`);
   document.getElementById('status').innerHTML = status;
 });
 
-d.connect();
+databench.connect();

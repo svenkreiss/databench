@@ -41,7 +41,7 @@
     "prepublish": "gulp",
     "build": "gulp",
     "test": "mocha -t 5000 --no-colors --use_strict js/tests/test.js",
-    "lint": "eslint js/src/*.js",
+    "lint": "eslint js/src/*.js && eslint databench/analyses_packaged/**/*.js",
     "esdoc": "esdoc -c esdoc.json",
     "jsdoc": "jsdoc --verbose --readme js/docs/index.md js/src/*.js -d docs/jsdoc/ -c js/docs/conf.json"
   },

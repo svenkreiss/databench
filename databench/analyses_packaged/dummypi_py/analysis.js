@@ -1,8 +1,12 @@
-var d = new Databench.Connection();
-Databench.ui.wire(d);
+/* global Databench */
+/* global document */
 
-d.on({data: 'pi'}, function(pi) {
-  document.getElementById('pi').innerHTML = pi.estimate.toFixed(3)+' ± '+pi.uncertainty.toFixed(3);
+const databench = new Databench.Connection();
+Databench.ui.wire(databench);
+
+databench.on({ data: 'pi' }, (pi) => {
+  document.getElementById('pi').innerHTML =
+    `${pi.estimate.toFixed(3)} ± ${pi.uncertainty.toFixed(3)}`;
 });
 
-d.connect();
+databench.connect();
