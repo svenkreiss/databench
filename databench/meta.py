@@ -4,7 +4,6 @@ from __future__ import absolute_import, unicode_literals, division
 
 import json
 import logging
-import os
 import tornado.gen
 import tornado.web
 import tornado.websocket
