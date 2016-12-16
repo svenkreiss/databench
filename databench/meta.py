@@ -55,15 +55,13 @@ class Meta(object):
              FrontendHandler,
              {'meta': self}),
 
-            (r'/{}/(?P<template_name>.+\.html)'.format(self.name),
+            (r'/(?P<template_name>{}/.+\.html)'.format(self.name),
              RenderTemplate,
-             {'template_path': self.analysis_path,
-              'info': self.info}),
+             {'info': self.info}),
 
             (r'/{}/'.format(self.name),
              RenderTemplate,
-             {'template_name': 'index.html',
-              'template_path': self.analysis_path,
+             {'template_name': '{}/index.html'.format(self.name),
               'info': self.info}),
         ] + [
             (r'/{}/{}'.format(self.name, route), handler, data)
@@ -198,17 +196,15 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
 
 
 class RenderTemplate(tornado.web.RequestHandler):
-    def initialize(self, info, template_name=None, template_path=None):
+    def initialize(self, info, template_name=None):
         self.info = info
         self.template_name = template_name
-        self.template_path = template_path
 
     def get(self, template_name=None):
         if template_name is None:
             template_name = self.template_name
-        loc = os.path.join(self.template_path, template_name)
         self.render(
-            loc,
+            template_name,
             databench_version=DATABENCH_VERSION,
             **self.info
         )

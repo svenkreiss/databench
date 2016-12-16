@@ -169,3 +169,10 @@ label {
     max-height: 100px;
     margin-right: 20px;
 }
+
+
+.d-home-link {
+    position: relative;
+    top: -30px;
+    font-size: 85%;
+}

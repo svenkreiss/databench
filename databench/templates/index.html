@@ -7,9 +7,7 @@
 
 
 {% block content %}
-{% if description_html %}
-    {% raw description_html %}
-{% end %}
+{% if description_html %}{% raw description_html %}{% end %}
 
 <h1 id="d-list-of-analyses">List of Analyses</h1>
 <div class="d-boxes">
@@ -25,7 +23,7 @@
 {% end %}
 
 
-{% block databench_footer %}
+{% block footer %}
 <script>
     console.log('Databench v{{databench_version}}, analyses v{{version}}');
 </script>

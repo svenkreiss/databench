@@ -3,48 +3,32 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>{% block title %}{{ globals().get('title', 'Databench') }}{% end %}</title>
-        <meta name="description" content="{% block description %}{{ globals().get('description', '') }}{% end %}">
+        <title>{{ title }}</title>
+        <meta name="description" content="{{ description }}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="shortcut icon" href="{% block favicon_url %}{{ globals().get('favicon_url', '') }}{% end %}">
-        {% block databench_head %}{% end %}
-        {% block injection_head %}{% raw injection_head %}{% end %}
+        <link rel="shortcut icon" href="/_static/favicon.ico">
         {% block head %}{% end %}
     </head>
     <body>
-        {% block body %}
-        <div class="{% block d-container-class %}d-container{% end %}">
+        <div class="d-container">
             <div class="d-header">
                 <h2 id="d-title"><a href="/" class="text-muted">
-                    {% block headerlogo %}
-                        <img id="d-logo" src="{{ logo_url }}" />{{ title }}
-                    {% end %}
+                    <img id="d-logo" src="/_static/logo.svg" />{{ title }}
                 </a></h2>
             </div>
 
-            <div class="d-content" id="d-content">
+            <div class="d-content">
                 {% block content %}
                 {% end %}
             </div>
 
-            {% block page_footer %}
             <div class="d-footer">
-                <div class="text-right-sm">
-                    {% if footer_html is None %}
-                        Created with <a href="http://databench.trivial.io/v0.5/">Databench</a>.
-                    {% else %}
-                        {% raw footer_html %}
-                    {% end %}
-                    <!-- This is Databench version {{databench_version}}. -->
-                </div>
+                Created with <a href="http://databench.trivial.io/v0.5/">Databench</a>.
+                <!-- This is Databench v{{databench_version}} and analyses v{{version}}. -->
             </div>
-            {% end %}
         </div>
-        {% end %}
 
-        {% block databench_footer %}{% end %}
-        {% block injection_footer %}{% raw injection_footer %}{% end %}
         {% block footer %}{% end %}
     </body>
 </html>
