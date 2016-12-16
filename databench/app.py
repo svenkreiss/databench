@@ -67,7 +67,7 @@ class App(object):
              {'path': os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                    'node_modules')}),
 
-            (r'/',
+            (r'/(?:index.html)?',
              IndexHandler,
              {'info': self.info, 'metas': self.metas}),
         ]
