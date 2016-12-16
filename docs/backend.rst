@@ -43,6 +43,16 @@ in your analyses path. Use ``analyses/static`` for static assets like logos and 
 .. _`base.html`: <https://github.com/svenkreiss/databench/blob/master/databench/templates/base.html>_
 .. _`analysis.html`: <https://github.com/svenkreiss/databench/blob/master/databench/templates/analysis.html>_
 
+Default ``analyses/base.html``:
+
+.. literalinclude:: ../databench/templates/base.html
+    :language: html
+
+Default ``analyses/analysis.html``:
+
+.. literalinclude:: ../databench/templates/analysis.html
+    :language: html
+
 
 Routes
 ------
