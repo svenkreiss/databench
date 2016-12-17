@@ -1,15 +1,10 @@
 """Command line tool to scaffold a new analysis environment."""
 
 import argparse
+from future.builtins import input
 import logging
 import os
 import shutil
-
-# for Python 2 compatibility
-try:
-    input = raw_input
-except NameError:
-    pass
 
 log = logging.getLogger(__name__)
 
@@ -59,8 +54,9 @@ def create_analyses(name, kernel=None):
     index_path = os.path.join(os.getcwd(), 'analyses', 'index.yaml')
     if not os.path.exists(index_path):
         with open(index_path, 'w') as f:
-            f.write('title: My Analyses\n')
-            f.write('version: \'0.1.0\'\n')
+            f.write('title: Analyses\n')
+            f.write('description: A short description.\n')
+            f.write('version: 0.1.0\n')
             f.write('\n')
             f.write('analyses:\n')
 
@@ -70,6 +66,9 @@ def create_analyses(name, kernel=None):
             f.write('  - name: {}\n'.format(name))
             f.write('    title: {}\n'.format(name.title()))
             f.write('    description: A new analysis.\n')
+            f.write('    watch:\n')
+            f.write('      - {}/*.js\n'.format(name))
+            f.write('      - {}/*.html\n'.format(name))
 
 
 def copy_scaffold_file(src, dest, name, scaffold_name):
@@ -78,7 +77,8 @@ def copy_scaffold_file(src, dest, name, scaffold_name):
         return
 
     # binary copy for unknown file endings
-    if not any(src.endswith(e) for e in ('.py', '.html', '.md', '.rst')):
+    if not any(src.endswith(e)
+               for e in ('.py', '.js', '.html', '.md', '.rst')):
         log.info('Binary copy {} to {}.'.format(src, dest))
         shutil.copyfile(src, dest)
         return

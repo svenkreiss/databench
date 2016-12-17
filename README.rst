@@ -5,8 +5,7 @@
 Databench
 =========
 
-Databench is a Python data analysis tool using Tornado and WebSockets that you
-can install with:
+Databench is a Python data analysis tool. Install with:
 
 .. code-block:: bash
 

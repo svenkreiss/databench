@@ -1,5 +1,6 @@
+from .utils import json_encoder_default
 from collections import defaultdict
-import copy
+import json
 import logging
 
 log = logging.getLogger(__name__)
@@ -35,18 +36,31 @@ class Datastore(object):
         """Set value for given key.
 
         Allows for assignments of the form ``d[key] = value``. The value is
-        copied using ``copy.deepcopy(value)`` before it is stored.
-        """
-        value = copy.deepcopy(value)
+        encoded as json before it is stored.
 
-        Datastore.store[self.domain][key] = value
+        Callbacks are skipped if the json-encoded value is unchanged.
+        """
+        value_encoded = json.dumps(value, default=json_encoder_default)
+
+        if key in Datastore.store[self.domain] and \
+           Datastore.store[self.domain][key] == value_encoded:
+            return self
+
+        Datastore.store[self.domain][key] = value_encoded
+
+        if Datastore.on_change_cb[self.domain]:
+            value_decoded = json.loads(value_encoded)
         for cb in Datastore.on_change_cb[self.domain]:
-            cb(key, value)
+            cb(key, value_decoded)
 
         return self
 
     def __getitem__(self, key):
         """Return the value for the given key."""
+        return json.loads(Datastore.store[self.domain][key])
+
+    def get_encoded(self, key):
+        """Return the stored value without decoding it."""
         return Datastore.store[self.domain][key]
 
     def __delitem__(self, key):
@@ -79,4 +93,4 @@ class Datastore(object):
         """
         for k, v in key_value_pairs.items():
             if k not in Datastore.store[self.domain]:
-                Datastore.store[self.domain][k] = copy.deepcopy(v)
+                Datastore.store[self.domain][k] = v

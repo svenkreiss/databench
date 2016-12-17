@@ -2,6 +2,7 @@ databench/static/databench.js
 databench/static/databench.js.map
 tests/analyses/build_test.txt
 tests/analyses_broken/build_test.txt
+_crawled/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -68,3 +69,4 @@ coverage.xml
 docs/_build/
 
 .DS_Store
+.vscode

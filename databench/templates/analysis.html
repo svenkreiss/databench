@@ -1,19 +1,13 @@
 {% extends "base.html" %}
 
 
-{% block d-container-class %}d-analysis-container{% end %}
-
-
 {% block content %}
-    {% block readme %}{% raw readme %}<br />{% end %}
+<a class="d-home-link" href="/">Home</a>
 
-	<div id="ws-alerts"></div>
-    {% block analysis %}{% end %}
+{% raw readme %}
+<div id="databench-alerts"></div>
 
-    {% block log %}<br /><pre id="log"></pre>{% end %}
-{% end %}
+{% block analysis %}{% end %}
 
-
-{% block databench_footer %}
-<script src="/_static/databench.js?version={{ databench_version }}"></script>
+<pre id="log"></pre>
 {% end %}

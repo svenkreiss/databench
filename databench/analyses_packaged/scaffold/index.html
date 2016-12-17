@@ -1,28 +1,18 @@
 {% extends "analysis.html" %}
 
 
+{% block head %}
+<link rel="stylesheet" href="/_static/databench.css?version={{ databench_version }}">
+{% end %}
+
+
 {% block analysis %}
-<h3>Analysis Output</h3>
+<h1>Analysis Output</h1>
 <p>The current status: <span id="status">unknown</span></p>
 {% end %}
 
 
-
 {% block footer %}
-<script>
-    // initialize Databench's frontend library
-    var d = new Databench.Connection();
-    Databench.ui.wire(d);
-
-    // listen for updates to 'status' in 'data'
-    d.on({data: 'status'}, function(status) {
-        console.log(`received ${JSON.stringify(status)}`);
-        document.getElementById('status').innerHTML = status;
-
-        // send 'ack' action back:
-        d.emit('ack', 'thanks for sending ready');
-    });
-
-    d.connect();
-</script>
+<script src="/_static/databench.js?v={{ databench_version }}"></script>
+<script src="/scaffold/static/analysis.js?v={{ version }}"></script>
 {% end %}

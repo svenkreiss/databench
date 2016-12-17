@@ -20,20 +20,11 @@ Defaults at the global level for ``index.yaml``:
     description_html: null
     author: null
     version: null
-    logo_url: /_static/logo.svg
-    favicon_url: /_static/favicon.ico
-    footer_html: null
-    injection_head: ''
-    injection_footer: ''
     build: null
     watch: null
 
     analyses:
       ...
-
-The entries ``injection_head`` and ``injection_footer`` can be overwritten by
-placing a ``head.html`` and ``footer.html`` in the analysis folder. This can
-be used to insert analytics tracking code.
 
 Examples for customization:
 
@@ -41,19 +32,26 @@ Examples for customization:
 
     title: Databench - Packaged Analyses
     description: my awesome analyses
-    logo_url: /static/logo-header.svg
-    favicon_url: /static/myfavicon.ico
-    footer_html: Created by <a href="http://www.trivial.io">me</a>.
 
-Place the ``logo-header.svg`` file in ``analyses/static/``. Any standard image
-format like ``.png``, ``.jpeg`` and ``.svg`` is supported.
 
-To modify the style globally (including the index page with the list of
-analysis) and to add a tracking snippet for analytics,
-you can inject code into the head and the bottom of the page.
-Inject code into the ``<head>`` section by creating a ``head.html`` file inside
-the analysis folder. Similarly, inject code into the bottom of the ``<body>``
-with a ``footer.html`` file.
+Templates
+---------
+
+Modify the `base.html`_, `analysis.html`_ or any other html template file
+in your analyses path. Use ``analyses/static`` for static assets like logos and favicons which is exposed at ``/static``.
+
+.. _`base.html`: <https://github.com/svenkreiss/databench/blob/master/databench/templates/base.html>_
+.. _`analysis.html`: <https://github.com/svenkreiss/databench/blob/master/databench/templates/analysis.html>_
+
+Default ``analyses/base.html``:
+
+.. literalinclude:: ../databench/templates/base.html
+    :language: html
+
+Default ``analyses/analysis.html``:
+
+.. literalinclude:: ../databench/templates/analysis.html
+    :language: html
 
 
 Routes

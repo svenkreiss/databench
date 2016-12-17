@@ -6,10 +6,12 @@ from . import __version__ as DATABENCH_VERSION
 from .meta import Meta
 from .meta_zmq import MetaZMQ
 from .readme import Readme
+from .template import Loader
 import glob
 import importlib
 import logging
 import os
+import random
 import subprocess
 import sys
 import tornado.autoreload
@@ -36,21 +38,18 @@ class App(object):
         (optional) Force to use the given ZMQ port for publishing.
     """
 
-    def __init__(self, analyses_path=None, zmq_port=None, cmd_args=None):
+    def __init__(self, analyses_path=None, zmq_port=None, cmd_args=None,
+                 debug=False):
         self.info = {
             'title': 'Databench',
             'description': None,
             'description_html': None,
             'author': None,
-            'version': None,
-            'logo_url': '/_static/logo.svg',
-            'favicon_url': '/_static/favicon.ico',
-            'footer_html': None,
-            'injection_head': '',
-            'injection_footer': '',
+            'version': '0.0.0',
         }
         self.metas = []
         self.cmd_args = cmd_args
+        self.debug = debug
         self._get_analyses(analyses_path)
 
         self.routes = [
@@ -68,7 +67,7 @@ class App(object):
              {'path': os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                    'node_modules')}),
 
-            (r'/',
+            (r'/(?:index.html)?',
              IndexHandler,
              {'info': self.info, 'metas': self.metas}),
         ]
@@ -78,8 +77,7 @@ class App(object):
             context = zmq.Context()
             socket = context.socket(zmq.PUB)
             zmq_port = socket.bind_to_random_port(
-                'tcp://127.0.0.1',
-                min_port=3000, max_port=9000,
+                'tcp://127.0.0.1', min_port=6000,
             )
             socket.close()
             context.destroy()
@@ -139,24 +137,14 @@ class App(object):
         with open(f_config, 'r') as f:
             config = yaml.safe_load(f)
             self.info.update(config)
+        if self.debug:
+            self.info['version'] += '.debug-{:04X}'.format(
+                int(random.random() * 0xffff))
 
         readme = Readme(self.analyses_path)
         if self.info['description'] is None:
             self.info['description'] = readme.text.strip()
         self.info['description_html'] = readme.html
-
-        f_head = os.path.join(self.analyses_path, 'head.html')
-        if os.path.isfile(f_head):
-            with open(f_head, 'r') as f:
-                self.info['injection_head'] = f.read()
-            log.debug('watch file {}'.format(f_head))
-            tornado.autoreload.watch(f_head)
-        f_footer = os.path.join(self.analyses_path, 'footer.html')
-        if os.path.isfile(f_footer):
-            with open(f_footer, 'r') as f:
-                self.info['injection_footer'] = f.read()
-            log.debug('watch file {}'.format(f_footer))
-            tornado.autoreload.watch(f_footer)
 
         # If 'analyses' or current directory contains a 'static' folder,
         # make it available.
@@ -296,8 +284,7 @@ class App(object):
                     values.append(info[attribute])
 
         # distribute info to the metas
-        distribute = ('logo_url', 'favicon_url', 'footer_html',
-                      'injection_head', 'injection_footer')
+        distribute = ('version',)
         analysis_infos = {info['name']: info
                           for info in self.info['analyses']
                           if 'name' in info}
@@ -343,9 +330,11 @@ class App(object):
             cwd = os.getcwd()
             os.chdir(self.analyses_path)
             if glob2:
-                files = [fn for expr in to_watch for fn in glob2.glob(expr)]
+                files = [os.path.join(self.analyses_path, fn)
+                         for expr in to_watch for fn in glob2.glob(expr)]
             else:
-                files = [fn for expr in to_watch for fn in glob.glob(expr)]
+                files = [os.path.join(self.analyses_path, fn)
+                         for expr in to_watch for fn in glob.glob(expr)]
                 if any('**' in expr for expr in to_watch):
                     log.warning('Please run "pip install glob2" to properly '
                                 'process watch patterns with "**".')
@@ -366,20 +355,20 @@ class App(object):
             log.debug('full command: {}'.format(full_cmd))
             subprocess.call(full_cmd, shell=True)
 
-    def tornado_app(self, debug=False, template_path=None, **kwargs):
+    def tornado_app(self, template_path=None, **kwargs):
         if template_path is None:
             template_path = os.path.join(
                 os.path.dirname(os.path.realpath(__file__)),
                 'templates',
             )
 
-        if debug:
+        if self.debug:
             self.build()
 
         return tornado.web.Application(
             self.routes,
-            debug=debug,
-            template_path=template_path,
+            debug=self.debug,
+            template_loader=Loader([self.analyses_path, template_path]),
             **kwargs
         )
 

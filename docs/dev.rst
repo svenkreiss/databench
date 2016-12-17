@@ -14,7 +14,7 @@ steps:
     virtualenv venv
     source venv/bin/activate
     # install this version in editable mode
-    pip install -e .[tests]
+    pip install -e .[markup,tests]
 
     # install JavaScript dependencies
     npm install
@@ -38,6 +38,10 @@ Now you can:
 
     # lint JavaScript
     npm run lint
+
+    # validate html (with Databench running)
+    localcrawl --start http://localhost:5000
+    html5validator --root _crawled
 
     # create JavaScript docs at docs/jsdoc/index.html
     npm run jsdoc

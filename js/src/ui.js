@@ -181,7 +181,7 @@ class Log extends UIElement {
 /**
  * Visual representation of alerts like connection failures.
  *
- * Usually wired to a `<div id="ws-alerts">` element.
+ * Usually wired to a `<div id="databench-alerts">` element.
  */
 class StatusLog extends UIElement {
   /**
@@ -232,7 +232,7 @@ class StatusLog extends UIElement {
   }
 
   /** Wire all status logs. */
-  static wire(conn, id = 'ws-alerts', formatter = StatusLog.defaultAlert) {
+  static wire(conn, id = 'databench-alerts', formatter = StatusLog.defaultAlert) {
     const node = document.getElementById(id);
     if (node == null) return;
     if (UIElement.determineActionName(node) == null) return;

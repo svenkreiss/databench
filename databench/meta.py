@@ -4,7 +4,6 @@ from __future__ import absolute_import, unicode_literals, division
 
 import json
 import logging
-import os
 import tornado.gen
 import tornado.web
 import tornado.websocket
@@ -15,7 +14,7 @@ except ImportError:
     from urlparse import parse_qs  # Python 2
 
 from . import __version__ as DATABENCH_VERSION
-from .utils import sanitize_message
+from .utils import json_encoder_default
 
 PING_INTERVAL = 15000
 log = logging.getLogger(__name__)
@@ -55,15 +54,13 @@ class Meta(object):
              FrontendHandler,
              {'meta': self}),
 
-            (r'/{}/(?P<template_name>.+\.html)'.format(self.name),
+            (r'/(?P<template_name>{}/.+\.html)'.format(self.name),
              RenderTemplate,
-             {'template_path': self.analysis_path,
-              'info': self.info}),
+             {'info': self.info}),
 
             (r'/{}/'.format(self.name),
              RenderTemplate,
-             {'template_name': 'index.html',
-              'template_path': self.analysis_path,
+             {'template_name': '{}/index.html'.format(self.name),
               'info': self.info}),
         ] + [
             (r'/{}/{}'.format(self.name, route), handler, data)
@@ -185,30 +182,28 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
 
     @tornado.gen.coroutine
     def emit(self, signal, message='__nomessagetoken__'):
-        message = sanitize_message(message)
-
         data = {'signal': signal}
         if message != '__nomessagetoken__':
             data['load'] = message
 
         try:
-            self.write_message(json.dumps(data).encode('utf-8'))
+            self.write_message(
+                json.dumps(data, default=json_encoder_default).encode('utf-8')
+            )
         except tornado.websocket.WebSocketClosedError:
             pass
 
 
 class RenderTemplate(tornado.web.RequestHandler):
-    def initialize(self, info, template_name=None, template_path=None):
+    def initialize(self, info, template_name=None):
         self.info = info
         self.template_name = template_name
-        self.template_path = template_path
 
     def get(self, template_name=None):
         if template_name is None:
             template_name = self.template_name
-        loc = os.path.join(self.template_path, template_name)
         self.render(
-            loc,
+            template_name,
             databench_version=DATABENCH_VERSION,
             **self.info
         )

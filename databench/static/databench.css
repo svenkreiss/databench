@@ -101,6 +101,7 @@ label {
 .alert {
     border:1px solid #aaa;
     border-radius: 4px;
+    margin: 1em 0;
     padding: 15px;
 }
 
@@ -133,6 +134,7 @@ label {
 .d-footer {
     padding-top: 19px;
     color: #777;
+    font-size: 80%;
     border-top: 1px solid #e5e5e5;
 }
 
@@ -166,4 +168,11 @@ label {
     max-width: 150px;
     max-height: 100px;
     margin-right: 20px;
+}
+
+
+.d-home-link {
+    position: relative;
+    top: -30px;
+    font-size: 85%;
 }
