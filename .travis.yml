@@ -17,9 +17,15 @@ install:
  - npm -v
  - npm install
  - npm run build
+ # Java 8 for html5validator
+ - sudo apt-get install oracle-java8-installer
+ - sudo update-java-alternatives -s java-8-oracle
+
 script:
  - flake8
  - npm run lint
+ - localcrawl --start http://localhost:5000 --run databench --log DEBUG
+ - html5validator --root _crawled/
  - nosetests -vv --with-coverage --cover-erase --cover-inclusive
 after_success:
  - coveralls || true
