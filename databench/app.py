@@ -77,8 +77,7 @@ class App(object):
             context = zmq.Context()
             socket = context.socket(zmq.PUB)
             zmq_port = socket.bind_to_random_port(
-                'tcp://127.0.0.1',
-                min_port=3000, max_port=9000,
+                'tcp://127.0.0.1', min_port=6000,
             )
             socket.close()
             context.destroy()
