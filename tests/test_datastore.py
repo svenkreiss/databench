@@ -32,7 +32,7 @@ class TestDatastore(unittest.TestCase):
 
     def test_list(self):
         self.d['test'] = ['list']
-        self.assertEqual(self.data_after, ['list'])
+        self.assertEqual(list(self.data_after), ['list'])
 
     def test_dict(self):
         self.d['test'] = {'key': 'value'}
