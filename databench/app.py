@@ -104,19 +104,19 @@ class App(object):
         if analyses_path:
             # analyses path supplied manually
             orig_syspath = sys.path
-            sys.path.append('.')
+            sys.path.insert(0, '.')
             analyses = importlib.import_module(analyses_path)
             sys.path = orig_syspath
         elif os.path.isfile(os.path.join('analyses', 'index.yaml')):
             # cwd outside analyses
             orig_syspath = sys.path
-            sys.path.append('.')
+            sys.path.insert(0, '.')
             import analyses
             sys.path = orig_syspath
         elif os.path.isfile('index.yaml'):
             # cwd is inside analyses
             orig_syspath = sys.path
-            sys.path.append('..')
+            sys.path.insert(0, '..')
             import analyses
             sys.path = orig_syspath
         else:
