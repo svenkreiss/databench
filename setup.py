@@ -41,9 +41,8 @@ setup(
         ],
         'tests': [
             'coverage>=4.1b2',
-            'flake8==2.5.4',  # pinned due to error with version 3.0
             'ghp-import>=0.4.1',
-            'hacking>=0.11.0',
+            'hacking>=0.11.0',  # imports a pinned version of flake8
             'html5validator>=0.2.6',
             'localcrawl>=0.1.2',
             'matplotlib>=1.5.1',
