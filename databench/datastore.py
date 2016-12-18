@@ -72,7 +72,7 @@ class DatastoreDict(object):
             return False
 
         keys = set(self.data.keys()) & set(other.data.keys())
-        return (len(self) == len(keys) and
+        return (len(self) == len(other) == len(keys) and
                 all(self.data[k] == other.data[k] for k in keys))
 
     def __len__(self):

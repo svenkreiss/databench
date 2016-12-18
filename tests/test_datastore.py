@@ -48,6 +48,16 @@ class TestDatastore(unittest.TestCase):
         self.d['test']['key'] = 'modified value'
         self.assertEqual(dict(self.data_after), {'key': 'modified value'})
 
+    def test_dict_overwrite(self):
+        self.d['test'] = {'key': 'value'}
+        self.d['test'] = {'key': 'modified value'}
+        self.assertEqual(dict(self.data_after), {'key': 'modified value'})
+
+    def test_dict_overwrite2(self):
+        self.d['test'] = {'e': 1}
+        self.d['test'] = {'e': 1, 'h': 1}
+        self.assertEqual(dict(self.data_after), {'e': 1, 'h': 1})
+
     def test_dict_update(self):
         self.d['test'] = {'key': 'value'}
         self.d['test'].update({'key': 'mod', 'key2': 'new'})
