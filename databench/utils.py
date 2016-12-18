@@ -26,6 +26,8 @@ def json_encoder_default(obj):
         return list(obj)
     elif obj.__class__.__name__ == 'DatastoreList':
         return list(obj)
+    elif obj.__class__.__name__ == 'DatastoreDict':
+        return dict(obj)
     elif hasattr(obj, 'tolist') and hasattr(obj, '__iter__'):
         # for np.array
         return obj.tolist()

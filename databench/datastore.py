@@ -1,5 +1,6 @@
 from .utils import json_encoder_default
 from collections import defaultdict
+from future.builtins import zip
 import json
 import logging
 
@@ -7,6 +8,10 @@ log = logging.getLogger(__name__)
 
 
 class DatastoreList(object):
+    """Object wrapper for storing a list in Datastore.
+
+    This triggers callbacks when elements are modified.
+    """
     def __init__(self, data, callback):
         self.data = [json.dumps(v, default=json_encoder_default) for v in data]
         self.callback = callback
@@ -21,17 +26,77 @@ class DatastoreList(object):
             return self
 
         self.data[key] = value_encoded
-
         self.callback(self)
 
         return self
 
     def __eq__(self, other):
+        if not isinstance(other, DatastoreList):
+            return False
+
         return (len(self) == len(other) and
                 all(v1 == v2 for v1, v2 in zip(self.data, other.data)))
 
     def __len__(self):
         return len(self.data)
+
+
+class DatastoreDict(object):
+    """Object wrapper for storing a dict in Datastore.
+
+    This triggers callbacks when elements are modified.
+    """
+    def __init__(self, data, callback):
+        self.data = {k: json.dumps(v, default=json_encoder_default)
+                     for k, v in data.items()}
+        self.callback = callback
+
+    def __getitem__(self, key):
+        if key not in self.data:
+            raise IndexError
+        return json.loads(self.data[key])
+
+    def __setitem__(self, key, value):
+        value_encoded = json.dumps(value, default=json_encoder_default)
+
+        if key in self.data and self.data[key] == value_encoded:
+            return self
+
+        self.data[key] = value_encoded
+        self.callback(self)
+
+        return self
+
+    def __eq__(self, other):
+        if not isinstance(other, DatastoreDict):
+            return False
+
+        keys = set(self.data.keys()) & set(other.data.keys())
+        return (len(self) == len(keys) and
+                all(self.data[k] == other.data[k] for k in keys))
+
+    def __len__(self):
+        return len(self.data)
+
+    def __iter__(self):
+        return (k for k in self.data.keys())
+
+    def keys(self):
+        return self.data.keys()
+
+    def values(self):
+        return (json.loads(v) for v in self.data.values())
+
+    def items(self):
+        return ((k, json.loads(v)) for k, v in self.data.items())
+
+    def update(self, new_data):
+        new_data_encoded = {k: json.dumps(v, default=json_encoder_default)
+                            for k, v in new_data.items()}
+        self.data.update(new_data_encoded)
+        self.callback(self)
+
+        return self
 
 
 class Datastore(object):
@@ -70,6 +135,8 @@ class Datastore(object):
         cb_fn = self.callback_fn(key)
         if isinstance(value, list):
             value_encoded = DatastoreList(value, cb_fn)
+        elif isinstance(value, dict):
+            value_encoded = DatastoreDict(value, cb_fn)
         else:
             value_encoded = json.dumps(value, default=json_encoder_default)
 
@@ -92,6 +159,8 @@ class Datastore(object):
 
     def decode(self, value):
         if isinstance(value, DatastoreList):
+            return value
+        elif isinstance(value, DatastoreDict):
             return value
 
         return json.loads(value)
