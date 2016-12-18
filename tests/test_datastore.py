@@ -34,6 +34,11 @@ class TestDatastore(unittest.TestCase):
         self.d['test'] = ['list']
         self.assertEqual(list(self.data_after), ['list'])
 
+    def test_list_change_element(self):
+        self.d['test'] = ['list']
+        self.d['test'][0] = 'modified list'
+        self.assertEqual(list(self.data_after), ['modified list'])
+
     def test_dict(self):
         self.d['test'] = {'key': 'value'}
         self.assertEqual(self.data_after, {'key': 'value'})
