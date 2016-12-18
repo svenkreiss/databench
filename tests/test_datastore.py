@@ -32,11 +32,26 @@ class TestDatastore(unittest.TestCase):
 
     def test_list(self):
         self.d['test'] = ['list']
-        self.assertEqual(self.data_after, ['list'])
+        self.assertEqual(list(self.data_after), ['list'])
+
+    def test_list_change_element(self):
+        self.d['test'] = ['list']
+        self.d['test'][0] = 'modified list'
+        self.assertEqual(list(self.data_after), ['modified list'])
 
     def test_dict(self):
         self.d['test'] = {'key': 'value'}
-        self.assertEqual(self.data_after, {'key': 'value'})
+        self.assertEqual(dict(self.data_after), {'key': 'value'})
+
+    def test_dict_change_element(self):
+        self.d['test'] = {'key': 'value'}
+        self.d['test']['key'] = 'modified value'
+        self.assertEqual(dict(self.data_after), {'key': 'modified value'})
+
+    def test_dict_update(self):
+        self.d['test'] = {'key': 'value'}
+        self.d['test'].update({'key': 'mod', 'key2': 'new'})
+        self.assertEqual(dict(self.data_after), {'key': 'mod', 'key2': 'new'})
 
     def test_contains(self):
         self.d['test'] = 'contains'

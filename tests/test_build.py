@@ -10,6 +10,12 @@ class Build(unittest.TestCase):
             return '{}'.format(os.path.getmtime(filename))
         return 'file_not_found'
 
+    def setUp(self):
+        self.owd = os.getcwd()  # original working directory
+
+    def tearDown(self):
+        os.chdir(self.owd)
+
     def test_build(self):
         before = self.file_id()
         subprocess.check_call(['databench', '--build',
@@ -22,11 +28,10 @@ class Build(unittest.TestCase):
     def test_cwd_outside_analyses(self):
         before = self.file_id()
 
-        owd = os.getcwd()  # original working directory
         os.chdir('tests')
         subprocess.check_call(['databench', '--build',
                                '--coverage', '../.coverage'])
-        os.chdir(owd)
+        os.chdir(self.owd)
 
         time.sleep(1)
         after = self.file_id()
@@ -35,11 +40,10 @@ class Build(unittest.TestCase):
     def test_cwd_inside_analyses(self):
         before = self.file_id()
 
-        owd = os.getcwd()  # original working directory
         os.chdir(os.path.join('tests', 'analyses'))
         subprocess.check_call(['databench', '--build',
                                '--coverage', '../../.coverage'])
-        os.chdir(owd)
+        os.chdir(self.owd)
 
         time.sleep(1)
         after = self.file_id()
