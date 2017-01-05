@@ -1,7 +1,10 @@
 Changelog
 ---------
 
-* `master <https://github.com/svenkreiss/databench/compare/v0.4.0...master>`_
+* `master <https://github.com/svenkreiss/databench/compare/v0.5.0...master>`_
+* `0.5.0 <https://github.com/svenkreiss/databench/compare/v0.4.0...v0.5.0>`_ (2017-01-04)
+    * various improvements to Datastore (supports storing dict and list now)
+    * linting for HTML and JS code
 * `0.4.0 <https://github.com/svenkreiss/databench/compare/v0.3.17...v0.4.0>`_ (2016-08-14)
     * switch from Flask to Tornado
     * switch from Jinja2 templates to Tornado templates
