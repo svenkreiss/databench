@@ -1,7 +1,10 @@
-let WebSocket;
-if (typeof WebSocket === 'undefined') {
-  WebSocket = require('websocket').w3cwebsocket;  // eslint-disable-line
-}
+import w3cwebsocket from 'websocket';
+const WebSocket = w3cwebsocket;
+
+// let WebSocket;
+// if (typeof WebSocket === 'undefined') {
+//   WebSocket = require('websocket').w3cwebsocket;  // eslint-disable-line
+// }
 
 /**
  * Connection to the backend.
