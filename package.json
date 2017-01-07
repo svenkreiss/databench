@@ -29,6 +29,7 @@
     "gulp-uglify": "^1.5.2",
     "jsdoc": "^3.4.0",
     "mocha": "^2.4.5",
+    "tslint": "^4.3.1",
     "typescript": "^2.1.4",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
@@ -44,7 +45,7 @@
     "prepublish": "tsc",
     "build": "tsc",
     "test": "mocha -t 5000 --no-colors --use_strict js/tests/test.js",
-    "lint": "tslint js/src/*.ts && eslint databench/analyses_packaged/**/*.js",
+    "lint": "tslint -c tslint.json js/src/*.ts && eslint databench/analyses_packaged/**/*.js",
     "esdoc": "esdoc -c esdoc.json",
     "jsdoc": "jsdoc --verbose --readme js/docs/index.md js/src/*.js -d docs/jsdoc/ -c js/docs/conf.json"
   },
