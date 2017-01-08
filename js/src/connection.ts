@@ -1,10 +1,6 @@
 import w3cwebsocket from 'websocket';
 const WebSocket = w3cwebsocket;
 
-// let WebSocket;
-// if (typeof WebSocket === 'undefined') {
-//   WebSocket = require('websocket').w3cwebsocket;  // eslint-disable-line
-// }
 
 /**
  * Connection to the backend.
@@ -24,6 +20,20 @@ const WebSocket = w3cwebsocket;
  * d.connect();
  */
 class Connection {
+  analysisId: string;
+  wsUrl: string;
+  requestArgs: string;
+
+  errorCB: (message?: string) => void;
+  private onCallbacks: any[];
+  private _onCallbacksOptimized: any;
+  private onProcessCallbacks: any;
+
+  private wsReconnectAttempt: number;
+  private wsReconnectDelay: number;
+  private socket: WebSocket;
+  private socketCheckOpen: number;
+
   /**
    * @param  {String} [analysisId=null]  Specify an analysis id or null to have one generated.
    *                                     The connection will try to connect to a previously created
@@ -56,7 +66,7 @@ class Connection {
 
   static guessWSUrl() {
     if (typeof location === 'undefined') return null;
-    const WSProtocol = location.origin.startsWith('https://') ? 'wss' : 'ws';
+    const WSProtocol = location.origin.indexOf('https://') === 0 ? 'wss' : 'ws';
     const path = location.pathname.substring(0, location.pathname.lastIndexOf('/'));
     return `${WSProtocol}://${document.domain}:${location.port}${path}/ws`;
   }

@@ -5,6 +5,11 @@
  * @module ui
  */
 
+import Map from 'es6-map';
+
+export class HTMLDatabenchElement extends HTMLElement {
+  databenchUI: UIElement;
+}
 
 /**
  * Abstract class for user interface elements which provides general helpers
@@ -17,7 +22,11 @@
  * respectively.
  * It also adds `this` UI element to the DOM node at `databenchUI`.
  */
-class UIElement {
+export class UIElement {
+  node: HTMLDatabenchElement & HTMLElement;
+  actionName: string;
+  wireSignal: string|any;
+
   /**
    * @param  {HTMLElement} node An HTML element.
    */
@@ -116,7 +125,12 @@ class UIElement {
  *
  * Usually wired to a `<pre id="log">` element.
  */
-class Log extends UIElement {
+export class Log extends UIElement {
+  consoleFnName: string;
+  limitNumber: number;
+  limitLength: number;
+  _messages: string[][];
+
   /**
    * @param  {HTMLElement} node     Primary node.
    * @param  {String} [consoleFnName='log'] Name of console method to replace.
@@ -157,7 +171,7 @@ class Log extends UIElement {
 
   add(message, source = 'unknown') {
     const msg = typeof message === 'string' ? message : JSON.stringify(message);
-    const paddedSource = ' '.repeat(Math.max(0, 8 - source.length)) + source;
+    const paddedSource = Array(Math.max(0, 8 - source.length)).join(' ') + source;
     this._messages.push([`${paddedSource}: ${msg}`]);
     this.render();
     return this;
@@ -183,7 +197,10 @@ class Log extends UIElement {
  *
  * Usually wired to a `<div id="databench-alerts">` element.
  */
-class StatusLog extends UIElement {
+export class StatusLog extends UIElement {
+  formatter: (message: string, count: number) => string;
+  _messages: { [message:string]: number };
+
   /**
    * @param  {HTMLElement} node      HTML node.
    * @param  {function}    formatter Formats a message and a count to a string.
@@ -192,7 +209,7 @@ class StatusLog extends UIElement {
     super(node);
 
     this.formatter = formatter;
-    this._messages = new Map();
+    this._messages = {};
 
     // to avoid confusion, void meaningless parent variable
     this.wireSignal = null;
@@ -210,22 +227,23 @@ class StatusLog extends UIElement {
   }
 
   render() {
-    const formatted = [...this._messages].map(([m, c]) => this.formatter(m, c));
+    const formatted = Object.getOwnPropertyNames(this._messages)
+      .map((m: string) => this.formatter(m, this._messages[m]));
     this.node.innerHTML = formatted.join('\n');
     return this;
   }
 
   add(message) {
     if (message == null) {
-      this._messages.clear();
+      this._messages = {};
       return this;
     }
     const msg = typeof message === 'string' ? message : JSON.stringify(message);
 
-    if (this._messages.has(msg)) {
-      this._messages.set(msg, this._messages.get(msg) + 1);
+    if (this._messages[msg] !== undefined) {
+      this._messages[msg] += 1;
     } else {
-      this._messages.set(msg, 1);
+      this._messages[msg] = 1;
     }
     this.render();
     return this;
@@ -243,6 +261,10 @@ class StatusLog extends UIElement {
   }
 }
 
+export enum ButtonState {
+  Idle = 1,
+  Active,
+}
 
 /**
  * A button, and usually wired to any `<button>` with an action name.
@@ -264,16 +286,16 @@ class StatusLog extends UIElement {
  * // In this form, Databench finds the button automatically and connects it
  * // to the backend. No additional JavaScript code is required.
  */
-class Button extends UIElement {
+export class Button extends UIElement {
+  _state: ButtonState;
+
   /**
    * @param  {HTMLElement} node DOM node to connect.
    */
   constructor(node) {
     super(node);
 
-    this.IDLE = 0;
-    this.ACTIVE = 2;
-    this._state = this.IDLE;
+    this._state = ButtonState.Idle;
 
     this.node.addEventListener('click', this.click.bind(this), false);
   }
@@ -289,7 +311,7 @@ class Button extends UIElement {
 
   render() {
     switch (this._state) {
-      case this.ACTIVE:
+      case ButtonState.Active:
         this.node.classList.add('disabled');
         break;
       default:
@@ -299,7 +321,7 @@ class Button extends UIElement {
   }
 
   click() {
-    if (this._state !== this.IDLE) return this;
+    if (this._state !== ButtonState.Idle) return this;
 
     const processID = Math.floor(Math.random() * 0x100000);
     this.clickCB(processID);
@@ -307,7 +329,7 @@ class Button extends UIElement {
   }
 
   state(s) {
-    if (s !== this.IDLE && s !== this.ACTIVE) return this;
+    if (s !== ButtonState.Idle && s !== ButtonState.Active) return this;
 
     this._state = s;
     this.render();
@@ -316,8 +338,8 @@ class Button extends UIElement {
 
   /** Wire all buttons. */
   static wire(conn) {
-    Array.from(document.getElementsByTagName('BUTTON'))
-      .filter(node => node.databenchUI === undefined)
+    [].slice.call(document.getElementsByTagName('BUTTON'), 0)
+      .filter(node => (<HTMLDatabenchElement>node).databenchUI === undefined)
       .filter(node => UIElement.determineActionName(node) !== null)
       .forEach(node => {
         const b = new Button(node);
@@ -328,7 +350,7 @@ class Button extends UIElement {
           // set up process callback
           conn.onProcess(processID, status => b.state(
             // map process status to state
-            { start: b.ACTIVE, end: b.IDLE }[status]
+            { start: ButtonState.Active, end: ButtonState.Idle }[status]
           ));
 
           conn.emit(b.actionName, b.actionFormat({
@@ -346,7 +368,7 @@ class Button extends UIElement {
  * Wired to ``<span>``, ``<p>``, ``<div>``, ``<i>`` and ``<b>`` tags with a
  * ``data-action`` attribute specifying the action name.
  */
-class Text extends UIElement {
+export class Text extends UIElement {
   /**
    * Format the value.
    * @param  {any} value Value as represented in the backend.
@@ -369,13 +391,15 @@ class Text extends UIElement {
    * @param  {Connection} conn Connection to use.
    */
   static wire(conn) {
-    [...Array.from(document.getElementsByTagName('SPAN')),
-     ...Array.from(document.getElementsByTagName('P')),
-     ...Array.from(document.getElementsByTagName('DIV')),
-     ...Array.from(document.getElementsByTagName('I')),
-     ...Array.from(document.getElementsByTagName('B'))]
-      .filter(node => node.databenchUI === undefined)
-      .filter(node => node.dataset.action !== undefined)
+    [].concat(
+      [].slice.call(document.getElementsByTagName('SPAN'), 0),
+      [].slice.call(document.getElementsByTagName('P'), 0),
+      [].slice.call(document.getElementsByTagName('DIV'), 0),
+      [].slice.call(document.getElementsByTagName('I'), 0),
+      [].slice.call(document.getElementsByTagName('B'), 0),
+    )
+      .filter(node => (<HTMLDatabenchElement>node).databenchUI === undefined)
+      .filter(node => (<HTMLElement>node).dataset['action'] !== undefined)
       .filter(node => UIElement.determineActionName(node) !== null)
       .forEach(node => {
         const t = new Text(node);
@@ -389,7 +413,10 @@ class Text extends UIElement {
 
 
 /** Make an `<input[type='text']>` with an action name interactive. */
-class TextInput extends UIElement {
+export class TextInput extends UIElement {
+  node: HTMLInputElement & HTMLDatabenchElement;
+  _triggerOnKeyUp: boolean;
+
   /**
    * @param {HTMLElement} node The node to connect.
    */
@@ -445,7 +472,7 @@ class TextInput extends UIElement {
   }
 
   /** Reads and sets the value. */
-  value(v) {
+  value(v?) {
     if (v === undefined) return this.node.value;
 
     this.node.value = this.formatFn(v || '');
@@ -454,8 +481,8 @@ class TextInput extends UIElement {
 
   /** Wire all text inputs. */
   static wire(conn) {
-    Array.from(document.getElementsByTagName('INPUT'))
-      .filter(node => node.databenchUI === undefined)
+    [].slice.call(document.getElementsByTagName('INPUT'), 0)
+      .filter(node => (<HTMLDatabenchElement>node).databenchUI === undefined)
       .filter(node => node.getAttribute('type') === 'text')
       .filter(node => UIElement.determineActionName(node) !== null)
       .forEach(node => {
@@ -488,7 +515,11 @@ class TextInput extends UIElement {
  * // The Python code is for illustration only and can be left out as this is
  * // the default behavior.
  */
-class Slider extends UIElement {
+export class Slider extends UIElement {
+  node: HTMLInputElement & HTMLDatabenchElement;
+  labelNode: HTMLElement;
+  labelHtml: string;
+
   /**
    * @param  {HTMLElement}  node      DOM node to bind.
    * @param  {HTMLElement?} labelNode DOM node label that corresponds to the slider.
@@ -549,7 +580,7 @@ class Slider extends UIElement {
   }
 
   /** Reads and sets the value. */
-  value(v) {
+  value(v?) {
     if (v === undefined) {
       return this.sliderToValue(parseFloat(this.node.value));
     }
@@ -566,26 +597,28 @@ class Slider extends UIElement {
     return this.changeCB(this.actionFormat(this.value()));
   }
 
-  /** Preprocess labels before wiring. */
-  static preprocessLabels() {
-    Array.from(document.getElementsByTagName('LABEL'))
-      .filter(label => label.htmlFor)
-      .forEach(label => {
-        const node = document.getElementById(label.htmlFor);
-        if (node) node.label = label;
-      });
+  /** Find all labels for slider elements. */
+  static labelsForSliders() {
+    return new Map<Element, Element>(
+      [].slice.call(document.getElementsByTagName('LABEL'), 0)
+        .filter(label => (<HTMLLabelElement>label).htmlFor)
+        .map((label): [Element, Element] => {
+          const node = document.getElementById((<HTMLLabelElement>label).htmlFor);
+          return [node, label];
+        })
+    );
   }
 
   /** Wire all sliders. */
   static wire(conn) {
-    this.preprocessLabels();
+    const lfs = this.labelsForSliders();
 
-    Array.from(document.getElementsByTagName('INPUT'))
-      .filter(node => node.databenchUI === undefined)
-      .filter(node => node.getAttribute('type') === 'range')
+    [].slice.call(document.getElementsByTagName('INPUT'), 0)
+      .filter(node => (<HTMLDatabenchElement>node).databenchUI === undefined)
+      .filter(node => (<HTMLElement>node).getAttribute('type') === 'range')
       .filter(node => UIElement.determineActionName(node) !== null)
       .forEach(node => {
-        const slider = new Slider(node, node.label);
+        const slider = new Slider(node, lfs.get(node));
         console.log('Wiring slider', node, `to action ${slider.actionName}.`);
 
         // handle events from frontend
@@ -616,7 +649,9 @@ class Slider extends UIElement {
  * ...
  * self.emit('mpl', databench.fig_to_src(fig))
  */
-class Image extends UIElement {
+export class Image extends UIElement {
+  node: HTMLImageElement & HTMLDatabenchElement;
+
   /** Reads and sets the value. */
   value(v) {
     if (v === undefined) return this.node.src;
@@ -627,9 +662,9 @@ class Image extends UIElement {
 
   /** Wire all text inputs. */
   static wire(conn) {
-    Array.from(document.getElementsByTagName('IMG'))
-      .filter(node => node.databenchUI === undefined)
-      .filter(node => node.dataset.signal !== undefined)
+    [].slice.call(document.getElementsByTagName('IMG'), 0)
+      .filter(node => (<HTMLDatabenchElement>node).databenchUI === undefined)
+      .filter(node => (<HTMLElement>node).dataset['signal'] !== undefined)
       .filter(node => UIElement.determineWireSignal(node) !== null)
       .forEach(node => {
         const img = new Image(node);
@@ -653,7 +688,7 @@ class Image extends UIElement {
  * @param  {Connection} connection A Databench.Connection instance.
  * @return {Connection}            The same connection.
  */
-function wire(connection) {
+export function wire(connection) {
   StatusLog.wire(connection);
   Button.wire(connection);
   TextInput.wire(connection);
@@ -663,5 +698,3 @@ function wire(connection) {
   Log.wire(connection);
   return connection;
 }
-
-export { StatusLog, Log, Button, TextInput, Text, Slider, Image, wire };
