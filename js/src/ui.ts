@@ -281,6 +281,7 @@ export enum ButtonState {
  * A simple example is below.
  *
  * @example
+ * ~~~
  * // in index.html, add:
  * <button data-action="run">Run</button>
  *
@@ -291,6 +292,7 @@ export enum ButtonState {
  *
  * // In this form, Databench finds the button automatically and connects it
  * // to the backend. No additional JavaScript code is required.
+ * ~~~
  */
 export class Button extends UIElement {
   _state: ButtonState;
@@ -515,6 +517,7 @@ export class TextInput extends UIElement {
  * Make all `<input[type='range']>` with an action name interactive.
  *
  * @example
+ * ~~~
  * // in index.html, add:
  * <label for="samples">Samples:</label>
  * <input type="range" id="samples" value="1000" min="100" max="10000" step="100" />
@@ -526,6 +529,7 @@ export class TextInput extends UIElement {
  *
  * // The Python code is for illustration only and can be left out as this is
  * // the default behavior.
+ * ~~~
  */
 export class Slider extends UIElement {
   node: HTMLInputElement & HTMLDatabenchElement;
@@ -652,6 +656,7 @@ export class Slider extends UIElement {
  * `fig_to_src()` (see example below).
  *
  * @example
+ * ~~~
  * // in index.html, add
  * <img alt="my plot" data-signal="mpl" />
  *
@@ -661,6 +666,7 @@ export class Slider extends UIElement {
  * fig = plt.figure()
  * ...
  * self.emit('mpl', databench.fig_to_src(fig))
+ * ~~~
  */
 export class Image extends UIElement {
   node: HTMLImageElement & HTMLDatabenchElement;
