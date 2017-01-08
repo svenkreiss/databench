@@ -26,6 +26,10 @@ test:
     - localcrawl --start http://localhost:5000 --run databench --log DEBUG
     - html5validator --root _crawled/
     - nosetests -vv --with-coverage --cover-erase --cover-inclusive
-  post:
+
+deployment:
+  production:
+   branch: master
+   commands:
     - coveralls || true
-    - npm run jsdoc && ghp-import -n -p docs/jsdoc
+    - npm run typedoc && ghp-import -n -p docs/typedoc

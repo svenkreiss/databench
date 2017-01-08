@@ -17,6 +17,7 @@ js/build
 -_.html
 docs/jsdoc
 docs/esdoc
+docs/typedoc
 
 # Distribution / packaging
 .Python
