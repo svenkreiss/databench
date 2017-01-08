@@ -6,7 +6,7 @@
         "sourceMap": true,
         "outDir": "js/build/commonjs",
         "declaration": true,
-        "declarationDir": "declarations"
+        "declarationDir": "js/build/declarations"
     },
     "include": [
         "js/src/**/*"
