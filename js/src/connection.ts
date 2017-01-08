@@ -1,6 +1,4 @@
-import w3cwebsocket from 'websocket';
-const WebSocket = w3cwebsocket;
-
+import { w3cwebsocket as WebSocket } from 'websocket';
 
 /**
  * Connection to the backend.
@@ -19,7 +17,7 @@ const WebSocket = w3cwebsocket;
  * // put custom d.on() methods here
  * d.connect();
  */
-class Connection {
+export class Connection {
   analysisId: string;
   wsUrl: string;
   requestArgs: string;
@@ -226,7 +224,7 @@ class Connection {
    * @param  {string|Object|Array|null} message    Payload attached to the action.
    * @return {Connection}                          this
    */
-  emit(signalName, message) {
+  emit(signalName, message?) {
     if (this.socket == null || this.socket.readyState !== this.socket.OPEN) {
       setTimeout(() => this.emit(signalName, message), 5);
       return this;
@@ -243,5 +241,3 @@ class Connection {
     return this;
   }
 }
-
-export { Connection };

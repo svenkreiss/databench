@@ -2,7 +2,7 @@
  * Databench
  */
 
-import * as ui from './ui';
 import { Connection } from './connection';
+import * as ui from './ui';
 
-export { ui, Connection };
+export { Connection, ui };

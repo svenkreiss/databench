@@ -1,6 +1,5 @@
-/* global describe it */
-const assert = require('assert');
-const Databench = require('./../build/node_client/main');
+import * as assert from 'assert';
+import * as Databench from './../src/main';
 
 
 describe('Databench', () => {
@@ -28,7 +27,6 @@ describe('Databench', () => {
       c.emit('test_fn', [1, 2]);
     });
   });
-
 
   describe('Connection for empty string', () => {
     // create connection

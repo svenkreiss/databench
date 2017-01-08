@@ -7,8 +7,12 @@
 
 import Map from 'es6-map';
 
-export class HTMLDatabenchElement extends HTMLElement {
+export interface HTMLDatabenchElement {
   databenchUI: UIElement;
+  classList: any;
+  addEventListener: any;
+  innerHTML: string;
+  innerText: string;
 }
 
 /**
@@ -23,7 +27,7 @@ export class HTMLDatabenchElement extends HTMLElement {
  * It also adds `this` UI element to the DOM node at `databenchUI`.
  */
 export class UIElement {
-  node: HTMLDatabenchElement & HTMLElement;
+  node: HTMLDatabenchElement;
   actionName: string;
   wireSignal: string|any;
 
@@ -178,9 +182,10 @@ export class Log extends UIElement {
   }
 
   /** Wire all logs. */
-  static wire(conn, id = 'log', source = 'backend', consoleFnName = 'log',
+  static wire(conn, root?, id = 'log', source = 'backend', consoleFnName = 'log',
               limitNumber = 20, limitLength = 250) {
-    const node = document.getElementById(id);
+    if (typeof root === undefined) root = document;
+    const node = root.getElementById(id);
     if (node == null) return;
     if (UIElement.determineActionName(node) == null) return;
 
@@ -250,8 +255,9 @@ export class StatusLog extends UIElement {
   }
 
   /** Wire all status logs. */
-  static wire(conn, id = 'databench-alerts', formatter = StatusLog.defaultAlert) {
-    const node = document.getElementById(id);
+  static wire(conn, root?, id = 'databench-alerts', formatter = StatusLog.defaultAlert) {
+    if (typeof root === undefined) root = document;
+    const node = root.getElementById(id);
     if (node == null) return;
     if (UIElement.determineActionName(node) == null) return;
 
@@ -337,8 +343,10 @@ export class Button extends UIElement {
   }
 
   /** Wire all buttons. */
-  static wire(conn) {
-    [].slice.call(document.getElementsByTagName('BUTTON'), 0)
+  static wire(conn, root?) {
+    if (typeof root === undefined) root = document;
+
+    [].slice.call(root.getElementsByTagName('BUTTON'), 0)
       .filter(node => (<HTMLDatabenchElement>node).databenchUI === undefined)
       .filter(node => UIElement.determineActionName(node) !== null)
       .forEach(node => {
@@ -390,13 +398,15 @@ export class Text extends UIElement {
    * Wire all text.
    * @param  {Connection} conn Connection to use.
    */
-  static wire(conn) {
+  static wire(conn, root?) {
+    if (typeof root === undefined) root = document;
+
     [].concat(
-      [].slice.call(document.getElementsByTagName('SPAN'), 0),
-      [].slice.call(document.getElementsByTagName('P'), 0),
-      [].slice.call(document.getElementsByTagName('DIV'), 0),
-      [].slice.call(document.getElementsByTagName('I'), 0),
-      [].slice.call(document.getElementsByTagName('B'), 0),
+      [].slice.call(root.getElementsByTagName('SPAN'), 0),
+      [].slice.call(root.getElementsByTagName('P'), 0),
+      [].slice.call(root.getElementsByTagName('DIV'), 0),
+      [].slice.call(root.getElementsByTagName('I'), 0),
+      [].slice.call(root.getElementsByTagName('B'), 0),
     )
       .filter(node => (<HTMLDatabenchElement>node).databenchUI === undefined)
       .filter(node => (<HTMLElement>node).dataset['action'] !== undefined)
@@ -480,8 +490,10 @@ export class TextInput extends UIElement {
   }
 
   /** Wire all text inputs. */
-  static wire(conn) {
-    [].slice.call(document.getElementsByTagName('INPUT'), 0)
+  static wire(conn, root?) {
+    if (typeof root === undefined) root = document;
+
+    [].slice.call(root.getElementsByTagName('INPUT'), 0)
       .filter(node => (<HTMLDatabenchElement>node).databenchUI === undefined)
       .filter(node => node.getAttribute('type') === 'text')
       .filter(node => UIElement.determineActionName(node) !== null)
@@ -598,22 +610,23 @@ export class Slider extends UIElement {
   }
 
   /** Find all labels for slider elements. */
-  static labelsForSliders() {
+  static labelsForSliders(root) {
     return new Map<Element, Element>(
-      [].slice.call(document.getElementsByTagName('LABEL'), 0)
+      [].slice.call(root.getElementsByTagName('LABEL'), 0)
         .filter(label => (<HTMLLabelElement>label).htmlFor)
         .map((label): [Element, Element] => {
-          const node = document.getElementById((<HTMLLabelElement>label).htmlFor);
+          const node = root.getElementById((<HTMLLabelElement>label).htmlFor);
           return [node, label];
         })
     );
   }
 
   /** Wire all sliders. */
-  static wire(conn) {
-    const lfs = this.labelsForSliders();
+  static wire(conn, root?) {
+    if (typeof root === undefined) root = document;
+    const lfs = this.labelsForSliders(root);
 
-    [].slice.call(document.getElementsByTagName('INPUT'), 0)
+    [].slice.call(root.getElementsByTagName('INPUT'), 0)
       .filter(node => (<HTMLDatabenchElement>node).databenchUI === undefined)
       .filter(node => (<HTMLElement>node).getAttribute('type') === 'range')
       .filter(node => UIElement.determineActionName(node) !== null)
@@ -661,8 +674,10 @@ export class Image extends UIElement {
   }
 
   /** Wire all text inputs. */
-  static wire(conn) {
-    [].slice.call(document.getElementsByTagName('IMG'), 0)
+  static wire(conn, root?) {
+    if (typeof root === undefined) root = document;
+
+    [].slice.call(root.getElementsByTagName('IMG'), 0)
       .filter(node => (<HTMLDatabenchElement>node).databenchUI === undefined)
       .filter(node => (<HTMLElement>node).dataset['signal'] !== undefined)
       .filter(node => UIElement.determineWireSignal(node) !== null)
@@ -688,13 +703,14 @@ export class Image extends UIElement {
  * @param  {Connection} connection A Databench.Connection instance.
  * @return {Connection}            The same connection.
  */
-export function wire(connection) {
-  StatusLog.wire(connection);
-  Button.wire(connection);
-  TextInput.wire(connection);
-  Text.wire(connection);
-  Slider.wire(connection);
-  Image.wire(connection);
-  Log.wire(connection);
+export function wire(connection, root?) {
+  StatusLog.wire(connection, root);
+  Button.wire(connection, root);
+  TextInput.wire(connection, root);
+  Text.wire(connection, root);
+  Slider.wire(connection, root);
+  Image.wire(connection, root);
+  Log.wire(connection, root);
+
   return connection;
 }
