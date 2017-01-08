@@ -204,7 +204,7 @@ export class Log extends UIElement {
  */
 export class StatusLog extends UIElement {
   formatter: (message: string, count: number) => string;
-  _messages: { [message:string]: number };
+  _messages: { [message: string]: number };
 
   /**
    * @param  {HTMLElement} node      HTML node.
