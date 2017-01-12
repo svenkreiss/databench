@@ -4,7 +4,7 @@ const webpack = require('webpack');
 module.exports = {
   context: __dirname,
   entry: {
-    databench: './js/src/main.ts',
+    databench: './js/src/index.ts',
   },
   output: {
     path: path.resolve(__dirname, 'databench/static'),

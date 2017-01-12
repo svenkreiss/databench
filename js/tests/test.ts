@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import * as Databench from './../src/main';
+import * as Databench from './../src';
 
 
 describe('Databench', () => {
