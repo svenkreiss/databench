@@ -5,8 +5,6 @@
  * @module ui
  */
 
-import Map from 'es6-map';
-
 export interface HTMLDatabenchElement {
   databenchUI: UIElement;
   classList: any;
@@ -184,7 +182,7 @@ export class Log extends UIElement {
   /** Wire all logs. */
   static wire(conn, root?, id = 'log', source = 'backend', consoleFnName = 'log',
               limitNumber = 20, limitLength = 250) {
-    if (typeof root === undefined) root = document;
+    if (root === undefined) root = document;
     const node = root.getElementById(id);
     if (node == null) return;
     if (UIElement.determineActionName(node) == null) return;
@@ -256,7 +254,7 @@ export class StatusLog extends UIElement {
 
   /** Wire all status logs. */
   static wire(conn, root?, id = 'databench-alerts', formatter = StatusLog.defaultAlert) {
-    if (typeof root === undefined) root = document;
+    if (root === undefined) root = document;
     const node = root.getElementById(id);
     if (node == null) return;
     if (UIElement.determineActionName(node) == null) return;
@@ -346,7 +344,7 @@ export class Button extends UIElement {
 
   /** Wire all buttons. */
   static wire(conn, root?) {
-    if (typeof root === undefined) root = document;
+    if (root === undefined) root = document;
 
     [].slice.call(root.getElementsByTagName('BUTTON'), 0)
       .filter(node => (<HTMLDatabenchElement>node).databenchUI === undefined)
@@ -401,7 +399,7 @@ export class Text extends UIElement {
    * @param  {Connection} conn Connection to use.
    */
   static wire(conn, root?) {
-    if (typeof root === undefined) root = document;
+    if (root === undefined) root = document;
 
     [].concat(
       [].slice.call(root.getElementsByTagName('SPAN'), 0),
@@ -493,7 +491,7 @@ export class TextInput extends UIElement {
 
   /** Wire all text inputs. */
   static wire(conn, root?) {
-    if (typeof root === undefined) root = document;
+    if (root === undefined) root = document;
 
     [].slice.call(root.getElementsByTagName('INPUT'), 0)
       .filter(node => (<HTMLDatabenchElement>node).databenchUI === undefined)
@@ -615,19 +613,18 @@ export class Slider extends UIElement {
 
   /** Find all labels for slider elements. */
   static labelsForSliders(root) {
-    return new Map<Element, Element>(
-      [].slice.call(root.getElementsByTagName('LABEL'), 0)
-        .filter(label => (<HTMLLabelElement>label).htmlFor)
-        .map((label): [Element, Element] => {
-          const node = root.getElementById((<HTMLLabelElement>label).htmlFor);
-          return [node, label];
-        })
-    );
+    let map: { [inputname: string]: HTMLLabelElement } = {};
+    [].slice.call(root.getElementsByTagName('LABEL'), 0)
+      .filter(label => (<HTMLLabelElement>label).htmlFor)
+      .forEach(label => {
+        map[(<HTMLLabelElement>label).htmlFor] = label;
+      });
+    return map;
   }
 
   /** Wire all sliders. */
   static wire(conn, root?) {
-    if (typeof root === undefined) root = document;
+    if (root === undefined) root = document;
     const lfs = this.labelsForSliders(root);
 
     [].slice.call(root.getElementsByTagName('INPUT'), 0)
@@ -635,7 +632,7 @@ export class Slider extends UIElement {
       .filter(node => (<HTMLElement>node).getAttribute('type') === 'range')
       .filter(node => UIElement.determineActionName(node) !== null)
       .forEach(node => {
-        const slider = new Slider(node, lfs.get(node));
+        const slider = new Slider(node, lfs[node.id]);
         console.log('Wiring slider', node, `to action ${slider.actionName}.`);
 
         // handle events from frontend
@@ -681,7 +678,7 @@ export class Image extends UIElement {
 
   /** Wire all text inputs. */
   static wire(conn, root?) {
-    if (typeof root === undefined) root = document;
+    if (root === undefined) root = document;
 
     [].slice.call(root.getElementsByTagName('IMG'), 0)
       .filter(node => (<HTMLDatabenchElement>node).databenchUI === undefined)
