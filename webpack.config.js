@@ -32,7 +32,7 @@ module.exports = {
     ],
     loaders: [
       { test: /\.json$/, loader: 'json-loader' },
-      { test: /\.tsx?$/, loader: 'awesome-typescript-loader' },
+      { test: /\.tsx?$/, loader: 'ts-loader' },
       { test: /\.jsx?$/, loader: 'babel-loader', exclude: /node_modules/, query: ['es2015'] },
     ],
   },

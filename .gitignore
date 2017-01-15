@@ -1,5 +1,6 @@
 databench/static/databench.js
 databench/static/databench.js.map
+databench/static/ts_declarations
 tests/analyses/build_test.txt
 tests/analyses_broken/build_test.txt
 _crawled/

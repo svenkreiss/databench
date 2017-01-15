@@ -2,7 +2,8 @@
   "name": "databench",
   "version": "0.5.1",
   "description": "Realtime data analysis tool.",
-  "main": "js/src/index.ts",
+  "main": "./databench/static/databench.js",
+  "types": "./databench/static/ts_declarations/index.d.ts",
   "directories": {
     "doc": "docs/jsdoc",
     "test": "js/tests"
@@ -12,7 +13,6 @@
   },
   "devDependencies": {
     "@types/mocha": "^2.2.36",
-    "awesome-typescript-loader": "^3.0.0-beta.17",
     "babel-core": "^6.21.0",
     "babel-eslint": "^4.1.8",
     "babel-loader": "^6.2.10",
@@ -25,6 +25,7 @@
     "json-loader": "^0.5.4",
     "mocha": "^2.4.5",
     "source-map-loader": "^0.1.5",
+    "ts-loader": "^1.3.3",
     "ts-node": "^2.0.0",
     "tslint": "^4.3.1",
     "typedoc": "^0.5.3",
