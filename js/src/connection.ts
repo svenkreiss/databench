@@ -1,7 +1,4 @@
-let WebSocket;
-if (typeof WebSocket === 'undefined') {
-  WebSocket = require('websocket').w3cwebsocket;  // eslint-disable-line
-}
+import { w3cwebsocket as WebSocket } from 'websocket';
 
 /**
  * Connection to the backend.
@@ -20,7 +17,21 @@ if (typeof WebSocket === 'undefined') {
  * // put custom d.on() methods here
  * d.connect();
  */
-class Connection {
+export class Connection {
+  analysisId: string;
+  wsUrl: string;
+  requestArgs: string;
+
+  errorCB: (message?: string) => void;
+  private onCallbacks: any[];
+  private _onCallbacksOptimized: any;
+  private onProcessCallbacks: any;
+
+  private wsReconnectAttempt: number;
+  private wsReconnectDelay: number;
+  private socket: WebSocket;
+  private socketCheckOpen: number;
+
   /**
    * @param  {String} [analysisId=null]  Specify an analysis id or null to have one generated.
    *                                     The connection will try to connect to a previously created
@@ -53,7 +64,7 @@ class Connection {
 
   static guessWSUrl() {
     if (typeof location === 'undefined') return null;
-    const WSProtocol = location.origin.startsWith('https://') ? 'wss' : 'ws';
+    const WSProtocol = location.origin.indexOf('https://') === 0 ? 'wss' : 'ws';
     const path = location.pathname.substring(0, location.pathname.lastIndexOf('/'));
     return `${WSProtocol}://${document.domain}:${location.port}${path}/ws`;
   }
@@ -213,7 +224,7 @@ class Connection {
    * @param  {string|Object|Array|null} message    Payload attached to the action.
    * @return {Connection}                          this
    */
-  emit(signalName, message) {
+  emit(signalName, message?) {
     if (this.socket == null || this.socket.readyState !== this.socket.OPEN) {
       setTimeout(() => this.emit(signalName, message), 5);
       return this;
@@ -230,5 +241,3 @@ class Connection {
     return this;
   }
 }
-
-export { Connection };

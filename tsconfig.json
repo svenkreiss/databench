@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "noImplicitAny": false,
+        "sourceMap": true,
+        "outDir": "js/build/commonjs",
+        "declaration": true,
+        "declarationDir": "ts_declarations"
+    },
+    "include": [
+        "js/src/**/*"
+    ],
+    "exclude": [
+        "node_modules/"
+    ]
+}
