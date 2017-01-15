@@ -12,10 +12,12 @@ import { w3cwebsocket as WebSocket } from 'websocket';
  * {@link Connection#on|on()} and {@link Connection#emit|emit()}.
  *
  * @example
+ * ~~~
  * var d = new Databench.Connection();
  * Databench.ui.wire(d);
  * // put custom d.on() methods here
  * d.connect();
+ * ~~~
  */
 export class Connection {
   analysisId: string;
@@ -197,16 +199,20 @@ export class Connection {
    * given to the callback function is the value assigned to `current_value`.
    *
    * @example
+   * ~~~
    * d.on('data', value => { console.log(value); });
    * // If the backend sends an action called 'data' with a message
    * // {current_value: 3.0}, this function would log `{current_value: 3.0}`.
+   * ~~~
    *
    * @example
+   * ~~~
    * d.on({data: 'current_value'}, value => { console.log(value); });
    * // If the backend sends an action called 'data' with a
    * // message {current_value: 3.0}, this function would log `3.0`.
    * // This callback is not triggered when the message does not contain a
    * // `current_value` key.
+   * ~~~
    *
    * @param  {string|Object}   signal   Signal name to listen for.
    * @param  {Function}        callback A callback function that takes the attached data.
