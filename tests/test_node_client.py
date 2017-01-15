@@ -11,7 +11,7 @@ LOGLEVEL = 'WARNING'
 class NodeClient(unittest.TestCase):
     def setUp(self):
         # transpile js code for node
-        subprocess.call(['webpack'])
+        subprocess.call(['npm', 'run', 'build'])
 
         # call os.setsid so that all subprocesses terminate when the
         # main process receives SIGTERM
