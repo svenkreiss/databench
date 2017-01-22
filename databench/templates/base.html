@@ -11,23 +11,21 @@
         {% block head %}{% end %}
     </head>
     <body>
-        <div class="d-container">
-            <div class="d-header">
-                <h2 id="d-title"><a href="/" class="text-muted">
-                    <img id="d-logo" alt="logo" src="/_static/logo.svg" />{{ title }}
-                </a></h2>
-            </div>
+        <header>
+            <h2 id="d-title"><a href="/" class="text-muted">
+                <img id="d-logo" alt="logo" src="/_static/logo.svg" />{{ title }}
+            </a></h2>
+        </header>
 
-            <div class="d-content">
-                {% block content %}
-                {% end %}
-            </div>
+        <main>
+            {% block content %}
+            {% end %}
+        </main>
 
-            <div class="d-footer">
-                Created with <a href="http://databench.trivial.io/v0.5/">Databench</a>.
-                <!-- This is Databench v{{databench_version}} and analyses v{{version}}. -->
-            </div>
-        </div>
+        <footer>
+            Created with <a href="http://databench.trivial.io/v0.5/">Databench</a>.
+            <!-- This is Databench v{{databench_version}} and analyses v{{version}}. -->
+        </footer>
 
         {% block footer %}{% end %}
     </body>

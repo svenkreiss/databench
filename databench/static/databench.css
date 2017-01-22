@@ -113,32 +113,32 @@ label {
 
 
 
-.d-header {
+header {
     margin-bottom: 30px;
     border-bottom: 1px solid #e5e5e5;
 }
-.d-header a:hover {
+header a:hover {
     text-decoration: none;
     color: #428bca;
 }
-.d-header img {
+header img {
     height: 26px;
     margin-right: 0.5em;
     vertical-align: baseline;
 }
 
-.d-content {
+main {
     margin: 40px 0;
 }
 
-.d-footer {
+footer {
     padding-top: 19px;
     color: #777;
     font-size: 80%;
     border-top: 1px solid #e5e5e5;
 }
 
-.d-footer ul {
+footer ul {
     list-style-type: none;
     padding: 0;
 }
