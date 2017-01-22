@@ -1,0 +1,35 @@
+machine:
+  python:
+    version: 3.5.1
+  node:
+    version: 5.7.0
+  java:
+    version: oraclejdk8
+
+general:
+  branches:
+    ignore:
+      - gh-pages
+
+dependencies:
+  pre:
+    - pip install --upgrade pip
+    - "pip install -e .[tests,markup]"
+    - pip install python-coveralls
+    - npm install
+    - npm run build
+
+test:
+  override:
+    - flake8
+    - npm run lint
+    - localcrawl --start http://localhost:5000 --run databench --log DEBUG
+    - html5validator --root _crawled/
+    - nosetests -vv --with-coverage --cover-erase --cover-inclusive
+
+deployment:
+  production:
+    branch: master
+    commands:
+      - coveralls || true
+      - npm run typedoc && cp circle.yml docs/typedoc/ && ghp-import -n -p docs/typedoc
