@@ -29,7 +29,7 @@ test:
 
 deployment:
   production:
-   branch: master
-   commands:
-    - coveralls || true
-    - npm run typedoc && ghp-import -n -p docs/typedoc
+    branch: master
+    commands:
+      - coveralls || true
+      - npm run typedoc && cp circle.yml docs/typedoc/ && ghp-import -n -p docs/typedoc
