@@ -1,5 +1,6 @@
 """Meta class for Databench Python kernel."""
 
+from databench.utils import json_encoder_default
 import json
 import logging
 import sys
@@ -181,7 +182,7 @@ class Meta(object):
 
         log.debug('kernel {} zmq send ({}): {}'
                   ''.format(analysis_id, signal, message))
-        self.zmq_publish.send_json({
+        self.zmq_publish.send(json.dumps({
             'analysis_id': analysis_id,
             'frame': {'signal': signal, 'load': message},
-        })
+        }, default=json_encoder_default).encode('utf-8'))
