@@ -1,7 +1,11 @@
 Changelog
 ---------
 
-* `master <https://github.com/svenkreiss/databench/compare/v0.5.0...master>`_
+* `master <https://github.com/svenkreiss/databench/compare/v0.6.0...master>`_
+* `0.6.0 <https://github.com/svenkreiss/databench/compare/v0.5.0...v0.6.0>`_ (2017-02-09)
+    * TypeScript, WebPack
+    * semantic HTML tags in templates
+    * added tests for Python 3.6
 * `0.5.0 <https://github.com/svenkreiss/databench/compare/v0.4.0...v0.5.0>`_ (2017-01-04)
     * various improvements to Datastore (supports storing dict and list now)
     * linting for HTML and JS code
