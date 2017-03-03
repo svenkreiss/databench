@@ -61,13 +61,14 @@ def main():
     from .app import App
 
     # log
+    print('Databench {}'.format(DATABENCH_VERSION))
+    print('host={}, port={}'.format(args.host, args.port))
+
     if args.loglevel != 'WARNING':
         print('Setting loglevel to {}.'.format(args.loglevel))
     logging.basicConfig(level=getattr(logging, args.loglevel))
 
     logging.info('Python {}'.format(sys.version))
-    logging.info('Databench {}'.format(DATABENCH_VERSION))
-    logging.info('host={}, port={}'.format(args.host, args.port))
     if unknown_args:
         logging.warn('Unrecognized arguments: {}'.format(unknown_args))
 
