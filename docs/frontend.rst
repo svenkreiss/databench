@@ -150,7 +150,7 @@ API Reference
 ``databench.js`` is exposed at ``/_static/databench.js``. Please see the
 `complete JavaScript API reference`_.
 
-.. image:: images/JavaScript_docs.png
+.. image:: images/JavaScript-docs.png
     :alt: JavaScript API Reference.
     :height: 300
     :target: http://www.svenkreiss.com/databench/
