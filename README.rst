@@ -19,12 +19,12 @@ and `a user guide and API documentation at databench.trivial.io <http://databenc
 |  |Python docs image|           +  |JavaScript docs image|  +
 +--------------------------------+---------------------------+
 
-.. |Python docs image| image:: images/Python_docs.png
+.. |Python docs image| image:: https://raw.githubusercontent.com/svenkreiss/databench/master/images/Python_docs.png
     :alt: Python API Reference.
     :height: 200
     :target: http://databench.trivial.io
 
-.. |JavaScript docs image| image:: images/JavaScript_docs.png
+.. |JavaScript docs image| image:: https://raw.githubusercontent.com/svenkreiss/databench/master/images/JavaScript_docs.png
     :alt: JavaScript API Reference.
     :height: 200
     :target: http://www.svenkreiss.com/databench/
