@@ -1,5 +1,5 @@
-Frontend
-========
+JavaScript Frontend
+===================
 
 This is section contains an overview of techniques and best practices that can
 be used on the frontend, followed by a short overview of the frontend API and
@@ -144,13 +144,18 @@ isolated server.
 
 .. _frontend-api:
 
-JavaScript API
---------------
+API Reference
+-------------
 
 ``databench.js`` is exposed at ``/_static/databench.js``. Please see the
-`complete JS API reference`_.
+`complete JavaScript API reference`_.
+
+.. image:: images/JavaScript_docs.png
+    :alt: JavaScript API Reference.
+    :height: 300
+    :target: http://www.svenkreiss.com/databench/
 
 .. _`angular analysis in the Databench examples`: https://github.com/svenkreiss/databench_examples/tree/master/analyses/angular
 .. _`databench_examples repository`: https://github.com/svenkreiss/databench_examples/
-.. _`complete JS API reference`: http://www.svenkreiss.com/databench/
+.. _`complete JavaScript API reference`: http://www.svenkreiss.com/databench/
 .. _`public and live example of simplepi`: http://databench-examples.trivial.io/simplepi/

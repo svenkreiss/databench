@@ -1,5 +1,5 @@
-Backend
-=======
+Python Backend
+==============
 
 .. _analyses_configurations:
 

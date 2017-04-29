@@ -47,8 +47,8 @@ Contents
 
     self
     quickstart
-    frontend
     backend
+    frontend
     deploy
     dev
 
