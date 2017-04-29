@@ -11,9 +11,24 @@ Databench is a Python data analysis tool. Install with:
 
     $ pip install databench
 
-Live demos are at `databench-examples.trivial.io <http://databench-examples.trivial.io>`_
-and a user guide and API documentation at
-`databench.trivial.io <http://databench.trivial.io>`_.
+`Live demos are at databench-examples.trivial.io <http://databench-examples.trivial.io>`_
+and `a user guide and API documentation at databench.trivial.io <http://databench.trivial.io>`_.
+
++--------------------------------+---------------------------+
+|  Documentation and Python API  +  JavaScript API           +
+|  |Python docs image|           +  |JavaScript docs image|  +
++--------------------------------+---------------------------+
+
+.. |Python docs image| image:: https://raw.githubusercontent.com/svenkreiss/databench/master/images/Python_docs.png
+    :alt: Python API Reference.
+    :height: 200
+    :target: http://databench.trivial.io
+
+.. |JavaScript docs image| image:: https://raw.githubusercontent.com/svenkreiss/databench/master/images/JavaScript_docs.png
+    :alt: JavaScript API Reference.
+    :height: 200
+    :target: http://www.svenkreiss.com/databench/
+
 Databench is made available under the
 `MIT license <https://github.com/svenkreiss/databench/blob/master/LICENSE>`_.
 
