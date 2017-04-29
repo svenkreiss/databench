@@ -81,28 +81,31 @@ SSL
 Provide ``--ssl-certfile``, ``--ssl-keyfile`` and ``--ssl-port``.
 
 
+API Reference
+-------------
+
 Analysis
---------
+~~~~~~~~
 
 .. autoclass:: databench.Analysis
 
 
 Meta
-----
+~~~~
 
 .. autoclass:: databench.Meta
    :members:
 
 
 Datastore
----------
+~~~~~~~~~
 
 .. autoclass:: databench.Datastore
    :members:
 
 
 Utils
------
+~~~~~
 
 .. autofunction:: databench.fig_to_src
 .. autofunction:: databench.png_to_src
@@ -110,7 +113,7 @@ Utils
 
 
 testing
--------
+~~~~~~~
 
 .. autoclass:: databench.testing.AnalysisTestCase
    :members:
