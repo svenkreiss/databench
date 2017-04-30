@@ -11,23 +11,23 @@ Databench is a Python data analysis tool. Install with:
 
     $ pip install databench
 
-`Live demos are at databench-examples.trivial.io <http://databench-examples.trivial.io>`_
-and `a user guide and API documentation at databench.trivial.io <http://databench.trivial.io>`_.
++--------------------------------+---------------------------+
+|  `Documentation`_              +  `Examples`_              +
+|  |Python docs image|           +  |Example image|          +
++--------------------------------+---------------------------+
 
-+--------------------------------+---------------------------+
-|  Documentation and Python API  +  JavaScript API           +
-|  |Python docs image|           +  |JavaScript docs image|  +
-+--------------------------------+---------------------------+
+.. _`Documentation`: http://databench.trivial.io
+.. _`Examples`: http://databench-examples.trivial.io
 
 .. |Python docs image| image:: https://raw.githubusercontent.com/svenkreiss/databench/master/docs/images/Python-docs.png
-    :alt: Python API Reference.
+    :alt: Documentation.
     :height: 200
     :target: http://databench.trivial.io
 
-.. |JavaScript docs image| image:: https://raw.githubusercontent.com/svenkreiss/databench/master/docs/images/JavaScript-docs.png
-    :alt: JavaScript API Reference.
+.. |Example image| image:: https://raw.githubusercontent.com/svenkreiss/databench/master/docs/images/bagofcharsd3.png
+    :alt: Analysis example screenshot.
     :height: 200
-    :target: http://www.svenkreiss.com/databench/
+    :target: http://databench-examples.trivial.io
 
 Databench is made available under the
 `MIT license <https://github.com/svenkreiss/databench/blob/master/LICENSE>`_.
