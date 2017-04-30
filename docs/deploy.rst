@@ -1,6 +1,6 @@
 
 Deployment
-----------
+==========
 
 The standard use case is to run ``databench`` locally. However, Databench can also be deployed on servers/platforms that support deploying WebSocket applications.
 
@@ -54,8 +54,7 @@ Example ``eb init`` options:
 * instance profile: pick one
 
 
-Troubleshooting
-===============
+Troubleshooting:
 
 * ``no module named boto``: do ``pip install boto`` before ``eb start``.
 * the web console is at ``https://console.aws.amazon.com/elasticbeanstalk/`` and make sure you are looking at the right region which can be selected in the top-right corner
