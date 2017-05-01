@@ -13,6 +13,7 @@ Databench is a Python data analysis tool. Install with:
 
 +--------------------------------+---------------------------+
 |  `Documentation`_              +  `Examples`_              +
+|                                +                           +
 |  |Python docs image|           +  |Example image|          +
 +--------------------------------+---------------------------+
 
