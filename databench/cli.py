@@ -24,6 +24,7 @@ def main():
     parser.add_argument('--version', action='version',
                         version='%(prog)s {}'.format(DATABENCH_VERSION))
     parser.add_argument('--log', dest='loglevel', default="WARNING",
+                        type=str.upper,
                         help='log level (INFO and DEBUG enable '
                              'autoreload)')
     parser.add_argument('--host', dest='host',
