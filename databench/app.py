@@ -348,7 +348,7 @@ class App(object):
         self.build_cmds = aggregated['build']
 
     def build(self):
-        """Run the build command specified in the Readme."""
+        """Run the build command specified in index.yaml."""
         for cmd in self.build_cmds:
             log.info('building command: {}'.format(cmd))
             full_cmd = 'cd {}; {}'.format(self.analyses_path, cmd)
