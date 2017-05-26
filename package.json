@@ -1,10 +1,10 @@
 {
   "name": "databench",
-  "version": "0.5.3",
+  "version": "0.6.0",
   "description": "Realtime data analysis tool.",
   "readme": "./js/docs/index.md",
-  "main": "./js/build/databench.js",
-  "types": "./js/build/ts_declarations/index.d.ts",
+  "main": "./js/build/commonjs/index.js",
+  "types": "./js/build/commonjs/index.d.ts",
   "directories": {
     "doc": "docs/jsdoc",
     "test": "js/tests"
@@ -37,7 +37,7 @@
     "parser": "babel-eslint"
   },
   "scripts": {
-    "build": "webpack && cp -r js/build/* databench/static/",
+    "build": "webpack && cp js/build/databench.* databench/static/",
     "test": "mocha -t 5000 --no-colors --compilers ts:ts-node/register js/tests/test.ts",
     "lint": "tslint -c tslint.json js/src/*.ts && eslint databench/analyses_packaged/**/*.js",
     "typedoc": "typedoc --readme js/docs/index.md --out docs/typedoc/ js/src/*.ts"

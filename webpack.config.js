@@ -7,10 +7,10 @@ module.exports = {
     databench: './js/src/index.ts',
   },
   output: {
-    path: path.resolve(__dirname, 'js/build'),
+    path: __dirname,
     library: 'Databench',
     libraryTarget: 'umd',
-    filename: 'databench.js',
+    filename: 'js/build/databench.js',
   },
 
   devtool: 'source-map',
