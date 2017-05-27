@@ -37,7 +37,7 @@
     "parser": "babel-eslint"
   },
   "scripts": {
-    "build": "webpack && cp js/build/databench.* databench/static/",
+    "build": "tsc && webpack && cp js/build/databench.* databench/static/",
     "test": "mocha -t 5000 --no-colors --compilers ts:ts-node/register js/tests/test.ts",
     "lint": "tslint -c tslint.json js/src/*.ts && eslint databench/analyses_packaged/**/*.js",
     "typedoc": "typedoc --readme js/docs/index.md --out docs/typedoc/ js/src/*.ts"
