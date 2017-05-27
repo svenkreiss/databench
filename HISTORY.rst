@@ -1,7 +1,10 @@
 Changelog
 ---------
 
-* `master <https://github.com/svenkreiss/databench/compare/v0.6.0...master>`_
+* `master <https://github.com/svenkreiss/databench/compare/v0.6.2...master>`_
+* `0.6.2 <https://github.com/svenkreiss/databench/compare/v0.6.0...v0.6.2>`_ (2017-05-26)
+    * TypeScript improvements
+    * documentation updates
 * `0.6.0 <https://github.com/svenkreiss/databench/compare/v0.5.0...v0.6.0>`_ (2017-02-09)
     * TypeScript, WebPack
     * semantic HTML tags in templates
