@@ -22,12 +22,12 @@ Databench is a Python data analysis tool. Install with:
 
 .. |Python docs image| image:: https://raw.githubusercontent.com/svenkreiss/databench/master/docs/images/Python-docs.png
     :alt: Documentation.
-    :height: 200
+    :height: 230px
     :target: http://databench.trivial.io
 
 .. |Example image| image:: https://raw.githubusercontent.com/svenkreiss/databench/master/docs/images/bagofcharsd3.png
     :alt: Analysis example screenshot.
-    :height: 200
+    :height: 230px
     :target: http://databench-examples.trivial.io
 
 Databench is made available under the
