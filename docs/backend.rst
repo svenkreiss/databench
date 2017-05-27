@@ -81,6 +81,19 @@ SSL
 Provide ``--ssl-certfile``, ``--ssl-keyfile`` and ``--ssl-port``.
 
 
+Command Line Arguments
+----------------------
+
+Command line parameters: add an ``on_cmd_args(self, args)`` method to the
+analysis.
+
+
+Request Arguments
+-----------------
+
+Request arguments: add an ``on_request_args(self, args)`` method.
+
+
 API Reference
 -------------
 
