@@ -22,7 +22,9 @@ setup(
     include_package_data=True,
 
     install_requires=[
+        'docutils>=0.12',
         'future>=0.15',
+        'markdown>=2.6.5',
         'pyyaml>=3.11',
         'pyzmq>=4.3.1',
         'tornado>=4.3',
@@ -33,12 +35,7 @@ setup(
             'scaffold-databench = databench.scaffold:main',
         ]
     },
-
     extras_require={
-        'markup': [
-            'docutils>=0.12',
-            'markdown>=2.6.5',
-        ],
         'tests': [
             'coverage>=4.1b2',
             'ghp-import>=0.4.1',
