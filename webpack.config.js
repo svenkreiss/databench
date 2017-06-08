@@ -8,32 +8,20 @@ module.exports = {
   },
   output: {
     path: __dirname,
-    library: 'Databench',
-    libraryTarget: 'umd',
     filename: 'js/build/databench.js',
   },
 
   devtool: 'source-map',
 
   resolve: {
-    extensions: ['', '.js', '.ts'],
-    root: [
-      path.join(__dirname, 'node_modules'),
-      path.resolve('./js/src'),
-    ],
+    extensions: ['.ts', '.tsx', '.js', '.json'],
   },
 
-  plugins: [
-    // new webpack.optimize.UglifyJsPlugin(),
-  ],
   module: {
-    preLoaders: [
-      { test: /\.js$/, loader: 'source-map-loader' },
-    ],
-    loaders: [
-      { test: /\.json$/, loader: 'json-loader' },
-      { test: /\.tsx?$/, loader: 'ts-loader' },
-      { test: /\.jsx?$/, loader: 'babel-loader', exclude: /node_modules/, query: ['es2015'] },
-    ],
+    rules: [
+      { test: /\.jsx?$/, loader: 'babel-loader' },
+      { test: /\.tsx?$/, loader: 'awesome-typescript-loader' },
+      { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' }
+    ]
   },
 }
