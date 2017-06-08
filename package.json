@@ -1,7 +1,7 @@
 {
   "name": "databench",
-  "version": "0.6.0",
-  "description": "Realtime data analysis tool.",
+  "version": "0.6.1",
+  "description": "Real-time data analysis tool.",
   "readme": "./js/docs/index.md",
   "main": "./js/build/commonjs/index.js",
   "types": "./js/build/commonjs/index.d.ts",
