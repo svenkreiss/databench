@@ -290,7 +290,7 @@ class App(object):
                           if 'name' in info}
         self.info['analyses'] = []  # rewrite self.info['analyses']
         for meta in self.metas:
-            log.info('Registering meta information {}'.format(meta.name))
+            log.debug('Registering meta information {}'.format(meta.name))
 
             # grab routes
             self.routes += meta.routes
