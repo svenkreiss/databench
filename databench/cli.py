@@ -23,10 +23,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--version', action='version',
                         version='%(prog)s {}'.format(DATABENCH_VERSION))
-    parser.add_argument('--log', dest='loglevel', default="WARNING",
+    parser.add_argument('--log', dest='loglevel', default="INFO",
                         type=str.upper,
-                        help='log level (INFO and DEBUG enable '
-                             'autoreload)')
+                        help=('log level (info, warning, error, critical or '
+                              'debug, default info)'))
+    parser.add_argument('--no-watch', dest='watch', default=True,
+                        action='store_false',
+                        help='do not watch and restart when files change')
     parser.add_argument('--host', dest='host',
                         default=os.environ.get('HOST', 'localhost'),
                         help='host address for webserver (default localhost)')
@@ -49,7 +52,7 @@ def main():
                           default=int(os.environ.get('SSLPORT', 5001)),
                           help='SSL port for webserver')
 
-    args, unknown_args = parser.parse_known_args()
+    args, analyses_args = parser.parse_known_args()
 
     # coverage
     cov = None
@@ -62,23 +65,26 @@ def main():
     from .app import App
 
     # log
-    print('Databench {}'.format(DATABENCH_VERSION))
-    print('host={}, port={}'.format(args.host, args.port))
-
-    if args.loglevel != 'WARNING':
+    if args.loglevel != 'INFO':
         print('Setting loglevel to {}.'.format(args.loglevel))
     logging.basicConfig(level=getattr(logging, args.loglevel))
 
-    logging.info('Python {}'.format(sys.version))
-    if unknown_args:
-        logging.warn('Unrecognized arguments: {}'.format(unknown_args))
+    # show versions and setup
+    logging.info('Databench {}'.format(DATABENCH_VERSION))
+    if args.host in ('localhost', '127.0.0.1'):
+        logging.info('Open http://{}:{} in a web browser.'
+                     ''.format(args.host, args.port))
+    logging.debug('host={}, port={}'.format(args.host, args.port))
+    logging.debug('Python {}'.format(sys.version))
 
-    app_debug = args.loglevel not in ('WARNING', 'ERROR', 'CRITICAL')
-    app = App(args.analyses, cmd_args=unknown_args, debug=app_debug)
+    if analyses_args:
+        logging.debug('Arguments passed to analyses: {}'.format(analyses_args))
+
+    app = App(args.analyses, cmd_args=analyses_args, debug=args.watch)
 
     # check whether this is just a quick build
     if args.build:
-        logging.info('Build mode: running build command and exit.')
+        logging.info('Build mode: only run build command and exit.')
         app.build()
         if cov:
             cov.stop()
