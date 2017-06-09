@@ -91,6 +91,10 @@ class Analysis(object):
         self.class_data = Datastore(type(self).__name__)
         self.class_data.on_change(self.class_data_change)
 
+    def on_args(self, cli_args, request_args):
+        self.cli_args = cli_args
+        self.request_args = request_args
+
     @staticmethod
     def __create_id():
         return ''.join(random.choice(string.ascii_letters + string.digits)
