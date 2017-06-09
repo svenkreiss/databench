@@ -78,11 +78,11 @@ describe('Databench', () => {
     });
   });
 
-  describe('Cmd Args', () => {
+  describe('Cli Args', () => {
     // create connection
     const c = new Databench.Connection(
       null,
-      'ws://localhost:5000/cmdargs/ws'
+      'ws://localhost:5000/cliargs/ws'
     );
 
     it('create a WebSocket connection', () => {
@@ -90,7 +90,7 @@ describe('Databench', () => {
     });
 
     it('command args test', done => {
-      c.on({ data: 'cmd_args' }, (args) => {
+      c.on({ data: 'cli_args' }, (args) => {
         assert.deepEqual(['--some-test-flag'], args);
         done();
       });

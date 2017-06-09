@@ -91,10 +91,6 @@ class Analysis(object):
         self.class_data = Datastore(type(self).__name__)
         self.class_data.on_change(self.class_data_change)
 
-    def on_args(self, cli_args, request_args):
-        self.cli_args = cli_args
-        self.request_args = request_args
-
     @staticmethod
     def __create_id():
         return ''.join(random.choice(string.ascii_letters + string.digits)
@@ -113,6 +109,17 @@ class Analysis(object):
         Overwrite to add behavior.
         """
         log.debug('on_connect called.')
+
+    def on_args(self, cli_args, request_args):
+        self.cli_args = cli_args
+        self.request_args = request_args
+
+    def on_connected(self):
+        """Default handlers for the "connected" action.
+
+        Overwrite to add behavior.
+        """
+        log.debug('on_connected called.')
 
     def on_disconnected(self):
         """Default handler for "disconnected" action.

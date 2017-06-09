@@ -34,6 +34,13 @@ class Analysis(object):
     def on_connect(self):
         log.debug('on_connect called.')
 
+    def on_args(self, cli_args, request_args):
+        self.cli_args = cli_args
+        self.request_args = request_args
+
+    def on_connected(self):
+        log.debug('on_connected called.')
+
     def on_disconnected(self):
         log.debug('on_disconnected called.')
 
