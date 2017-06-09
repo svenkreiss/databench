@@ -34,7 +34,8 @@ class Meta(object):
         log.info('Analysis id: {}, port sub: {}, port pub: {}'.format(
                  analysis_id, zmq_port_subscribe, zmq_port_publish))
 
-        self.analysis = analysis_class(analysis_id)
+        self.analysis = analysis_class()
+        self.analysis.init_databench(analysis_id)
 
         def emit(signal, message='__nomessagetoken__'):
             self.emit(signal, message, analysis_id)

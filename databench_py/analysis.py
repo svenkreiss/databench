@@ -11,7 +11,10 @@ class Analysis(object):
 
     datastore_class = Datastore
 
-    def __init__(self, id_):
+    def __init__(self):
+        pass
+
+    def init_databench(self, id_):
         self.id_ = id_
         self.emit = lambda s, pl: log.error('emit called before Analysis '
                                             'setup complete')

@@ -67,11 +67,15 @@ class Analysis(object):
 
     _databench_analysis = True
 
-    def __init__(self, id_=None):
+    def __init__(self):
+        pass
+
+    def init_databench(self, id_=None):
         self.id_ = id_ if id_ else Analysis.__create_id()
         self.emit = lambda s, pl: log.error('emit called before Analysis '
                                             'setup complete')
         self.init_datastores()
+        return self
 
     def init_datastores(self):
         """Initialize datastores for this analysis instance.

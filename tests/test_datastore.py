@@ -69,7 +69,7 @@ class TestDatastore(unittest.TestCase):
         assert 'never-user-test' not in self.d
 
     def test_analysis_datastore(self):
-        a = databench.Analysis()
+        a = databench.Analysis().init_databench()
         a.set_emit_fn(lambda s, pl: None)
         a.data.on_change(self.cb)
         a.data['test'] = 'analysis_datastore'

@@ -150,7 +150,8 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
                 return
 
             log.debug('Instantiate analysis id {}'.format(msg['__connect']))
-            self.analysis = self.meta.analysis_class(msg['__connect'])
+            self.analysis = self.meta.analysis_class()
+            self.analysis.init_databench(msg['__connect'])
             self.analysis.set_emit_fn(self.emit)
             log.info('Analysis {} instanciated.'.format(self.analysis.id_))
             self.emit('__connect', {'analysis_id': self.analysis.id_})
