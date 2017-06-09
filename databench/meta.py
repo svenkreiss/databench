@@ -149,22 +149,26 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
                 log.error('Connection already has an analysis. Abort.')
                 return
 
-            log.debug('Instantiate analysis id {}'.format(msg['__connect']))
-            self.analysis = self.meta.analysis_class(msg['__connect'])
+            requested_id = msg['__connect']
+            log.debug('Instantiate analysis with id {}'.format(requested_id))
+            self.analysis = self.meta.analysis_class()
+            self.analysis.init_databench(requested_id)
             self.analysis.set_emit_fn(self.emit)
             log.info('Analysis {} instanciated.'.format(self.analysis.id_))
             self.emit('__connect', {'analysis_id': self.analysis.id_})
 
             self.meta.run_process(self.analysis, 'connect')
-            log.info('Connected to analysis.')
 
+            args = {'cli_args': None, 'request_args': None}
             if self.meta.cmd_args is not None:
-                self.meta.run_process(self.analysis, 'cmd_args',
-                                      [self.meta.cmd_args])
-
+                args['cli_args'] = self.meta.cmd_args
             if '__request_args' in msg and msg['__request_args']:
                 qs = parse_qs(msg['__request_args'].lstrip('?'))
-                self.meta.run_process(self.analysis, 'request_args', [qs])
+                args['request_args'] = qs
+            self.meta.run_process(self.analysis, 'args', args)
+
+            self.meta.run_process(self.analysis, 'connected')
+            log.info('Connected to analysis.')
             return
 
         if self.analysis is None:

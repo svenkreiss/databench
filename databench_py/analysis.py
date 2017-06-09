@@ -11,7 +11,10 @@ class Analysis(object):
 
     datastore_class = Datastore
 
-    def __init__(self, id_):
+    def __init__(self):
+        pass
+
+    def init_databench(self, id_):
         self.id_ = id_
         self.emit = lambda s, pl: log.error('emit called before Analysis '
                                             'setup complete')
@@ -30,6 +33,13 @@ class Analysis(object):
 
     def on_connect(self):
         log.debug('on_connect called.')
+
+    def on_args(self, cli_args, request_args):
+        self.cli_args = cli_args
+        self.request_args = request_args
+
+    def on_connected(self):
+        log.debug('on_connected called.')
 
     def on_disconnected(self):
         log.debug('on_disconnected called.')

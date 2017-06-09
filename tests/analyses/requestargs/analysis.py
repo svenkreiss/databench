@@ -3,6 +3,6 @@ import databench
 
 class RequestArgs(databench.Analysis):
 
-    def on_request_args(self, argv):
+    def on_connected(self):
         """Echo params."""
-        self.emit('ack', argv)
+        self.emit('ack', self.request_args)

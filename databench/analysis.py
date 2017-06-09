@@ -67,11 +67,15 @@ class Analysis(object):
 
     _databench_analysis = True
 
-    def __init__(self, id_=None):
+    def __init__(self):
+        pass
+
+    def init_databench(self, id_=None):
         self.id_ = id_ if id_ else Analysis.__create_id()
         self.emit = lambda s, pl: log.error('emit called before Analysis '
                                             'setup complete')
         self.init_datastores()
+        return self
 
     def init_datastores(self):
         """Initialize datastores for this analysis instance.
@@ -100,11 +104,21 @@ class Analysis(object):
     """Events."""
 
     def on_connect(self):
-        """Default handlers for the "connect" action.
+        log.debug('on_connect called.')
+
+    def on_args(self, cli_args, request_args):
+        self.cli_args = cli_args
+        self.request_args = request_args
+
+    def on_connected(self):
+        """Default handlers for the "connected" action.
 
         Overwrite to add behavior.
+
+        .. versionadded:: 0.7
+            Previously, most of this functionality was in ``on_connect()``.
         """
-        log.debug('on_connect called.')
+        log.debug('on_connected called.')
 
     def on_disconnected(self):
         """Default handler for "disconnected" action.

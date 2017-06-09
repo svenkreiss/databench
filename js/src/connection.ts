@@ -119,7 +119,7 @@ export class Connection {
     this.wsReconnectAttempt += 1;
     this.wsReconnectDelay *= 2;
 
-    if (this.wsReconnectAttempt > 3) {
+    if (this.wsReconnectAttempt > 5) {
       this.errorCB(
         'Connection closed. ' +
         'Please <a href="javascript:location.reload(true);" ' +

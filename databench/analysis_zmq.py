@@ -11,9 +11,13 @@ log = logging.getLogger(__name__)
 
 
 class AnalysisZMQ(Analysis):
-    def __init__(self, id_):
-        super(AnalysisZMQ, self).__init__(id_)
+    def __init__(self):
+        pass
+
+    def init_databench(self, id_):
+        super(AnalysisZMQ, self).init_databench(id_)
         self.zmq_handshake = False
+        return self
 
     def on_connect(self, executable, zmq_publish):
         self.zmq_publish = zmq_publish
