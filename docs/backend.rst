@@ -81,17 +81,13 @@ SSL
 Provide ``--ssl-certfile``, ``--ssl-keyfile`` and ``--ssl-port``.
 
 
-Command Line Arguments
-----------------------
+Command Line and Request Arguments
+----------------------------------
 
-Command line parameters: add an ``on_cmd_args(self, args)`` method to the
-analysis.
+Command line parameters are in ``self.cli_args`` and the arguments from the
+http request are in ``self.request_args``.
 
-
-Request Arguments
------------------
-
-Request arguments: add an ``on_request_args(self, args)`` method.
+.. versionchanged:: 0.7
 
 
 API Reference

@@ -104,10 +104,6 @@ class Analysis(object):
     """Events."""
 
     def on_connect(self):
-        """Default handlers for the "connect" action.
-
-        Overwrite to add behavior.
-        """
         log.debug('on_connect called.')
 
     def on_args(self, cli_args, request_args):
@@ -118,6 +114,9 @@ class Analysis(object):
         """Default handlers for the "connected" action.
 
         Overwrite to add behavior.
+
+        .. versionadded:: 0.7
+            Previously, most of this functionality was in ``on_connect()``.
         """
         log.debug('on_connected called.')
 
