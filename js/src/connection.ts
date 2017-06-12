@@ -35,14 +35,14 @@ export class Connection {
   private socketCheckOpen: number;
 
   /**
-   * @param  {String} [analysisId=null]  Specify an analysis id or null to have one generated.
-   *                                     The connection will try to connect to a previously created
-   *                                     analysis with that id.
-   * @param  {String} [wsUrl=null]       URL of WebSocket endpoint or null to guess it.
-   * @param  {String} [requestArgs=null] `search` part of request url or null to take from
-   *                                     `window.location.search`.
+   * @param  analysisId   Specify an analysis id or null to have one generated.
+   *                      The connection will try to connect to a previously created
+   *                      analysis with that id.
+   * @param  wsUrl        URL of WebSocket endpoint or null to guess it.
+   * @param  requestArgs  `search` part of request url or null to take from
+   *                      `window.location.search`.
    */
-  constructor(analysisId = null, wsUrl = null, requestArgs = null) {
+  constructor(analysisId:string = null, wsUrl:string = null, requestArgs:string = null) {
     this.analysisId = analysisId;
     this.wsUrl = wsUrl || Connection.guessWSUrl();
     this.requestArgs = (requestArgs == null && (typeof window !== 'undefined')) ?
@@ -64,7 +64,7 @@ export class Connection {
     this.socketCheckOpen = null;
   }
 
-  static guessWSUrl() {
+  static guessWSUrl(): string {
     if (typeof location === 'undefined') return null;
     const WSProtocol = location.origin.indexOf('https://') === 0 ? 'wss' : 'ws';
     const path = location.pathname.substring(0, location.pathname.lastIndexOf('/'));
@@ -72,7 +72,7 @@ export class Connection {
   }
 
   /** initialize connection */
-  connect() {
+  connect():Connection {
     this.socket = new WebSocket(this.wsUrl);
 
     this.socketCheckOpen = setInterval(this.wsCheckOpen.bind(this), 2000);
@@ -135,7 +135,7 @@ export class Connection {
     setTimeout(this.connect.bind(this), actualDelay);
   }
 
-  wsOnMessage(event) {
+  wsOnMessage(event:{data:string}) {
     const message = JSON.parse(event.data);
 
     // connect response
@@ -214,11 +214,11 @@ export class Connection {
    * // `current_value` key.
    * ~~~
    *
-   * @param  {string|Object}   signal   Signal name to listen for.
-   * @param  {Function}        callback A callback function that takes the attached data.
-   * @return {Connection}      this
+   * @param  signal    Signal name to listen for.
+   * @param  callback  A callback function that takes the attached data.
+   * @return           this
    */
-  on(signal, callback) {
+  on(signal:string|{[field:string]: string}, callback):Connection {
     this.onCallbacks.push({ signal, callback });
     this._onCallbacksOptimized = null;
     return this;
@@ -226,11 +226,11 @@ export class Connection {
 
   /**
    * Emit a signal/action to the backend.
-   * @param  {string}                   signalName A signal name. Usually an action name.
-   * @param  {string|Object|Array|null} message    Payload attached to the action.
-   * @return {Connection}                          this
+   * @param  signalName  A signal name. Usually an action name.
+   * @param  message     Payload attached to the action.
+   * @return             this
    */
-  emit(signalName, message?) {
+  emit(signalName:string, message?):Connection {
     if (this.socket == null || this.socket.readyState !== this.socket.OPEN) {
       setTimeout(() => this.emit(signalName, message), 5);
       return this;
@@ -239,7 +239,7 @@ export class Connection {
     return this;
   }
 
-  onProcess(processID, callback) {
+  onProcess(processID:number, callback):Connection {
     if (!(processID in this.onProcessCallbacks)) {
       this.onProcessCallbacks[processID] = [];
     }
