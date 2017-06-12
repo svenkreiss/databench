@@ -8,6 +8,8 @@ module.exports = {
   },
   output: {
     path: __dirname,
+    library: 'Databench',
+    libraryTarget: 'umd',
     filename: 'js/build/databench.js',
   },
 
