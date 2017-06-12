@@ -131,14 +131,14 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Status<wbr>Log<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, formatter<span class="tsd-signature-symbol">?: </span><a href="_ui_.statuslog.html#defaultalert" class="tsd-signature-type">defaultAlert</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_ui_.statuslog.html" class="tsd-signature-type">StatusLog</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Status<wbr>Log<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span>, formatter<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_ui_.statuslog.html" class="tsd-signature-type">StatusLog</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_ui_.uielement.html">UIElement</a>.<a href="_ui_.uielement.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/0965107/js/src/ui.ts#L205">ui.ts:205</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/ec49d87/js/src/ui.ts#L209">ui.ts:209</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -146,7 +146,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>node: <span class="tsd-signature-type">any</span></h5>
+									<h5>node: <span class="tsd-signature-type">HTMLElement</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<div class="lead">
 											<p>HTML node.</p>
@@ -154,12 +154,33 @@
 									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> formatter: <a href="_ui_.statuslog.html#defaultalert" class="tsd-signature-type">defaultAlert</a><span class="tsd-signature-symbol"> =&nbsp;StatusLog.defaultAlert</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> formatter: <span class="tsd-signature-type">function</span><span class="tsd-signature-symbol"> =&nbsp;StatusLog.defaultAlert</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<div class="lead">
 											<p>Formats a message and a count to a string.</p>
 										</div>
 									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-siganture">
+											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, count<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>message: <span class="tsd-signature-type">string</span></h5>
+														</li>
+														<li>
+															<h5>count: <span class="tsd-signature-type">number</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_ui_.statuslog.html" class="tsd-signature-type">StatusLog</a></h4>
@@ -175,7 +196,7 @@
 					<div class="tsd-signature tsd-kind-icon">_messages<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/0965107/js/src/ui.ts#L205">ui.ts:205</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/ec49d87/js/src/ui.ts#L209">ui.ts:209</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -194,7 +215,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_ui_.uielement.html">UIElement</a>.<a href="_ui_.uielement.html#actionname">actionName</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/0965107/js/src/ui.ts#L29">ui.ts:29</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/ec49d87/js/src/ui.ts#L27">ui.ts:27</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -204,7 +225,7 @@
 					<div class="tsd-signature tsd-kind-icon">formatter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/0965107/js/src/ui.ts#L204">ui.ts:204</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/ec49d87/js/src/ui.ts#L208">ui.ts:208</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -239,7 +260,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_ui_.uielement.html">UIElement</a>.<a href="_ui_.uielement.html#node">node</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/0965107/js/src/ui.ts#L28">ui.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/ec49d87/js/src/ui.ts#L26">ui.ts:26</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -250,7 +271,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_ui_.uielement.html">UIElement</a>.<a href="_ui_.uielement.html#wiresignal">wireSignal</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/0965107/js/src/ui.ts#L30">ui.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/ec49d87/js/src/ui.ts#L28">ui.ts:28</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -268,7 +289,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_ui_.uielement.html">UIElement</a>.<a href="_ui_.uielement.html#actionformat">actionFormat</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/0965107/js/src/ui.ts#L48">ui.ts:48</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/ec49d87/js/src/ui.ts#L46">ui.ts:46</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -300,7 +321,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/0965107/js/src/ui.ts#L239">ui.ts:239</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/ec49d87/js/src/ui.ts#L244">ui.ts:244</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -323,7 +344,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/0965107/js/src/ui.ts#L232">ui.ts:232</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/ec49d87/js/src/ui.ts#L237">ui.ts:237</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
@@ -334,13 +355,13 @@
 					<a name="defaultalert" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> default<wbr>Alert</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">default<wbr>Alert<span class="tsd-signature-symbol">(</span>msg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, count<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+						<li class="tsd-signature tsd-kind-icon">default<wbr>Alert<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, count<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/0965107/js/src/ui.ts#L227">ui.ts:227</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/ec49d87/js/src/ui.ts#L232">ui.ts:232</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -351,13 +372,13 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>msg: <span class="tsd-signature-type">any</span></h5>
+									<h5>message: <span class="tsd-signature-type">string</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>A message.</p>
 									</div>
 								</li>
 								<li>
-									<h5>count: <span class="tsd-signature-type">any</span></h5>
+									<h5>count: <span class="tsd-signature-type">number</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Count of the message.</p>
 									</div>
@@ -372,14 +393,14 @@
 					<a name="determineactionname" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> determine<wbr>Action<wbr>Name</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">determine<wbr>Action<wbr>Name<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+						<li class="tsd-signature tsd-kind-icon">determine<wbr>Action<wbr>Name<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_ui_.uielement.html">UIElement</a>.<a href="_ui_.uielement.html#determineactionname">determineActionName</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/0965107/js/src/ui.ts#L62">ui.ts:62</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/ec49d87/js/src/ui.ts#L60">ui.ts:60</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -393,13 +414,13 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>node: <span class="tsd-signature-type">any</span></h5>
+									<h5>node: <span class="tsd-signature-type">HTMLElement</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>A HTML element.</p>
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 							<p>Name of action or null.</p>
 						</li>
 					</ul>
@@ -408,14 +429,14 @@
 					<a name="determinewiresignal" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> determine<wbr>Wire<wbr>Signal</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">determine<wbr>Wire<wbr>Signal<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+						<li class="tsd-signature tsd-kind-icon">determine<wbr>Wire<wbr>Signal<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_ui_.uielement.html">UIElement</a>.<a href="_ui_.uielement.html#determinewiresignal">determineWireSignal</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/0965107/js/src/ui.ts#L97">ui.ts:97</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/ec49d87/js/src/ui.ts#L95">ui.ts:95</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -433,13 +454,13 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>node: <span class="tsd-signature-type">any</span></h5>
+									<h5>node: <span class="tsd-signature-type">HTMLElement</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>A HTML element.</p>
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 							<p>Name of a signal or null.</p>
 						</li>
 					</ul>
@@ -448,13 +469,13 @@
 					<a name="wire" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> wire</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">wire<span class="tsd-signature-symbol">(</span>conn<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, root<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span>, id<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, formatter<span class="tsd-signature-symbol">?: </span><a href="_ui_.statuslog.html#defaultalert" class="tsd-signature-type">defaultAlert</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">wire<span class="tsd-signature-symbol">(</span>conn<span class="tsd-signature-symbol">: </span><a href="_connection_.connection.html" class="tsd-signature-type">Connection</a>, id<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, formatter<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/0965107/js/src/ui.ts#L256">ui.ts:256</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/ec49d87/js/src/ui.ts#L261">ui.ts:261</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -465,16 +486,34 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>conn: <span class="tsd-signature-type">any</span></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> root: <span class="tsd-signature-type">any</span></h5>
+									<h5>conn: <a href="_connection_.connection.html" class="tsd-signature-type">Connection</a></h5>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> id: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;databench-alerts&quot;</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> formatter: <a href="_ui_.statuslog.html#defaultalert" class="tsd-signature-type">defaultAlert</a><span class="tsd-signature-symbol"> =&nbsp;StatusLog.defaultAlert</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> formatter: <span class="tsd-signature-type">function</span><span class="tsd-signature-symbol"> =&nbsp;StatusLog.defaultAlert</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-siganture">
+											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, count<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>message: <span class="tsd-signature-type">string</span></h5>
+														</li>
+														<li>
+															<h5>count: <span class="tsd-signature-type">number</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
