@@ -5,12 +5,10 @@
  * @module ui
  */
 
-export interface HTMLDatabenchElement {
+import { Connection } from './connection';
+
+export interface HTMLDatabenchElement extends HTMLElement {
   databenchUI: UIElement;
-  classList: any;
-  addEventListener: any;
-  innerHTML: string;
-  innerText: string;
 }
 
 /**
@@ -30,10 +28,10 @@ export class UIElement {
   wireSignal: string|any;
 
   /**
-   * @param  {HTMLElement} node An HTML element.
+   * @param node  An HTML element.
    */
-  constructor(node) {
-    this.node = node;
+  constructor(node: HTMLElement|HTMLDatabenchElement) {
+    this.node = <HTMLDatabenchElement>node;
     this.node.databenchUI = this;
 
     this.actionName = UIElement.determineActionName(node);
@@ -42,10 +40,10 @@ export class UIElement {
 
   /**
    * Formats the payload of an action.
-   * @param  {any} value Original payload.
-   * @return {any}       Modified payload.
+   * @param  value Original payload.
+   * @return       Modified payload.
    */
-  actionFormat(value) {
+  actionFormat(value: any): any {
     return value;
   }
 
@@ -56,10 +54,10 @@ export class UIElement {
    * to the HTML tag. If that is not found, the action name is determined from
    * the tag's `data-action`, `name` or `id` attribute (in that order).
    *
-   * @param  {HTMLElement} node A HTML element.
-   * @return {string}      Name of action or null.
+   * @param  node A HTML element.
+   * @return      Name of action or null.
    */
-  static determineActionName(node) {
+  static determineActionName(node: HTMLElement): string {
     // determine action name from HTML DOM
     let action = null;
 
@@ -91,10 +89,10 @@ export class UIElement {
    * can contain a `:` which will be used to create an object as well. That means
    * that `data-signal="data:myvalue"` gives the same result as `data-action="myvalue"`.
    *
-   * @param  {HTMLElement} node A HTML element.
-   * @return {string}           Name of a signal or null.
+   * @param  node A HTML element.
+   * @return      Name of a signal or null.
    */
-  static determineWireSignal(node) {
+  static determineWireSignal(node: HTMLElement): string {
     // determine signal name from HTML DOM
     let signal = null;
 
@@ -134,12 +132,15 @@ export class Log extends UIElement {
   _messages: string[][];
 
   /**
-   * @param  {HTMLElement} node     Primary node.
-   * @param  {String} [consoleFnName='log'] Name of console method to replace.
-   * @param  {Number} [limitNumber=20]      Maximum number of messages to show.
-   * @param  {Number} [limitLength=250]     Maximum length of a message.
+   * @param  node            Primary node.
+   * @param  consoleFnName   Name of console method to replace.
+   * @param  limitNumber     Maximum number of messages to show.
+   * @param  limitLength     Maximum length of a message.
    */
-  constructor(node, consoleFnName = 'log', limitNumber = 20, limitLength = 250) {
+  constructor(node: HTMLElement,
+              consoleFnName: string = 'log',
+              limitNumber: number = 20,
+              limitLength: number = 250) {
     super(node);
 
     this.consoleFnName = consoleFnName;
@@ -180,10 +181,13 @@ export class Log extends UIElement {
   }
 
   /** Wire all logs. */
-  static wire(conn, root?, id = 'log', source = 'backend', consoleFnName = 'log',
-              limitNumber = 20, limitLength = 250) {
-    if (root === undefined) root = document;
-    const node = root.getElementById(id);
+  static wire(conn: Connection,
+              id: string = 'log',
+              source: string = 'backend',
+              consoleFnName: string = 'log',
+              limitNumber: number = 20,
+              limitLength: number = 250) {
+    const node = document.getElementById(id);
     if (node == null) return;
     if (UIElement.determineActionName(node) == null) return;
 
@@ -205,10 +209,11 @@ export class StatusLog extends UIElement {
   _messages: { [message: string]: number };
 
   /**
-   * @param  {HTMLElement} node      HTML node.
-   * @param  {function}    formatter Formats a message and a count to a string.
+   * @param  node       HTML node.
+   * @param  formatter  Formats a message and a count to a string.
    */
-  constructor(node, formatter = StatusLog.defaultAlert) {
+  constructor(node: HTMLElement,
+              formatter: (message: string, count: number) => string = StatusLog.defaultAlert) {
     super(node);
 
     this.formatter = formatter;
@@ -220,13 +225,13 @@ export class StatusLog extends UIElement {
 
   /**
    * The default formatter function
-   * @param  {string} msg   A message.
-   * @param  {number} count Count of the message.
-   * @return {string}       HTML formatted version of the inputs.
+   * @param  message   A message.
+   * @param  count     Count of the message.
+   * @returns HTML formatted version of the inputs.
    */
-  static defaultAlert(msg, count) {
+  static defaultAlert(message: string, count: number): string {
     const countFormat = count <= 1 ? '' : `<b>(${count})</b> `;
-    return `<div class="alert alert-danger">${countFormat}${msg}</div>`;
+    return `<div class="alert alert-danger">${countFormat}${message}</div>`;
   }
 
   render() {
@@ -253,9 +258,10 @@ export class StatusLog extends UIElement {
   }
 
   /** Wire all status logs. */
-  static wire(conn, root?, id = 'databench-alerts', formatter = StatusLog.defaultAlert) {
-    if (root === undefined) root = document;
-    const node = root.getElementById(id);
+  static wire(conn: Connection,
+              id: string = 'databench-alerts',
+              formatter: (message: string, count: number) => string = StatusLog.defaultAlert) {
+    const node = document.getElementById(id);
     if (node == null) return;
     if (UIElement.determineActionName(node) == null) return;
 
@@ -296,9 +302,9 @@ export class Button extends UIElement {
   _state: ButtonState;
 
   /**
-   * @param  {HTMLElement} node DOM node to connect.
+   * @param node   DOM node to connect.
    */
-  constructor(node) {
+  constructor(node: HTMLElement) {
     super(node);
 
     this._state = ButtonState.Idle;
@@ -309,9 +315,9 @@ export class Button extends UIElement {
   /**
    * Called on click events. When a button is wired, this function is overwritten
    * with the actual function that is triggered on click events.
-   * @param  {int} processID a random id for the process that could be started
+   * @param  processID   a random id for the process that could be started
    */
-  clickCB(processID) {
+  clickCB(processID: number) {
     return console.log(`click on ${this.node} with ${processID}`);
   }
 
@@ -343,7 +349,7 @@ export class Button extends UIElement {
   }
 
   /** Wire all buttons. */
-  static wire(conn, root?) {
+  static wire(conn: Connection, root?: Document|HTMLElement) {
     if (root === undefined) root = document;
 
     [].slice.call(root.getElementsByTagName('BUTTON'), 0)
@@ -379,17 +385,20 @@ export class Button extends UIElement {
 export class Text extends UIElement {
   /**
    * Format the value.
-   * @param  {any} value Value as represented in the backend.
-   * @return {string}       Formatted representation of the value.
+   * @param  value  Value as represented in the backend.
+   * @return Formatted representation of the value.
    */
-  formatFn(value) {
+  formatFn(value: any): string {
     return value;
   }
 
-  /** Reads and sets the value. */
-  value(v) {
-    if (v === undefined) return this.node.innerHTML;
+  /** Reads the value. */
+  get_value(v) {
+    return this.node.innerHTML;
+  }
 
+  /** Reads the value. */
+  set_value(v) {
     this.node.innerHTML = this.formatFn(v || '');
     return this;
   }
@@ -398,7 +407,7 @@ export class Text extends UIElement {
    * Wire all text.
    * @param  {Connection} conn Connection to use.
    */
-  static wire(conn, root?) {
+  static wire(conn: Connection, root?: Document|HTMLElement) {
     if (root === undefined) root = document;
 
     [].concat(
@@ -416,7 +425,7 @@ export class Text extends UIElement {
         console.log('Wiring text', node, `to action ${t.actionName}.`);
 
         // handle events from backend
-        conn.on(t.wireSignal, message => t.value(message));
+        conn.on(t.wireSignal, message => t.set_value(message));
       });
   }
 }
@@ -428,9 +437,9 @@ export class TextInput extends UIElement {
   _triggerOnKeyUp: boolean;
 
   /**
-   * @param {HTMLElement} node The node to connect.
+   * @param node  The node to connect.
    */
-  constructor(node) {
+  constructor(node: HTMLElement) {
     super(node);
 
     this._triggerOnKeyUp = false;
@@ -440,23 +449,23 @@ export class TextInput extends UIElement {
 
   /**
    * Format the value.
-   * @param  {any}    value Value as represented in the backend.
-   * @return {string}       Formatted representation of the value.
+   * @param  value  Value as represented in the backend.
+   * @return Formatted representation of the value.
    */
-  formatFn(value) {
+  formatFn(value: any): string {
     return value;
   }
 
   /**
    * Callback that is triggered on frontend changes.
-   * @param  {any} value A formatted action.
+   * @param  value  A formatted action.
    */
-  changeCB(value) {
+  changeCB(value: any) {
     return console.log(`change of ${this.node}: ${value}`);
   }
 
   change() {
-    return this.changeCB(this.actionFormat(this.value()));
+    return this.changeCB(this.actionFormat(this.get_value()));
   }
 
   /**
@@ -464,10 +473,10 @@ export class TextInput extends UIElement {
    * `change` events (i.e. pressing enter or unfocusing the element).
    * Setting this to true will trigger on every `keyup` event of this element.
    *
-   * @param  {boolean}   v Whether to trigger on `keyup` events. Default is true.
-   * @return {TextInput}   self
+   * @param  v Whether to trigger on `keyup` events. Default is true.
+   * @return self
    */
-  triggerOnKeyUp(v) {
+  triggerOnKeyUp(v: boolean): TextInput {
     if (v !== false && !this._triggerOnKeyUp) {
       this.node.addEventListener('keyup', this.change.bind(this), false);
       this._triggerOnKeyUp = true;
@@ -482,15 +491,18 @@ export class TextInput extends UIElement {
   }
 
   /** Reads and sets the value. */
-  value(v?) {
-    if (v === undefined) return this.node.value;
+  get_value(): string {
+    return this.node.value;
+  }
 
+  /** Set value */
+  value(v: string): TextInput {
     this.node.value = this.formatFn(v || '');
     return this;
   }
 
   /** Wire all text inputs. */
-  static wire(conn, root?) {
+  static wire(conn: Connection, root?: Document|HTMLElement) {
     if (root === undefined) root = document;
 
     [].slice.call(root.getElementsByTagName('INPUT'), 0)
@@ -535,10 +547,10 @@ export class Slider extends UIElement {
   labelHtml: string;
 
   /**
-   * @param  {HTMLElement}  node      DOM node to bind.
-   * @param  {HTMLElement?} labelNode DOM node label that corresponds to the slider.
+   * @param  node       DOM node to bind.
+   * @param  labelNode  DOM node label that corresponds to the slider.
    */
-  constructor(node, labelNode) {
+  constructor(node: HTMLElement, labelNode?: HTMLElement) {
     super(node);
 
     this.labelNode = labelNode;
@@ -551,54 +563,55 @@ export class Slider extends UIElement {
 
   /**
    * Callback with changes to the slider value.
-   * @param  {Number} value   Value from a sliderToValue() transform.
+   * @param  value   Value from a sliderToValue() transform.
    */
-  changeCB(value) {
+  changeCB(value: number) {
     return console.log(`slider value change: ${value}`);
   }
 
   /**
    * Transform a backend value to a slider value.
-   * @param  {number} value Value as stored in backend.
-   * @return {int}          Value for the HTML range element.
+   * @param   value  Value as stored in backend.
+   * @return  Value for the HTML range element.
    */
-  valueToSlider(value) {
-    return value;
+  valueToSlider(value: number): string {
+    return value.toFixed();
   }
 
   /**
    * Transform a value from the HTML range element to a value that should be stored.
-   * @param  {int}    s Value from HTML range element.
-   * @return {number}   Value to store.
+   * @param  s  Value from HTML range element.
+   * @return Value to store.
    */
-  sliderToValue(s) {
+  sliderToValue(s: number): number {
     return s;
   }
 
   /**
    * How a value should be represented.
    * For example, this can add units or convert from radians to degrees.
-   * @param  {number}         value Input value as it is stored in the backend.
-   * @return {string|number}        Representation of a value.
+   * @param  value  Input value as it is stored in the backend.
+   * @return Representation of a value.
    */
-  formatFn(value) {
-    return value;
+  formatFn(value: number): string {
+    return value.toFixed();
   }
 
   render() {
-    const v = this.value();
+    const v = this.get_value();
     if (this.labelNode) {
       this.labelNode.innerHTML = `${this.labelHtml} ${this.formatFn(v)}`;
     }
     return this;
   }
 
-  /** Reads and sets the value. */
-  value(v?) {
-    if (v === undefined) {
-      return this.sliderToValue(parseFloat(this.node.value));
-    }
+  /** Reads the value. */
+  get_value(): number {
+    return this.sliderToValue(parseFloat(this.node.value));
+  }
 
+  /** Reads the value. */
+  set_value(v: number) {
     const newSliderValue = this.valueToSlider(v);
     if (this.node.value === newSliderValue) return this;
 
@@ -608,7 +621,7 @@ export class Slider extends UIElement {
   }
 
   change() {
-    return this.changeCB(this.actionFormat(this.value()));
+    return this.changeCB(this.actionFormat(this.get_value()));
   }
 
   /** Find all labels for slider elements. */
@@ -623,7 +636,7 @@ export class Slider extends UIElement {
   }
 
   /** Wire all sliders. */
-  static wire(conn, root?) {
+  static wire(conn: Connection, root?: Document|HTMLElement) {
     if (root === undefined) root = document;
     const lfs = this.labelsForSliders(root);
 
@@ -639,7 +652,7 @@ export class Slider extends UIElement {
         slider.changeCB = message => conn.emit(slider.actionName, message);
 
         // handle events from backend
-        conn.on(slider.wireSignal, message => slider.value(message));
+        conn.on(slider.wireSignal, message => slider.set_value(message));
       });
   }
 }
@@ -677,7 +690,7 @@ export class Image extends UIElement {
   }
 
   /** Wire all text inputs. */
-  static wire(conn, root?) {
+  static wire(conn: Connection, root?: Document|HTMLElement) {
     if (root === undefined) root = document;
 
     [].slice.call(root.getElementsByTagName('IMG'), 0)
@@ -703,17 +716,17 @@ export class Image extends UIElement {
  * name is determined by
  * {@link module:ui~UIElement.determineWireSignal|UIElement.determineWireSignal()}.
  *
- * @param  {Connection} connection A Databench.Connection instance.
- * @return {Connection}            The same connection.
+ * @param  connection  A Databench.Connection instance.
+ * @return The same connection.
  */
-export function wire(connection, root?) {
-  StatusLog.wire(connection, root);
+export function wire(connection: Connection, root?: Document|HTMLElement): Connection {
+  StatusLog.wire(connection);
   Button.wire(connection, root);
   TextInput.wire(connection, root);
   Text.wire(connection, root);
   Slider.wire(connection, root);
   Image.wire(connection, root);
-  Log.wire(connection, root);
+  Log.wire(connection);
 
   return connection;
 }
