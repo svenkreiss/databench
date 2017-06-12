@@ -42,7 +42,7 @@ export class Connection {
    * @param  requestArgs  `search` part of request url or null to take from
    *                      `window.location.search`.
    */
-  constructor(analysisId:string = null, wsUrl:string = null, requestArgs:string = null) {
+  constructor(analysisId: string = null, wsUrl: string = null, requestArgs: string = null) {
     this.analysisId = analysisId;
     this.wsUrl = wsUrl || Connection.guessWSUrl();
     this.requestArgs = (requestArgs == null && (typeof window !== 'undefined')) ?
@@ -72,7 +72,7 @@ export class Connection {
   }
 
   /** initialize connection */
-  connect():Connection {
+  connect(): Connection {
     this.socket = new WebSocket(this.wsUrl);
 
     this.socketCheckOpen = setInterval(this.wsCheckOpen.bind(this), 2000);
@@ -135,7 +135,7 @@ export class Connection {
     setTimeout(this.connect.bind(this), actualDelay);
   }
 
-  wsOnMessage(event:{data:string}) {
+  wsOnMessage(event: {data: string}) {
     const message = JSON.parse(event.data);
 
     // connect response
@@ -218,7 +218,7 @@ export class Connection {
    * @param  callback  A callback function that takes the attached data.
    * @return           this
    */
-  on(signal:string|{[field:string]: string}, callback):Connection {
+  on(signal: string|{[field: string]: string}, callback): Connection {
     this.onCallbacks.push({ signal, callback });
     this._onCallbacksOptimized = null;
     return this;
@@ -230,7 +230,7 @@ export class Connection {
    * @param  message     Payload attached to the action.
    * @return             this
    */
-  emit(signalName:string, message?):Connection {
+  emit(signalName: string, message?): Connection {
     if (this.socket == null || this.socket.readyState !== this.socket.OPEN) {
       setTimeout(() => this.emit(signalName, message), 5);
       return this;
@@ -239,7 +239,7 @@ export class Connection {
     return this;
   }
 
-  onProcess(processID:number, callback):Connection {
+  onProcess(processID: number, callback): Connection {
     if (!(processID in this.onProcessCallbacks)) {
       this.onProcessCallbacks[processID] = [];
     }
