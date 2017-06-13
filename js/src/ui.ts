@@ -126,37 +126,23 @@ export class UIElement {
  * Usually wired to a `<pre id="log">` element.
  */
 export class Log extends UIElement {
-  consoleFnName: string;
   limitNumber: number;
   limitLength: number;
   _messages: string[][];
 
   /**
    * @param  node            Primary node.
-   * @param  consoleFnName   Name of console method to replace.
    * @param  limitNumber     Maximum number of messages to show.
    * @param  limitLength     Maximum length of a message.
    */
   constructor(node: HTMLElement,
-              consoleFnName: string = 'log',
               limitNumber: number = 20,
               limitLength: number = 250) {
     super(node);
 
-    this.consoleFnName = consoleFnName;
     this.limitNumber = limitNumber;
     this.limitLength = limitLength;
     this._messages = [];
-
-    // more sensible default for this case
-    this.wireSignal = { log: null };
-
-    // capture events from frontend
-    const _consoleFnOriginal = console[consoleFnName];
-    console[consoleFnName] = message => {
-      this.add(message, 'frontend');
-      _consoleFnOriginal.apply(console, [message]);
-    };
   }
 
   render() {
@@ -184,7 +170,7 @@ export class Log extends UIElement {
   static wire(conn: Connection,
               id: string = 'log',
               source: string = 'backend',
-              consoleFnName: string = 'log',
+              wireSignal: string = 'log',
               limitNumber: number = 20,
               limitLength: number = 250) {
     const node = document.getElementById(id);
@@ -192,8 +178,8 @@ export class Log extends UIElement {
     if (UIElement.determineActionName(node) == null) return;
 
     console.log('Wiring log to ', node, `with id=${id}.`);
-    const l = new Log(node, consoleFnName, limitNumber, limitLength);
-    conn.on(l.wireSignal, message => l.add(message, source));
+    const l = new Log(node, limitNumber, limitLength);
+    conn.on(wireSignal, message => l.add(message, source));
     return;
   }
 }
