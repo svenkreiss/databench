@@ -124,6 +124,11 @@ class Datastore(object):
         Datastore.on_change_cb[self.domain].append(callback)
         return self
 
+    def trigger_all_change_callbacks(self):
+        """Trigger all callbacks that were set with on_change()."""
+        for key in Datastore.store[self.domain].keys():
+            self.callback_fn(key)(self[key])
+
     def __setitem__(self, key, value):
         """Set value for given key.
 
