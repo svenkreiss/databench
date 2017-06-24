@@ -2,6 +2,7 @@
 
 import base64
 import io
+import json
 
 try:
     import numpy as np
@@ -70,3 +71,15 @@ def svg_to_src(svg):
     :rtype: str
     """
     return 'data:image/svg+xml;utf8,' + svg
+
+
+def to_string(*args, **kwargs):
+    if len(args) == 1 and not kwargs and isinstance(args[0], str):
+        message = args[0]
+    elif not kwargs:
+        message = json.dumps(args)
+    elif not args:
+        message = json.dumps(kwargs)
+    else:
+        message = json.dumps(args) + ', ' + json.dumps(kwargs)
+    return message

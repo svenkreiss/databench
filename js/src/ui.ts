@@ -158,7 +158,7 @@ export class Log extends UIElement {
     return this;
   }
 
-  add(message, source = 'unknown') {
+  add(message: any, source = 'unknown') {
     const msg = typeof message === 'string' ? message : JSON.stringify(message);
     const paddedSource = Array(Math.max(0, 8 - source.length)).join(' ') + source;
     this._messages.push([`${paddedSource}: ${msg}`]);
@@ -169,17 +169,24 @@ export class Log extends UIElement {
   /** Wire all logs. */
   static wire(conn: Connection,
               id: string = 'log',
-              source: string = 'backend',
-              wireSignal: string = 'log',
+              wireSignals: string[] = ['log', 'warn', 'error'],
               limitNumber: number = 20,
               limitLength: number = 250) {
     const node = document.getElementById(id);
     if (node == null) return;
     if (UIElement.determineActionName(node) == null) return;
 
-    console.log('Wiring log to ', node, `with id=${id}.`);
-    const l = new Log(node, limitNumber, limitLength);
-    conn.on(wireSignal, message => l.add(message, source));
+    const log = new Log(node, limitNumber, limitLength);
+    console.log(`Wiring ${wireSignals} to `, node);
+    wireSignals.forEach(wireSignal => {
+      conn.on(wireSignal, message => {
+        log.add(message, `backend (${wireSignal})`);
+      });
+      conn.preEmit(wireSignal, message => {
+        log.add(message, `frontend (${wireSignal})`);
+        return message;
+      });
+    });
     return;
   }
 }
