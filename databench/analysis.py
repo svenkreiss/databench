@@ -81,8 +81,13 @@ class Analysis(object):
 
     def init_databench(self, id_=None):
         self.id_ = id_ if id_ else Analysis.__create_id()
-        self.emit = lambda s, pl: log.error('emit called before Analysis '
-                                            'setup complete')
+        self.emit_to_frontend = (
+            lambda s, pl:
+                log.error('emit called before Analysis setup was complete')
+        )
+        self.log_frontend = logging.getLogger(__name__ + '.frontend')
+        self.log_backend = logging.getLogger(__name__ + '.backend')
+
         self.init_datastores()
         return self
 
@@ -107,7 +112,25 @@ class Analysis(object):
 
     def set_emit_fn(self, emit_fn):
         """Sets what the emit function for this analysis will be."""
-        self.emit = emit_fn
+        self.emit_to_frontend = emit_fn
+        return self
+
+    def emit(self, signal, message):
+        """Emit a signal to the frontend.
+
+        :param str signal: name of the signal
+        :param message: message to send
+        :returns: self
+        """
+        # call pre-emit hooks
+        if signal == 'log':
+            self.log_backend.info(message)
+        elif signal == 'warn':
+            self.log_backend.warn(message)
+        elif signal == 'error':
+            self.log_backend.error(message)
+
+        self.emit_to_frontend(signal, message)
         return self
 
     """Events."""
@@ -120,13 +143,13 @@ class Analysis(object):
         self.request_args = request_args
 
     def on_log(self, *args, **kwargs):
-        log.info(utils.to_string(*args, **kwargs))
+        self.log_frontend.info(utils.to_string(*args, **kwargs))
 
     def on_warn(self, *args, **kwargs):
-        log.warn(utils.to_string(*args, **kwargs))
+        self.log_frontend.warn(utils.to_string(*args, **kwargs))
 
     def on_error(self, *args, **kwargs):
-        log.error(utils.to_string(*args, **kwargs))
+        self.log_frontend.error(utils.to_string(*args, **kwargs))
 
     def on_connected(self):
         """Default handlers for the "connected" action.

@@ -68,8 +68,11 @@ export class Connection {
 
     // wire log, warn, error messages into console outputs
     ['log', 'warn', 'error'].forEach(wireSignal => {
-      this.on(wireSignal, message => console[wireSignal](`backend: ${message}`));
-      this.preEmit(wireSignal, message => console[wireSignal](`frontend: ${message}`));
+      this.on(wireSignal, message => console[wireSignal]('backend: ', message));
+      this.preEmit(wireSignal, message => {
+        console[wireSignal]('frontend: ', message);
+        return message;
+      });
     });
   }
 
