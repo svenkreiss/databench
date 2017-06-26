@@ -115,7 +115,7 @@ class Analysis(object):
         self.emit_to_frontend = emit_fn
         return self
 
-    def emit(self, signal, message):
+    def emit(self, signal, message='__nomessagetoken__'):
         """Emit a signal to the frontend.
 
         :param str signal: name of the signal
