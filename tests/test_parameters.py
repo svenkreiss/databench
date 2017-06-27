@@ -7,9 +7,8 @@ class Parameters(object):
 
     @tornado.testing.gen_test
     def test_no_parameter(self):
-        c = self.connection(self.analysis)
-        yield c.connect()
-        yield c.emit('test_action')
+        c = yield self.connection(self.analysis).connect()
+        c.emit('test_action')
         r = yield c.read()
         yield c.close()
 
@@ -17,8 +16,7 @@ class Parameters(object):
 
     @tornado.testing.gen_test
     def test_empty_parameter(self):
-        c = self.connection(self.analysis)
-        yield c.connect()
+        c = yield self.connection(self.analysis).connect()
         yield c.emit('test_fn', '')
         r = yield c.read()
         yield c.close()
@@ -27,8 +25,7 @@ class Parameters(object):
 
     @tornado.testing.gen_test
     def test_parameter(self):
-        c = self.connection(self.analysis)
-        yield c.connect()
+        c = yield self.connection(self.analysis).connect()
         yield c.emit('test_fn', 1)
         r = yield c.read()
         yield c.close()
@@ -37,8 +34,7 @@ class Parameters(object):
 
     @tornado.testing.gen_test
     def test_list(self):
-        c = self.connection(self.analysis)
-        yield c.connect()
+        c = yield self.connection(self.analysis).connect()
         yield c.emit('test_fn', [1, 2])
         r = yield c.read()
         yield c.close()
@@ -47,8 +43,7 @@ class Parameters(object):
 
     @tornado.testing.gen_test
     def test_dict(self):
-        c = self.connection(self.analysis)
-        yield c.connect()
+        c = yield self.connection(self.analysis).connect()
         yield c.emit('test_fn', {'first_param': 1, 'second_param': 2})
         r = yield c.read()
         yield c.close()
@@ -57,8 +52,7 @@ class Parameters(object):
 
     @tornado.testing.gen_test
     def test_process(self):
-        c = self.connection(self.analysis)
-        yield c.connect()
+        c = yield self.connection(self.analysis).connect()
         yield c.emit('test_fn', {'first_param': 1, '__process_id': 123})
         r_start = yield c.read()
         r = yield c.read()
@@ -77,43 +71,35 @@ class Parameters(object):
 
     @tornado.testing.gen_test
     def test_data(self):
-        data = {}
-        c = self.connection(self.analysis)
-        c.on('data', lambda d: data.update(d))
-        yield c.connect()
+        c = yield self.connection(self.analysis).connect()
         yield c.emit('test_data', ['light', 'red'])
         yield c.read()
-        self.assertEqual({'light': 'red'}, data)
+        self.assertEqual({'light': 'red'}, c.data)
+        yield c.close()
 
     @tornado.testing.gen_test
     def test_data_with_data_cb(self):
-        data = {}
-        c = self.connection(self.analysis)
-        c.on('data', lambda d: data.update(d))
-        yield c.connect()
+        c = yield self.connection(self.analysis).connect()
         yield c.emit('test_data', ['light2', 'red'])
         yield c.read()
-        self.assertEqual({'light2': 'red-modified'}, data)
+        self.assertEqual({'light2': 'red-modified'}, c.data)
+        yield c.close()
 
     @tornado.testing.gen_test
     def test_class_data(self):
-        data = {}
-        c = self.connection(self.analysis)
-        c.on('class_data', lambda d: data.update(d))
-        yield c.connect()
+        c = yield self.connection(self.analysis).connect()
         yield c.emit('test_class_data', ['light', 'red'])
         yield c.read()
-        self.assertEqual({'light': 'red'}, data)
+        self.assertEqual({'light': 'red'}, c.class_data)
+        yield c.close()
 
     @tornado.testing.gen_test
     def test_class_data_with_data_cb(self):
-        data = {}
-        c = self.connection(self.analysis)
-        c.on('class_data', lambda d: data.update(d))
-        yield c.connect()
+        c = yield self.connection(self.analysis).connect()
         yield c.emit('test_class_data', ['light2', 'red'])
         yield c.read()
-        self.assertEqual({'light2': 'red-modified'}, data)
+        self.assertEqual({'light2': 'red-modified'}, c.class_data)
+        yield c.close()
 
 
 class ParametersTest(Parameters, AnalysisTestCase):

@@ -3,6 +3,7 @@ from collections import defaultdict
 import json
 import tornado
 from tornado.testing import AsyncHTTPTestCase, AsyncHTTPSTestCase
+from tornado.testing import gen_test  # noqa
 
 
 class Connection(object):
@@ -21,11 +22,19 @@ class Connection(object):
         self.on_process_callbacks = defaultdict(list)
         self.on_callbacks = defaultdict(list)
 
+        # emulate behavior of automatically updating data and class_data
+        self.data = {}
+        self.class_data = {}
+        self.on_callbacks['data'].append(
+            lambda d: self.data.update(d))
+        self.on_callbacks['class_data'].append(
+            lambda d: self.class_data.update(d))
+
     @tornado.gen.coroutine
     def connect(self, compression_options=None):
         self.ws = yield tornado.websocket.websocket_connect(
             tornado.httpclient.HTTPRequest(self.url, validate_cert=False),
-            # io_loop=self.io_loop,
+            # io_loop=self.testcase.io_loop, callback=self.testcase.stop,
             compression_options=compression_options)
 
         yield self.ws.write_message(json.dumps({
@@ -38,13 +47,8 @@ class Connection(object):
 
     @tornado.gen.coroutine
     def close(self):
-        """Close a websocket connection and wait for the server side.
-
-        If we don't wait here, there are sometimes leak warnings in the
-        tests.
-        """
+        """Close a websocket connection."""
         self.ws.close()
-        yield tornado.gen.sleep(1.0)
 
     @tornado.gen.coroutine
     def emit(self, action, message='__nomessagetoken__'):
@@ -53,14 +57,10 @@ class Connection(object):
         :param action: name of an action
         :param message: payload for the action
         """
-        if message == '__nomessagetoken__':
-            yield self.ws.write_message(
-                json.dumps({'signal': action})
-            )
-        else:
-            yield self.ws.write_message(
-                json.dumps({'signal': action, 'load': message})
-            )
+        out = {'signal': action}
+        if message != '__nomessagetoken__':
+            out['load'] = message
+        yield self.ws.write_message(json.dumps(out))
 
     @tornado.gen.coroutine
     def read(self):
@@ -97,9 +97,25 @@ class AnalysisTestCase(AsyncHTTPTestCase):
 
     ``analyses_path`` is the import path for the analyses.
 
-    Similar to tornado websocket unit tests:
-    see https://github.com/tornadoweb/tornado/blob/master/tornado/\
-test/websocket_test.py
+
+    Example (from tests/test_testing.py):
+
+    .. code-block::python
+
+        from databench.testing import AnalysisTestCase, gen_test
+
+
+        class Example(AnalysisTestCase):
+            analyses_path = 'tests.analyses'
+
+            @gen_test
+            def test_data(self):
+                c = yield self.connection(analysis_name='parameters').connect()
+                yield c.emit('test_data', ['light', 'red'])
+                yield c.read()
+                self.assertEqual({'light': 'red'}, c.data)
+                yield c.close()
+
     """
 
     analyses_path = None
@@ -118,14 +134,7 @@ test/websocket_test.py
 
 
 class AnalysisTestCaseSSL(AsyncHTTPSTestCase):
-    """Test scaffolding for an analysis with SSL.
-
-    ``analyses_path`` is the import path for the analyses.
-
-    Similar to tornado websocket unit tests:
-    see https://github.com/tornadoweb/tornado/blob/master/tornado/\
-test/websocket_test.py
-    """
+    """Same as :class:`AnalysisTestCase` but with SSL."""
 
     analyses_path = None
 
