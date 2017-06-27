@@ -49,6 +49,7 @@ class Connection(object):
     def close(self):
         """Close a websocket connection."""
         self.ws.close()
+        yield tornado.gen.sleep(1.0)
 
     @tornado.gen.coroutine
     def emit(self, action, message='__nomessagetoken__'):
@@ -96,6 +97,7 @@ class AnalysisTestCase(AsyncHTTPTestCase):
     """Test scaffolding for an analysis.
 
     ``analyses_path`` is the import path for the analyses.
+    ``gen_test`` is an alias for ``tornado.testing.gen_test``.
 
 
     Example (from tests/test_testing.py):
