@@ -11,7 +11,7 @@ class MultipleConnections(object):
         connections = []
 
         for _ in range(4):
-            connection = yield self.connection(self.analysis).connect()
+            connection = yield self.connect(self.analysis)
             connections.append(connection)
 
         for connection in connections:
