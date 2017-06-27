@@ -4,7 +4,7 @@ from databench.testing import AnalysisTestCase, gen_test
 databench.meta.PING_INTERVAL = 500
 
 
-class MultipleConnections(AnalysisTestCase):
+class MultipleConnections(object):
 
     @gen_test
     def test_run(self):
