@@ -11,7 +11,7 @@ class Basics(object):
 
     @gen_test
     def test_connect(self):
-        c = yield self.connection(self.analysis).connect()
+        c = yield self.connect(self.analysis)
         yield c.close()
         self.assertEqual(len(c.analysis_id), 8)
 
@@ -52,13 +52,12 @@ class BasicsTestAnalyses(AnalysisTestCase):
 
     @gen_test
     def test_connection_interruption(self):
-        conn1 = yield self.connection('connection_interruption').connect()
-        yield conn1.close()
-        analysis_id1 = conn1.analysis_id
+        client1 = yield self.connect('connection_interruption')
+        yield client1.close()
+        analysis_id1 = client1.analysis_id
         self.assertEqual(len(analysis_id1), 8)
 
-        conn2 = yield self.connection('connection_interruption',
-                                      analysis_id1).connect()
-        yield conn2.close()
-        analysis_id2 = conn2.analysis_id
+        client2 = yield self.connect('connection_interruption', analysis_id1)
+        yield client2.close()
+        analysis_id2 = client2.analysis_id
         self.assertEqual(analysis_id1, analysis_id2)
