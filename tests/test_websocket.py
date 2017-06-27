@@ -1,21 +1,17 @@
 """Websocket test."""
 
-from databench.testing import AnalysisTestCase, AnalysisTestCaseSSL
-import tornado.testing
+from databench.testing import AnalysisTestCase, AnalysisTestCaseSSL, gen_test
 
 
 class Basics(object):
-    ANALYSIS = None
-
     def test_index(self):
         response = self.fetch('/')
         self.assertEqual(response.code, 200)
         self.assertIn(b'Dummy', response.body)
 
-    @tornado.testing.gen_test
+    @gen_test
     def test_connect(self):
-        c = self.connection(self.analysis)
-        yield c.connect()
+        c = yield self.connection(self.analysis).connect()
         yield c.close()
         self.assertEqual(len(c.analysis_id), 8)
 
@@ -54,16 +50,15 @@ class BasicsTestAnalyses(AnalysisTestCase):
         self.assertEqual(response.code, 200)
         self.assertIn(b'placeholder', response.body)
 
-    @tornado.testing.gen_test
+    @gen_test
     def test_connection_interruption(self):
-        connection1 = self.connection('connection_interruption')
-        yield connection1.connect()
-        yield connection1.close()
-        analysis_id1 = connection1.analysis_id
+        conn1 = yield self.connection('connection_interruption').connect()
+        yield conn1.close()
+        analysis_id1 = conn1.analysis_id
         self.assertEqual(len(analysis_id1), 8)
 
-        connection2 = self.connection('connection_interruption', analysis_id1)
-        yield connection2.connect()
-        yield connection2.close()
-        analysis_id2 = connection2.analysis_id
+        conn2 = yield self.connection('connection_interruption',
+                                      analysis_id1).connect()
+        yield conn2.close()
+        analysis_id2 = conn2.analysis_id
         self.assertEqual(analysis_id1, analysis_id2)
