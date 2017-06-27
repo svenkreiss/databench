@@ -29,7 +29,7 @@
     "json-loader": "^0.5.4",
     "mocha": "^2.4.5",
     "source-map-loader": "^0.1.5",
-    "ts-node": "^2.0.0",
+    "ts-node": "^2.1.2",
     "tslint": "^4.3.1",
     "typedoc": "^0.5.3",
     "typescript": "^2.3.4",
