@@ -80,6 +80,8 @@
 					server (see example below).</p>
 					<p>The other two essential functions to know about are
 					{@link Connection#on|on()} and {@link Connection#emit|emit()}.</p>
+					<p>Logging across frontend and backend can be done by emitting <code>log</code>,
+					<code>warn</code> or <code>error</code>, e.g. <code>emit(&#39;log&#39;, &#39;Hello World&#39;)</code>.</p>
 					<dl class="tsd-comment-tags">
 						<dt>example</dt>
 						<dd><pre><code><span class="hljs-keyword">var</span> d = <span class="hljs-function"><span class="hljs-keyword">new</span> <span class="hljs-title">Databench</span>.<span class="hljs-title">Connection</span>();
@@ -111,11 +113,11 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_connection_.connection.html#_oncallbacksoptimized" class="tsd-kind-icon">_on<wbr>Callbacks<wbr>Optimized</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_connection_.connection.html#analysisid" class="tsd-kind-icon">analysis<wbr>Id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_connection_.connection.html#errorcb" class="tsd-kind-icon">errorCB</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_connection_.connection.html#oncallbacks" class="tsd-kind-icon">on<wbr>Callbacks</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_connection_.connection.html#onprocesscallbacks" class="tsd-kind-icon">on<wbr>Process<wbr>Callbacks</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_connection_.connection.html#preemitcallbacks" class="tsd-kind-icon">pre<wbr>Emit<wbr>Callbacks</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_connection_.connection.html#requestargs" class="tsd-kind-icon">request<wbr>Args</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_connection_.connection.html#socket" class="tsd-kind-icon">socket</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_connection_.connection.html#socketcheckopen" class="tsd-kind-icon">socket<wbr>Check<wbr>Open</a></li>
@@ -127,12 +129,13 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_connection_.connection.html#_on_object" class="tsd-kind-icon">_on_<wbr>object</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_connection_.connection.html#connect" class="tsd-kind-icon">connect</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_connection_.connection.html#disconnect" class="tsd-kind-icon">disconnect</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_connection_.connection.html#emit" class="tsd-kind-icon">emit</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_connection_.connection.html#on" class="tsd-kind-icon">on</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_connection_.connection.html#onprocess" class="tsd-kind-icon">on<wbr>Process</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_connection_.connection.html#optimizeoncallbacks" class="tsd-kind-icon">optimize<wbr>OnCallbacks</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_connection_.connection.html#preemit" class="tsd-kind-icon">pre<wbr>Emit</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_connection_.connection.html#wscheckopen" class="tsd-kind-icon">ws<wbr>Check<wbr>Open</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_connection_.connection.html#wsonclose" class="tsd-kind-icon">ws<wbr>OnClose</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_connection_.connection.html#wsonmessage" class="tsd-kind-icon">ws<wbr>OnMessage</a></li>
@@ -155,7 +158,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L35">connection.ts:35</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L38">connection.ts:38</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -197,23 +200,13 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
-					<a name="_oncallbacksoptimized" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _on<wbr>Callbacks<wbr>Optimized</h3>
-					<div class="tsd-signature tsd-kind-icon">_on<wbr>Callbacks<wbr>Optimized<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L29">connection.ts:29</a></li>
-						</ul>
-					</aside>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="analysisid" class="tsd-anchor"></a>
 					<h3>analysis<wbr>Id</h3>
 					<div class="tsd-signature tsd-kind-icon">analysis<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L23">connection.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L26">connection.ts:26</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -223,7 +216,7 @@
 					<div class="tsd-signature tsd-kind-icon">errorCB<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L27">connection.ts:27</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L30">connection.ts:30</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -251,22 +244,110 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="oncallbacks" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> on<wbr>Callbacks</h3>
-					<div class="tsd-signature tsd-kind-icon">on<wbr>Callbacks<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></div>
+					<div class="tsd-signature tsd-kind-icon">on<wbr>Callbacks<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L28">connection.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L31">connection.ts:31</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>field: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">[]</span></h5>
+								<ul class="tsd-parameters">
+									<li class="tsd-parameter-siganture">
+										<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+										</ul>
+										<ul class="tsd-descriptions">
+											<li class="tsd-description">
+												<h4 class="tsd-parameters-title">Parameters</h4>
+												<ul class="tsd-parameters">
+													<li>
+														<h5>message: <span class="tsd-signature-type">any</span></h5>
+													</li>
+												</ul>
+												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="onprocesscallbacks" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> on<wbr>Process<wbr>Callbacks</h3>
-					<div class="tsd-signature tsd-kind-icon">on<wbr>Process<wbr>Callbacks<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<div class="tsd-signature tsd-kind-icon">on<wbr>Process<wbr>Callbacks<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L30">connection.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L32">connection.ts:32</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>field: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">[]</span></h5>
+								<ul class="tsd-parameters">
+									<li class="tsd-parameter-siganture">
+										<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>status<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+										</ul>
+										<ul class="tsd-descriptions">
+											<li class="tsd-description">
+												<h4 class="tsd-parameters-title">Parameters</h4>
+												<ul class="tsd-parameters">
+													<li>
+														<h5>status: <span class="tsd-signature-type">any</span></h5>
+													</li>
+												</ul>
+												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="preemitcallbacks" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> pre<wbr>Emit<wbr>Callbacks</h3>
+					<div class="tsd-signature tsd-kind-icon">pre<wbr>Emit<wbr>Callbacks<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L33">connection.ts:33</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>field: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">[]</span></h5>
+								<ul class="tsd-parameters">
+									<li class="tsd-parameter-siganture">
+										<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+										</ul>
+										<ul class="tsd-descriptions">
+											<li class="tsd-description">
+												<h4 class="tsd-parameters-title">Parameters</h4>
+												<ul class="tsd-parameters">
+													<li>
+														<h5>message: <span class="tsd-signature-type">any</span></h5>
+													</li>
+												</ul>
+												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="requestargs" class="tsd-anchor"></a>
@@ -274,7 +355,7 @@
 					<div class="tsd-signature tsd-kind-icon">request<wbr>Args<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L25">connection.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L28">connection.ts:28</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -284,7 +365,7 @@
 					<div class="tsd-signature tsd-kind-icon">socket<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">WebSocket</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L34">connection.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L37">connection.ts:37</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -294,7 +375,7 @@
 					<div class="tsd-signature tsd-kind-icon">socket<wbr>Check<wbr>Open<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L35">connection.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L38">connection.ts:38</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -304,7 +385,7 @@
 					<div class="tsd-signature tsd-kind-icon">ws<wbr>Reconnect<wbr>Attempt<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L32">connection.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L35">connection.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -314,7 +395,7 @@
 					<div class="tsd-signature tsd-kind-icon">ws<wbr>Reconnect<wbr>Delay<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L33">connection.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L36">connection.ts:36</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -324,13 +405,62 @@
 					<div class="tsd-signature tsd-kind-icon">ws<wbr>Url<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L24">connection.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L27">connection.ts:27</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="_on_object" class="tsd-anchor"></a>
+					<h3>_on_<wbr>object</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">_on_<wbr>object<span class="tsd-signature-symbol">(</span>signal<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span>, callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_connection_.connection.html" class="tsd-signature-type">Connection</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L211">connection.ts:211</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>signal: <span class="tsd-signature-type">object</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-index-signature">
+											<h5><span class="tsd-signature-symbol">[</span>field: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">string</span></h5>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5>callback: <span class="tsd-signature-type">function</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-siganture">
+											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>message: <span class="tsd-signature-type">any</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_connection_.connection.html" class="tsd-signature-type">Connection</a></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="connect" class="tsd-anchor"></a>
 					<h3>connect</h3>
@@ -341,7 +471,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L75">connection.ts:75</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L87">connection.ts:87</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -363,7 +493,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L86">connection.ts:86</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L98">connection.ts:98</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -385,7 +515,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L233">connection.ts:233</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L242">connection.ts:242</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -417,13 +547,13 @@
 					<a name="on" class="tsd-anchor"></a>
 					<h3>on</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">on<span class="tsd-signature-symbol">(</span>signal<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span>, callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_connection_.connection.html" class="tsd-signature-type">Connection</a></li>
+						<li class="tsd-signature tsd-kind-icon">on<span class="tsd-signature-symbol">(</span>signal<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span>, callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_connection_.connection.html" class="tsd-signature-type">Connection</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L221">connection.ts:221</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L200">connection.ts:200</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -459,10 +589,28 @@
 									</div>
 								</li>
 								<li>
-									<h5>callback: <span class="tsd-signature-type">any</span></h5>
+									<h5>callback: <span class="tsd-signature-type">function</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>A callback function that takes the attached data.</p>
 									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-siganture">
+											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>message: <span class="tsd-signature-type">any</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_connection_.connection.html" class="tsd-signature-type">Connection</a></h4>
@@ -480,7 +628,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L242">connection.ts:242</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L258">connection.ts:258</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -497,19 +645,58 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="optimizeoncallbacks" class="tsd-anchor"></a>
-					<h3>optimize<wbr>OnCallbacks</h3>
+					<a name="preemit" class="tsd-anchor"></a>
+					<h3>pre<wbr>Emit</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">optimize<wbr>OnCallbacks<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">pre<wbr>Emit<span class="tsd-signature-symbol">(</span>signalName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_connection_.connection.html" class="tsd-signature-type">Connection</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L160">connection.ts:160</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L230">connection.ts:230</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set a pre-emit hook.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>signalName: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>A signal name.</p>
+									</div>
+								</li>
+								<li>
+									<h5>callback: <span class="tsd-signature-type">function</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Callback function.</p>
+									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-siganture">
+											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>message: <span class="tsd-signature-type">any</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_connection_.connection.html" class="tsd-signature-type">Connection</a></h4>
+							<p>this</p>
 						</li>
 					</ul>
 				</section>
@@ -523,7 +710,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L92">connection.ts:92</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L104">connection.ts:104</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -540,7 +727,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L116">connection.ts:116</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L128">connection.ts:128</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -557,7 +744,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L138">connection.ts:138</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L150">connection.ts:150</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -585,7 +772,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L106">connection.ts:106</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L118">connection.ts:118</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -602,7 +789,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabb2f0/js/src/connection.ts#L67">connection.ts:67</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/14a6e49/js/src/connection.ts#L79">connection.ts:79</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -638,9 +825,6 @@
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
 								<a href="_connection_.connection.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-								<a href="_connection_.connection.html#_oncallbacksoptimized" class="tsd-kind-icon">_on<wbr>Callbacks<wbr>Optimized</a>
-							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_connection_.connection.html#analysisid" class="tsd-kind-icon">analysis<wbr>Id</a>
 							</li>
@@ -652,6 +836,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_connection_.connection.html#onprocesscallbacks" class="tsd-kind-icon">on<wbr>Process<wbr>Callbacks</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_connection_.connection.html#preemitcallbacks" class="tsd-kind-icon">pre<wbr>Emit<wbr>Callbacks</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_connection_.connection.html#requestargs" class="tsd-kind-icon">request<wbr>Args</a>
@@ -672,6 +859,9 @@
 								<a href="_connection_.connection.html#wsurl" class="tsd-kind-icon">ws<wbr>Url</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_connection_.connection.html#_on_object" class="tsd-kind-icon">_on_<wbr>object</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_connection_.connection.html#connect" class="tsd-kind-icon">connect</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
@@ -687,7 +877,7 @@
 								<a href="_connection_.connection.html#onprocess" class="tsd-kind-icon">on<wbr>Process</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_connection_.connection.html#optimizeoncallbacks" class="tsd-kind-icon">optimize<wbr>OnCallbacks</a>
+								<a href="_connection_.connection.html#preemit" class="tsd-kind-icon">pre<wbr>Emit</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_connection_.connection.html#wscheckopen" class="tsd-kind-icon">ws<wbr>Check<wbr>Open</a>
