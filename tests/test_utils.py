@@ -13,11 +13,11 @@ class TestUtils(unittest.TestCase):
         ax.plot([1, 2, 3, 4])
 
     def test_png(self):
-        src = databench.fig_to_src(self.figure, 'png')
+        src = databench.utils.fig_to_src(self.figure, 'png')
         self.assertEqual(src[:43],
                          'data:image/png;base64,iVBORw0KGgoAAAANSUhEU')
 
     def test_svg(self):
-        src = databench.fig_to_src(self.figure, 'svg')
+        src = databench.utils.fig_to_src(self.figure, 'svg')
         self.assertEqual(src[:43],
                          'data:image/svg+xml;utf8,<?xml version="1.0"')

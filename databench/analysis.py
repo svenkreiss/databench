@@ -6,6 +6,7 @@ import logging
 import random
 import string
 
+from . import utils
 from .datastore import Datastore
 
 log = logging.getLogger(__name__)
@@ -17,14 +18,17 @@ class Analysis(object):
     This contains the analysis code. Every browser connection corresponds to
     and instance of this class.
 
-    **Initialize:** add an ``on_connect(self)`` method to your analysis class.
+    **Initialization**: Instance variables should be initialized to default
+    values in the constructor. All other initializtion work should be done
+    in the ``on_connected(self)``.
 
-    **Request args:** ``request_args`` or GET parameters are processed with a
-    ``on_request_args(argv)`` method where ``argv`` is a dictionary of all
+    **Arguments/Parameters**: Command line arguments are available
+    at ``self.cli_args`` and the parameters of the HTTP GET request at
+    ``self.request_args``. ``request_args`` is a dictionary of all
     arguments. Each value of the dictionary is a list of given values for this
     key even if this key only appeared once in the url.
 
-    **Actions:** are captured by specifying a class method starting
+    **Actions**: are captured by specifying a class method starting
     with ``on_`` followed by the action name. To capture the action
     ``run`` that is emitted with the JavaScript code
 
@@ -37,17 +41,16 @@ class Analysis(object):
 
     .. code-block:: python
 
-        # here in Python
+        # in Python
         def on_run(self, my_param):
 
-    here. The entries of a dictionary will be used as keyword arguments in the
-    function call. If the emitted message is an array,
-    the entries will be used as positional arguments in the function call.
+    in Python. Lists are treated as positional arguments and objects as keyword
+    arguments to the function call.
     If the message is neither of type ``list`` nor ``dict`` (for example a
     plain ``string`` or ``float``), the function will be called with that
     as its first parameter.
 
-    **Writing to a datastore:** By default, a :class:`Datastore` scoped to
+    **Writing to a datastore**: By default, a :class:`Datastore` scoped to
     the current analysis instance is created at ``self.data``. You can write
     key-value pairs to it with
 
@@ -58,6 +61,11 @@ class Analysis(object):
     Similarly, there is a ``self.class_data`` :class:`Datastore` which is
     scoped to all instances of this analysis by its class name.
 
+    **Communicating with the frontend**: The default is to change state by
+    changing and entry in ``self.data`` or ``self.class_data`` and let that
+    change propagate to the frontend. Directly calling ``emit()`` is also
+    possible.
+
     **Outgoing messages**: changes to the datastore are emitted to the
     frontend and this path should usually not be modified. However, databench
     does provide access to ``emit()``
@@ -66,14 +74,20 @@ class Analysis(object):
     """
 
     _databench_analysis = True
+    datastore_class = Datastore
 
     def __init__(self):
         pass
 
     def init_databench(self, id_=None):
         self.id_ = id_ if id_ else Analysis.__create_id()
-        self.emit = lambda s, pl: log.error('emit called before Analysis '
-                                            'setup complete')
+        self.emit_to_frontend = (
+            lambda s, pl:
+                log.error('emit called before Analysis setup was complete')
+        )
+        self.log_frontend = logging.getLogger(__name__ + '.frontend')
+        self.log_backend = logging.getLogger(__name__ + '.backend')
+
         self.init_datastores()
         return self
 
@@ -86,9 +100,9 @@ class Analysis(object):
 
         Overwrite this method to use other datastore backends.
         """
-        self.data = Datastore(self.id_)
+        self.data = Analysis.datastore_class(self.id_)
         self.data.on_change(self.data_change)
-        self.class_data = Datastore(type(self).__name__)
+        self.class_data = Analysis.datastore_class(type(self).__name__)
         self.class_data.on_change(self.class_data_change)
 
     @staticmethod
@@ -98,7 +112,25 @@ class Analysis(object):
 
     def set_emit_fn(self, emit_fn):
         """Sets what the emit function for this analysis will be."""
-        self.emit = emit_fn
+        self.emit_to_frontend = emit_fn
+        return self
+
+    def emit(self, signal, message='__nomessagetoken__'):
+        """Emit a signal to the frontend.
+
+        :param str signal: name of the signal
+        :param message: message to send
+        :returns: self
+        """
+        # call pre-emit hooks
+        if signal == 'log':
+            self.log_backend.info(message)
+        elif signal == 'warn':
+            self.log_backend.warn(message)
+        elif signal == 'error':
+            self.log_backend.error(message)
+
+        self.emit_to_frontend(signal, message)
         return self
 
     """Events."""
@@ -109,6 +141,15 @@ class Analysis(object):
     def on_args(self, cli_args, request_args):
         self.cli_args = cli_args
         self.request_args = request_args
+
+    def on_log(self, *args, **kwargs):
+        self.log_frontend.info(utils.to_string(*args, **kwargs))
+
+    def on_warn(self, *args, **kwargs):
+        self.log_frontend.warn(utils.to_string(*args, **kwargs))
+
+    def on_error(self, *args, **kwargs):
+        self.log_frontend.error(utils.to_string(*args, **kwargs))
 
     def on_connected(self):
         """Default handlers for the "connected" action.

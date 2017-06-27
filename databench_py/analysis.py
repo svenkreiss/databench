@@ -1,6 +1,7 @@
 """Analysis module for Databench Python kernel."""
 
 from databench import Datastore
+from databench import utils
 import logging
 
 log = logging.getLogger(__name__)
@@ -9,6 +10,7 @@ log = logging.getLogger(__name__)
 class Analysis(object):
     """Databench's analysis class."""
 
+    _databench_analysis = True
     datastore_class = Datastore
 
     def __init__(self):
@@ -37,6 +39,15 @@ class Analysis(object):
     def on_args(self, cli_args, request_args):
         self.cli_args = cli_args
         self.request_args = request_args
+
+    def on_log(self, *args, **kwargs):
+        log.info(utils.to_string(*args, **kwargs))
+
+    def on_warn(self, *args, **kwargs):
+        log.warn(utils.to_string(*args, **kwargs))
+
+    def on_error(self, *args, **kwargs):
+        log.error(utils.to_string(*args, **kwargs))
 
     def on_connected(self):
         log.debug('on_connected called.')

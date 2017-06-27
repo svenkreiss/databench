@@ -9,7 +9,7 @@ import databench
 
 class Dummypi(databench.Analysis):
 
-    def on_connect(self):
+    def on_connected(self):
         self.data['samples'] = 1000
 
     @tornado.gen.coroutine
@@ -34,13 +34,11 @@ class Dummypi(databench.Analysis):
             self.emit('log', {'draws': draws, 'inside': inside})
 
             # calculate pi and its uncertainty given the current draws
+            pi = 4.0 * inside / draws
             p = inside / draws
             uncertainty = 4.0 * math.sqrt(draws * p * (1.0 - p)) / draws
 
             # send status to frontend
-            self.data['pi'] = {
-                'estimate': 4.0 * inside / draws,
-                'uncertainty': uncertainty,
-            }
+            self.data['pi'] = {'estimate': pi, 'uncertainty': uncertainty}
 
         self.emit('log', {'action': 'done'})

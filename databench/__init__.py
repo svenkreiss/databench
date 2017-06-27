@@ -4,6 +4,8 @@
 from __future__ import absolute_import
 
 __version__ = '0.7.0'
+__all__ = ['Analysis', 'AnalysisZMQ', 'App', 'Datastore', 'Meta', 'MetaZMQ',
+           'Readme', 'testing', 'utils']
 
 from .analysis import Analysis
 from .analysis_zmq import AnalysisZMQ
@@ -13,4 +15,4 @@ from .meta import Meta
 from .meta_zmq import MetaZMQ
 from .readme import Readme
 from . import testing
-from .utils import json_encoder_default, fig_to_src, png_to_src, svg_to_src
+from . import utils

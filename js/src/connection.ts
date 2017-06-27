@@ -11,6 +11,9 @@ import { w3cwebsocket as WebSocket } from 'websocket';
  * The other two essential functions to know about are
  * {@link Connection#on|on()} and {@link Connection#emit|emit()}.
  *
+ * Logging across frontend and backend can be done by emitting ``log``,
+ * ``warn`` or ``error``, e.g. ``emit('log', 'Hello World')``.
+ *
  * @example
  * ~~~
  * var d = new Databench.Connection();
@@ -25,9 +28,9 @@ export class Connection {
   requestArgs: string;
 
   errorCB: (message?: string) => void;
-  private onCallbacks: any[];
-  private _onCallbacksOptimized: any;
-  private onProcessCallbacks: any;
+  private onCallbacks: {[field: string]: ((message: any) => void)[]};
+  private onProcessCallbacks: {[field: string]: ((status: any) => void)[]};
+  private preEmitCallbacks: {[field: string]: ((message: any) => any)[]};
 
   private wsReconnectAttempt: number;
   private wsReconnectDelay: number;
@@ -53,15 +56,24 @@ export class Connection {
     }
 
     this.errorCB = msg => (msg != null ? console.log(`connection error: ${msg}`) : null);
-    this.onCallbacks = [];
-    this._onCallbacksOptimized = null;
+    this.onCallbacks = {};
     this.onProcessCallbacks = {};
+    this.preEmitCallbacks = {};
 
     this.wsReconnectAttempt = 0;
     this.wsReconnectDelay = 100.0;
 
     this.socket = null;
     this.socketCheckOpen = null;
+
+    // wire log, warn, error messages into console outputs
+    ['log', 'warn', 'error'].forEach(wireSignal => {
+      this.on(wireSignal, message => console[wireSignal]('backend: ', message));
+      this.preEmit(wireSignal, message => {
+        console[wireSignal]('frontend: ', message);
+        return message;
+      });
+    });
   }
 
   static guessWSUrl(): string {
@@ -147,46 +159,13 @@ export class Connection {
     if (message.signal === '__process') {
       const id = message.load.id;
       const status = message.load.status;
-      this.onProcessCallbacks[id].map(cb => cb(status));
+      this.onProcessCallbacks[id].forEach(cb => cb(status));
     }
 
     // normal message
-    if (this._onCallbacksOptimized === null) this.optimizeOnCallbacks();
-    if (message.signal in this._onCallbacksOptimized) {
-      this._onCallbacksOptimized[message.signal].map(cb => cb(message.load));
+    if (message.signal in this.onCallbacks) {
+      this.onCallbacks[message.signal].forEach(cb => cb(message.load));
     }
-  }
-
-  optimizeOnCallbacks() {
-    this._onCallbacksOptimized = {};
-    this.onCallbacks.forEach(({ signal, callback }) => {
-      if (typeof signal === 'string') {
-        if (!(signal in this._onCallbacksOptimized)) {
-          this._onCallbacksOptimized[signal] = [];
-        }
-        this._onCallbacksOptimized[signal].push(callback);
-      } else if (typeof signal === 'object') {
-        Object.keys(signal).forEach(signalName => {
-          const entryName = signal[signalName];
-          const filteredCallback = data => {
-            if (data.hasOwnProperty(entryName)) {
-              callback(data[entryName]);
-            }
-          };
-
-          if (!(signalName in this._onCallbacksOptimized)) {
-            this._onCallbacksOptimized[signalName] = [];
-          }
-
-          // only use the filtered callback if the entry was not empty
-          if (entryName) {
-            this._onCallbacksOptimized[signalName].push(filteredCallback);
-          } else {
-            this._onCallbacksOptimized[signalName].push(callback);
-          }
-        });
-      }
-    });
   }
 
   /**
@@ -218,9 +197,39 @@ export class Connection {
    * @param  callback  A callback function that takes the attached data.
    * @return           this
    */
-  on(signal: string|{[field: string]: string}, callback): Connection {
-    this.onCallbacks.push({ signal, callback });
-    this._onCallbacksOptimized = null;
+  on(signal: string|{[field: string]: string}, callback: (message: any) => void): Connection {
+    if (typeof signal === 'object') {
+      this._on_object(signal, callback);
+      return this;
+    }
+
+    if (!(signal in this.onCallbacks)) this.onCallbacks[signal] = [];
+    this.onCallbacks[signal].push(callback);
+    return this;
+  }
+
+  _on_object(signal: {[field: string]: string}, callback: (message: any) => void): Connection {
+    Object.keys(signal).forEach(signalName => {
+      const entryName = signal[signalName];
+      const filteredCallback = data => {
+        if (!data.hasOwnProperty(entryName)) return;
+        callback(data[entryName]);
+      };
+      this.on(signalName, filteredCallback);
+    });
+
+    return this;
+  }
+
+  /**
+   * Set a pre-emit hook.
+   * @param signalName  A signal name.
+   * @param callback    Callback function.
+   * @return            this
+   */
+  preEmit(signalName: string, callback: (message: any) => any): Connection {
+    if (!(signalName in this.preEmitCallbacks)) this.preEmitCallbacks[signalName] = [];
+    this.preEmitCallbacks[signalName].push(callback);
     return this;
   }
 
@@ -231,6 +240,13 @@ export class Connection {
    * @return             this
    */
   emit(signalName: string, message?): Connection {
+    // execute preEmit hooks before sending message to backend
+    if (signalName in this.preEmitCallbacks) {
+      this.preEmitCallbacks[signalName].forEach(cb => {
+        message = cb(message);
+      });
+    }
+
     if (this.socket == null || this.socket.readyState !== this.socket.OPEN) {
       setTimeout(() => this.emit(signalName, message), 5);
       return this;
