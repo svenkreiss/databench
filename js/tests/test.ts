@@ -1,4 +1,4 @@
-import * as assert from 'assert';
+import { expect } from 'chai';
 import * as Databench from './../src';
 
 
@@ -11,7 +11,7 @@ describe('Databench', () => {
     ).connect();
 
     it('create a WebSocket connection', () => {
-      assert.equal('object', typeof c);
+      expect(typeof c).to.equal('object');
     });
 
     it('action without message', (done) => {
@@ -21,7 +21,7 @@ describe('Databench', () => {
 
     it('echo an object', done => {
       c.on('test_fn', data => {
-        assert.deepEqual([1, 2], data);
+        expect(data).to.deep.equal([1, 2]);
         done();
       });
       c.emit('test_fn', [1, 2]);
@@ -37,7 +37,7 @@ describe('Databench', () => {
 
     it('echo an empty string', done => {
       c.on('test_fn', dataEmpty => {
-        assert.deepEqual(['', 100], dataEmpty);
+        expect(dataEmpty).to.deep.equal(['', 100]);
         done();
       });
       c.emit('test_fn', '');
@@ -53,7 +53,7 @@ describe('Databench', () => {
 
     it('echo a null parameter', done => {
       c.on('test_fn', dataNull => {
-        assert.deepEqual([null, 100], dataNull);
+        expect(dataNull).to.deep.equal([null, 100]);
         done();
       });
       c.emit('test_fn', null);
@@ -69,7 +69,7 @@ describe('Databench', () => {
     );
 
     it('create a WebSocket connection', () => {
-      assert.equal('object', typeof c);
+      expect(typeof c).to.equal('object');
     });
 
     it('request args test', done => {
@@ -86,12 +86,12 @@ describe('Databench', () => {
     );
 
     it('create a WebSocket connection', () => {
-      assert.equal('object', typeof c);
+      expect(typeof c).to.equal('object');
     });
 
     it('command args test', done => {
       c.on({ data: 'cli_args' }, (args) => {
-        assert.deepEqual(['--some-test-flag'], args);
+        expect(args).to.deep.equal(['--some-test-flag']);
         done();
       });
       c.connect();
@@ -107,7 +107,7 @@ describe('Databench', () => {
     );
 
     it('create a WebSocket connection', () => {
-      assert.equal('object', typeof c);
+      expect(typeof c).to.equal('object');
     });
 
     it('connect', () => {

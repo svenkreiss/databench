@@ -13,14 +13,14 @@
     "websocket": "^1.0.22"
   },
   "devDependencies": {
-    "@types/assert": "0.0.31",
+    "@types/chai": "^4.0.1",
     "@types/mocha": "^2.2.41",
-    "assert": "^1.4.1",
     "awesome-typescript-loader": "^3.1.3",
     "babel-core": "^6.21.0",
     "babel-eslint": "^4.1.8",
     "babel-loader": "^6.2.10",
     "babel-preset-es2015": "^6.18.0",
+    "chai": "^4.0.2",
     "eslint": "^2.13.1",
     "eslint-config-airbnb": "^9.0.1",
     "eslint-plugin-import": "^2.2.0",
