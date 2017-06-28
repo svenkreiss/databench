@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import * as Databench from './../src';
+import * as Databench from '.';
 
 
 describe('Databench', () => {
