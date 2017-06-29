@@ -18,10 +18,13 @@ class Build(unittest.TestCase):
 
     def test_build(self):
         before = self.file_id()
+
+        os.chdir('databench')
         subprocess.check_call(['databench', '--build',
-                               '--analyses', 'databench.tests.analyses',
+                               '--analyses', 'tests.analyses',
                                '--coverage', '.coverage'])
         time.sleep(1)
+
         after = self.file_id()
         self.assertNotEqual(before, after)
 
@@ -52,10 +55,13 @@ class Build(unittest.TestCase):
     def test_broken_analyses(self):
         before = self.file_id(
             filename='databench/tests/analyses_broken/build_test.txt')
+
+        os.chdir('databench')
         subprocess.check_call(['databench', '--build',
-                               '--analyses', 'databench.tests.analyses_broken',
+                               '--analyses', 'tests.analyses_broken',
                                '--coverage', '.coverage'])
         time.sleep(1)
+
         after = self.file_id(
             filename='databench/tests/analyses_broken/build_test.txt')
         self.assertNotEqual(before, after)
