@@ -8,7 +8,7 @@ class ParametersTestCases(object):
     @tornado.testing.gen_test
     def test_no_parameter(self):
         c = yield self.connect(self.analysis)
-        c.emit('test_action')
+        yield c.emit('test_action')
         r = yield c.read()
         yield c.close()
 
