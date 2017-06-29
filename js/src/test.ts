@@ -3,55 +3,38 @@ import * as Databench from '.';
 
 
 describe('Databench', () => {
-  describe('Connection', () => {
-    // create connection
-    const c = new Databench.Connection(
-      null,
-      'ws://localhost:5000/parameters/ws'
-    ).connect();
-
+  describe('Echo Tests', () => {
     it('create a WebSocket connection', () => {
+      const c = Databench.connect('ws://localhost:5000/parameters/ws');
       expect(typeof c).to.equal('object');
     });
 
     it('action without message', (done) => {
-      c.on('test_action_ack', () => { done(); });
+      const c = Databench.connect('ws://localhost:5000/parameters/ws');
+      c.on('test_action_ack', () => done());
       c.emit('test_action');
     });
 
     it('echo an object', done => {
+      const c = Databench.connect('ws://localhost:5000/parameters/ws');
       c.on('test_fn', data => {
         expect(data).to.deep.equal([1, 2]);
         done();
       });
       c.emit('test_fn', [1, 2]);
     });
-  });
-
-  describe('Connection for empty string', () => {
-    // create connection
-    const c = new Databench.Connection(
-      null,
-      'ws://localhost:5000/parameters/ws'
-    ).connect();
 
     it('echo an empty string', done => {
+      const c = Databench.connect('ws://localhost:5000/parameters/ws');
       c.on('test_fn', dataEmpty => {
         expect(dataEmpty).to.deep.equal(['', 100]);
         done();
       });
       c.emit('test_fn', '');
     });
-  });
-
-  describe('Connection for null', () => {
-    // create connection
-    const c = new Databench.Connection(
-      null,
-      'ws://localhost:5000/parameters/ws'
-    ).connect();
 
     it('echo a null parameter', done => {
+      const c = Databench.connect('ws://localhost:5000/parameters/ws');
       c.on('test_fn', dataNull => {
         expect(dataNull).to.deep.equal([null, 100]);
         done();
@@ -60,36 +43,18 @@ describe('Databench', () => {
     });
   });
 
-  describe('Request Args', () => {
-    // create connection
-    const c = new Databench.Connection(
-      null,
-      'ws://localhost:5000/requestargs/ws',
-      '?data=requestargtest'
-    );
-
-    it('create a WebSocket connection', () => {
-      expect(typeof c).to.equal('object');
-    });
-
+  describe('Command line and Request Arguments', () => {
     it('request args test', done => {
-      c.on('ack', () => done());
+      const c = new Databench.Connection('ws://localhost:5000/requestargs/ws', '?data=requestargtest');
+      c.on('echo_request_args', (request_args: string) => {
+        expect(request_args).to.deep.equal({ data: ['requestargtest'] });
+        done();
+      });
       c.connect();
     });
-  });
 
-  describe('Cli Args', () => {
-    // create connection
-    const c = new Databench.Connection(
-      null,
-      'ws://localhost:5000/cliargs/ws'
-    );
-
-    it('create a WebSocket connection', () => {
-      expect(typeof c).to.equal('object');
-    });
-
-    it('command args test', done => {
+    it('cli args test', done => {
+      const c = new Databench.Connection('ws://localhost:5000/cliargs/ws');
       c.on({ data: 'cli_args' }, (args) => {
         expect(args).to.deep.equal(['--some-test-flag']);
         done();
@@ -98,28 +63,12 @@ describe('Databench', () => {
     });
   });
 
-  describe('disconnect', () => {
-    // create connection
-    const c = new Databench.Connection(
-      null,
-      'ws://localhost:5000/requestargs/ws',
-      '?data=requestargtest'
-    );
-
-    it('create a WebSocket connection', () => {
-      expect(typeof c).to.equal('object');
-    });
-
-    it('connect', () => {
-      c.connect();
-    });
-
-    it('disconnect', () => {
-      c.disconnect();
-    });
-
+  describe('Cycle Connection', () => {
     it('reconnect', done => {
-      c.on('ack', () => done());
+      // create connection
+      const c = Databench.connect('ws://localhost:5000/requestargs/ws');
+      c.disconnect();
+      c.on('echo_request_args', () => done());
       c.connect();
     });
   });
