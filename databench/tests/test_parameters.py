@@ -103,10 +103,10 @@ class ParametersTestCases(object):
 
 
 class Parameters(ParametersTestCases, AnalysisTestCase):
-    analyses_path = 'tests.analyses'
+    analyses_path = 'databench.tests.analyses'
     analysis = 'parameters'
 
 
 class ParametersPy(ParametersTestCases, AnalysisTestCase):
-    analyses_path = 'tests.analyses'
+    analyses_path = 'databench.tests.analyses'
     analysis = 'parameters_py'

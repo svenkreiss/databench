@@ -5,9 +5,6 @@ import time
 import unittest
 
 
-LOGLEVEL = 'WARNING'
-
-
 class NodeClient(unittest.TestCase):
     def setUp(self):
         # transpile js code for node
@@ -15,15 +12,12 @@ class NodeClient(unittest.TestCase):
 
         # call os.setsid so that all subprocesses terminate when the
         # main process receives SIGTERM
-        self.daemon = subprocess.Popen(['databench',
-                                        '--log={}'.format(LOGLEVEL),
-                                        '--analyses', 'tests.analyses',
-                                        '--coverage', '.coverage',
-                                        '--some-test-flag'],
-                                       close_fds=True,
-                                       stdin=subprocess.PIPE,
-                                       stdout=subprocess.PIPE,
-                                       preexec_fn=os.setsid)
+        self.daemon = subprocess.Popen([
+            'databench',
+            '--analyses', 'databench.tests.analyses',
+            '--coverage', '.coverage',
+            '--some-test-flag'
+        ], stdin=subprocess.PIPE, stdout=subprocess.PIPE, preexec_fn=os.setsid)
         time.sleep(5)
 
     def tearDown(self):

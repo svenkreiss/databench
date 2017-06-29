@@ -2,7 +2,7 @@ from databench.testing import AnalysisTestCase, gen_test
 
 
 class Example(AnalysisTestCase):
-    analyses_path = 'tests.analyses'
+    analyses_path = 'databench.tests.analyses'
 
     @gen_test
     def test_data(self):

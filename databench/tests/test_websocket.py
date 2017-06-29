@@ -33,7 +33,7 @@ class BasicsDummypiPySSL(Basics, AnalysisTestCaseSSL):
 
 
 class BasicsTestAnalyses(AnalysisTestCase):
-    analyses_path = 'tests.analyses'
+    analyses_path = 'databench.tests.analyses'
 
     def test_index(self):
         response = self.fetch('/')
