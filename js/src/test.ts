@@ -45,7 +45,7 @@ describe('Echo Tests', () => {
 describe('Command line and Request Arguments', () => {
   it('request args test', done => {
     const c = new Databench.Connection('ws://localhost:5000/requestargs/ws', '?data=requestargtest');
-    c.on('echo_request_args', (request_args: string) => {
+    c.on('echo_request_args', request_args => {
       expect(request_args).to.deep.equal({ data: ['requestargtest'] });
       done();
     });
@@ -54,7 +54,7 @@ describe('Command line and Request Arguments', () => {
 
   it('cli args test', done => {
     const c = new Databench.Connection('ws://localhost:5000/cliargs/ws');
-    c.on({ data: 'cli_args' }, (args) => {
+    c.on({ data: 'cli_args' }, args => {
       expect(args).to.deep.equal(['--some-test-flag']);
       done();
     });
