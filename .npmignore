@@ -5,7 +5,6 @@ databench_py/
 dist/
 docs/
 logo/
-tests/
 *.egg-info
 *.py
 MANIFEST.in

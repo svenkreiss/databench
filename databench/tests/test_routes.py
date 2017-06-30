@@ -7,7 +7,7 @@ except ImportError:
 
 
 class RoutesTest(AnalysisTestCase):
-    analyses_path = 'tests.analyses'
+    analyses_path = 'databench.tests.analyses'
 
     def test_get(self):
         response = self.fetch('/simple2/get')

@@ -4,6 +4,10 @@ python:
  - "3.4"
  - "3.5"
  - "3.6"
+addons:
+  apt:
+    packages:
+      - oracle-java8-set-default
 install:
  # install Python dependencies
  - pip install --upgrade pip
@@ -18,9 +22,6 @@ install:
  - npm -v
  - npm install
  - npm run build
- # Java 8 for html5validator
- - sudo apt-get install oracle-java8-installer
- - sudo update-java-alternatives -s java-8-oracle
 
 script:
  - flake8

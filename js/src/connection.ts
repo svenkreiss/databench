@@ -23,9 +23,9 @@ import { w3cwebsocket as WebSocket } from 'websocket';
  * ~~~
  */
 export class Connection {
-  analysisId: string;
   wsUrl: string;
   requestArgs: string;
+  analysisId: string;
 
   errorCB: (message?: string) => void;
   private onCallbacks: {[field: string]: ((message: any) => void)[]};
@@ -38,18 +38,18 @@ export class Connection {
   private socketCheckOpen: number;
 
   /**
-   * @param  analysisId   Specify an analysis id or null to have one generated.
-   *                      The connection will try to connect to a previously created
-   *                      analysis with that id.
    * @param  wsUrl        URL of WebSocket endpoint or null to guess it.
    * @param  requestArgs  `search` part of request url or null to take from
    *                      `window.location.search`.
+   * @param  analysisId   Specify an analysis id or null to have one generated.
+   *                      The connection will try to connect to a previously created
+   *                      analysis with that id.
    */
-  constructor(analysisId: string = null, wsUrl: string = null, requestArgs: string = null) {
-    this.analysisId = analysisId;
+  constructor(wsUrl: string = null, requestArgs: string = null, analysisId: string = null) {
     this.wsUrl = wsUrl || Connection.guessWSUrl();
     this.requestArgs = (requestArgs == null && (typeof window !== 'undefined')) ?
                         window.location.search : requestArgs;
+    this.analysisId = analysisId;
 
     if (!this.wsUrl) {
       throw Error('Need a wsUrl.');
@@ -262,4 +262,29 @@ export class Connection {
     this.onProcessCallbacks[processID].push(callback);
     return this;
   }
+}
+
+
+/**
+ * Create a Connection and immediately connect to it.
+ *
+ * This is a shorthand for
+ * ~~~
+ * new Connection(wsUrl, requestArgs, analysisId).connect();
+ * ~~~
+ *
+ * Use this function in tests where you know that connect() will not trigger
+ * any callbacks that you should listen to. In regular code, it is better
+ * to define all ``on`` callbacks before calling ``connect()`` and so this
+ * shorthand should not be used.
+ *
+ * @param  wsUrl        URL of WebSocket endpoint or null to guess it.
+ * @param  requestArgs  `search` part of request url or null to take from
+ *                      `window.location.search`.
+ * @param  analysisId   Specify an analysis id or null to have one generated.
+ *                      The connection will try to connect to a previously created
+ *                      analysis with that id.
+ */
+export function connect(wsUrl: string = null, requestArgs: string = null, analysisId: string = null) {
+  return new Connection(wsUrl, requestArgs, analysisId).connect();
 }
