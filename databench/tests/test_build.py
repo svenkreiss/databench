@@ -1,15 +1,13 @@
-import databench.tests.analyses
-import databench.tests.analyses_broken
+import databench
 import os
 import subprocess
 import time
 import unittest
 
 
-ANALYSES_PATH = os.path.abspath(
-    os.path.dirname(databench.tests.analyses.__file__))
-ANALYSES_BROKEN_PATH = os.path.abspath(
-    os.path.dirname(databench.tests.analyses_broken.__file__))
+_, ANALYSES_PATH = databench.App.get_analyses('databench.tests.analyses')
+_, ANALYSES_BROKEN_PATH = databench.App.get_analyses(
+    'databench.tests.analyses_broken')
 
 
 class Build(unittest.TestCase):

@@ -50,7 +50,7 @@ class App(object):
         self.metas = []
         self.cmd_args = cmd_args
         self.debug = debug
-        self._get_analyses(analyses_path)
+        self.analyses, self.analyses_path = self.get_analyses(analyses_path)
 
         self.routes = [
             (r'/(favicon\.ico)',
@@ -100,7 +100,8 @@ class App(object):
         self.meta_analyses()
         self.register_metas()
 
-    def _get_analyses(self, analyses_path):
+    @staticmethod
+    def get_analyses(analyses_path):
         if analyses_path:
             # analyses path supplied manually
             orig_syspath = sys.path
@@ -124,11 +125,8 @@ class App(object):
                         'Using packaged analyses.')
             from databench import analyses_packaged as analyses
 
-        self.analyses_path = os.path.abspath(
-            os.path.dirname(analyses.__file__))
-        self.analyses = analyses
-
-        return analyses
+        analyses_path = os.path.abspath(os.path.dirname(analyses.__file__))
+        return analyses, analyses_path
 
     def analyses_info(self):
         """Add analyses from the analyses folder."""
