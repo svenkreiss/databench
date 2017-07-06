@@ -66,9 +66,9 @@ class Build(unittest.TestCase):
         build_file = os.path.join(ANALYSES_BROKEN_PATH, 'build_test.txt')
         before = self.file_id(build_file)
 
-        os.chdir(os.path.join(ANALYSES_PATH, '..', '..'))
+        os.chdir(os.path.join(ANALYSES_BROKEN_PATH, '..', '..'))
         subprocess.check_call(['databench', '--build',
-                               '--analyses', 'databench.tests.analyses_broken',
+                               '--analyses', 'tests.analyses_broken',
                                '--coverage', self.coverage_file])
         os.chdir(self.original_working_dir)
 
