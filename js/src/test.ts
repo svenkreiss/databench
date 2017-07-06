@@ -71,3 +71,27 @@ describe('Cycle Connection', () => {
     c.connect();
   });
 });
+
+describe('Analysis Test', () => {
+  it('can open a connection without connecting', done => {
+    const c = new Databench.Connection();
+    c.preEmit('test', message => done());
+    c.emit('test');
+  });
+
+  it('can emulate an empty backend response', done => {
+    const c = new Databench.Connection();
+    c.on('received', message => done());
+    c.preEmit('test', message => c.trigger('received'));
+    c.emit('test');
+  });
+
+  it('can emulate a string backend response', () => {
+    const c = new Databench.Connection();
+    c.on('received', message => {
+      expect(message).to.equal('test message');
+    });
+    c.preEmit('test', message => c.trigger('received', 'test message'));
+    c.emit('test');
+  });
+});
