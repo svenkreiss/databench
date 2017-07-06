@@ -20,6 +20,7 @@ class Build(unittest.TestCase):
 
     def setUp(self):
         self.original_working_dir = os.getcwd()  # original working directory
+        self.coverage_file = os.path.join(os.getcwd(), '.coverage')
 
     def tearDown(self):
         os.chdir(self.original_working_dir)
@@ -27,9 +28,11 @@ class Build(unittest.TestCase):
     def test_build(self):
         before = self.file_id()
 
+        os.chdir(os.path.join(ANALYSES_PATH, '..', '..'))
         subprocess.check_call(['databench', '--build',
-                               '--analyses', 'databench.tests.analyses',
-                               '--coverage', '.coverage'])
+                               '--analyses', 'tests.analyses',
+                               '--coverage', self.coverage_file])
+        os.chdir(self.original_working_dir)
 
         time.sleep(1)
         after = self.file_id()
@@ -40,7 +43,7 @@ class Build(unittest.TestCase):
 
         os.chdir(os.path.join(ANALYSES_PATH, '..'))
         subprocess.check_call(['databench', '--build',
-                               '--coverage', '../../.coverage'])
+                               '--coverage', self.coverage_file])
         os.chdir(self.original_working_dir)
 
         time.sleep(1)
@@ -52,7 +55,7 @@ class Build(unittest.TestCase):
 
         os.chdir(ANALYSES_PATH)
         subprocess.check_call(['databench', '--build',
-                               '--coverage', '../../../.coverage'])
+                               '--coverage', self.coverage_file])
         os.chdir(self.original_working_dir)
 
         time.sleep(1)
@@ -63,9 +66,11 @@ class Build(unittest.TestCase):
         build_file = os.path.join(ANALYSES_BROKEN_PATH, 'build_test.txt')
         before = self.file_id(build_file)
 
+        os.chdir(os.path.join(ANALYSES_PATH, '..', '..'))
         subprocess.check_call(['databench', '--build',
                                '--analyses', 'databench.tests.analyses_broken',
-                               '--coverage', '.coverage'])
+                               '--coverage', self.coverage_file])
+        os.chdir(self.original_working_dir)
 
         time.sleep(1)
         after = self.file_id(build_file)
