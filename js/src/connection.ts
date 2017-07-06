@@ -51,10 +51,6 @@ export class Connection {
                         window.location.search : requestArgs;
     this.analysisId = analysisId;
 
-    if (!this.wsUrl) {
-      throw Error('Need a wsUrl.');
-    }
-
     this.errorCB = msg => (msg != null ? console.log(`connection error: ${msg}`) : null);
     this.onCallbacks = {};
     this.onProcessCallbacks = {};
@@ -85,6 +81,10 @@ export class Connection {
 
   /** initialize connection */
   connect(): Connection {
+    if (!this.wsUrl) {
+      throw Error('Need a wsUrl.');
+    }
+
     this.socket = new WebSocket(this.wsUrl);
 
     this.socketCheckOpen = setInterval(this.wsCheckOpen.bind(this), 2000);
@@ -147,6 +147,15 @@ export class Connection {
     setTimeout(this.connect.bind(this), actualDelay);
   }
 
+  /**
+   * Trigger all callbacks for this signal with this message.
+   * @param signal  Name of the signal to trigger.
+   * @param message Payload for the triggered signal.
+   */
+  trigger(signal: string, message: any = null) {
+    this.onCallbacks[signal].forEach(cb => cb(message));
+  }
+
   wsOnMessage(event: {data: string}) {
     const message = JSON.parse(event.data);
 
@@ -164,7 +173,7 @@ export class Connection {
 
     // normal message
     if (message.signal in this.onCallbacks) {
-      this.onCallbacks[message.signal].forEach(cb => cb(message.load));
+      this.trigger(message.signal, message.load);
     }
   }
 
@@ -247,10 +256,16 @@ export class Connection {
       });
     }
 
-    if (this.socket == null || this.socket.readyState !== this.socket.OPEN) {
+    // socket will never be open
+    if (this.socket == null) return this;
+
+    // socket is not open yet
+    if (this.socket.readyState !== this.socket.OPEN) {
       setTimeout(() => this.emit(signalName, message), 5);
       return this;
     }
+
+    // send to backend
     this.socket.send(JSON.stringify({ signal: signalName, load: message }));
     return this;
   }
