@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>TextInput | databench</title>
+	<title>Slider | databench</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -38,10 +38,6 @@
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-externals" checked />
-							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
-							<input type="checkbox" id="tsd-filter-only-exported" />
-							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
 					</div>
 					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
@@ -56,13 +52,13 @@
 					<a href="../../databench/globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_ui_.html">&quot;ui&quot;</a>
+					<a href="../modules/ui.html">ui</a>
 				</li>
 				<li>
-					<a href="_ui_.textinput.html">TextInput</a>
+					<a href="ui.slider.html">Slider</a>
 				</li>
 			</ul>
-			<h1>Class TextInput</h1>
+			<h1>Class Slider</h1>
 		</div>
 	</div>
 </header>
@@ -72,18 +68,30 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Make an <code>&lt;input[type=&#39;text&#39;]&gt;</code> with an action name interactive.</p>
+						<p>Make all <code>&lt;input[type=&#39;range&#39;]&gt;</code> with an action name interactive.</p>
 					</div>
+					<pre><code>// in <span class="hljs-built_in">index</span>.html, <span class="hljs-built_in">add</span>:
+&lt;label <span class="hljs-keyword">for</span>=<span class="hljs-string">"samples"</span>&gt;Sample<span class="hljs-variable">s:</span>&lt;/label&gt;
+&lt;<span class="hljs-built_in">input</span> <span class="hljs-built_in">type</span>=<span class="hljs-string">"range"</span> id=<span class="hljs-string">"samples"</span> value=<span class="hljs-string">"1000"</span> <span class="hljs-built_in">min</span>=<span class="hljs-string">"100"</span> <span class="hljs-built_in">max</span>=<span class="hljs-string">"10000"</span> step=<span class="hljs-string">"100"</span> /&gt;
+
+// in analysis.<span class="hljs-keyword">py</span>, <span class="hljs-built_in">add</span>:
+def on_samples(self, value):
+    <span class="hljs-string">""</span><span class="hljs-string">"Sets the number of samples to generate per run."</span><span class="hljs-string">""</span>
+    self.data[<span class="hljs-string">'samples'</span>] = value
+
+// The Python code <span class="hljs-keyword">is</span> <span class="hljs-keyword">for</span> illustration <span class="hljs-keyword">only</span> <span class="hljs-built_in">and</span> can <span class="hljs-keyword">be</span> <span class="hljs-keyword">left</span> out <span class="hljs-keyword">as</span> this <span class="hljs-keyword">is</span>
+// the default behavior.
+</code></pre>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="_ui_.uielement.html" class="tsd-signature-type">UIElement</a>
+						<a href="ui.uielement.html" class="tsd-signature-type">UIElement</a>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">TextInput</span>
+								<span class="target">Slider</span>
 							</li>
 						</ul>
 					</li>
@@ -96,31 +104,35 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="_ui_.textinput.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="ui.slider.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_ui_.textinput.html#_triggeronkeyup" class="tsd-kind-icon">_trigger<wbr>OnKey<wbr>Up</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_ui_.textinput.html#actionname" class="tsd-kind-icon">action<wbr>Name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="_ui_.textinput.html#node" class="tsd-kind-icon">node</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_ui_.textinput.html#wiresignal" class="tsd-kind-icon">wire<wbr>Signal</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="ui.slider.html#actionname" class="tsd-kind-icon">action<wbr>Name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="ui.slider.html#labelhtml" class="tsd-kind-icon">label<wbr>Html</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="ui.slider.html#labelnode" class="tsd-kind-icon">label<wbr>Node</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="ui.slider.html#node" class="tsd-kind-icon">node</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="ui.slider.html#wiresignal" class="tsd-kind-icon">wire<wbr>Signal</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_ui_.textinput.html#actionformat" class="tsd-kind-icon">action<wbr>Format</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_.textinput.html#change" class="tsd-kind-icon">change</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_.textinput.html#changecb" class="tsd-kind-icon">changeCB</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_.textinput.html#formatfn" class="tsd-kind-icon">format<wbr>Fn</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_.textinput.html#get_value" class="tsd-kind-icon">get_<wbr>value</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_.textinput.html#triggeronkeyup" class="tsd-kind-icon">trigger<wbr>OnKey<wbr>Up</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_ui_.textinput.html#value" class="tsd-kind-icon">value</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="_ui_.textinput.html#determineactionname" class="tsd-kind-icon">determine<wbr>Action<wbr>Name</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="_ui_.textinput.html#determinewiresignal" class="tsd-kind-icon">determine<wbr>Wire<wbr>Signal</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_ui_.textinput.html#wire" class="tsd-kind-icon">wire</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="ui.slider.html#actionformat" class="tsd-kind-icon">action<wbr>Format</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ui.slider.html#change" class="tsd-kind-icon">change</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ui.slider.html#changecb" class="tsd-kind-icon">changeCB</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ui.slider.html#formatfn" class="tsd-kind-icon">format<wbr>Fn</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ui.slider.html#get_value" class="tsd-kind-icon">get_<wbr>value</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ui.slider.html#render" class="tsd-kind-icon">render</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ui.slider.html#set_value" class="tsd-kind-icon">set_<wbr>value</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ui.slider.html#slidertovalue" class="tsd-kind-icon">slider<wbr>ToValue</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ui.slider.html#valuetoslider" class="tsd-kind-icon">value<wbr>ToSlider</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="ui.slider.html#determineactionname" class="tsd-kind-icon">determine<wbr>Action<wbr>Name</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="ui.slider.html#determinewiresignal" class="tsd-kind-icon">determine<wbr>Wire<wbr>Signal</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="ui.slider.html#labelsforsliders" class="tsd-kind-icon">labels<wbr>For<wbr>Sliders</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="ui.slider.html#wire" class="tsd-kind-icon">wire</a></li>
 							</ul>
 						</section>
 					</div>
@@ -132,14 +144,14 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Text<wbr>Input<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_ui_.textinput.html" class="tsd-signature-type">TextInput</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Slider<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span>, labelNode<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ui.slider.html" class="tsd-signature-type">Slider</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="_ui_.uielement.html">UIElement</a>.<a href="_ui_.uielement.html#constructor">constructor</a></p>
+								<p>Overrides <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/ui.ts#L428">ui.ts:428</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8b25b56/js/src/ui.ts#L540">ui.ts:540</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -150,36 +162,54 @@
 									<h5>node: <span class="tsd-signature-type">HTMLElement</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<div class="lead">
-											<p>The node to connect.</p>
+											<p>DOM node to bind.</p>
+										</div>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> labelNode: <span class="tsd-signature-type">HTMLElement</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>DOM node label that corresponds to the slider.</p>
 										</div>
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_ui_.textinput.html" class="tsd-signature-type">TextInput</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="ui.slider.html" class="tsd-signature-type">Slider</a></h4>
 						</li>
 					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_triggeronkeyup" class="tsd-anchor"></a>
-					<h3>_trigger<wbr>OnKey<wbr>Up</h3>
-					<div class="tsd-signature tsd-kind-icon">_trigger<wbr>OnKey<wbr>Up<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/ui.ts#L428">ui.ts:428</a></li>
-						</ul>
-					</aside>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="actionname" class="tsd-anchor"></a>
 					<h3>action<wbr>Name</h3>
 					<div class="tsd-signature tsd-kind-icon">action<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="_ui_.uielement.html">UIElement</a>.<a href="_ui_.uielement.html#actionname">actionName</a></p>
+						<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#actionname">actionName</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/ui.ts#L26">ui.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8b25b56/js/src/ui.ts#L29">ui.ts:29</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="labelhtml" class="tsd-anchor"></a>
+					<h3>label<wbr>Html</h3>
+					<div class="tsd-signature tsd-kind-icon">label<wbr>Html<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8b25b56/js/src/ui.ts#L540">ui.ts:540</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="labelnode" class="tsd-anchor"></a>
+					<h3>label<wbr>Node</h3>
+					<div class="tsd-signature tsd-kind-icon">label<wbr>Node<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HTMLElement</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8b25b56/js/src/ui.ts#L539">ui.ts:539</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -188,9 +218,9 @@
 					<h3>node</h3>
 					<div class="tsd-signature tsd-kind-icon">node<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HTMLInputElement &amp; HTMLDatabenchElement</span></div>
 					<aside class="tsd-sources">
-						<p>Overrides <a href="_ui_.uielement.html">UIElement</a>.<a href="_ui_.uielement.html#node">node</a></p>
+						<p>Overrides <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#node">node</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/ui.ts#L427">ui.ts:427</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8b25b56/js/src/ui.ts#L538">ui.ts:538</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -199,9 +229,9 @@
 					<h3>wire<wbr>Signal</h3>
 					<div class="tsd-signature tsd-kind-icon">wire<wbr>Signal<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="_ui_.uielement.html">UIElement</a>.<a href="_ui_.uielement.html#wiresignal">wireSignal</a></p>
+						<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#wiresignal">wireSignal</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/ui.ts#L27">ui.ts:27</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8b25b56/js/src/ui.ts#L30">ui.ts:30</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -217,9 +247,9 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="_ui_.uielement.html">UIElement</a>.<a href="_ui_.uielement.html#actionformat">actionFormat</a></p>
+								<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#actionformat">actionFormat</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/ui.ts#L45">ui.ts:45</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8b25b56/js/src/ui.ts#L48">ui.ts:48</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -251,7 +281,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/ui.ts#L458">ui.ts:458</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8b25b56/js/src/ui.ts#L616">ui.ts:616</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -262,26 +292,26 @@
 					<a name="changecb" class="tsd-anchor"></a>
 					<h3>changeCB</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">changeCB<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">changeCB<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/ui.ts#L454">ui.ts:454</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8b25b56/js/src/ui.ts#L561">ui.ts:561</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Callback that is triggered on frontend changes.</p>
+									<p>Callback with changes to the slider value.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>value: <span class="tsd-signature-type">any</span></h5>
+									<h5>value: <span class="tsd-signature-type">number</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>A formatted action.</p>
+										<p>Value from a sliderToValue() transform.</p>
 									</div>
 								</li>
 							</ul>
@@ -293,31 +323,32 @@
 					<a name="formatfn" class="tsd-anchor"></a>
 					<h3>format<wbr>Fn</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">format<wbr>Fn<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+						<li class="tsd-signature tsd-kind-icon">format<wbr>Fn<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/ui.ts#L446">ui.ts:446</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8b25b56/js/src/ui.ts#L589">ui.ts:589</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Format the value.</p>
+									<p>How a value should be represented.
+									For example, this can add units or convert from radians to degrees.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>value: <span class="tsd-signature-type">any</span></h5>
+									<h5>value: <span class="tsd-signature-type">number</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>Value as represented in the backend.</p>
+										<p>Input value as it is stored in the backend.</p>
 									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-							<p>Formatted representation of the value.</p>
+							<p>Representation of a value.</p>
 						</li>
 					</ul>
 				</section>
@@ -325,83 +356,130 @@
 					<a name="get_value" class="tsd-anchor"></a>
 					<h3>get_<wbr>value</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get_<wbr>value<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+						<li class="tsd-signature tsd-kind-icon">get_<wbr>value<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/ui.ts#L485">ui.ts:485</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8b25b56/js/src/ui.ts#L602">ui.ts:602</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Reads and sets the value.</p>
+									<p>Reads the value.</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="triggeronkeyup" class="tsd-anchor"></a>
-					<h3>trigger<wbr>OnKey<wbr>Up</h3>
+					<a name="render" class="tsd-anchor"></a>
+					<h3>render</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">trigger<wbr>OnKey<wbr>Up<span class="tsd-signature-symbol">(</span>v<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_ui_.textinput.html" class="tsd-signature-type">TextInput</a></li>
+						<li class="tsd-signature tsd-kind-icon">render<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/ui.ts#L470">ui.ts:470</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8b25b56/js/src/ui.ts#L593">ui.ts:593</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="set_value" class="tsd-anchor"></a>
+					<h3>set_<wbr>value</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">set_<wbr>value<span class="tsd-signature-symbol">(</span>v<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8b25b56/js/src/ui.ts#L607">ui.ts:607</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>The default is <code>false</code>, which means that the callback is only triggered on
-										<code>change</code> events (i.e. pressing enter or unfocusing the element).
-									Setting this to true will trigger on every <code>keyup</code> event of this element.</p>
+									<p>Reads the value.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>v: <span class="tsd-signature-type">boolean</span></h5>
+									<h5>v: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="slidertovalue" class="tsd-anchor"></a>
+					<h3>slider<wbr>ToValue</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">slider<wbr>ToValue<span class="tsd-signature-symbol">(</span>s<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8b25b56/js/src/ui.ts#L579">ui.ts:579</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Transform a value from the HTML range element to a value that should be stored.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>s: <span class="tsd-signature-type">number</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>Whether to trigger on <code>keyup</code> events. Default is true.</p>
+										<p>Value from HTML range element.</p>
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_ui_.textinput.html" class="tsd-signature-type">TextInput</a></h4>
-							<p>self</p>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+							<p>Value to store.</p>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="value" class="tsd-anchor"></a>
-					<h3>value</h3>
+					<a name="valuetoslider" class="tsd-anchor"></a>
+					<h3>value<wbr>ToSlider</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">value<span class="tsd-signature-symbol">(</span>v<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_ui_.textinput.html" class="tsd-signature-type">TextInput</a></li>
+						<li class="tsd-signature tsd-kind-icon">value<wbr>ToSlider<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/ui.ts#L490">ui.ts:490</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8b25b56/js/src/ui.ts#L570">ui.ts:570</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Set value</p>
+									<p>Transform a backend value to a slider value.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>v: <span class="tsd-signature-type">string</span></h5>
+									<h5>value: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Value as stored in backend.</p>
+									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_ui_.textinput.html" class="tsd-signature-type">TextInput</a></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+							<p>Value for the HTML range element.</p>
 						</li>
 					</ul>
 				</section>
@@ -414,9 +492,9 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="_ui_.uielement.html">UIElement</a>.<a href="_ui_.uielement.html#determineactionname">determineActionName</a></p>
+								<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#determineactionname">determineActionName</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/ui.ts#L59">ui.ts:59</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8b25b56/js/src/ui.ts#L62">ui.ts:62</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -450,9 +528,9 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="_ui_.uielement.html">UIElement</a>.<a href="_ui_.uielement.html#determinewiresignal">determineWireSignal</a></p>
+								<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#determinewiresignal">determineWireSignal</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/ui.ts#L94">ui.ts:94</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8b25b56/js/src/ui.ts#L97">ui.ts:97</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -482,27 +560,60 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
-					<a name="wire" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> wire</h3>
+					<a name="labelsforsliders" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> labels<wbr>For<wbr>Sliders</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">wire<span class="tsd-signature-symbol">(</span>conn<span class="tsd-signature-symbol">: </span><a href="_connection_.connection.html" class="tsd-signature-type">Connection</a>, root<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Document</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">labels<wbr>For<wbr>Sliders<span class="tsd-signature-symbol">(</span>root<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/ui.ts#L496">ui.ts:496</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8b25b56/js/src/ui.ts#L621">ui.ts:621</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Wire all text inputs.</p>
+									<p>Find all labels for slider elements.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>conn: <a href="_connection_.connection.html" class="tsd-signature-type">Connection</a></h5>
+									<h5>root: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
+							<ul class="tsd-parameters">
+								<li class="tsd-parameter-index-signature">
+									<h5><span class="tsd-signature-symbol">[</span>inputname: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">HTMLLabelElement</span></h5>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="wire" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> wire</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">wire<span class="tsd-signature-symbol">(</span>conn<span class="tsd-signature-symbol">: </span><a href="connection.html" class="tsd-signature-type">Connection</a>, root<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Document</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8b25b56/js/src/ui.ts#L632">ui.ts:632</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Wire all sliders.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>conn: <a href="connection.html" class="tsd-signature-type">Connection</a></h5>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> root: <span class="tsd-signature-type">Document</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">HTMLElement</span></h5>
@@ -520,105 +631,108 @@
 					<li class="globals  ">
 						<a href="../../databench/globals.html"><em>Globals</em></a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_connection_.html">"connection"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_index_.html">"index"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_test_.html">"test"</a>
-					</li>
-					<li class="current tsd-kind-external-module">
-						<a href="../modules/_ui_.html">"ui"</a>
+					<li class="current tsd-kind-module">
+						<a href="../modules/ui.html">ui</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
-						<a href="../enums/_ui_.buttonstate.html" class="tsd-kind-icon">Button<wbr>State</a>
+					<li class=" tsd-kind-enum tsd-parent-kind-module">
+						<a href="../enums/ui.buttonstate.html" class="tsd-kind-icon">Button<wbr>State</a>
 					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_.button.html" class="tsd-kind-icon">Button</a>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="ui.button.html" class="tsd-kind-icon">Button</a>
 					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_.image.html" class="tsd-kind-icon">Image</a>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="ui.image.html" class="tsd-kind-icon">Image</a>
 					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_.log.html" class="tsd-kind-icon">Log</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_.slider.html" class="tsd-kind-icon">Slider</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_.statuslog.html" class="tsd-kind-icon">Status<wbr>Log</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_.text.html" class="tsd-kind-icon">Text</a>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="ui.log.html" class="tsd-kind-icon">Log</a>
 					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_.textinput.html" class="tsd-kind-icon">Text<wbr>Input</a>
+					<li class="current tsd-kind-class tsd-parent-kind-module">
+						<a href="ui.slider.html" class="tsd-kind-icon">Slider</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-								<a href="_ui_.textinput.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="ui.slider.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="ui.slider.html#actionname" class="tsd-kind-icon">action<wbr>Name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_ui_.textinput.html#_triggeronkeyup" class="tsd-kind-icon">_trigger<wbr>OnKey<wbr>Up</a>
+								<a href="ui.slider.html#labelhtml" class="tsd-kind-icon">label<wbr>Html</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="_ui_.textinput.html#actionname" class="tsd-kind-icon">action<wbr>Name</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="ui.slider.html#labelnode" class="tsd-kind-icon">label<wbr>Node</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
-								<a href="_ui_.textinput.html#node" class="tsd-kind-icon">node</a>
+								<a href="ui.slider.html#node" class="tsd-kind-icon">node</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="_ui_.textinput.html#wiresignal" class="tsd-kind-icon">wire<wbr>Signal</a>
+								<a href="ui.slider.html#wiresignal" class="tsd-kind-icon">wire<wbr>Signal</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="_ui_.textinput.html#actionformat" class="tsd-kind-icon">action<wbr>Format</a>
+								<a href="ui.slider.html#actionformat" class="tsd-kind-icon">action<wbr>Format</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_ui_.textinput.html#change" class="tsd-kind-icon">change</a>
+								<a href="ui.slider.html#change" class="tsd-kind-icon">change</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_ui_.textinput.html#changecb" class="tsd-kind-icon">changeCB</a>
+								<a href="ui.slider.html#changecb" class="tsd-kind-icon">changeCB</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_ui_.textinput.html#formatfn" class="tsd-kind-icon">format<wbr>Fn</a>
+								<a href="ui.slider.html#formatfn" class="tsd-kind-icon">format<wbr>Fn</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_ui_.textinput.html#get_value" class="tsd-kind-icon">get_<wbr>value</a>
+								<a href="ui.slider.html#get_value" class="tsd-kind-icon">get_<wbr>value</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_ui_.textinput.html#triggeronkeyup" class="tsd-kind-icon">trigger<wbr>OnKey<wbr>Up</a>
+								<a href="ui.slider.html#render" class="tsd-kind-icon">render</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_ui_.textinput.html#value" class="tsd-kind-icon">value</a>
+								<a href="ui.slider.html#set_value" class="tsd-kind-icon">set_<wbr>value</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="ui.slider.html#slidertovalue" class="tsd-kind-icon">slider<wbr>ToValue</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="ui.slider.html#valuetoslider" class="tsd-kind-icon">value<wbr>ToSlider</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
-								<a href="_ui_.textinput.html#determineactionname" class="tsd-kind-icon">determine<wbr>Action<wbr>Name</a>
+								<a href="ui.slider.html#determineactionname" class="tsd-kind-icon">determine<wbr>Action<wbr>Name</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
-								<a href="_ui_.textinput.html#determinewiresignal" class="tsd-kind-icon">determine<wbr>Wire<wbr>Signal</a>
+								<a href="ui.slider.html#determinewiresignal" class="tsd-kind-icon">determine<wbr>Wire<wbr>Signal</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
-								<a href="_ui_.textinput.html#wire" class="tsd-kind-icon">wire</a>
+								<a href="ui.slider.html#labelsforsliders" class="tsd-kind-icon">labels<wbr>For<wbr>Sliders</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="ui.slider.html#wire" class="tsd-kind-icon">wire</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_ui_.uielement.html" class="tsd-kind-icon">UIElement</a>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="ui.statuslog.html" class="tsd-kind-icon">Status<wbr>Log</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_ui_.htmldatabenchelement.html" class="tsd-kind-icon">HTMLDatabench<wbr>Element</a>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="ui.text.html" class="tsd-kind-icon">Text</a>
 					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_ui_.html#wire" class="tsd-kind-icon">wire</a>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="ui.textinput.html" class="tsd-kind-icon">Text<wbr>Input</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="ui.uielement.html" class="tsd-kind-icon">UIElement</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/ui.htmldatabenchelement.html" class="tsd-kind-icon">HTMLDatabench<wbr>Element</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="../modules/ui.html#wire" class="tsd-kind-icon">wire</a>
 					</li>
 				</ul>
 			</nav>

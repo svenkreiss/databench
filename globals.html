@@ -38,10 +38,6 @@
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-externals" checked />
-							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
-							<input type="checkbox" id="tsd-filter-only-exported" />
-							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
 					</div>
 					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
@@ -68,15 +64,79 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>External modules</h3>
+							<h3>Modules</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-external-module"><a href="modules/_connection_.html" class="tsd-kind-icon">"connection"</a></li>
-								<li class="tsd-kind-external-module"><a href="modules/_index_.html" class="tsd-kind-icon">"index"</a></li>
-								<li class="tsd-kind-external-module"><a href="modules/_test_.html" class="tsd-kind-icon">"test"</a></li>
-								<li class="tsd-kind-external-module"><a href="modules/_ui_.html" class="tsd-kind-icon">"ui"</a></li>
+								<li class="tsd-kind-module"><a href="modules/ui.html" class="tsd-kind-icon">ui</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Classes</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-class"><a href="classes/connection.html" class="tsd-kind-icon">Connection</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function"><a href="globals.html#connect" class="tsd-kind-icon">connect</a></li>
 							</ul>
 						</section>
 					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="connect" class="tsd-anchor"></a>
+					<h3>connect</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">connect<span class="tsd-signature-symbol">(</span>wsUrl<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, requestArgs<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, analysisId<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="classes/connection.html" class="tsd-signature-type">Connection</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8b25b56/js/src/connection.ts#L304">connection.ts:304</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Create a Connection and immediately connect to it.</p>
+								</div>
+								<p>This is a shorthand for</p>
+								<pre><code><span class="hljs-function"><span class="hljs-keyword">new</span> <span class="hljs-title">Connection</span>(wsUrl, requestArgs, analysisId).<span class="hljs-title">connect</span>();</span>
+</code></pre><p>Use this function in tests where you know that <code>connect()</code> will not trigger
+									any callbacks that you should listen to. In regular code, it is better
+									to define all <code>on</code> callbacks before calling <code>connect()</code> and so this
+								shorthand should not be used.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> wsUrl: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;null</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>URL of WebSocket endpoint or null to guess it.</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> requestArgs: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;null</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p><code>search</code> part of request url or null to take from
+										<code>window.location.search</code>.</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> analysisId: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;null</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Specify an analysis id or null to have one generated.
+											The connection will try to connect to a previously created
+										analysis with that id.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="classes/connection.html" class="tsd-signature-type">Connection</a></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -86,22 +146,19 @@
 					<li class="globals current ">
 						<a href="globals.html"><em>Globals</em></a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_connection_.html">"connection"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_index_.html">"index"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_test_.html">"test"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_ui_.html">"ui"</a>
+					<li class=" tsd-kind-module">
+						<a href="modules/ui.html">ui</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-class">
+						<a href="classes/connection.html" class="tsd-kind-icon">Connection</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#connect" class="tsd-kind-icon">connect</a>
+					</li>
 				</ul>
 			</nav>
 		</div>
