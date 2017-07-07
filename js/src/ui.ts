@@ -17,9 +17,8 @@ export interface HTMLDatabenchElement extends HTMLElement {
  * that is sent with actions of wired elements.
  *
  * The constructor adds the variables `actionName` and `wireSignal` using
- * {@link module:ui~UIElement.determineActionName|determineActionName()} and
- * {@link module:ui~UIElement.determineWireSignal|determineWireSignal()}
- * respectively.
+ * [[UIElement.determineActionName]] and
+ * [[UIElement.determineWireSignal]] respectively.
  * It also adds `this` UI element to the DOM node at `databenchUI`.
  */
 export class UIElement {
@@ -277,7 +276,6 @@ export enum ButtonState {
  * backend is processing the action that got started when it was clicked.
  * A simple example is below.
  *
- * @example
  * ~~~
  * // in index.html, add:
  * <button data-action="run">Run</button>
@@ -372,8 +370,8 @@ export class Button extends UIElement {
 /**
  * Data bound text elements.
  *
- * Wired to ``<span>``, ``<p>``, ``<div>``, ``<i>`` and ``<b>`` tags with a
- * ``data-action`` attribute specifying the action name.
+ * Wired to `<span>`, `<p>`, `<div>`, `<i>` and `<b>` tags with a
+ * `data-action` attribute specifying the action name.
  */
 export class Text extends UIElement {
   /**
@@ -519,7 +517,6 @@ export class TextInput extends UIElement {
 /**
  * Make all `<input[type='range']>` with an action name interactive.
  *
- * @example
  * ~~~
  * // in index.html, add:
  * <label for="samples">Samples:</label>
@@ -658,7 +655,6 @@ export class Slider extends UIElement {
  * tag. For matplotlib, that formatting can be done with the utility function
  * `fig_to_src()` (see example below).
  *
- * @example
  * ~~~
  * // in index.html, add
  * <img alt="my plot" data-signal="mpl" />
@@ -703,11 +699,9 @@ export class Image extends UIElement {
 
 /**
  * Wire all the UI elements to the backend. The action name is determined by
- * {@link module:ui~UIElement.determineActionName|UIElement.determineActionName()}
- * and the action message can be modified by overwriting
- * {@link module:ui~UIElement#actionFormat|UIElement.actionFormat()}. The signal
- * name is determined by
- * {@link module:ui~UIElement.determineWireSignal|UIElement.determineWireSignal()}.
+ * [[UIElement.determineActionName]] and the action message can be modified
+ * by overwriting [[UIElement.actionFormat]]. The signal name is determined by
+ * [[UIElement.determineWireSignal]].
  *
  * @param  connection  A Databench.Connection instance.
  * @return The same connection.

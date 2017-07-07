@@ -5,16 +5,15 @@ import { w3cwebsocket as WebSocket } from 'websocket';
  *
  * The standard template is to create a connection first, then use it to
  * wire all UI elements, to add custom callback functions and at last to run
- * {@link Connection#connect|connect()} to create a WebSocket connection to the backend
+ * [[Connection.connect]] to create a WebSocket connection to the backend
  * server (see example below).
  *
  * The other two essential functions to know about are
- * {@link Connection#on|on()} and {@link Connection#emit|emit()}.
+ * [[Connection.on]] and [[Connection.emit]].
  *
- * Logging across frontend and backend can be done by emitting ``log``,
- * ``warn`` or ``error``, e.g. ``emit('log', 'Hello World')``.
+ * Logging across frontend and backend can be done by emitting `log`,
+ * `warn` or `error`, e.g. `emit('log', 'Hello World')`.
  *
- * @example
  * ~~~
  * var d = new Databench.Connection();
  * Databench.ui.wire(d);
@@ -186,14 +185,12 @@ export class Connection {
    * the key `current_value`. In this case, the value that is
    * given to the callback function is the value assigned to `current_value`.
    *
-   * @example
    * ~~~
    * d.on('data', value => { console.log(value); });
    * // If the backend sends an action called 'data' with a message
    * // {current_value: 3.0}, this function would log `{current_value: 3.0}`.
    * ~~~
    *
-   * @example
    * ~~~
    * d.on({data: 'current_value'}, value => { console.log(value); });
    * // If the backend sends an action called 'data' with a
@@ -288,9 +285,9 @@ export class Connection {
  * new Connection(wsUrl, requestArgs, analysisId).connect();
  * ~~~
  *
- * Use this function in tests where you know that connect() will not trigger
+ * Use this function in tests where you know that `connect()` will not trigger
  * any callbacks that you should listen to. In regular code, it is better
- * to define all ``on`` callbacks before calling ``connect()`` and so this
+ * to define all `on` callbacks before calling `connect()` and so this
  * shorthand should not be used.
  *
  * @param  wsUrl        URL of WebSocket endpoint or null to guess it.
