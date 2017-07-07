@@ -76,20 +76,17 @@
 					</div>
 					<p>The standard template is to create a connection first, then use it to
 						wire all UI elements, to add custom callback functions and at last to run
-						{@link Connection#connect|connect()} to create a WebSocket connection to the backend
+						<a href="_connection_.connection.html#connect">Connection.connect</a> to create a WebSocket connection to the backend
 					server (see example below).</p>
 					<p>The other two essential functions to know about are
-					{@link Connection#on|on()} and {@link Connection#emit|emit()}.</p>
+					<a href="_connection_.connection.html#on">Connection.on</a> and <a href="_connection_.connection.html#emit">Connection.emit</a>.</p>
 					<p>Logging across frontend and backend can be done by emitting <code>log</code>,
 					<code>warn</code> or <code>error</code>, e.g. <code>emit(&#39;log&#39;, &#39;Hello World&#39;)</code>.</p>
-					<dl class="tsd-comment-tags">
-						<dt>example</dt>
-						<dd><pre><code><span class="hljs-keyword">var</span> d = <span class="hljs-function"><span class="hljs-keyword">new</span> <span class="hljs-title">Databench</span>.<span class="hljs-title">Connection</span>();
+					<pre><code><span class="hljs-keyword">var</span> d = <span class="hljs-function"><span class="hljs-keyword">new</span> <span class="hljs-title">Databench</span>.<span class="hljs-title">Connection</span>();
 <span class="hljs-title">Databench</span>.<span class="hljs-title">ui</span>.<span class="hljs-title">wire</span>(d);
 <span class="hljs-comment">// put custom d.on() methods here</span>
 <span class="hljs-title">d</span>.<span class="hljs-title">connect</span>();</span>
-</code></pre></dd>
-					</dl>
+</code></pre>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -159,7 +156,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L38">connection.ts:38</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L37">connection.ts:37</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -207,7 +204,7 @@
 					<div class="tsd-signature tsd-kind-icon">analysis<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L28">connection.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L27">connection.ts:27</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -217,7 +214,7 @@
 					<div class="tsd-signature tsd-kind-icon">errorCB<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L30">connection.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L29">connection.ts:29</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -248,7 +245,7 @@
 					<div class="tsd-signature tsd-kind-icon">on<wbr>Callbacks<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L31">connection.ts:31</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L30">connection.ts:30</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -284,7 +281,7 @@
 					<div class="tsd-signature tsd-kind-icon">on<wbr>Process<wbr>Callbacks<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L32">connection.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L31">connection.ts:31</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -320,7 +317,7 @@
 					<div class="tsd-signature tsd-kind-icon">pre<wbr>Emit<wbr>Callbacks<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L33">connection.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L32">connection.ts:32</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -356,7 +353,7 @@
 					<div class="tsd-signature tsd-kind-icon">request<wbr>Args<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L27">connection.ts:27</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L26">connection.ts:26</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -366,7 +363,7 @@
 					<div class="tsd-signature tsd-kind-icon">socket<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">WebSocket</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L37">connection.ts:37</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L36">connection.ts:36</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -376,7 +373,7 @@
 					<div class="tsd-signature tsd-kind-icon">socket<wbr>Check<wbr>Open<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L38">connection.ts:38</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L37">connection.ts:37</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -386,7 +383,7 @@
 					<div class="tsd-signature tsd-kind-icon">ws<wbr>Reconnect<wbr>Attempt<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L35">connection.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L34">connection.ts:34</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -396,7 +393,7 @@
 					<div class="tsd-signature tsd-kind-icon">ws<wbr>Reconnect<wbr>Delay<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L36">connection.ts:36</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L35">connection.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -406,7 +403,7 @@
 					<div class="tsd-signature tsd-kind-icon">ws<wbr>Url<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L26">connection.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L25">connection.ts:25</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -423,7 +420,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L220">connection.ts:220</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L217">connection.ts:217</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -472,7 +469,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L83">connection.ts:83</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L82">connection.ts:82</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -494,7 +491,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L98">connection.ts:98</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L97">connection.ts:97</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -516,7 +513,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L251">connection.ts:251</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L248">connection.ts:248</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -554,7 +551,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L209">connection.ts:209</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L206">connection.ts:206</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -566,20 +563,15 @@
 									trigger on <code>data</code> actions that are sending a JSON dictionary that contains
 									the key <code>current_value</code>. In this case, the value that is
 								given to the callback function is the value assigned to <code>current_value</code>.</p>
-								<dl class="tsd-comment-tags">
-									<dt>example</dt>
-									<dd><pre><code>d.<span class="hljs-keyword">on</span>(<span class="hljs-string">'data'</span>, <span class="hljs-keyword">value</span> =&gt; { console.log(<span class="hljs-keyword">value</span>); });
+								<pre><code>d.<span class="hljs-keyword">on</span>(<span class="hljs-string">'data'</span>, <span class="hljs-keyword">value</span> =&gt; { console.log(<span class="hljs-keyword">value</span>); });
 <span class="hljs-comment">// If the backend sends an action called 'data' with a message</span>
 <span class="hljs-comment">// {current_value: 3.0}, this function would log `{current_value: 3.0}`.</span>
-</code></pre></dd>
-									<dt>example</dt>
-									<dd><pre><code>d.<span class="hljs-keyword">on</span>({data: <span class="hljs-string">'current_value'</span>}, <span class="hljs-keyword">value</span> =&gt; { console.log(<span class="hljs-keyword">value</span>); });
+</code></pre><pre><code>d.<span class="hljs-keyword">on</span>({data: <span class="hljs-string">'current_value'</span>}, <span class="hljs-keyword">value</span> =&gt; { console.log(<span class="hljs-keyword">value</span>); });
 <span class="hljs-comment">// If the backend sends an action called 'data' with a</span>
 <span class="hljs-comment">// message {current_value: 3.0}, this function would log `3.0`.</span>
 <span class="hljs-comment">// This callback is not triggered when the message does not contain a</span>
 <span class="hljs-comment">// `current_value` key.</span>
-</code></pre></dd>
-								</dl>
+</code></pre>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -629,7 +621,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L273">connection.ts:273</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L270">connection.ts:270</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -655,7 +647,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L239">connection.ts:239</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L236">connection.ts:236</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -711,7 +703,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L155">connection.ts:155</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L154">connection.ts:154</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -748,7 +740,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L104">connection.ts:104</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L103">connection.ts:103</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -765,7 +757,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L128">connection.ts:128</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L127">connection.ts:127</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -782,7 +774,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L159">connection.ts:159</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L158">connection.ts:158</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -810,7 +802,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L118">connection.ts:118</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L117">connection.ts:117</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -827,7 +819,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/cabc90f/js/src/connection.ts#L75">connection.ts:75</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/8dad0e5/js/src/connection.ts#L74">connection.ts:74</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
