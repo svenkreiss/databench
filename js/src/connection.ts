@@ -15,10 +15,14 @@ import { w3cwebsocket as WebSocket } from 'websocket';
  * `warn` or `error`, e.g. `emit('log', 'Hello World')`.
  *
  * ~~~
- * var d = new Databench.Connection();
- * Databench.ui.wire(d);
+ * var databench = new Databench.Connection();
+ * Databench.ui.wire(databench);
+ *
+ *
  * // put custom d.on() methods here
- * d.connect();
+ *
+ *
+ * databench.connect();
  * ~~~
  */
 export class Connection {

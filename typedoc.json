@@ -1,0 +1,10 @@
+{
+    "excludePrivate": true,
+    "excludeNotExported": true,
+    "excludeExternals": true,
+    "moduleResolution": "node",
+    "includeDeclarations": false,
+    "mode": "file",
+    "out": "docs/typedoc",
+    "readme": "js/docs/index.md"
+}
