@@ -1,3 +1,9 @@
+/**
+ * Test documentation.
+ *
+ * Bla.
+ */
+
 import { expect } from 'chai';
 import * as Databench from '.';
 

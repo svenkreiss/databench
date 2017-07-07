@@ -7,6 +7,9 @@
 
 import { Connection } from './connection';
 
+export namespace ui {
+
+
 export interface HTMLDatabenchElement extends HTMLElement {
   databenchUI: UIElement;
 }
@@ -717,3 +720,6 @@ export function wire(connection: Connection, root?: Document|HTMLElement): Conne
 
   return connection;
 }
+
+
+}  // namespace ui
