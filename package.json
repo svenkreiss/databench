@@ -30,7 +30,7 @@
     "mocha": "^2.4.5",
     "source-map-loader": "^0.1.6",
     "tslint": "^4.5.1",
-    "typedoc": "^0.5.3",
+    "typedoc": "^0.5.10",
     "typescript": "^2.4.1",
     "webpack": "^2.6.1"
   },
@@ -41,7 +41,7 @@
     "build": "tsc && webpack && cp js/build/databench.* databench/static/",
     "test": "mocha -t 5000 --no-colors js/build/commonjs/test.js",
     "lint": "tslint -c tslint.json js/src/*.ts && eslint databench/analyses_packaged/**/*.js",
-    "typedoc": "typedoc --readme js/docs/index.md --out docs/typedoc/ js/src/*.ts"
+    "typedoc": "typedoc --readme js/docs/index.md --out docs/typedoc/ js/src/"
   },
   "repository": {
     "type": "git",
