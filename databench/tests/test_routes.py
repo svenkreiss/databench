@@ -1,4 +1,4 @@
-from databench.testing import AnalysisTestCase
+from databench.testing import ConnectionTestCase
 
 try:
     from urllib import urlencode  # Python 2
@@ -6,7 +6,7 @@ except ImportError:
     from urllib.parse import urlencode  # Python 3
 
 
-class RoutesTest(AnalysisTestCase):
+class RoutesTest(ConnectionTestCase):
     analyses_path = 'databench.tests.analyses'
 
     def test_get(self):

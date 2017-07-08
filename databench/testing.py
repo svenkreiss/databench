@@ -6,6 +6,30 @@ from tornado.testing import AsyncHTTPTestCase, AsyncHTTPSTestCase
 from tornado.testing import gen_test  # noqa
 
 
+class AnalysisTestCase(object):
+    """Test case for analyses.
+
+    :param databench.Analysis analysis: The analysis to test.
+    :param str cli_args: Command line interface arguments.
+    :param str request_args: Request arguments.
+    """
+    def __init__(self, analysis, emit_fn, cli_args=None, request_args=None):
+        self.analysis = analysis
+        self.cli_args = cli_args
+        self.request_args = request_args
+
+        # initialize
+        self.analysis.init_databench()
+        self.analysis.set_emit_fn(emit_fn)
+        self.trigger('args', cli_args, request_args)
+        self.trigger('connected')
+
+    def trigger(self, signal, *args, **kwargs):
+        """Trigger an `on` callback."""
+        fn = getattr(self.analysis, 'on_{}'.format(signal))
+        fn(*args, **kwargs)
+
+
 class Connection(object):
     """WebSocket client connection to backend.
 
@@ -109,7 +133,7 @@ class Connection(object):
         self.on_process_callbacks[process_id].append(callback)
 
 
-class AnalysisTestCase(AsyncHTTPTestCase):
+class ConnectionTestCase(AsyncHTTPTestCase):
     """Test scaffolding for an analysis.
 
     ``analyses_path`` is the import path for the analyses.
@@ -146,8 +170,8 @@ class AnalysisTestCase(AsyncHTTPTestCase):
                                request_args).connect()
 
 
-class AnalysisTestCaseSSL(AsyncHTTPSTestCase):
-    """Same as :class:`AnalysisTestCase` but with SSL."""
+class ConnectionTestCaseSSL(AsyncHTTPSTestCase):
+    """Same as :class:`ConnectionTestCase` but with SSL."""
 
     analyses_path = None
 
