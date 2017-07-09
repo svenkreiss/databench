@@ -66,8 +66,15 @@ class Meta(object):
     def run_process(analysis, action_name, message='__nomessagetoken__'):
         """Executes an action in the analysis with the given message.
 
-        It also handles the start and stop signals in case a ``__process_id``
-        is given.
+        It also handles the start and stop signals in the case that message
+        is a `dict` with a key ``__process_id``.
+
+        :param str action_name: Name of the action to trigger.
+        :param message: Message.
+        :param callback:
+            A callback function when done (e.g.
+            `stop <tornado.testing.AsyncTestCase.stop>` in tests).
+        :rtype: tornado.concurrent.Future
         """
 
         if analysis is None:

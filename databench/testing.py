@@ -4,7 +4,6 @@ from collections import defaultdict
 import json
 import tornado
 from tornado.testing import AsyncHTTPTestCase, AsyncHTTPSTestCase
-from tornado.testing import gen_test  # noqa
 
 
 class AnalysisTest(object):
@@ -15,11 +14,20 @@ class AnalysisTest(object):
     :param str request_args: Request arguments.
     :param meta: An object with a `run_process` attribute.
 
-    Example:
+    Trigger actions using the `~databench.testing.AnalysisTest.trigger` method.
+    All outgoing messages to the frontend are captured in `emitted_messages`.
+
+    There are two main options for constructing tests: decorating with
+    `~tornado.testing.gen_test` and ``yield`` ing futures (block until
+    future is done) or to use `~tornado.testing.AsyncTestCase.wait` and
+    `~tornado.testing.AsyncTestCase.stop` in callbacks.
+    For detailed information on ioloops within the Tornado testing framework,
+    please consult `tornado.testing`.
+
+    Examples:
 
     .. literalinclude:: ../databench/tests/test_testing.py
         :language: python
-
     """
     def __init__(self, analysis, cli_args=None, request_args=None, meta=None):
         self.analysis = analysis
@@ -38,9 +46,18 @@ class AnalysisTest(object):
     def emulate_emit_to_frontend(self, signal, message):
         self.emitted_messages.append((signal, message))
 
-    def trigger(self, action_name, message='__nomessagetoken__'):
-        """Trigger an `on` callback."""
-        self.meta.run_process(self.analysis, action_name, message)
+    def trigger(self, action_name, message='__nomessagetoken__', **kwargs):
+        """Trigger an `on` callback.
+
+        :param str action_name: Name of the action to trigger.
+        :param message: Message.
+        :param callback:
+            A callback function when done (e.g.
+            `stop <tornado.testing.AsyncTestCase.stop>` in tests).
+        :rtype: tornado.concurrent.Future
+        """
+        return self.meta.run_process(
+            self.analysis, action_name, message, **kwargs)
 
 
 class Connection(object):

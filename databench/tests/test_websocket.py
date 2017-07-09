@@ -1,7 +1,7 @@
 """Websocket test."""
 
-from databench.testing import (ConnectionTestCase, ConnectionTestCaseSSL,
-                               gen_test)
+from databench.testing import ConnectionTestCase, ConnectionTestCaseSSL
+import tornado.testing
 
 
 class Basics(object):
@@ -10,7 +10,7 @@ class Basics(object):
         self.assertEqual(response.code, 200)
         self.assertIn(b'Dummy', response.body)
 
-    @gen_test
+    @tornado.testing.gen_test
     def test_connect(self):
         c = yield self.connect(self.analysis)
         yield c.close()
@@ -51,7 +51,7 @@ class BasicsTestAnalyses(ConnectionTestCase):
         self.assertEqual(response.code, 200)
         self.assertIn(b'placeholder', response.body)
 
-    @gen_test
+    @tornado.testing.gen_test
     def test_connection_interruption(self):
         client1 = yield self.connect('connection_interruption')
         yield client1.close()

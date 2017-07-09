@@ -1,12 +1,13 @@
 import databench
-from databench.testing import ConnectionTestCase, gen_test
+from databench.testing import ConnectionTestCase
+import tornado.testing
 
 databench.meta.PING_INTERVAL = 500
 
 
 class MultipleConnections(object):
 
-    @gen_test
+    @tornado.testing.gen_test
     def test_run(self):
         connections = []
 

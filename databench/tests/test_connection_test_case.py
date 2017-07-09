@@ -1,4 +1,5 @@
-from databench.testing import ConnectionTestCase, gen_test
+from databench.testing import ConnectionTestCase
+from tornado.testing import gen_test
 
 
 class Example(ConnectionTestCase):
