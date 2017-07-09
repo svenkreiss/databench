@@ -4,7 +4,7 @@ import databench
 import ssl
 
 
-class App(databench.testing.AnalysisTestCase):
+class App(databench.testing.ConnectionTestCase):
     def test_index(self):
         response = self.fetch('/')
         self.assertEqual(response.code, 200)
@@ -14,7 +14,7 @@ class App(databench.testing.AnalysisTestCase):
         self.assertEqual(response.code, 200)
 
 
-class SSLApp(databench.testing.AnalysisTestCaseSSL):
+class SSLApp(databench.testing.ConnectionTestCaseSSL):
     def test_index(self):
         response = self.fetch('/')
         self.assertEqual(response.code, 200)

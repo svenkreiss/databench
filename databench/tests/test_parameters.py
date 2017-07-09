@@ -1,4 +1,4 @@
-from databench.testing import AnalysisTestCase
+from databench.testing import ConnectionTestCase
 import tornado.testing
 
 
@@ -102,11 +102,11 @@ class ParametersTestCases(object):
         yield c.close()
 
 
-class Parameters(ParametersTestCases, AnalysisTestCase):
+class Parameters(ParametersTestCases, ConnectionTestCase):
     analyses_path = 'databench.tests.analyses'
     analysis = 'parameters'
 
 
-class ParametersPy(ParametersTestCases, AnalysisTestCase):
+class ParametersPy(ParametersTestCases, ConnectionTestCase):
     analyses_path = 'databench.tests.analyses'
     analysis = 'parameters_py'

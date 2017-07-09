@@ -26,22 +26,14 @@ Defaults at the global level for ``index.yaml``:
     analyses:
       ...
 
-Examples for customization:
-
-.. code-block:: none
-
-    title: Databench - Packaged Analyses
-    description: my awesome analyses
-
 
 Templates
 ---------
 
-Modify the `base.html`_, `analysis.html`_ or any other html template file
-in your analyses path. Use ``analyses/static`` for static assets like logos and favicons which is exposed at ``/static``.
-
-.. _`base.html`: <https://github.com/svenkreiss/databench/blob/master/databench/templates/base.html>_
-.. _`analysis.html`: <https://github.com/svenkreiss/databench/blob/master/databench/templates/analysis.html>_
+Modify the ``base.html``, ``analysis.html`` or any other html template file
+by placing a ``base.html`` or ``analysis.html`` file in your analyses path.
+Use ``analyses/static`` for static assets like logos
+and favicons which is exposed at ``/static``.
 
 Default ``analyses/base.html``:
 
@@ -61,7 +53,7 @@ Add a ``routes.py`` file to your analysis with extra Tornado request handlers
 and register them in a ``ROUTES`` variable. This is an example of a
 ``routes.py`` file:
 
-.. literalinclude:: ../tests/analyses/simple2/routes.py
+.. literalinclude:: ../databench/tests/analyses/simple2/routes.py
     :language: python
 
 
@@ -121,14 +113,8 @@ Utils
 .. autofunction:: databench.utils.svg_to_src
 
 
-testing
+Testing
 ~~~~~~~
 
-.. autoclass:: databench.testing.AnalysisTestCase
-   :members:
-
-.. autoclass:: databench.testing.AnalysisTestCaseSSL
-   :members:
-
-.. autoclass:: databench.testing.Connection
+.. autoclass:: databench.testing.AnalysisTest
    :members:

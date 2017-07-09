@@ -1,13 +1,17 @@
-from databench.testing import AnalysisTestCase, gen_test
+from databench.testing import AnalysisTest
+from databench.tests.analyses.parameters.analysis import Parameters
+import tornado.testing
 
 
-class Example(AnalysisTestCase):
-    analyses_path = 'databench.tests.analyses'
+class Example(tornado.testing.AsyncTestCase):
+    @tornado.testing.gen_test
+    def test_gentest(self):
+        test = AnalysisTest(Parameters())
+        yield test.trigger('test_data', ['light', 'red'])
+        self.assertIn(('data', {'light': 'red'}), test.emitted_messages)
 
-    @gen_test
-    def test_data(self):
-        c = yield self.connection(analysis_name='parameters').connect()
-        yield c.emit('test_data', ['light', 'red'])
-        yield c.read()
-        self.assertEqual({'light': 'red'}, c.data)
-        yield c.close()
+    def test_stopwait(self):
+        test = AnalysisTest(Parameters())
+        test.trigger('test_data', ['light', 'red'], callback=self.stop)
+        self.wait()
+        self.assertIn(('data', {'light': 'red'}), test.emitted_messages)

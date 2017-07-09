@@ -50,7 +50,8 @@ autoclass_content = 'both'
 autodoc_docstring_signature = False
 
 intersphinx_mapping = {
-  'flask': ('http://flask.pocoo.org/docs/', None),
+    'flask': ('http://flask.pocoo.org/docs/', None),
+    'tornado': ('http://www.tornadoweb.org/en/stable/', None),
 }
 
 # Add any paths that contain templates here, relative to this directory.
