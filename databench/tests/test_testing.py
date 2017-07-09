@@ -5,7 +5,7 @@ import tornado.testing
 
 class Example(tornado.testing.AsyncTestCase):
     @tornado.testing.gen_test
-    def test_simple(self):
+    def test_gentest(self):
         test = AnalysisTest(Parameters())
         yield test.trigger('test_data', ['light', 'red'])
         self.assertIn(('data', {'light': 'red'}), test.emitted_messages)
