@@ -1,4 +1,5 @@
 from .app import App
+from .meta import Meta
 from collections import defaultdict
 import json
 import tornado
@@ -6,28 +7,40 @@ from tornado.testing import AsyncHTTPTestCase, AsyncHTTPSTestCase
 from tornado.testing import gen_test  # noqa
 
 
-class AnalysisTestCase(object):
-    """Test case for analyses.
+class AnalysisTest(object):
+    """Unit test wrapper for an analysis.
 
     :param databench.Analysis analysis: The analysis to test.
     :param str cli_args: Command line interface arguments.
     :param str request_args: Request arguments.
+    :param meta: An object with a `run_process` attribute.
+
+    Example:
+
+    .. literalinclude:: ../databench/tests/test_testing.py
+        :language: python
+
     """
-    def __init__(self, analysis, emit_fn, cli_args=None, request_args=None):
+    def __init__(self, analysis, cli_args=None, request_args=None, meta=None):
         self.analysis = analysis
         self.cli_args = cli_args
         self.request_args = request_args
+        self.meta = meta or Meta
+        self.emitted_messages = []
 
         # initialize
         self.analysis.init_databench()
-        self.analysis.set_emit_fn(emit_fn)
-        self.trigger('args', cli_args, request_args)
+        self.analysis.set_emit_fn(self.emulate_emit_to_frontend)
+        self.trigger('connect')
+        self.trigger('args', [cli_args, request_args])
         self.trigger('connected')
 
-    def trigger(self, signal, *args, **kwargs):
+    def emulate_emit_to_frontend(self, signal, message):
+        self.emitted_messages.append((signal, message))
+
+    def trigger(self, action_name, message='__nomessagetoken__'):
         """Trigger an `on` callback."""
-        fn = getattr(self.analysis, 'on_{}'.format(signal))
-        fn(*args, **kwargs)
+        self.meta.run_process(self.analysis, action_name, message)
 
 
 class Connection(object):

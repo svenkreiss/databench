@@ -23,26 +23,20 @@ log = logging.getLogger(__name__)
 class Meta(object):
     """Meta class referencing an analysis.
 
-    :param str name:
-        Name of this analysis. If ``signals`` is not specified,
-        this also becomes the namespace for the WebSocket connection and
-        has to match the frontend's :js:class:`Databench` ``name``.
-
-    :param analysis_class:
+    :param str name: Name of this analysis.
+    :param databench.Analysis analysis_class:
         Object that should be instantiated for every new websocket connection.
-    :type analysis_class: :class:`databench.Analysis`
-
     :param str analysis_path: Path of the analysis class.
-
     :param list extra_routes: [(route, handler, data), ...]
+    :param list cli_args: Arguments from the command line.
     """
 
     def __init__(self, name, analysis_class, analysis_path, extra_routes,
-                 cmd_args=None):
+                 cli_args=None):
         self.name = name
         self.analysis_class = analysis_class
         self.analysis_path = analysis_path
-        self.cmd_args = cmd_args
+        self.cli_args = cli_args
 
         self.info = {}
         self.routes = [
@@ -67,8 +61,9 @@ class Meta(object):
             for route, handler, data in extra_routes
         ]
 
+    @staticmethod
     @tornado.gen.coroutine
-    def run_process(self, analysis, action_name, message='__nomessagetoken__'):
+    def run_process(analysis, action_name, message='__nomessagetoken__'):
         """Executes an action in the analysis with the given message.
 
         It also handles the start and stop signals in case a ``__process_id``
@@ -88,9 +83,9 @@ class Meta(object):
             analysis.emit('__process', {'id': process_id, 'status': 'start'})
 
         fn_name = 'on_{}'.format(action_name)
-        if hasattr(analysis, fn_name):
+        fn = getattr(analysis, fn_name, None)
+        if fn is not None:
             log.debug('calling {}'.format(fn_name))
-            fn = getattr(analysis, fn_name)
 
             # Check whether this is a list (positional arguments)
             # or a dictionary (keyword arguments).
@@ -106,10 +101,7 @@ class Meta(object):
             # default is to store action name and data as key and value
             # in analysis.data
             analysis.data[action_name] = (
-                message
-                if message != '__nomessagetoken__'
-                else None
-            )
+                message if message != '__nomessagetoken__' else None)
 
         if process_id:
             analysis.emit('__process', {'id': process_id, 'status': 'end'})
@@ -160,11 +152,11 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
             self.meta.run_process(self.analysis, 'connect')
 
             args = {'cli_args': None, 'request_args': None}
-            if self.meta.cmd_args is not None:
-                args['cli_args'] = self.meta.cmd_args
+            if self.meta.cli_args is not None:
+                args['cli_args'] = self.meta.cli_args
             if '__request_args' in msg and msg['__request_args']:
-                qs = parse_qs(msg['__request_args'].lstrip('?'))
-                args['request_args'] = qs
+                args['request_args'] = parse_qs(
+                    msg['__request_args'].lstrip('?'))
             self.meta.run_process(self.analysis, 'args', args)
 
             self.meta.run_process(self.analysis, 'connected')
