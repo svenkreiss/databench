@@ -8,11 +8,8 @@ a section on UI elements (buttons, text boxes, sliders, etc).
 
 .. _frontend-overview:
 
-Overview
---------
-
 Additional Views
-++++++++++++++++
+----------------
 
 Next to the ``index.html``, you can create other html files like this
 ``log.html`` file:
@@ -39,33 +36,34 @@ which will automatically be available at the url ending with ``log.html``.
 
 
 
-HTML Template
-+++++++++++++
+HTML Templates
+--------------
 
 Templates are rendered buy Tornado's template engine. Databench provides
 a visual frame for your analysis which you can extend from with
-``{% extends "analysis.html" %}``.
-This template offers you three main entry points for modifying the HTML page.
-Those are the template blocks ``head`` which places your code inside the
-HTML ``<head>``, ``analysis`` which inserts your main code into the
-HTML ``<body>`` and ``footer`` for code that should be placed right before the
-closing ``</body>`` tag.
+``{% extends "analysis.html" %}``. Example:
 
-Here is an example for making use of the ``head`` block:
+.. literalinclude:: ../databench/analyses_packaged/scaffold/index.html
+    :language: html
 
-.. code-block:: html
+Modify the ``base.html``, ``analysis.html`` or any other html template file
+by placing a ``base.html`` or ``analysis.html`` file in your analyses path.
+Use ``analyses/static`` for static assets like logos
+and favicons which is exposed at ``/static``.
 
-    {% block head %}
-        <!-- Add inline CSS to the page: -->
-        <style>p { font-family: serif; }</style>
+Default ``analyses/base.html``:
 
-        <!-- Add a css file (put my-style.css into analyses/scaffold/): -->
-        <link rel="stylesheet" type="text/css" href="/static/my-style.css">
-    {% end %}
+.. literalinclude:: ../databench/templates/base.html
+    :language: html
+
+Default ``analyses/analysis.html``:
+
+.. literalinclude:: ../databench/templates/analysis.html
+    :language: html
 
 
 Extensions
-++++++++++
+----------
 
 Databench is supposed to go out of your way and work well with many
 frontend frameworks and tools. For example, it works well with Twitter
@@ -74,7 +72,7 @@ Bootstrap, Font Awesome, MathJax, and many more.
 
 
 Static Files
-++++++++++++
+------------
 
 To add a static file to an analysis, place it in the analysis folder. Static
 files in this folder are exposed at the ``/<some_analysis>/static/`` url.
@@ -95,7 +93,7 @@ see :ref:`analyses_configurations`.
 
 
 Node Modules
-++++++++++++
+------------
 
 Databench looks for a ``static`` and a ``node_modules`` folder first in the
 analyses folder and then in the current working directory.
@@ -116,17 +114,14 @@ static files and Node packages.
 
 
 Running the Backend at a Custom Location
-++++++++++++++++++++++++++++++++++++++++
+----------------------------------------
 
 You can also include Databench in websites. You need the Databench JavaScript
 library and configure the location of your Databench backend:
 
 .. code-block:: javascript
 
-    var d = Databench.Connection(
-        null,
-        'ws://databench-examples.trivial.io/simplepi/ws',
-    );
+    var d = Databench.Connection('ws://databench-examples.trivial.io/simplepi/ws');
 
 which connects to the backend of the `public and live example of simplepi`_.
 When you connect to your own backend, you will have to invoke databench with
@@ -141,21 +136,6 @@ WARNING: Databench was developed for deployment in trusted environments.
 You need to handle security yourself, e.g. by running Databench on an
 isolated server.
 
-
-.. _frontend-api:
-
-API Reference
--------------
-
-``databench.js`` is exposed at ``/_static/databench.js``. Please see the
-`complete JavaScript API reference`_.
-
-.. image:: images/JavaScript-docs.png
-    :alt: JavaScript API Reference.
-    :height: 300
-    :target: http://www.svenkreiss.com/databench/
-
 .. _`angular analysis in the Databench examples`: https://github.com/svenkreiss/databench_examples/tree/master/analyses/angular
 .. _`databench_examples repository`: https://github.com/svenkreiss/databench_examples/
-.. _`complete JavaScript API reference`: http://www.svenkreiss.com/databench/
 .. _`public and live example of simplepi`: http://databench-examples.trivial.io/simplepi/
