@@ -67,8 +67,22 @@ Extensions
 
 Databench is supposed to go out of your way and work well with many
 frontend frameworks and tools. For example, it works well with Twitter
-Bootstrap, Font Awesome, MathJax, and many more.
+Bootstrap, React, Font Awesome, MathJax, and many more.
 
+
+.. _frontend_logging:
+
+Logging
+-------
+
+.. versionchanged:: 0.7
+
+Use ``console.log()`` to log to the console as usual. To log to the console and
+send a message to the backend about the log message, use
+``d.emit('log', ...)``. Similarly, if the backend emits a ``log`` action, the
+frontend console as well as ``databench.ui.Log`` will show it. Similarly to
+``log``, this also works for ``warn`` and ``error``.
+Also see :ref:`backend_logging` in the Python section.
 
 
 Static Files

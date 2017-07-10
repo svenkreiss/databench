@@ -27,6 +27,21 @@ Defaults at the global level for ``index.yaml``:
       ...
 
 
+.. _backend_logging:
+
+Logging
+-------
+
+.. versionchanged:: 0.7
+
+Use Python's ``logging`` as usual. To log to ``logging`` and
+send a message to the frontend about the log message, use
+``self.emit('log', ...)``. Similarly, if the frontend emits a ``log`` action,
+a backend ``logging`` message will also be emitted. Similarly to
+``log``, this also works for ``warn`` and ``error``.
+Also see :ref:`frontend_logging` in the JavaScript section.
+
+
 Routes
 ------
 
