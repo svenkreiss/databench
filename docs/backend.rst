@@ -27,25 +27,6 @@ Defaults at the global level for ``index.yaml``:
       ...
 
 
-Templates
----------
-
-Modify the ``base.html``, ``analysis.html`` or any other html template file
-by placing a ``base.html`` or ``analysis.html`` file in your analyses path.
-Use ``analyses/static`` for static assets like logos
-and favicons which is exposed at ``/static``.
-
-Default ``analyses/base.html``:
-
-.. literalinclude:: ../databench/templates/base.html
-    :language: html
-
-Default ``analyses/analysis.html``:
-
-.. literalinclude:: ../databench/templates/analysis.html
-    :language: html
-
-
 Routes
 ------
 

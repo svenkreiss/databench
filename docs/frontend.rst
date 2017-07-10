@@ -36,29 +36,30 @@ which will automatically be available at the url ending with ``log.html``.
 
 
 
-HTML Template
--------------
+HTML Templates
+--------------
 
 Templates are rendered buy Tornado's template engine. Databench provides
 a visual frame for your analysis which you can extend from with
-``{% extends "analysis.html" %}``.
-This template offers you three main entry points for modifying the HTML page.
-Those are the template blocks ``head`` which places your code inside the
-HTML ``<head>``, ``analysis`` which inserts your main code into the
-HTML ``<body>`` and ``footer`` for code that should be placed right before the
-closing ``</body>`` tag.
+``{% extends "analysis.html" %}``. Example:
 
-Here is an example for making use of the ``head`` block:
+.. literalinclude:: ../databench/analyses_packaged/scaffold/index.html
+    :language: html
 
-.. code-block:: html
+Modify the ``base.html``, ``analysis.html`` or any other html template file
+by placing a ``base.html`` or ``analysis.html`` file in your analyses path.
+Use ``analyses/static`` for static assets like logos
+and favicons which is exposed at ``/static``.
 
-    {% block head %}
-        <!-- Add inline CSS to the page: -->
-        <style>p { font-family: serif; }</style>
+Default ``analyses/base.html``:
 
-        <!-- Add a css file (put my-style.css into analyses/scaffold/): -->
-        <link rel="stylesheet" type="text/css" href="/static/my-style.css">
-    {% end %}
+.. literalinclude:: ../databench/templates/base.html
+    :language: html
+
+Default ``analyses/analysis.html``:
+
+.. literalinclude:: ../databench/templates/analysis.html
+    :language: html
 
 
 Extensions
