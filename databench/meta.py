@@ -133,10 +133,12 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
     def open(self):
         log.debug('WebSocket connection opened.')
 
+    @tornado.gen.coroutine
     def on_close(self):
         log.debug('WebSocket connection closed.')
-        self.meta.run_process(self.analysis, 'disconnected')
+        yield self.meta.run_process(self.analysis, 'disconnected')
 
+    @tornado.gen.coroutine
     def on_message(self, message):
         if message is None:
             log.debug('empty message received.')
@@ -156,7 +158,7 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
             log.info('Analysis {} instanciated.'.format(self.analysis.id_))
             self.emit('__connect', {'analysis_id': self.analysis.id_})
 
-            self.meta.run_process(self.analysis, 'connect')
+            yield self.meta.run_process(self.analysis, 'connect')
 
             args = {'cli_args': None, 'request_args': None}
             if self.meta.cli_args is not None:
@@ -164,9 +166,9 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
             if '__request_args' in msg and msg['__request_args']:
                 args['request_args'] = parse_qs(
                     msg['__request_args'].lstrip('?'))
-            self.meta.run_process(self.analysis, 'args', args)
+            yield self.meta.run_process(self.analysis, 'args', args)
 
-            self.meta.run_process(self.analysis, 'connected')
+            yield self.meta.run_process(self.analysis, 'connected')
             log.info('Connected to analysis.')
             return
 
@@ -179,11 +181,12 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
             return
 
         if 'load' not in msg:
-            self.meta.run_process(self.analysis, msg['signal'])
+            yield self.meta.run_process(self.analysis,
+                                        msg['signal'])
         else:
-            self.meta.run_process(self.analysis, msg['signal'], msg['load'])
+            yield self.meta.run_process(self.analysis,
+                                        msg['signal'], msg['load'])
 
-    @tornado.gen.coroutine
     def emit(self, signal, message='__nomessagetoken__'):
         data = {'signal': signal}
         if message != '__nomessagetoken__':
@@ -191,8 +194,7 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
 
         try:
             self.write_message(
-                json.dumps(data, default=json_encoder_default).encode('utf-8')
-            )
+                json.dumps(data, default=json_encoder_default).encode('utf-8'))
         except tornado.websocket.WebSocketClosedError:
             pass
 
@@ -205,8 +207,6 @@ class RenderTemplate(tornado.web.RequestHandler):
     def get(self, template_name=None):
         if template_name is None:
             template_name = self.template_name
-        self.render(
-            template_name,
-            databench_version=DATABENCH_VERSION,
-            **self.info
-        )
+        self.render(template_name,
+                    databench_version=DATABENCH_VERSION,
+                    **self.info)
