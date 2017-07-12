@@ -86,8 +86,6 @@ class Analysis(object):
                 log.error('emit called before Analysis setup was complete')
         )
 
-        return self
-
     def on_databench_init(self):
         """Initialize analysis instance.
 
