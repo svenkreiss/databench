@@ -137,6 +137,7 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
     def on_close(self):
         log.debug('WebSocket connection closed.')
         yield self.meta.run_process(self.analysis, 'disconnected')
+        yield self.meta.run_process(self.analysis, 'databench_del')
 
     @tornado.gen.coroutine
     def on_message(self, message):
@@ -158,6 +159,7 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
             log.info('Analysis {} instanciated.'.format(self.analysis.id_))
             self.emit('__connect', {'analysis_id': self.analysis.id_})
 
+            yield self.meta.run_process(self.analysis, 'databench_init')
             yield self.meta.run_process(self.analysis, 'connect')
 
             args = {'cli_args': None, 'request_args': None}

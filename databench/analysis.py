@@ -85,25 +85,30 @@ class Analysis(object):
             lambda s, pl:
                 log.error('emit called before Analysis setup was complete')
         )
-        self.log_frontend = logging.getLogger(__name__ + '.frontend')
-        self.log_backend = logging.getLogger(__name__ + '.backend')
 
-        self.init_datastores()
         return self
 
-    def init_datastores(self):
-        """Initialize datastores for this analysis instance.
+    def on_databench_init(self):
+        """Initialize analysis instance.
 
         This creates instances of :class:`Datastore` at ``self.data`` and
         ``seld.class_data`` with the datastore domains being the current id
         and the class name of this analysis respectively.
 
-        Overwrite this method to use other datastore backends.
+        Overwrite this method to use other datastore backends and logging.
         """
+        self.log_frontend = logging.getLogger(__name__ + '.frontend')
+        self.log_backend = logging.getLogger(__name__ + '.backend')
+
         self.data = Analysis.datastore_class(self.id_)
         self.data.on_change(self.data_change)
         self.class_data = Analysis.datastore_class(type(self).__name__)
         self.class_data.on_change(self.class_data_change)
+
+    def on_databench_del(self):
+        """Cleanup."""
+        del self.data
+        del self.class_data
 
     @staticmethod
     def __create_id():
