@@ -33,7 +33,7 @@ Databench is a Python data analysis tool. Install with:
 Databench is made available under the
 `MIT license <https://github.com/svenkreiss/databench/blob/master/LICENSE>`_.
 
-.. image:: https://travis-ci.org/svenkreiss/databench.svg
+.. image:: https://travis-ci.org/svenkreiss/databench.svg?branch=master
     :target: https://travis-ci.org/svenkreiss/databench
 .. image:: https://coveralls.io/repos/svenkreiss/databench/badge.svg
     :target: https://coveralls.io/r/svenkreiss/databench
