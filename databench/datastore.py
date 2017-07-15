@@ -38,16 +38,20 @@ class DatastoreList(object):
     """
     def __init__(self, data, callback):
         self._change_callback = callback
-        self.data = [encode(v, self.trigger_changed) for v in data]
+        self.data = [encode(v, self.get_change_trigger(i))
+                     for i, v in enumerate(data)]
 
     def trigger_changed(self, key):
         self._change_callback(key)
+
+    def get_change_trigger(self, key):
+        return lambda _: self.trigger_changed(key)
 
     def __getitem__(self, key):
         return decode(self.data[key])
 
     def __setitem__(self, key, value):
-        value_encoded = encode(value, self.trigger_changed)
+        value_encoded = encode(value, self.get_change_trigger(key))
 
         if key in self.data and self.data[key] == value_encoded:
             return self
@@ -82,11 +86,14 @@ class DatastoreDict(object):
             change_callback = lambda k: None
 
         self._change_callback = change_callback
-        self.data = {k: encode(v, self.trigger_changed)
+        self.data = {k: encode(v, self.get_change_trigger(k))
                      for k, v in data.items()}
 
     def trigger_changed(self, key):
         self._change_callback(key)
+
+    def get_change_trigger(self, key):
+        return lambda _: self.trigger_changed(key)
 
     def __getitem__(self, key):
         if key not in self.data:
@@ -104,7 +111,7 @@ class DatastoreDict(object):
         return self.data[key]
 
     def __setitem__(self, key, value):
-        value_encoded = encode(value, self.trigger_changed)
+        value_encoded = encode(value, self.get_change_trigger(key))
         print(key, value, value_encoded)
 
         if key in self.data and self.data[key] == value_encoded:
@@ -137,6 +144,9 @@ class DatastoreDict(object):
         """Delete the given key."""
         del self.data[key]
         self.trigger_changed(key)
+
+    def __repr__(self):
+        return {k: self[k] for k in self.keys()}.__repr__()
 
     def keys(self):
         return self.data.keys()

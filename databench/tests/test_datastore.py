@@ -18,7 +18,8 @@ class TestDatastore(unittest.TestCase):
     def test_init(self):
         self.d['test'] = 'before-init'
         self.d.init({'unset_test': 'init'})
-        self.assertEqual(self.data_after, 'before-init')
+        self.assertEqual(self.d['test'], 'before-init')
+        self.assertEqual(self.d['unset_test'], 'init')
 
     def test_update(self):
         self.d.update({'test': 'update'})
@@ -55,10 +56,7 @@ class TestDatastore(unittest.TestCase):
 
     def test_dict_change_element(self):
         self.d['test'] = {'key': 'value'}
-        print('------')
-        print(type(self.d['test']))
         self.d['test']['key'] = 'modified value'
-        print('---- end')
         self.assertEqual(dict(self.data_after), {'key': 'modified value'})
 
     def test_dict_change_element2(self):
@@ -72,10 +70,9 @@ class TestDatastore(unittest.TestCase):
         self.d['test'] = {'key': {'key2': 'value'}}
         all = self.d['test']
         all['key']['key2'] = 'modified value'
-        print('---------', type(all), all == self.d['test'])
         self.d['test'] = all
-        self.assertEqual(dict(self.data_after),
-                         {'key': {'key2': 'modified value'}})
+        self.assertEqual(repr(self.data_after),
+                         repr({'key': {'key2': 'modified value'}}))
 
     def test_dict_overwrite(self):
         self.d['test'] = {'key': 'value'}
