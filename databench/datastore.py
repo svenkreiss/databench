@@ -7,26 +7,53 @@ import logging
 log = logging.getLogger(__name__)
 
 
+def decode(value):
+    if isinstance(value, DatastoreList):
+        return value
+    elif isinstance(value, DatastoreDict):
+        return value
+
+    return json.loads(value)
+
+
+def encode(value, callback):
+    if isinstance(value, list):
+        return DatastoreList(value, callback)
+    elif isinstance(value, dict):
+        return DatastoreDict(value, callback)
+    elif isinstance(value, DatastoreList):
+        value._change_callback = callback
+        return value
+    elif isinstance(value, DatastoreDict):
+        value._change_callback = callback
+        return value
+
+    return json.dumps(value, default=json_encoder_default)
+
+
 class DatastoreList(object):
     """Object wrapper for storing a list in Datastore.
 
     This triggers callbacks when elements are modified.
     """
     def __init__(self, data, callback):
-        self.data = [json.dumps(v, default=json_encoder_default) for v in data]
-        self.callback = callback
+        self._change_callback = callback
+        self.data = [encode(v, self.trigger_changed) for v in data]
+
+    def trigger_changed(self, key):
+        self._change_callback(key)
 
     def __getitem__(self, key):
-        return json.loads(self.data[key])
+        return decode(self.data[key])
 
     def __setitem__(self, key, value):
-        value_encoded = json.dumps(value, default=json_encoder_default)
+        value_encoded = encode(value, self.trigger_changed)
 
         if key in self.data and self.data[key] == value_encoded:
             return self
 
         self.data[key] = value_encoded
-        self.callback(self)
+        self.trigger_changed(key)
 
         return self
 
@@ -44,26 +71,47 @@ class DatastoreList(object):
 class DatastoreDict(object):
     """Object wrapper for storing a dict in Datastore.
 
-    This triggers callbacks when elements are modified.
+    :param change_callback: callback whithout arguments
+
+    This trigger then change callback when elements are modified.
     """
-    def __init__(self, data, callback):
-        self.data = {k: json.dumps(v, default=json_encoder_default)
+    def __init__(self, data=None, change_callback=None):
+        if data is None:
+            data = {}
+        if change_callback is None:
+            change_callback = lambda k: None
+
+        self._change_callback = change_callback
+        self.data = {k: encode(v, self.trigger_changed)
                      for k, v in data.items()}
-        self.callback = callback
+
+    def trigger_changed(self, key):
+        self._change_callback(key)
 
     def __getitem__(self, key):
         if key not in self.data:
             raise IndexError
-        return json.loads(self.data[key])
+        return decode(self.data[key])
+
+    def get(self, key, default=None):
+        if key not in self.data:
+            return default
+        return decode(self.data[key])
+
+    def get_encoded(self, key):
+        if key not in self.data:
+            raise IndexError
+        return self.data[key]
 
     def __setitem__(self, key, value):
-        value_encoded = json.dumps(value, default=json_encoder_default)
+        value_encoded = encode(value, self.trigger_changed)
+        print(key, value, value_encoded)
 
         if key in self.data and self.data[key] == value_encoded:
             return self
 
         self.data[key] = value_encoded
-        self.callback(self)
+        self.trigger_changed(key)
 
         return self
 
@@ -81,20 +129,27 @@ class DatastoreDict(object):
     def __iter__(self):
         return (k for k in self.data.keys())
 
+    def __contains__(self, key):
+        """Test whether key is set."""
+        return key in self.data
+
+    def __delitem__(self, key):
+        """Delete the given key."""
+        del self.data[key]
+        self.trigger_changed(key)
+
     def keys(self):
         return self.data.keys()
 
     def values(self):
-        return (json.loads(v) for v in self.data.values())
+        return (self[k] for k in self.data.keys())
 
     def items(self):
-        return ((k, json.loads(v)) for k, v in self.data.items())
+        return ((k, self[k]) for k, v in self.data.keys())
 
     def update(self, new_data):
-        new_data_encoded = {k: json.dumps(v, default=json_encoder_default)
-                            for k, v in new_data.items()}
-        self.data.update(new_data_encoded)
-        self.callback(self)
+        for k, v in new_data.items():
+            self[k] = v
 
         return self
 
@@ -109,80 +164,48 @@ class Datastore(object):
         data local to an analysis instance or the name of an analysis class
         for data that is shared across instances of the same analysis.
     """
-    store = defaultdict(dict)
-    on_change_cb = defaultdict(list)
+    store = defaultdict(DatastoreDict)
+    change_callbacks = defaultdict(list)
 
     def __init__(self, domain):
         self.domain = domain
+        datastore_dict = Datastore.store[self.domain]
+        datastore_dict._change_callback = self.trigger_change_callbacks
 
     def on_change(self, callback):
         """Register a change callback.
 
-        :param callback:
-            A callback function that takes in a key and a value.
+        :param callback: Function that takes in a key and a value.
         """
-        Datastore.on_change_cb[self.domain].append(callback)
+        Datastore.change_callbacks[self.domain].append(callback)
         return self
+
+    def trigger_change_callbacks(self, key):
+        for callback in Datastore.change_callbacks[self.domain]:
+            callback(key, Datastore.store[self.domain].get(key, None))
 
     def trigger_all_change_callbacks(self):
         """Trigger all callbacks that were set with on_change()."""
         for key in Datastore.store[self.domain].keys():
-            self.callback_fn(key)(self[key])
+            self.trigger_change_callbacks(key)
 
     def __setitem__(self, key, value):
         """Set value for given key.
 
-        Allows for assignments of the form ``d[key] = value``. The value is
-        encoded as json before it is stored.
-
+        Allows for assignments of the form ``d[key] = value``.
         Callbacks are skipped if the json-encoded value is unchanged.
         """
-        cb_fn = self.callback_fn(key)
-        if isinstance(value, list):
-            value_encoded = DatastoreList(value, cb_fn)
-        elif isinstance(value, dict):
-            value_encoded = DatastoreDict(value, cb_fn)
-        else:
-            value_encoded = json.dumps(value, default=json_encoder_default)
-
-        if key in Datastore.store[self.domain] and \
-           Datastore.store[self.domain][key] == value_encoded:
-            return self
-
-        Datastore.store[self.domain][key] = value_encoded
-
-        value_decoded = self.decode(value_encoded)
-        cb_fn(value_decoded)
-
+        Datastore.store[self.domain][key] = value
         return self
-
-    def callback_fn(self, key):
-        def execute(value):
-            for cb in Datastore.on_change_cb[self.domain]:
-                cb(key, value)
-        return execute
-
-    def decode(self, value):
-        if isinstance(value, DatastoreList):
-            return value
-        elif isinstance(value, DatastoreDict):
-            return value
-
-        return json.loads(value)
 
     def __getitem__(self, key):
         """Return the value for the given key."""
-        return self.decode(Datastore.store[self.domain][key])
-
-    def get_encoded(self, key):
-        """Return the stored value without decoding it."""
         return Datastore.store[self.domain][key]
 
     def __delitem__(self, key):
         """Delete the given key."""
         del Datastore.store[self.domain][key]
-        for cb in Datastore.on_change_cb[self.domain]:
-            cb(key, None)
+        self.trigger_change_callbacks(key)
 
     def __contains__(self, key):
         """Test whether key is set."""
@@ -194,14 +217,12 @@ class Datastore(object):
         :param dict key_value_pairs:
             A dictionary of key value pairs to update.
         """
-        for k, v in key_value_pairs.items():
-            self[k] = v
+        Datastore.store[self.domain].update(key_value_pairs)
 
     def init(self, key_value_pairs):
         """Initialize datastore.
 
         Only sets values for keys that are not in the datastore already.
-        No callbacks are called.
 
         :param dict key_value_pairs:
             A set of key value pairs to use to initialize the datastore.

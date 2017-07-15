@@ -34,6 +34,11 @@ class TestDatastore(unittest.TestCase):
         self.d['test'] = ['list']
         self.assertEqual(list(self.data_after), ['list'])
 
+    def test_list_change(self):
+        self.d['test'] = ['list']
+        self.d['test'] = ['list2']
+        self.assertEqual(list(self.data_after), ['list2'])
+
     def test_list_change_element(self):
         self.d['test'] = ['list']
         self.d['test'][0] = 'modified list'
@@ -43,10 +48,34 @@ class TestDatastore(unittest.TestCase):
         self.d['test'] = {'key': 'value'}
         self.assertEqual(dict(self.data_after), {'key': 'value'})
 
+    def test_dict_change(self):
+        self.d['test'] = {'key': 'value'}
+        self.d['test'] = {'key': 'value2'}
+        self.assertEqual(dict(self.data_after), {'key': 'value2'})
+
     def test_dict_change_element(self):
         self.d['test'] = {'key': 'value'}
+        print('------')
+        print(type(self.d['test']))
         self.d['test']['key'] = 'modified value'
+        print('---- end')
         self.assertEqual(dict(self.data_after), {'key': 'modified value'})
+
+    def test_dict_change_element2(self):
+        self.d['test'] = {'key': 'value'}
+        all = self.d['test']
+        all['key'] = 'modified value'
+        self.d['test'] = all
+        self.assertEqual(dict(self.data_after), {'key': 'modified value'})
+
+    def test_dict_change_element3(self):
+        self.d['test'] = {'key': {'key2': 'value'}}
+        all = self.d['test']
+        all['key']['key2'] = 'modified value'
+        print('---------', type(all), all == self.d['test'])
+        self.d['test'] = all
+        self.assertEqual(dict(self.data_after),
+                         {'key': {'key2': 'modified value'}})
 
     def test_dict_overwrite(self):
         self.d['test'] = {'key': 'value'}
