@@ -47,6 +47,9 @@ class DatastoreList(object):
     def get_change_trigger(self, key):
         return lambda _: self.trigger_changed(key)
 
+    def __iter__(self):
+        return (decode(v) for v in self.data)
+
     def __getitem__(self, key):
         return decode(self.data[key])
 
@@ -70,6 +73,9 @@ class DatastoreList(object):
 
     def __len__(self):
         return len(self.data)
+
+    def to_native(self):
+        return [v.to_native() if hasattr(v, 'to_native') else v for v in self]
 
 
 class DatastoreDict(object):
@@ -146,22 +152,26 @@ class DatastoreDict(object):
         self.trigger_changed(key)
 
     def __repr__(self):
-        return {k: self[k] for k in self.keys()}.__repr__()
+        return {k: self[k] for k in self}.__repr__()
 
     def keys(self):
         return self.data.keys()
 
     def values(self):
-        return (self[k] for k in self.data.keys())
+        return (self[k] for k in self)
 
     def items(self):
-        return ((k, self[k]) for k, v in self.data.keys())
+        return ((k, self[k]) for k in self)
 
     def update(self, new_data):
         for k, v in new_data.items():
             self[k] = v
 
         return self
+
+    def to_native(self):
+        return {k: v.to_native() if hasattr(v, 'to_native') else v
+                for k, v in self.items()}
 
 
 class Datastore(object):
