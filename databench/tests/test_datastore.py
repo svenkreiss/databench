@@ -4,10 +4,12 @@ import unittest
 
 class TestDatastore(unittest.TestCase):
     def setUp(self):
+        self.n_callbacks = 0
         self.after = None
         self.d = databench.Datastore('abcdef').on_change(self.cb)
 
     def cb(self, key, value):
+        self.n_callbacks += 1
         print('{} changed to {}'.format(key, value))
         self.after = value
 
@@ -87,6 +89,22 @@ class TestDatastore(unittest.TestCase):
         self.d['test'] = {'key': 'value'}
         self.d['test'].update({'key': 'mod', 'key2': 'new'})
         self.assertEqual(self.after.to_native(), {'key': 'mod', 'key2': 'new'})
+
+    def test_cycle(self):
+        self.d['test'] = {'key': 'value'}
+        n_callbacks_before = self.n_callbacks
+        test = self.d['test']
+        test['key'] = 'modified'
+        self.d['test'] = test
+        self.assertEqual(self.n_callbacks, n_callbacks_before + 1)
+        self.assertEqual(self.after.to_native(), {'key': 'modified'})
+
+    def test_cycle2(self):
+        self.d['test'] = {'key': {'key2': 'value'}}
+        n_callbacks_before = self.n_callbacks
+        self.d['test']['key']['key2'] = 'modified'
+        self.assertEqual(self.n_callbacks, n_callbacks_before + 1)
+        self.assertEqual(self.after.to_native(), {'key': {'key2': 'modified'}})
 
     def test_contains(self):
         self.d['test'] = 'contains'

@@ -118,7 +118,6 @@ class DatastoreDict(object):
 
     def __setitem__(self, key, value):
         value_encoded = encode(value, self.get_change_trigger(key))
-        print(key, value, value_encoded)
 
         if key in self.data and self.data[key] == value_encoded:
             return self
