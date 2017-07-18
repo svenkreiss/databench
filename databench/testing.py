@@ -40,6 +40,7 @@ class AnalysisTest(object):
         self.analysis.init_databench()
         self.analysis.set_emit_fn(self.emulate_emit_to_frontend)
         self.trigger('connect')
+        self.trigger('databench_init')
         self.trigger('args', [cli_args, request_args])
         self.trigger('connected')
 

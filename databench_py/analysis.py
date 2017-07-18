@@ -33,15 +33,15 @@ class Analysis(object):
         self.log_frontend = logging.getLogger(__name__ + '.frontend')
         self.log_backend = logging.getLogger(__name__ + '.backend')
 
-        self.data = Analysis.datastore_class(self.id_)
+        self.data = Analysis.datastore_class(self.id_, release_storage=True)
         self.data.on_change(self.data_change)
         self.class_data = Analysis.datastore_class(type(self).__name__)
         self.class_data.on_change(self.class_data_change)
 
     def on_databench_del(self):
         """Cleanup."""
-        del self.data
-        del self.class_data
+        self.data.close()
+        self.class_data.close()
 
     def set_emit_fn(self, emit_fn):
         """Sets what the emit function for this analysis will be."""
