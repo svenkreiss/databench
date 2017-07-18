@@ -1,3 +1,1 @@
-Sphinx==1.5.3
-
--e git+https://github.com/svenkreiss/alabaster.git#egg=alabaster-master
+Sphinx==1.6.3

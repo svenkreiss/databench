@@ -125,32 +125,33 @@ exclude_patterns = ['_build']
 # a list of builtin themes.
 # html_theme = 'default'
 
-html_theme_path = [alabaster.get_path()]
 html_theme = 'alabaster'
 html_sidebars = {
-   '**': [
-       'about.html', 'navigation.html', # 'searchbox.html', 'donate.html',
-   ]
+    '**': [
+        'about.html', 'navigation.html', # 'searchbox.html', 'donate.html',
+    ]
 }
 
 html_theme_options = {
-   # 'logo': 'logo-w600.png',
-   'github_user': 'svenkreiss',
-   'github_repo': 'databench',
-   'github_banner': True,
-   'github_button': True,
-   'travis_button': False,
-   'analytics_id': 'UA-4070485-2',
-   'extra_nav_links': [
-      ('Links', [
-        ('Live Demos', 'http://databench-examples.trivial.io'),
-        ('Examples', 'https://github.com/svenkreiss/databench_examples'),
-        ('Databench on GitHub', 'https://github.com/svenkreiss/databench'),
-        ('Issue Tracker', 'https://github.com/svenkreiss/databench/issues'),
-      ]),
-   ],
-   'show_powered_by': False,
-   'description': open('description.txt', 'r').read(),
+    'github_user': 'svenkreiss',
+    'github_repo': 'databench',
+    'github_button': True,
+    'github_type': 'star',
+    'travis_button': False,
+    'analytics_id': 'UA-4070485-2',
+    'extra_nav_links': {
+        'Live Demos': 'http://databench-examples.trivial.io',
+        'Examples': 'https://github.com/svenkreiss/databench_examples',
+        'GitHub': 'https://github.com/svenkreiss/databench',
+    },
+    'show_powered_by': False,
+    'description': open('description.txt', 'r').read(),
+
+    # style
+    'font_family': 'sans-serif',
+    'font_size': '15px',
+    'code_font_size': '13px',
+    'caption_font_size': '13px',
 }
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -180,7 +181,7 @@ html_favicon = 'images/favicon.ico'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-#html_static_path = ['_static']
+html_static_path = ['./custom.css']
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied

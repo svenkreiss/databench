@@ -1,0 +1,22 @@
+table.docutils td, table.docutils th {
+    border: 1px solid #ccc;
+}
+
+.hideinsphinx {
+    display: none;
+}
+
+div.sphinxsidebarwrapper img.logo {
+    max-width: 70%;
+    margin-bottom: 30px;
+}
+
+div.sphinxsidebar ul li.toctree-l1 > a,
+div.sphinxsidebar ul li.toctree-l2 > a {
+    font-size: 100%;
+}
+
+div.footer,
+.blurb {
+    font-size: 90%;
+}
