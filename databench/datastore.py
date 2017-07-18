@@ -182,26 +182,33 @@ class Datastore(object):
         A namespace for the key values. This can be an analysis instance id for
         data local to an analysis instance or the name of an analysis class
         for data that is shared across instances of the same analysis.
+
+    :param bool release_storage:
+        Release storage when the last datastore for a domain closes.
     """
     store = defaultdict(DatastoreDict)
-    change_callbacks = defaultdict(list)
+    datastores = defaultdict(list)  # list of instances by domain
 
-    def __init__(self, domain):
+    def __init__(self, domain, release_storage=False):
         self.domain = domain
+        self.release_storage = release_storage
+        self.change_callbacks = []
         datastore_dict = Datastore.store[self.domain]
         datastore_dict._change_callback = self.trigger_change_callbacks
+        Datastore.datastores[self.domain].append(self)
 
     def on_change(self, callback):
         """Register a change callback.
 
         :param callback: Function that takes in a key and a value.
         """
-        Datastore.change_callbacks[self.domain].append(callback)
+        self.change_callbacks.append(callback)
         return self
 
     def trigger_change_callbacks(self, key):
-        for callback in Datastore.change_callbacks[self.domain]:
-            callback(key, Datastore.store[self.domain].get(key, None))
+        for datastore in Datastore.datastores[self.domain]:
+            for callback in datastore.change_callbacks:
+                callback(key, Datastore.store[self.domain].get(key, None))
 
     def trigger_all_change_callbacks(self):
         """Trigger all callbacks that were set with on_change()."""
@@ -249,3 +256,15 @@ class Datastore(object):
         for k, v in key_value_pairs.items():
             if k not in Datastore.store[self.domain]:
                 Datastore.store[self.domain][k] = v
+
+    def close(self):
+        """Close and delete instance."""
+
+        # remove callbacks
+        Datastore.datastores[self.domain].remove(self)
+
+        # delete data after the last instance is gone
+        if self.release_storage and not Datastore.datastores[self.domain]:
+            del Datastore.store[self.domain]
+
+        del self

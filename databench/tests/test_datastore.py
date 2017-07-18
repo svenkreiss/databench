@@ -8,6 +8,9 @@ class TestDatastore(unittest.TestCase):
         self.after = None
         self.d = databench.Datastore('abcdef').on_change(self.cb)
 
+    def tearDown(self):
+        self.d.close()
+
     def cb(self, key, value):
         self.n_callbacks += 1
         print('{} changed to {}'.format(key, value))
@@ -22,6 +25,18 @@ class TestDatastore(unittest.TestCase):
         self.d.init({'unset_test': 'init'})
         self.assertEqual(self.d['test'], 'before-init')
         self.assertEqual(self.d['unset_test'], 'init')
+
+    def test_del_callback(self):
+        self.n_callback2 = 0
+
+        def callback2(key, value):
+            self.n_callback2 += 1
+
+        d2 = databench.Datastore('abcdef').on_change(callback2)
+        self.d['test'] = 'del-callback'
+        d2.close()
+        self.d['test'] = 'del-callback2'
+        self.assertEqual(self.n_callback2, 1)
 
     def test_update(self):
         self.d.update({'test': 'update'})
