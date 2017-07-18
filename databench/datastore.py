@@ -238,7 +238,7 @@ class Datastore(object):
         return key in Datastore.store[self.domain]
 
     def update(self, key_value_pairs):
-        """Similar to ``dict.update()``.
+        """Similar to :meth:`dict.update`.
 
         :param dict key_value_pairs:
             A dictionary of key value pairs to update.

@@ -19,13 +19,13 @@ class Analysis(object):
     an instance of this class.
 
     **Initialization**: All initializations should be done in
-    :meth:`databench.Analysis.on_connected`. Instance variables (which should
-    be avoided in favor of ``self.data``) should be initialized in the
-    constructor.
+    :meth:`.on_connected`. Instance variables (which should be avoided in favor
+    of `.data`) should be initialized in the constructor. Some cleanup
+    can be done in :meth:`.on_disconnected`.
 
     **Arguments/Parameters**: Command line arguments are available
-    at ``self.cli_args`` and the parameters of the HTTP GET request at
-    ``self.request_args``. ``request_args`` is a dictionary of all
+    at `.cli_args` and the parameters of the HTTP GET request at
+    `.request_args`. `.request_args` is a dictionary of all
     arguments. Each value of the dictionary is a list of given values for this
     key even if this key only appeared once in the url
     (see `urllib.parse.parse_qs`).
@@ -48,29 +48,29 @@ class Analysis(object):
 
     in Python. Lists are treated as positional arguments and objects as keyword
     arguments to the function call.
-    If the message is neither of type ``list`` nor ``dict`` (for example a
-    plain ``string`` or ``float``), the function will be called with that
+    If the message is neither of type `list` nor `dict` (for example a
+    plain `string` or `float`), the function will be called with that
     as its first parameter.
 
-    **Writing to a datastore**: By default, a :class:`Datastore` scoped to
-    the current analysis instance is created at ``self.data``. You can write
+    **Writing to a datastore**: By default, a :class:`.Datastore` scoped to
+    the current analysis instance is created at `.data`. You can write
     key-value pairs to it with
 
     .. code-block:: python
 
         self.data[key] = value
 
-    Similarly, there is a ``self.class_data`` :class:`Datastore` which is
+    Similarly, there is a `.class_data` :class:`.Datastore` which is
     scoped to all instances of this analysis by its class name.
 
     **Communicating with the frontend**: The default is to change state by
-    changing and entry in ``self.data`` or ``self.class_data`` and let that
-    change propagate to the frontend. Directly calling ``emit()`` is also
+    changing and entry in `.data` or `.class_data` and let that
+    change propagate to the frontend. Directly calling :meth:`.emit` is also
     possible.
 
     **Outgoing messages**: changes to the datastore are emitted to the
     frontend and this path should usually not be modified. However, databench
-    does provide access to ``emit()``
+    does provide access to :meth:`.emit`
     method and to methods that modify a value for a key before it is send
     out with ``data_<key>(value)`` methods.
     """
@@ -79,7 +79,15 @@ class Analysis(object):
     datastore_class = Datastore
 
     def __init__(self):
-        pass
+        #: Data specific to this instance of this analysis and therefore
+        #: connection.
+        self.data = None
+        #: Data that is shared across all instances of this analysis.
+        self.class_data = None
+        #: Command line arguments.
+        self.cli_args = []
+        #: Request arguments.
+        self.request_args = {}
 
     def init_databench(self, id_=None):
         self.id_ = id_ if id_ else Analysis.__create_id()
@@ -96,8 +104,8 @@ class Analysis(object):
     def init_datastores(self):
         """Initialize datastores for this analysis instance.
 
-        This creates instances of :class:`Datastore` at ``self.data`` and
-        ``seld.class_data`` with the datastore domains being the current id
+        This creates instances of :class:`.Datastore` at `.data` and
+        `.class_data` with the datastore domains being the current id
         and the class name of this analysis respectively.
 
         Overwrite this method to use other datastore backends.
@@ -122,7 +130,8 @@ class Analysis(object):
 
         :param str signal: name of the signal
         :param message: message to send
-        :returns: self
+        :returns: return value from frontend emit function
+        :rtype: tornado.concurrent.Future
         """
         # call pre-emit hooks
         if signal == 'log':

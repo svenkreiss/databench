@@ -73,7 +73,7 @@ class Meta(object):
         :param message: Message.
         :param callback:
             A callback function when done (e.g.
-            `stop <tornado.testing.AsyncTestCase.stop>` in tests).
+            `~tornado.testing.AsyncTestCase.stop` in tests).
         :rtype: tornado.concurrent.Future
         """
 
