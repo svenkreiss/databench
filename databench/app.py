@@ -352,6 +352,7 @@ class App(object):
             full_cmd = 'cd {}; {}'.format(self.analyses_path, cmd)
             log.debug('full command: {}'.format(full_cmd))
             subprocess.call(full_cmd, shell=True)
+            log.info('build done')
 
     def tornado_app(self, template_path=None, **kwargs):
         if template_path is None:

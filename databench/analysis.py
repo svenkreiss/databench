@@ -133,8 +133,7 @@ class Analysis(object):
         elif signal == 'error':
             self.log_backend.error(message)
 
-        self.emit_to_frontend(signal, message)
-        return self
+        return self.emit_to_frontend(signal, message)
 
     """Events."""
 
