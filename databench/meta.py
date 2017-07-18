@@ -156,7 +156,7 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
             self.analysis.init_databench(requested_id)
             self.analysis.set_emit_fn(self.emit)
             log.info('Analysis {} instanciated.'.format(self.analysis.id_))
-            self.emit('__connect', {'analysis_id': self.analysis.id_})
+            yield self.emit('__connect', {'analysis_id': self.analysis.id_})
 
             yield self.meta.run_process(self.analysis, 'connect')
 
@@ -193,7 +193,7 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
             data['load'] = message
 
         try:
-            self.write_message(
+            return self.write_message(
                 json.dumps(data, default=json_encoder_default).encode('utf-8'))
         except tornado.websocket.WebSocketClosedError:
             pass
