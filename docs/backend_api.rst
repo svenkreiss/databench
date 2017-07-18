@@ -5,6 +5,7 @@ Analysis
 --------
 
 .. autoclass:: databench.Analysis
+    :members:
 
 
 Meta

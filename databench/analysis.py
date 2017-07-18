@@ -16,17 +16,19 @@ class Analysis(object):
     """Databench's analysis class.
 
     This contains the analysis code. Every browser connection corresponds to
-    and instance of this class.
+    an instance of this class.
 
-    **Initialization**: Instance variables should be initialized to default
-    values in the constructor. All other initializtion work should be done
-    in the ``on_connected(self)``.
+    **Initialization**: All initializations should be done in
+    :meth:`databench.Analysis.on_connected`. Instance variables (which should
+    be avoided in favor of ``self.data``) should be initialized in the
+    constructor.
 
     **Arguments/Parameters**: Command line arguments are available
     at ``self.cli_args`` and the parameters of the HTTP GET request at
     ``self.request_args``. ``request_args`` is a dictionary of all
     arguments. Each value of the dictionary is a list of given values for this
-    key even if this key only appeared once in the url.
+    key even if this key only appeared once in the url
+    (see `urllib.parse.parse_qs`).
 
     **Actions**: are captured by specifying a class method starting
     with ``on_`` followed by the action name. To capture the action
