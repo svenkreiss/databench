@@ -568,7 +568,7 @@ export class Slider extends UIElement {
    * @return  Value for the HTML range element.
    */
   valueToSlider(value: number): string {
-    return value.toFixed();
+    return value.toString();
   }
 
   /**
@@ -587,7 +587,7 @@ export class Slider extends UIElement {
    * @return Representation of a value.
    */
   formatFn(value: number): string {
-    return value.toFixed();
+    return value.toString();
   }
 
   render() {
