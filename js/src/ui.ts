@@ -27,7 +27,7 @@ export interface HTMLDatabenchElement extends HTMLElement {
 export class UIElement {
   node: HTMLDatabenchElement;
   actionName: string;
-  wireSignal: string|any;
+  wireSignal: string | { [x: string]: string; };
 
   /**
    * @param node  An HTML element.
@@ -36,8 +36,14 @@ export class UIElement {
     this.node = <HTMLDatabenchElement>node;
     this.node.databenchUI = this;
 
-    this.actionName = UIElement.determineActionName(node);
-    this.wireSignal = UIElement.determineWireSignal(node);
+    const actionName = UIElement.determineActionName(node);
+    if (!actionName) throw Error('Failed to determine action name.');
+
+    const wireSignal = UIElement.determineWireSignal(node);
+    if (!wireSignal) throw Error('Failed to determine wire signal.');
+
+    this.actionName = actionName;
+    this.wireSignal = wireSignal;
   }
 
   /**
@@ -59,25 +65,23 @@ export class UIElement {
    * @param  node A HTML element.
    * @return      Name of action or null.
    */
-  static determineActionName(node: HTMLElement): string {
-    // determine action name from HTML DOM
-    let action = null;
-
+  static determineActionName(node: HTMLElement): string|null {
     if (node.dataset.skipwire === 'true' ||
       node.dataset.skipwire === 'TRUE' ||
       node.dataset.skipwire === '1') {
       return null;
     }
 
-    if (node.dataset.action) {
-      action = node.dataset.action;
-    } else if (node.getAttribute('name')) {
-      action = node.getAttribute('name');
-    } else if (node.getAttribute('id')) {
-      action = node.getAttribute('id');
-    }
+    const dataAction = node.dataset.action;
+    if (dataAction) return dataAction;
 
-    return action;
+    const attrName = node.getAttribute('name');
+    if (attrName) return attrName;
+
+    const attrId = node.getAttribute('id');
+    if (attrId) return attrId;
+
+    return null;
   }
 
   /**
@@ -94,31 +98,31 @@ export class UIElement {
    * @param  node A HTML element.
    * @return      Name of a signal or null.
    */
-  static determineWireSignal(node: HTMLElement): string {
-    // determine signal name from HTML DOM
-    let signal = null;
-
+  static determineWireSignal(node: HTMLElement): string | { [x: string]: string; } | null {
     if (node.dataset.skipwire === 'true' ||
       node.dataset.skipwire === 'TRUE' ||
       node.dataset.skipwire === '1') {
       return null;
     }
 
-    if (node.dataset.signal) {
-      signal = node.dataset.signal;
-      if (signal.indexOf(':') >= 1) {
-        const [key, value] = signal.split(':', 2);
-        signal = { [key]: value };
+    const dataSignal = node.dataset.signal;
+    if (dataSignal) {
+      if (dataSignal.indexOf(':') >= 1) {
+        const [key, value] = dataSignal.split(':', 2);
+        return { [key]: value };
       }
-    } else if (node.dataset.action) {
-      signal = { data: node.dataset.action };
-    } else if (node.getAttribute('name')) {
-      signal = { data: node.getAttribute('name') };
-    } else if (node.getAttribute('id')) {
-      signal = { data: node.getAttribute('id') };
     }
 
-    return signal;
+    const dataAction = node.dataset.action;
+    if (dataAction) return { data: dataAction };
+
+    const attrName = node.getAttribute('name');
+    if (attrName) return { data: attrName };
+
+    const attrId = node.getAttribute('id');
+    if (attrId) return { data: attrId };
+
+    return null;
   }
 }
 
@@ -213,9 +217,6 @@ export class StatusLog extends UIElement {
 
     this.formatter = formatter;
     this._messages = {};
-
-    // to avoid confusion, void meaningless parent variable
-    this.wireSignal = null;
   }
 
   /**
@@ -236,7 +237,7 @@ export class StatusLog extends UIElement {
     return this;
   }
 
-  add(message) {
+  add(message: any) {
     if (message == null) {
       this._messages = {};
       return this;
@@ -334,7 +335,7 @@ export class Button extends UIElement {
     return this;
   }
 
-  state(s) {
+  state(s: ButtonState) {
     if (s !== ButtonState.Idle && s !== ButtonState.Active) return this;
 
     this._state = s;
@@ -346,8 +347,9 @@ export class Button extends UIElement {
   static wire(conn: Connection, root?: Document|HTMLElement) {
     if (root === undefined) root = document;
 
-    [].slice.call(root.getElementsByTagName('BUTTON'), 0)
-      .filter(node => (<HTMLDatabenchElement>node).databenchUI === undefined)
+    const elements: HTMLDatabenchElement[] = [].slice.call(root.getElementsByTagName('BUTTON'), 0);
+    elements
+      .filter(node => node.databenchUI === undefined)
       .filter(node => UIElement.determineActionName(node) !== null)
       .forEach(node => {
         const b = new Button(node);
@@ -387,12 +389,12 @@ export class Text extends UIElement {
   }
 
   /** Reads the value. */
-  get_value(v) {
+  get_value() {
     return this.node.innerHTML;
   }
 
   /** Reads the value. */
-  set_value(v) {
+  set_value(v?: string) {
     this.node.innerHTML = this.formatFn(v || '');
     return this;
   }
@@ -499,8 +501,9 @@ export class TextInput extends UIElement {
   static wire(conn: Connection, root?: Document|HTMLElement) {
     if (root === undefined) root = document;
 
-    [].slice.call(root.getElementsByTagName('INPUT'), 0)
-      .filter(node => (<HTMLDatabenchElement>node).databenchUI === undefined)
+    const elements: HTMLDatabenchElement[] = [].slice.call(root.getElementsByTagName('INPUT'), 0);
+    elements
+      .filter(node => node.databenchUI === undefined)
       .filter(node => node.getAttribute('type') === 'text')
       .filter(node => UIElement.determineActionName(node) !== null)
       .forEach(node => {
@@ -536,7 +539,7 @@ export class TextInput extends UIElement {
  */
 export class Slider extends UIElement {
   node: HTMLInputElement & HTMLDatabenchElement;
-  labelNode: HTMLElement;
+  labelNode: HTMLElement | undefined;
   labelHtml: string;
 
   /**
@@ -547,7 +550,7 @@ export class Slider extends UIElement {
     super(node);
 
     this.labelNode = labelNode;
-    this.labelHtml = labelNode ? labelNode.innerHTML : null;
+    this.labelHtml = labelNode ? labelNode.innerHTML : '';
 
     this.node.addEventListener('input', this.render.bind(this), false);
     this.node.addEventListener('change', this.change.bind(this), false);
@@ -618,13 +621,13 @@ export class Slider extends UIElement {
   }
 
   /** Find all labels for slider elements. */
-  static labelsForSliders(root) {
+  static labelsForSliders(root: Document|HTMLElement) {
     let map: { [inputname: string]: HTMLLabelElement } = {};
-    [].slice.call(root.getElementsByTagName('LABEL'), 0)
-      .filter(label => (<HTMLLabelElement>label).htmlFor)
-      .forEach(label => {
-        map[(<HTMLLabelElement>label).htmlFor] = label;
-      });
+
+    const elements: HTMLLabelElement[] = [].slice.call(root.getElementsByTagName('LABEL'), 0);
+    elements
+      .filter(label => label.htmlFor)
+      .forEach(label => { map[label.htmlFor] = label; });
     return map;
   }
 
@@ -633,9 +636,10 @@ export class Slider extends UIElement {
     if (root === undefined) root = document;
     const lfs = this.labelsForSliders(root);
 
-    [].slice.call(root.getElementsByTagName('INPUT'), 0)
-      .filter(node => (<HTMLDatabenchElement>node).databenchUI === undefined)
-      .filter(node => (<HTMLElement>node).getAttribute('type') === 'range')
+    const elements: HTMLDatabenchElement[] = [].slice.call(root.getElementsByTagName('INPUT'), 0);
+    elements
+      .filter(node => node.databenchUI === undefined)
+      .filter(node => node.getAttribute('type') === 'range')
       .filter(node => UIElement.determineActionName(node) !== null)
       .forEach(node => {
         const slider = new Slider(node, lfs[node.id]);
@@ -674,7 +678,7 @@ export class Image extends UIElement {
   node: HTMLImageElement & HTMLDatabenchElement;
 
   /** Reads and sets the value. */
-  value(v) {
+  value(v?: string) {
     if (v === undefined) return this.node.src;
 
     this.node.src = v || '';
@@ -685,9 +689,10 @@ export class Image extends UIElement {
   static wire(conn: Connection, root?: Document|HTMLElement) {
     if (root === undefined) root = document;
 
-    [].slice.call(root.getElementsByTagName('IMG'), 0)
-      .filter(node => (<HTMLDatabenchElement>node).databenchUI === undefined)
-      .filter(node => (<HTMLElement>node).dataset['signal'] !== undefined)
+    const elements: HTMLDatabenchElement[] = [].slice.call(root.getElementsByTagName('IMG'), 0);
+    elements
+      .filter(node => node.databenchUI === undefined)
+      .filter(node => node.dataset['signal'] !== undefined)
       .filter(node => UIElement.determineWireSignal(node) !== null)
       .forEach(node => {
         const img = new Image(node);
