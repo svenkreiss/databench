@@ -42,7 +42,7 @@ class DatastoreList(object):
                      for i, v in enumerate(data)]
 
     def trigger_changed(self, key):
-        self._change_callback(key)
+        return self._change_callback(key)
 
     def get_change_trigger(self, key):
         return lambda _: self.trigger_changed(key)
@@ -53,15 +53,17 @@ class DatastoreList(object):
     def __getitem__(self, key):
         return decode(self.data[key])
 
-    def __setitem__(self, key, value):
+    def set(self, key, value):
         value_encoded = encode(value, self.get_change_trigger(key))
 
         if key in self.data and self.data[key] == value_encoded:
             return self
 
         self.data[key] = value_encoded
-        self.trigger_changed(key)
+        return self.trigger_changed(key)
 
+    def __setitem__(self, key, value):
+        self.set(key, value)
         return self
 
     def __eq__(self, other):
@@ -96,7 +98,7 @@ class DatastoreDict(object):
                      for k, v in data.items()}
 
     def trigger_changed(self, key):
-        self._change_callback(key)
+        return self._change_callback(key)
 
     def get_change_trigger(self, key):
         return lambda _: self.trigger_changed(key)
@@ -116,15 +118,17 @@ class DatastoreDict(object):
             raise IndexError
         return self.data[key]
 
-    def __setitem__(self, key, value):
+    def set(self, key, value):
         value_encoded = encode(value, self.get_change_trigger(key))
 
         if key in self.data and self.data[key] == value_encoded:
             return self
 
         self.data[key] = value_encoded
-        self.trigger_changed(key)
+        return self.trigger_changed(key)
 
+    def __setitem__(self, key, value):
+        self.set(key, value)
         return self
 
     def __eq__(self, other):
@@ -206,14 +210,22 @@ class Datastore(object):
         return self
 
     def trigger_change_callbacks(self, key):
-        for datastore in Datastore.datastores[self.domain]:
-            for callback in datastore.change_callbacks:
-                callback(key, Datastore.store[self.domain].get(key, None))
+        return [
+            callback(key, Datastore.store[self.domain].get(key, None))
+            for datastore in Datastore.datastores[self.domain]
+            for callback in datastore.change_callbacks
+        ]
 
     def trigger_all_change_callbacks(self):
         """Trigger all callbacks that were set with on_change()."""
-        for key in Datastore.store[self.domain].keys():
-            self.trigger_change_callbacks(key)
+        return [
+            ret
+            for key in Datastore.store[self.domain].keys()
+            for ret in self.trigger_change_callbacks(key)
+        ]
+
+    def set(self, key, value):
+        return Datastore.store[self.domain].set(key, value)
 
     def __setitem__(self, key, value):
         """Set value for given key.
@@ -221,7 +233,7 @@ class Datastore(object):
         Allows for assignments of the form ``d[key] = value``.
         Callbacks are skipped if the json-encoded value is unchanged.
         """
-        Datastore.store[self.domain][key] = value
+        self.set(key, value)
         return self
 
     def __getitem__(self, key):

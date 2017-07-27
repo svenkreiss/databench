@@ -78,6 +78,14 @@ class ParametersTestCases(object):
         yield c.close()
 
     @tornado.testing.gen_test
+    def test_set_data(self):
+        c = yield self.connect(self.analysis)
+        yield c.emit('test_set_data', ['light', 'red'])
+        yield c.read()
+        self.assertEqual({'light': 'red'}, c.data)
+        yield c.close()
+
+    @tornado.testing.gen_test
     def test_data_with_data_cb(self):
         c = yield self.connect(self.analysis)
         yield c.emit('test_data', ['light2', 'red'])

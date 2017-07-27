@@ -1,5 +1,6 @@
 import databench_py
 import databench_py.singlethread
+import tornado.gen
 
 
 class Parameters_Py(databench_py.Analysis):
@@ -15,6 +16,11 @@ class Parameters_Py(databench_py.Analysis):
     def on_test_data(self, key, value):
         """Store some test data."""
         self.data[key] = value
+
+    @tornado.gen.coroutine
+    def on_test_set_data(self, key, value):
+        """Store some test data."""
+        yield self.data.set(key, value)
 
     def on_test_class_data(self, key, value):
         """Store key-value in class data."""

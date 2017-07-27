@@ -6,15 +6,17 @@ class TestDatastore(unittest.TestCase):
     def setUp(self):
         self.n_callbacks = 0
         self.after = None
-        self.d = databench.Datastore('abcdef').on_change(self.cb)
+        self.d = databench.Datastore('abcdef')
+        self.d.on_change(self.datastore_callback)
 
     def tearDown(self):
         self.d.close()
 
-    def cb(self, key, value):
+    def datastore_callback(self, key, value):
         self.n_callbacks += 1
         print('{} changed to {}'.format(key, value))
         self.after = value
+        return 'callback return'
 
     def test_simple(self):
         self.d['test'] = 'trivial'
@@ -124,12 +126,17 @@ class TestDatastore(unittest.TestCase):
     def test_contains(self):
         self.d['test'] = 'contains'
         assert 'test' in self.d
-        assert 'never-user-test' not in self.d
+        assert 'never-used-test' not in self.d
+
+    def test_set_return(self):
+        ret = self.d.set('test', 'set_return')
+        assert 'test' in self.d
+        self.assertEqual(ret, ['callback return'])
 
     def test_analysis_datastore(self):
         a = databench.Analysis().init_databench()
         a.set_emit_fn(lambda s, pl: None)
-        a.data.on_change(self.cb)
+        a.data.on_change(self.datastore_callback)
         a.data['test'] = 'analysis_datastore'
 
         print(self.after)

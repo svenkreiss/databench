@@ -1,4 +1,5 @@
 import databench
+import tornado.gen
 
 
 class Parameters(databench.Analysis):
@@ -14,6 +15,11 @@ class Parameters(databench.Analysis):
     def on_test_data(self, key, value):
         """Store some test data."""
         self.data[key] = value
+
+    @tornado.gen.coroutine
+    def on_test_set_data(self, key, value):
+        """Store some test data."""
+        yield self.data.set(key, value)
 
     def on_test_class_data(self, key, value):
         """Store key-value in class data."""
