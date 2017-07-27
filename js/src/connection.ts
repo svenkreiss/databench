@@ -94,7 +94,7 @@ export class Connection {
   }
 
   static guessWSUrl(): string {
-    if (typeof location === 'undefined') throw Error('Need a wsUrl.');
+    if (typeof location === 'undefined') return '';
     const WSProtocol = location.origin.indexOf('https://') === 0 ? 'wss' : 'ws';
     const path = location.pathname.substring(0, location.pathname.lastIndexOf('/'));
     return `${WSProtocol}://${document.domain}:${location.port}${path}/ws`;
