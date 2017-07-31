@@ -31,11 +31,8 @@ log = logging.getLogger(__name__)
 class App(object):
     """Databench app. Creates a Tornado app.
 
-    :param analyses_path:
-        (optional) An import path of the analyses.
-
-    :param zmq_port:
-        (optional) Force to use the given ZMQ port for publishing.
+    :param str analyses_path: An import path of the analyses.
+    :param int zmq_port: Force to use the given ZMQ port for publishing.
     """
 
     def __init__(self, analyses_path=None, zmq_port=None, cmd_args=None,
@@ -144,11 +141,12 @@ class App(object):
             self.info['description'] = readme.text.strip()
         self.info['description_html'] = readme.html
 
-        # If 'analyses' or current directory contains a 'static' folder,
-        # make it available.
+        # If 'analyses', 'analyses/..' or current directory contains a
+        # 'static' folder, make it available.
         static_path = next((
             p
             for p in (os.path.join(self.analyses_path, 'static'),
+                      os.path.join(self.analyses_path, '..', 'static'),
                       os.path.join(os.getcwd(), 'static'))
             if os.path.isdir(p)
         ), None)
@@ -162,11 +160,12 @@ class App(object):
         else:
             log.debug('Did not find a static folder.')
 
-        # If 'analyses' or current directory contains a 'node_modules' folder,
-        # make it available.
+        # If 'analyses', 'analyses/..' or current directory contains a
+        # 'node_modules' folder, make it available.
         node_modules_path = next((
             p
             for p in (os.path.join(self.analyses_path, 'node_modules'),
+                      os.path.join(self.analyses_path, '..', 'node_modules'),
                       os.path.join(os.getcwd(), 'node_modules'))
             if os.path.isdir(p)
         ), None)
