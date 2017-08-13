@@ -7,7 +7,7 @@ import random
 import string
 
 from . import utils
-from .datastore import Datastore
+from .datastore_legacy import DatastoreLegacy
 
 log = logging.getLogger(__name__)
 
@@ -76,7 +76,7 @@ class Analysis(object):
     """
 
     _databench_analysis = True
-    datastore_class = Datastore
+    datastore_class = DatastoreLegacy
 
     def __init__(self):
         #: Data specific to this instance of this analysis and therefore

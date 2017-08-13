@@ -11,6 +11,7 @@ from .analysis import Analysis
 from .analysis_zmq import AnalysisZMQ
 from .app import App
 from .datastore import Datastore
+from .datastore_legacy import DatastoreLegacy
 from .meta import Meta
 from .meta_zmq import MetaZMQ
 from .readme import Readme
