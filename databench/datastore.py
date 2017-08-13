@@ -41,29 +41,36 @@ class DatastoreList(object):
         self.data = [encode(v, self.get_change_trigger(i))
                      for i, v in enumerate(data)]
 
-    def trigger_changed(self, key):
-        return self._change_callback(key)
+    def trigger_changed(self, i):
+        return self._change_callback(i)
 
-    def get_change_trigger(self, key):
-        return lambda _: self.trigger_changed(key)
+    def get_change_trigger(self, i):
+        return lambda _: self.trigger_changed(i)
 
     def __iter__(self):
+        """List iterator."""
         return (decode(v) for v in self.data)
 
-    def __getitem__(self, key):
-        return decode(self.data[key])
+    def __getitem__(self, i):
+        """Get item."""
+        return decode(self.data[i])
 
-    def set(self, key, value):
-        value_encoded = encode(value, self.get_change_trigger(key))
+    def set(self, i, value):
+        """Set value at position i and return a Future.
 
-        if key in self.data and self.data[key] == value_encoded:
+        :rtype: tornado.concurrent.Future
+        """
+        value_encoded = encode(value, self.get_change_trigger(i))
+
+        if i in self.data and self.data[i] == value_encoded:
             return self
 
-        self.data[key] = value_encoded
-        return self.trigger_changed(key)
+        self.data[i] = value_encoded
+        return self.trigger_changed(i)
 
-    def __setitem__(self, key, value):
-        self.set(key, value)
+    def __setitem__(self, i, value):
+        """Set value at position i."""
+        self.set(i, value)
         return self
 
     def __eq__(self, other):
@@ -77,6 +84,7 @@ class DatastoreList(object):
         return len(self.data)
 
     def to_native(self):
+        """Convert to a Python list."""
         return [v.to_native() if hasattr(v, 'to_native') else v for v in self]
 
 
@@ -104,11 +112,16 @@ class DatastoreDict(object):
         return lambda _: self.trigger_changed(key)
 
     def __getitem__(self, key):
+        """Return entry at key."""
         if key not in self.data:
             raise IndexError
         return decode(self.data[key])
 
     def get(self, key, default=None):
+        """Return entry at key.
+
+        Return a default value if the key is not present.
+        """
         if key not in self.data:
             return default
         return decode(self.data[key])
@@ -119,6 +132,10 @@ class DatastoreDict(object):
         return self.data[key]
 
     def set(self, key, value):
+        """Set a value at key and return a Future.
+
+        :rtype: tornado.concurrent.Future
+        """
         value_encoded = encode(value, self.get_change_trigger(key))
 
         if key in self.data and self.data[key] == value_encoded:
@@ -128,6 +145,7 @@ class DatastoreDict(object):
         return self.trigger_changed(key)
 
     def __setitem__(self, key, value):
+        """Set a value at key."""
         self.set(key, value)
         return self
 
@@ -140,9 +158,11 @@ class DatastoreDict(object):
                 all(self.data[k] == other.data[k] for k in keys))
 
     def __len__(self):
+        """Length of the dictionary."""
         return len(self.data)
 
     def __iter__(self):
+        """Iterator."""
         return (k for k in self.data.keys())
 
     def __contains__(self, key):
@@ -155,18 +175,23 @@ class DatastoreDict(object):
         self.trigger_changed(key)
 
     def __repr__(self):
+        """repr"""
         return {k: self[k] for k in self}.__repr__()
 
     def keys(self):
+        """Keys."""
         return self.data.keys()
 
     def values(self):
+        """Values."""
         return (self[k] for k in self)
 
     def items(self):
+        """Items."""
         return ((k, self[k]) for k in self)
 
     def update(self, new_data):
+        """Update."""
         for k, v in new_data.items():
             self[k] = v
 
@@ -225,6 +250,10 @@ class Datastore(object):
         ]
 
     def set(self, key, value):
+        """Set value at key and return a Future
+
+        :rtype: tornado.concurrent.Future
+        """
         return Datastore.store[self.domain].set(key, value)
 
     def __setitem__(self, key, value):
