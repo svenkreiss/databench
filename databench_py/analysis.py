@@ -1,6 +1,6 @@
 """Analysis module for Databench Python kernel."""
 
-from databench import Datastore
+from databench import DatastoreLegacy
 from databench import utils
 import logging
 
@@ -11,7 +11,7 @@ class Analysis(object):
     """Databench's analysis class."""
 
     _databench_analysis = True
-    datastore_class = Datastore
+    datastore_class = DatastoreLegacy
 
     def __init__(self):
         pass
