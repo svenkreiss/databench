@@ -5,6 +5,7 @@ from __future__ import absolute_import, unicode_literals, division
 import logging
 import random
 import string
+import tornado.gen
 
 from . import utils
 from .datastore_legacy import DatastoreLegacy
@@ -110,9 +111,9 @@ class Analysis(object):
 
         Overwrite this method to use other datastore backends.
         """
-        self.data = Analysis.datastore_class(self.id_)
+        self.data = self.datastore_class(self.id_)
         self.data.on_change(self.data_change)
-        self.class_data = Analysis.datastore_class(type(self).__name__)
+        self.class_data = self.datastore_class(type(self).__name__)
         self.class_data.on_change(self.class_data_change)
 
     @staticmethod
@@ -177,6 +178,28 @@ class Analysis(object):
         Overwrite to add behavior.
         """
         log.debug('on_disconnected called.')
+
+    @tornado.gen.coroutine
+    def on_set_state(self, **kwargs):
+        """Default set_state handler.
+
+        Requires that `Analysis.datastore_class` is set to a datastore type
+        that supports :func:`set_state`; for example
+        :class:`~databench.Datastore` but not
+        :class:`~databench.DatastoreLegacy`.
+        """
+        yield self.data.set_state(kwargs)
+
+    @tornado.gen.coroutine
+    def on_set_class_state(self, **kwargs):
+        """Default set_class_state handler.
+
+        Requires that `Analysis.datastore_class` is set to a datastore type
+        that supports :func:`set_state`; for example
+        :class:`~databench.Datastore` but not
+        :class:`~databench.DatastoreLegacy`.
+        """
+        yield self.class_data.set_state(kwargs)
 
     """Data callbacks."""
 

@@ -8,9 +8,10 @@ import databench
 
 
 class Dummypi(databench.Analysis):
+    datastore_class = databench.Datastore
 
     def on_connected(self):
-        self.data['samples'] = 1000
+        self.data.init({'samples': 100000})
 
     @tornado.gen.coroutine
     def on_run(self):
@@ -18,8 +19,6 @@ class Dummypi(databench.Analysis):
 
         inside = 0
         for draws in range(1, self.data['samples']):
-            yield tornado.gen.sleep(0.001)
-
             # generate points and check whether they are inside the unit circle
             r1 = random.random()
             r2 = random.random()
@@ -31,14 +30,16 @@ class Dummypi(databench.Analysis):
                 continue
 
             # debug
-            self.emit('log', {'draws': draws, 'inside': inside})
+            yield self.emit('log', {'draws': draws, 'inside': inside})
 
             # calculate pi and its uncertainty given the current draws
-            pi = 4.0 * inside / draws
             p = inside / draws
-            uncertainty = 4.0 * math.sqrt(draws * p * (1.0 - p)) / draws
+            pi = {
+                'estimate': 4.0 * inside / draws,
+                'uncertainty': 4.0 * math.sqrt(draws * p * (1.0 - p)) / draws,
+            }
 
             # send status to frontend
-            self.data['pi'] = {'estimate': pi, 'uncertainty': uncertainty}
+            yield self.data.set_state({'pi': pi})
 
-        self.emit('log', {'action': 'done'})
+        yield self.emit('log', {'action': 'done'})
