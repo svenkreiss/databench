@@ -142,6 +142,17 @@ class Datastore(unittest.TestCase):
         print(self.after)
         self.assertEqual(self.after, 'analysis_datastore')
 
+    def test_setstate(self):
+        self.d.set('test', 'setstate')
+        self.d.set_state({'test': 'modified'})
+        self.assertEqual(self.after, 'modified')
+
+    def test_setstate_fn(self):
+        self.d.set('test', 'setstate')
+        self.d.set('cnt', 2)
+        self.d.set_state(lambda ds: {'test': 'modified{}'.format(ds['cnt'])})
+        self.assertEqual(self.after, 'modified2')
+
 
 class DatastoreLegacy(unittest.TestCase):
     def setUp(self):

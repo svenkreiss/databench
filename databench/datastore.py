@@ -93,6 +93,18 @@ class Datastore(object):
         self.data[key] = value_encoded
         return self.trigger_change_callbacks(key)
 
+    def set_state(self, updater):
+        """Update the datastore.
+
+        :param func|dict updater: (state) => state_change or dict state_change
+        """
+        if callable(updater):
+            value = updater(self)
+        else:
+            value = updater
+
+        return self.update(value)
+
     def __contains__(self, key):
         """Test whether key is set."""
         return key in self.data
