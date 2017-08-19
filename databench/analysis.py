@@ -183,7 +183,7 @@ class Analysis(object):
     def on_set_state(self, **kwargs):
         """Default set_state handler.
 
-        Requires that `Analysis.datastore_class` is set to a datastore type
+        Requires that `self.data` is set to a datastore type
         that supports :func:`set_state`; for example
         :class:`~databench.Datastore` but not
         :class:`~databench.DatastoreLegacy`.
@@ -194,7 +194,7 @@ class Analysis(object):
     def on_set_class_state(self, **kwargs):
         """Default set_class_state handler.
 
-        Requires that `Analysis.datastore_class` is set to a datastore type
+        Requires that `self.data` is set to a datastore type
         that supports :func:`set_state`; for example
         :class:`~databench.Datastore` but not
         :class:`~databench.DatastoreLegacy`.
