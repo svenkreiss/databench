@@ -5,9 +5,11 @@ from __future__ import absolute_import, unicode_literals, division
 import logging
 import random
 import string
+import tornado.gen
+import warnings
 
 from . import utils
-from .datastore import Datastore
+from .datastore_legacy import DatastoreLegacy
 
 log = logging.getLogger(__name__)
 
@@ -52,15 +54,15 @@ class Analysis(object):
     plain `string` or `float`), the function will be called with that
     as its first parameter.
 
-    **Writing to a datastore**: By default, a :class:`.Datastore` scoped to
-    the current analysis instance is created at `.data`. You can write
+    **Writing to a datastore**: By default, a :class:`.DatastoreLegacy` scoped
+    to the current analysis instance is created at `.data`. You can write
     key-value pairs to it with
 
     .. code-block:: python
 
         self.data[key] = value
 
-    Similarly, there is a `.class_data` :class:`.Datastore` which is
+    Similarly, there is a `.class_data` :class:`.DatastoreLegacy` which is
     scoped to all instances of this analysis by its class name.
 
     **Communicating with the frontend**: The default is to change state by
@@ -73,20 +75,19 @@ class Analysis(object):
     does provide access to :meth:`.emit`
     method and to methods that modify a value for a key before it is send
     out with ``data_<key>(value)`` methods.
+
+    :ivar DatastoreLegacy data: data scoped for this instance/connection
+    :ivar DatastoreLegacy class_data: data scoped across all instances
+    :ivar list cli_args: command line arguments
+    :ivar dict request_args: request arguments
     """
 
     _databench_analysis = True
-    datastore_class = Datastore
 
     def __init__(self):
-        #: Data specific to this instance of this analysis and therefore
-        #: connection.
         self.data = None
-        #: Data that is shared across all instances of this analysis.
         self.class_data = None
-        #: Command line arguments.
         self.cli_args = []
-        #: Request arguments.
         self.request_args = {}
 
     def init_databench(self, id_=None):
@@ -110,10 +111,10 @@ class Analysis(object):
 
         Overwrite this method to use other datastore backends.
         """
-        self.data = Analysis.datastore_class(self.id_)
-        self.data.on_change(self.data_change)
-        self.class_data = Analysis.datastore_class(type(self).__name__)
-        self.class_data.on_change(self.class_data_change)
+        self.data = DatastoreLegacy(self.id_)
+        self.data.subscribe(self.data_change)
+        self.class_data = DatastoreLegacy(type(self).__name__)
+        self.class_data.subscribe(self.class_data_change)
 
     @staticmethod
     def __create_id():
@@ -178,14 +179,40 @@ class Analysis(object):
         """
         log.debug('on_disconnected called.')
 
+    @tornado.gen.coroutine
+    def on_set_state(self, **kwargs):
+        """Default set_state handler.
+
+        Requires that `self.data` is set to a datastore type
+        that supports :func:`set_state`; for example
+        :class:`~databench.Datastore` but not
+        :class:`~databench.DatastoreLegacy`.
+        """
+        yield self.data.set_state(kwargs)
+
+    @tornado.gen.coroutine
+    def on_set_class_state(self, **kwargs):
+        """Default set_class_state handler.
+
+        Requires that `self.data` is set to a datastore type
+        that supports :func:`set_state`; for example
+        :class:`~databench.Datastore` but not
+        :class:`~databench.DatastoreLegacy`.
+        """
+        yield self.class_data.set_state(kwargs)
+
     """Data callbacks."""
 
     def data_change(self, key, value):
         if hasattr(self, 'data_{}'.format(key)):
+            warnings.warn('Do not use data callbacks anymore.',
+                          category=DeprecationWarning)
             value = getattr(self, 'data_{}'.format(key))(value)
         self.emit('data', {key: value})
 
     def class_data_change(self, key, value):
         if hasattr(self, 'class_data_{}'.format(key)):
+            warnings.warn('Do not use data callbacks anymore.',
+                          category=DeprecationWarning)
             value = getattr(self, 'class_data_{}'.format(key))(value)
         self.emit('class_data', {key: value})
