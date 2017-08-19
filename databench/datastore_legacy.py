@@ -227,7 +227,17 @@ class DatastoreLegacy(object):
         DatastoreLegacy.datastores[self.domain].append(self)
 
     def on_change(self, callback):
-        """Register a change callback.
+        """Subscribe to changes in the datastore with a callback.
+
+        Deprecated. Use :meth:`subscribe` instead.
+
+        :param callback: Function that takes in a key and a value.
+        """
+        self.change_callbacks.append(callback)
+        return self
+
+    def subscribe(self, callback):
+        """Subscribe to changes in the datastore with a callback.
 
         :param callback: Function that takes in a key and a value.
         """
@@ -235,8 +245,9 @@ class DatastoreLegacy(object):
         return self
 
     def trigger_change_callbacks(self, key):
+        value = DatastoreLegacy.store[self.domain].get(key, None)
         return [
-            callback(key, DatastoreLegacy.store[self.domain].get(key, None))
+            callback(key, value)
             for datastore in DatastoreLegacy.datastores[self.domain]
             for callback in datastore.change_callbacks
         ]

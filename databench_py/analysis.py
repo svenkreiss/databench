@@ -22,9 +22,9 @@ class Analysis(object):
                                             'setup complete')
 
         self.data = Analysis.datastore_class(self.id_)
-        self.data.on_change(self.data_change)
+        self.data.subscribe(self.data_change)
         self.class_data = Analysis.datastore_class(type(self).__name__)
-        self.class_data.on_change(self.class_data_change)
+        self.class_data.subscribe(self.class_data_change)
 
     def set_emit_fn(self, emit_fn):
         """Sets what the emit function for this analysis will be."""

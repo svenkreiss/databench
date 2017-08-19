@@ -33,32 +33,32 @@ class Datastore(object):
     def __init__(self, domain, release_storage=False):
         self.domain = domain
         self.release_storage = release_storage
-        self.change_callbacks = []
+        self.callbacks = []
         Datastore.stores[self.domain].append(self)
 
     @property
     def data(self):
         return Datastore.global_data[self.domain]
 
-    def on_change(self, callback):
-        """Register a change callback.
+    def subscribe(self, callback):
+        """Subscribe to changes in the datastore with a callback.
 
-        :param callback: Function with signature (key, value) => None.
+        :param callback: Function with signature ({key: value}) => None.
         """
-        self.change_callbacks.append(callback)
+        self.callbacks.append(callback)
         return self
 
-    def trigger_change_callbacks(self, key):
+    def trigger_callbacks(self, key):
         value = self.get(key)
-        return [callback(key, value)
+        return [callback({key: value})
                 for datastore in Datastore.stores[self.domain]
-                for callback in datastore.change_callbacks]
+                for callback in datastore.callbacks]
 
-    def trigger_all_change_callbacks(self):
+    def trigger_all_callbacks(self):
         """Trigger all callbacks that were set with on_change()."""
         return [ret
                 for key in self
-                for ret in self.trigger_change_callbacks(key)]
+                for ret in self.trigger_callbacks(key)]
 
     def get_encoded(self, key):
         if key not in self.data:
@@ -91,7 +91,7 @@ class Datastore(object):
             return self
 
         self.data[key] = value_encoded
-        return self.trigger_change_callbacks(key)
+        return self.trigger_callbacks(key)
 
     def set_state(self, updater):
         """Update the datastore.
@@ -99,11 +99,11 @@ class Datastore(object):
         :param func|dict updater: (state) => state_change or dict state_change
         """
         if callable(updater):
-            value = updater(self)
+            state_change = updater(self)
         else:
-            value = updater
+            state_change = updater
 
-        return self.update(value)
+        return [self.set(k, v) for k, v in state_change.items()]
 
     def __contains__(self, key):
         """Test whether key is set."""
@@ -149,7 +149,7 @@ class Datastore(object):
             raise IndexError
 
         del self.data[key]
-        self.trigger_change_callbacks(key)
+        self.trigger_callbacks(key)
 
     def __repr__(self):
         """repr"""
@@ -166,11 +166,3 @@ class Datastore(object):
     def items(self):
         """Items."""
         return ((k, self[k]) for k in self)
-
-    def update(self, key_value_pairs):
-        """Similar to :meth:`dict.update`.
-
-        :param dict key_value_pairs:
-            A dictionary of key value pairs to update.
-        """
-        return [self.set(k, v) for k, v in key_value_pairs.items()]

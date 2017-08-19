@@ -8,7 +8,14 @@ import databench
 
 
 class Dummypi(databench.Analysis):
-    datastore_class = databench.Datastore
+    """A dummy analysis.
+
+    :ivar databench.Datastore data: Datastore scoped to the connection.
+    """
+
+    def init_datastores(self):
+        self.data = databench.Datastore(self.id_)
+        self.data.subscribe(lambda data: self.emit('data', data))
 
     def on_connected(self):
         self.data.init({'samples': 100000})
