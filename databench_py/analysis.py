@@ -11,7 +11,6 @@ class Analysis(object):
     """Databench's analysis class."""
 
     _databench_analysis = True
-    datastore_class = DatastoreLegacy
 
     def __init__(self):
         pass
@@ -21,9 +20,9 @@ class Analysis(object):
         self.emit = lambda s, pl: log.error('emit called before Analysis '
                                             'setup complete')
 
-        self.data = Analysis.datastore_class(self.id_)
+        self.data = DatastoreLegacy(self.id_)
         self.data.subscribe(self.data_change)
-        self.class_data = Analysis.datastore_class(type(self).__name__)
+        self.class_data = DatastoreLegacy(type(self).__name__)
         self.class_data.subscribe(self.class_data_change)
 
     def set_emit_fn(self, emit_fn):
