@@ -7,6 +7,8 @@ Analysis
 .. autoclass:: databench.Analysis
     :members:
 
+.. autofunction:: databench.on
+
 
 Meta
 ----
@@ -18,6 +20,9 @@ Meta
 Datastore
 ---------
 
+.. autoclass:: databench.DatastoreLegacy
+   :members:
+
 .. autoclass:: databench.Datastore
    :members:
 
@@ -25,6 +30,7 @@ Datastore
 Utils
 -----
 
+.. autofunction:: databench.utils.json_encoder_default
 .. autofunction:: databench.utils.fig_to_src
 .. autofunction:: databench.utils.png_to_src
 .. autofunction:: databench.utils.svg_to_src

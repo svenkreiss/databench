@@ -2,6 +2,11 @@
 
 from __future__ import absolute_import, unicode_literals, division
 
+from . import __version__ as DATABENCH_VERSION
+from .analysis import SignalHandler
+from .utils import json_encoder_default
+from collections import defaultdict
+import functools
 import json
 import logging
 import tornado.gen
@@ -12,9 +17,6 @@ try:
     from urllib.parse import parse_qs  # Python 3
 except ImportError:
     from urlparse import parse_qs  # Python 2
-
-from . import __version__ as DATABENCH_VERSION
-from .utils import json_encoder_default
 
 PING_INTERVAL = 15000
 log = logging.getLogger(__name__)
@@ -38,6 +40,8 @@ class Meta(object):
         self.analysis_path = analysis_path
         self.cli_args = cli_args
 
+        self.fill_signal_handlers(analysis_class)
+
         self.info = {}
         self.routes = [
             (r'/{}/static/(.*)'.format(self.name),
@@ -60,6 +64,24 @@ class Meta(object):
             (r'/{}/{}'.format(self.name, route), handler, data)
             for route, handler, data in extra_routes
         ]
+
+    @staticmethod
+    def fill_signal_handlers(analysis_class):
+        analysis_class._signal_handlers = defaultdict(list)
+        for attr_str in dir(analysis_class):
+            attr = getattr(analysis_class, attr_str)
+
+            signal = None
+            if attr_str.startswith('on_'):
+                signal = attr_str[3:]
+            else:
+                if isinstance(attr, SignalHandler):
+                    signal = attr.signal
+
+            if signal is None:
+                continue
+
+            analysis_class._signal_handlers[signal].append(attr)
 
     @staticmethod
     @tornado.gen.coroutine
@@ -89,21 +111,27 @@ class Meta(object):
         if process_id:
             analysis.emit('__process', {'id': process_id, 'status': 'start'})
 
-        fn_name = 'on_{}'.format(action_name)
-        fn = getattr(analysis, fn_name, None)
-        if fn is not None:
-            log.debug('calling {}'.format(fn_name))
+        fns = [
+            functools.partial(class_fn, analysis)
+            for class_fn in analysis._signal_handlers.get(action_name, [])
+        ]
+        if fns:
+            args, kwargs = [], {}
 
             # Check whether this is a list (positional arguments)
             # or a dictionary (keyword arguments).
             if isinstance(message, list):
-                yield tornado.gen.maybe_future(fn(*message))
+                args = message
             elif isinstance(message, dict):
-                yield tornado.gen.maybe_future(fn(**message))
+                kwargs = message
             elif message == '__nomessagetoken__':
-                yield tornado.gen.maybe_future(fn())
+                pass
             else:
-                yield tornado.gen.maybe_future(fn(message))
+                args = [message]
+
+            for fn in fns:
+                log.debug('calling {}'.format(fn))
+                yield tornado.gen.maybe_future(fn(*args, **kwargs))
         else:
             # default is to store action name and data as key and value
             # in analysis.data
@@ -112,7 +140,8 @@ class Meta(object):
             # with new Datastore
             value = message if message != '__nomessagetoken__' else None
             if hasattr(analysis.data, 'set_state'):
-                analysis.data.set_state({action_name: value})
+                # TODO(sven): add deprecation warning here?
+                yield analysis.data.set_state({action_name: value})
             else:
                 # TODO(sven): add deprecation warning here?
                 analysis.data[action_name] = value

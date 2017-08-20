@@ -7,7 +7,7 @@ __version__ = '0.7b7'
 __all__ = ['Analysis', 'AnalysisZMQ', 'App', 'Datastore', 'Meta', 'MetaZMQ',
            'Readme', 'testing', 'utils']
 
-from .analysis import Analysis
+from .analysis import Analysis, on
 from .analysis_zmq import AnalysisZMQ
 from .app import App
 from .datastore import Datastore
