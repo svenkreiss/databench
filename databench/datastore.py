@@ -97,6 +97,7 @@ class Datastore(object):
         """Update the datastore.
 
         :param func|dict updater: (state) => state_change or dict state_change
+        :rtype: Iterable[tornado.concurrent.Future]
         """
         if callable(updater):
             state_change = updater(self)

@@ -25,7 +25,11 @@ class SignalHandler(object):
 
 
 def on(signal):
-    """Decorator for signal handlers."""
+    """Decorator for signal handlers.
+
+    This also decorates the method with `tornado.gen.coroutine` so that
+    `~tornado.concurrent.Future`s can be `yield`ed.
+    """
     def decorated(f):
         return SignalHandler(signal, f)
 
