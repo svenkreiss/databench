@@ -2,8 +2,8 @@ from __future__ import division
 
 import math
 from random import random
-from time import sleep
 
+import databench
 import databench_py
 import databench_py.singlethread
 
@@ -12,35 +12,45 @@ logging.basicConfig(level='DEBUG')
 
 
 class Dummypi_Py(databench_py.Analysis):
+    """A dummy analysis.
 
-    def on_connected(self):
-        self.data['samples'] = 1000
+    :ivar databench.Datastore data: Datastore scoped to the connection.
+    """
 
-    def on_run(self):
+    def init_datastores(self):
+        self.data = databench.Datastore(self.id_)
+        self.data.subscribe(lambda data: self.emit('data', data))
+
+    @databench.on('connected')
+    def connected_action(self):
+        self.data.init({'samples': 100000})
+
+    @databench.on('run')
+    def run_action(self):
         """Run when button is pressed."""
 
         inside = 0
-        for i in range(self.data['samples']):
-            sleep(0.001)
+        for draws in range(1, self.data['samples']):
+            # generate points and check whether they are inside the unit circle
             r1, r2 = (random(), random())
             if r1 ** 2 + r2 ** 2 < 1.0:
                 inside += 1
 
-            if (i + 1) % 100 == 0:
-                draws = i + 1
-                self.emit('log', {
-                    'draws': draws,
-                    'inside': inside,
-                    'r1': r1,
-                    'r2': r2,
-                })
+            if draws % 1000 != 0:
+                continue
 
-                p = inside / draws
-                uncertainty = 4.0 * math.sqrt(draws * p * (1.0 - p)) / draws
-                self.data['pi'] = {
-                    'estimate': 4.0 * inside / draws,
-                    'uncertainty': uncertainty,
-                }
+            # debug
+            self.emit('log', {'draws': draws, 'inside': inside})
+
+            # calculate pi and its uncertainty given the current draws
+            p = inside / draws
+            pi = {
+                'estimate': 4.0 * inside / draws,
+                'uncertainty': 4.0 * math.sqrt(draws * p * (1.0 - p)) / draws,
+            }
+
+            # send status to frontend
+            self.data.set_state({'pi': pi})
 
         self.emit('log', {'action': 'done'})
 

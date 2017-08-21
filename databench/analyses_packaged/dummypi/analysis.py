@@ -32,7 +32,7 @@ class Dummypi(databench.Analysis):
                 inside += 1
 
             # every 100 iterations, update status
-            if draws % 100 != 0:
+            if draws % 1000 != 0:
                 continue
 
             # debug
