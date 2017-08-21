@@ -72,11 +72,10 @@ class Meta(object):
             attr = getattr(analysis_class, attr_str)
 
             signal = None
-            if attr_str.startswith('on_'):
+            if isinstance(attr, SignalHandler):
+                signal = attr.signal
+            elif attr_str.startswith('on_'):
                 signal = attr_str[3:]
-            else:
-                if isinstance(attr, SignalHandler):
-                    signal = attr.signal
 
             if signal is None:
                 continue
@@ -113,7 +112,8 @@ class Meta(object):
 
         fns = [
             functools.partial(class_fn, analysis)
-            for class_fn in analysis._signal_handlers.get(action_name, [])
+            for class_fn in (analysis._signal_handlers.get(action_name, []) +
+                             analysis._signal_handlers.get('*', []))
         ]
         if fns:
             args, kwargs = [], {}
@@ -139,12 +139,7 @@ class Meta(object):
             # TODO(sven): deprecate this in favor of set_state() in Analysis
             # with new Datastore
             value = message if message != '__nomessagetoken__' else None
-            if hasattr(analysis.data, 'set_state'):
-                # TODO(sven): add deprecation warning here?
-                yield analysis.data.set_state({action_name: value})
-            else:
-                # TODO(sven): add deprecation warning here?
-                analysis.data[action_name] = value
+            analysis.data[action_name] = value
 
         if process_id:
             analysis.emit('__process', {'id': process_id, 'status': 'end'})
