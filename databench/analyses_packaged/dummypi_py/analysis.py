@@ -2,7 +2,6 @@ from __future__ import division
 
 import math
 from random import random
-from time import sleep
 
 import databench
 import databench_py
@@ -32,8 +31,6 @@ class Dummypi_Py(databench_py.Analysis):
 
         inside = 0
         for draws in range(1, self.data['samples']):
-            # sleep(0.001)
-
             # generate points and check whether they are inside the unit circle
             r1, r2 = (random(), random())
             if r1 ** 2 + r2 ** 2 < 1.0:
