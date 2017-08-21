@@ -159,7 +159,7 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
         if self.ws_connection is None:
             self.ping_callback.stop()
             return
-        self.ping(b'')
+        self.ping(b'ping')
 
     def open(self):
         log.debug('WebSocket connection opened.')
