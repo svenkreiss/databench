@@ -140,6 +140,7 @@ class Meta(object):
             # with new Datastore
             value = message if message != '__nomessagetoken__' else None
             if hasattr(analysis.data, 'set_state'):
+                # TODO(sven): add deprecation warning here?
                 analysis.data.set_state({action_name: value})
             else:
                 # TODO(sven): add deprecation warning here?
