@@ -1,6 +1,8 @@
 """Meta class for Databench Python kernel."""
 
+import databench
 from databench.utils import json_encoder_default
+import functools
 import json
 import logging
 import sys
@@ -33,6 +35,8 @@ class Meta(object):
 
         log.info('Analysis id: {}, port sub: {}, port pub: {}'.format(
                  analysis_id, zmq_port_subscribe, zmq_port_publish))
+
+        databench.Meta.fill_signal_handlers(analysis_class)
 
         self.analysis = analysis_class()
         self.analysis.init_databench(analysis_id)
@@ -110,30 +114,38 @@ class Meta(object):
         if process_id:
             analysis.emit('__process', {'id': process_id, 'status': 'start'})
 
-        fn_name = 'on_{}'.format(action_name)
-        if hasattr(analysis, fn_name):
-            log.debug('kernel calling {}'.format(fn_name))
-            fn = getattr(analysis, fn_name)
+        fns = [
+            functools.partial(class_fn, analysis)
+            for class_fn in (analysis._signal_handlers.get(action_name, []) +
+                             analysis._signal_handlers.get('*', []))
+        ]
+        if fns:
+            args, kwargs = [], {}
+
             # Check whether this is a list (positional arguments)
             # or a dictionary (keyword arguments).
             if isinstance(message, list):
-                fn(*message)
+                args = message
             elif isinstance(message, dict):
-                fn(**message)
+                kwargs = message
             elif message == '__nomessagetoken__':
-                fn()
+                pass
             else:
-                fn(message)
+                args = [message]
+
+            for fn in fns:
+                log.debug('kernel calling {}'.format(fn))
+                fn(*args, **kwargs)
         else:
             # default is to store action name and data as key and value
             # in analysis.data
-            analysis.data[action_name] = (
-                message
-                if message != '__nomessagetoken__'
-                else None
-            )
+            #
+            # TODO(sven): deprecate this in favor of set_state() in Analysis
+            # with new Datastore
+            value = message if message != '__nomessagetoken__' else None
+            analysis.data[action_name] = value
 
-        log.debug('kernel done {}'.format(fn_name))
+        log.debug('kernel done {}'.format(action_name))
 
         if process_id:
             analysis.emit('__process', {'id': process_id, 'status': 'end'})
