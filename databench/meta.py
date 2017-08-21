@@ -139,7 +139,11 @@ class Meta(object):
             # TODO(sven): deprecate this in favor of set_state() in Analysis
             # with new Datastore
             value = message if message != '__nomessagetoken__' else None
-            analysis.data[action_name] = value
+            if hasattr(analysis.data, 'set_state'):
+                analysis.data.set_state({action_name: value})
+            else:
+                # TODO(sven): add deprecation warning here?
+                analysis.data[action_name] = value
 
         if process_id:
             analysis.emit('__process', {'id': process_id, 'status': 'end'})

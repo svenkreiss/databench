@@ -20,6 +20,10 @@ class Analysis(object):
         self.emit = lambda s, pl: log.error('emit called before Analysis '
                                             'setup complete')
 
+        self.init_datastores()
+        return self
+
+    def init_datastores(self):
         self.data = DatastoreLegacy(self.id_)
         self.data.subscribe(self.data_change)
         self.class_data = DatastoreLegacy(type(self).__name__)
