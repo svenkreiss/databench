@@ -1,10 +1,8 @@
 from __future__ import division
 
+import databench
 import math
 import random
-import tornado.gen
-
-import databench
 
 
 class Dummypi(databench.Analysis):
@@ -17,11 +15,12 @@ class Dummypi(databench.Analysis):
         self.data = databench.Datastore(self.id_)
         self.data.subscribe(lambda data: self.emit('data', data))
 
-    def on_connected(self):
+    @databench.on('connected')
+    def connected_action(self):
         self.data.init({'samples': 100000})
 
-    @tornado.gen.coroutine
-    def on_run(self):
+    @databench.on('run')
+    def run_action(self):
         """Run when button is pressed."""
 
         inside = 0

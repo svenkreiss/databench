@@ -38,10 +38,7 @@ class MetaZMQ(Meta):
             yield tornado.gen.sleep(0.1)
 
         log.debug('sending action {}'.format(action_name))
-        analysis.zmq_send({
-            'signal': action_name,
-            'load': message,
-        })
+        analysis.zmq_send({'signal': action_name, 'load': message})
 
         if action_name == 'disconnected':
             # Give kernel time to process disconnected message.

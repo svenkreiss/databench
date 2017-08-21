@@ -36,6 +36,8 @@ class AnalysisTest(object):
         self.meta = meta or Meta
         self.emitted_messages = []
 
+        Meta.fill_signal_handlers(analysis.__class__)
+
         # initialize
         self.analysis.init_databench()
         self.analysis.set_emit_fn(self.emulate_emit_to_frontend)

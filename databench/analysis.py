@@ -14,6 +14,28 @@ from .datastore_legacy import DatastoreLegacy
 log = logging.getLogger(__name__)
 
 
+class SignalHandler(object):
+    def __init__(self, signal, f):
+        self.signal = signal
+        self.f = f
+
+    @tornado.gen.coroutine
+    def __call__(self, *args, **kwargs):
+        return self.f(*args, **kwargs)
+
+
+def on(signal):
+    """Decorator for signal handlers.
+
+    This also decorates the method with `tornado.gen.coroutine` so that
+    `~tornado.concurrent.Future`s can be `yield`ed.
+    """
+    def decorated(f):
+        return SignalHandler(signal, f)
+
+    return decorated
+
+
 class Analysis(object):
     """Databench's analysis class.
 
