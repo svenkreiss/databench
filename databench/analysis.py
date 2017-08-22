@@ -201,28 +201,6 @@ class Analysis(object):
         """
         log.debug('on_disconnected called.')
 
-    @tornado.gen.coroutine
-    def on_set_state(self, **kwargs):
-        """Default set_state handler.
-
-        Requires that `self.data` is set to a datastore type
-        that supports :func:`set_state`; for example
-        :class:`~databench.Datastore` but not
-        :class:`~databench.DatastoreLegacy`.
-        """
-        yield self.data.set_state(kwargs)
-
-    @tornado.gen.coroutine
-    def on_set_class_state(self, **kwargs):
-        """Default set_class_state handler.
-
-        Requires that `self.data` is set to a datastore type
-        that supports :func:`set_state`; for example
-        :class:`~databench.Datastore` but not
-        :class:`~databench.DatastoreLegacy`.
-        """
-        yield self.class_data.set_state(kwargs)
-
     """Data callbacks."""
 
     def data_change(self, key, value):
