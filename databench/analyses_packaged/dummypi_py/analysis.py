@@ -21,6 +21,10 @@ class Dummypi_Py(databench_py.Analysis):
         self.data = databench.Datastore(self.id_)
         self.data.subscribe(lambda data: self.emit('data', data))
 
+    @databench.on('set_state')
+    def set_state_action(self, **kwargs):
+        self.data.set_state(kwargs)
+
     @databench.on('connected')
     def connected_action(self):
         self.data.init({'samples': 100000})
