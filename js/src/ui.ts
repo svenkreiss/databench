@@ -349,7 +349,7 @@ export class Button extends UIElement {
     const elements: HTMLDatabenchElement[] = [].slice.call(root.getElementsByTagName('BUTTON'), 0);
     elements
       .filter(node => node.databenchUI === undefined)
-      .filter(node => UIElement.determineActionName(node) !== null)
+      .filter(node => UIElement.determineActionName(node) !== undefined)
       .forEach(node => {
         const b = new Button(node);
         console.log('Wiring button', node, `to action ${b.actionName}.`);
@@ -415,7 +415,7 @@ export class Text extends UIElement {
     )
       .filter(node => (<HTMLDatabenchElement>node).databenchUI === undefined)
       .filter(node => (<HTMLElement>node).dataset['action'] !== undefined)
-      .filter(node => UIElement.determineActionName(node) !== null)
+      .filter(node => UIElement.determineActionName(node) !== undefined)
       .forEach(node => {
         const t = new Text(node);
         console.log('Wiring text', node, `to action ${t.actionName}.`);
@@ -506,7 +506,7 @@ export class TextInput extends UIElement {
     elements
       .filter(node => node.databenchUI === undefined)
       .filter(node => node.getAttribute('type') === 'text')
-      .filter(node => UIElement.determineActionName(node) !== null)
+      .filter(node => UIElement.determineActionName(node) !== undefined)
       .forEach(node => {
         const t = new TextInput(node);
         console.log('Wiring text input', node, `to action ${t.actionName}.`);
@@ -645,7 +645,7 @@ export class Slider extends UIElement {
     elements
       .filter(node => node.databenchUI === undefined)
       .filter(node => node.getAttribute('type') === 'range')
-      .filter(node => UIElement.determineActionName(node) !== null)
+      .filter(node => UIElement.determineActionName(node) !== undefined)
       .forEach(node => {
         const slider = new Slider(node, lfs[node.id]);
         console.log('Wiring slider', node, `to action ${slider.actionName}.`);
