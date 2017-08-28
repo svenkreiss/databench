@@ -49,25 +49,27 @@ class App(object):
         self.debug = debug
         self.analyses, self.analyses_path = self.get_analyses(analyses_path)
 
+        static_path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)), 'static')
+        node_modules_path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)), 'node_modules')
         self.routes = [
-            (r'/(favicon\.ico)',
-             tornado.web.StaticFileHandler,
+            (r'/(favicon\.ico)', tornado.web.StaticFileHandler,
              {'path': 'static/favicon.ico'}),
 
-            (r'/_static/(.*)',
-             tornado.web.StaticFileHandler,
-             {'path': os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                   'static')}),
+            (r'/_static/(.*)', tornado.web.StaticFileHandler,
+             {'path': static_path}),
 
-            (r'/_node_modules/(.*)',
-             tornado.web.StaticFileHandler,
-             {'path': os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                   'node_modules')}),
+            (r'/_node_modules/(.*)', tornado.web.StaticFileHandler,
+             {'path': node_modules_path}),
 
-            (r'/(?:index.html)?',
-             IndexHandler,
+            (r'/(?:index.html)?', IndexHandler,
              {'info': self.info, 'metas': self.metas}),
         ]
+
+        # watch Databench's own static files
+        tornado.autoreload.watch(os.path.join(static_path, 'databench.js'))
+        tornado.autoreload.watch(os.path.join(static_path, 'databench.css'))
 
         # check whether we have to determine zmq_port ourselves first
         if zmq_port is None:
