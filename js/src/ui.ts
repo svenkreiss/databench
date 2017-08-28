@@ -96,14 +96,11 @@ export class UIElement {
     if (node.dataset.skipwire === 'true' ||
       node.dataset.skipwire === 'TRUE' ||
       node.dataset.skipwire === '1') {
-        console.log('skip');
         return undefined;
     }
 
-    console.log('dataSignal', node.dataset.signal);
     const dataSignal = node.dataset.signal;
     if (dataSignal) {
-      console.log('found data signal');
       if (dataSignal.indexOf(':') >= 1) {
         const [key, value] = dataSignal.split(':', 2);
         return { [key]: value };
@@ -120,7 +117,6 @@ export class UIElement {
     const attrId = node.getAttribute('id');
     if (attrId) return { data: attrId };
 
-    console.log('no wire signal found');
     return undefined;
   }
 }
