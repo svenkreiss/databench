@@ -10,7 +10,7 @@ module.exports = {
     path: __dirname,
     library: 'Databench',
     libraryTarget: 'umd',
-    filename: 'js/build/databench.js',
+    filename: 'databench/static/databench.js',
   },
 
   devtool: 'source-map',

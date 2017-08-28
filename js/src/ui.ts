@@ -26,8 +26,8 @@ export interface HTMLDatabenchElement extends HTMLElement {
  */
 export class UIElement {
   node: HTMLDatabenchElement;
-  actionName: string;
-  wireSignal: string | { [x: string]: string; };
+  actionName?: string;
+  wireSignal?: string | { [x: string]: string; };
 
   /**
    * @param node  An HTML element.
@@ -36,14 +36,8 @@ export class UIElement {
     this.node = <HTMLDatabenchElement>node;
     this.node.databenchUI = this;
 
-    const actionName = UIElement.determineActionName(node);
-    if (!actionName) throw Error('Failed to determine action name.');
-
-    const wireSignal = UIElement.determineWireSignal(node);
-    if (!wireSignal) throw Error('Failed to determine wire signal.');
-
-    this.actionName = actionName;
-    this.wireSignal = wireSignal;
+    this.actionName = UIElement.determineActionName(node);
+    this.wireSignal = UIElement.determineWireSignal(node);
   }
 
   /**
@@ -65,11 +59,11 @@ export class UIElement {
    * @param  node A HTML element.
    * @return      Name of action or null.
    */
-  static determineActionName(node: HTMLElement): string|null {
+  static determineActionName(node: HTMLElement): string|undefined {
     if (node.dataset.skipwire === 'true' ||
       node.dataset.skipwire === 'TRUE' ||
       node.dataset.skipwire === '1') {
-      return null;
+      return undefined;
     }
 
     const dataAction = node.dataset.action;
@@ -81,7 +75,7 @@ export class UIElement {
     const attrId = node.getAttribute('id');
     if (attrId) return attrId;
 
-    return null;
+    return undefined;
   }
 
   /**
@@ -98,11 +92,11 @@ export class UIElement {
    * @param  node A HTML element.
    * @return      Name of a signal or null.
    */
-  static determineWireSignal(node: HTMLElement): string | { [x: string]: string; } | null {
+  static determineWireSignal(node: HTMLElement): string | { [x: string]: string; } | undefined {
     if (node.dataset.skipwire === 'true' ||
       node.dataset.skipwire === 'TRUE' ||
       node.dataset.skipwire === '1') {
-      return null;
+        return undefined;
     }
 
     const dataSignal = node.dataset.signal;
@@ -111,6 +105,7 @@ export class UIElement {
         const [key, value] = dataSignal.split(':', 2);
         return { [key]: value };
       }
+      return dataSignal;
     }
 
     const dataAction = node.dataset.action;
@@ -122,7 +117,7 @@ export class UIElement {
     const attrId = node.getAttribute('id');
     if (attrId) return { data: attrId };
 
-    return null;
+    return undefined;
   }
 }
 
@@ -350,7 +345,7 @@ export class Button extends UIElement {
     const elements: HTMLDatabenchElement[] = [].slice.call(root.getElementsByTagName('BUTTON'), 0);
     elements
       .filter(node => node.databenchUI === undefined)
-      .filter(node => UIElement.determineActionName(node) !== null)
+      .filter(node => UIElement.determineActionName(node) !== undefined)
       .forEach(node => {
         const b = new Button(node);
         console.log('Wiring button', node, `to action ${b.actionName}.`);
@@ -363,6 +358,7 @@ export class Button extends UIElement {
             { start: ButtonState.Active, end: ButtonState.Idle }[status]
           ));
 
+          if (!b.actionName) throw Error('Failed to determine action name');
           conn.emit(b.actionName, b.actionFormat({
             __process_id: processID,  // eslint-disable-line camelcase
           }));
@@ -415,12 +411,13 @@ export class Text extends UIElement {
     )
       .filter(node => (<HTMLDatabenchElement>node).databenchUI === undefined)
       .filter(node => (<HTMLElement>node).dataset['action'] !== undefined)
-      .filter(node => UIElement.determineActionName(node) !== null)
+      .filter(node => UIElement.determineActionName(node) !== undefined)
       .forEach(node => {
         const t = new Text(node);
         console.log('Wiring text', node, `to action ${t.actionName}.`);
 
         // handle events from backend
+        if (!t.wireSignal) throw Error('Failed to determine action name');
         conn.on(t.wireSignal, message => t.set_value(message));
       });
   }
@@ -505,15 +502,19 @@ export class TextInput extends UIElement {
     elements
       .filter(node => node.databenchUI === undefined)
       .filter(node => node.getAttribute('type') === 'text')
-      .filter(node => UIElement.determineActionName(node) !== null)
+      .filter(node => UIElement.determineActionName(node) !== undefined)
       .forEach(node => {
         const t = new TextInput(node);
         console.log('Wiring text input', node, `to action ${t.actionName}.`);
 
         // handle events from frontend
-        t.changeCB = message => conn.emit(t.actionName, message);
+        t.changeCB = message => {
+          if (!t.actionName) throw Error('Failed to determine action name');
+          conn.emit(t.actionName, message);
+        };
 
         // handle events from backend
+        if (!t.wireSignal) throw Error('Failed to determine action name');
         conn.on(t.wireSignal, message => t.value(message));
       });
   }
@@ -640,15 +641,19 @@ export class Slider extends UIElement {
     elements
       .filter(node => node.databenchUI === undefined)
       .filter(node => node.getAttribute('type') === 'range')
-      .filter(node => UIElement.determineActionName(node) !== null)
+      .filter(node => UIElement.determineActionName(node) !== undefined)
       .forEach(node => {
         const slider = new Slider(node, lfs[node.id]);
         console.log('Wiring slider', node, `to action ${slider.actionName}.`);
 
         // handle events from frontend
-        slider.changeCB = message => conn.emit(slider.actionName, message);
+        slider.changeCB = message => {
+          if (!slider.actionName) throw Error('Failed to determine action name');
+          conn.emit(slider.actionName, message);
+        };
 
         // handle events from backend
+        if (!slider.wireSignal) throw Error('Failed to determine action name');
         conn.on(slider.wireSignal, message => slider.set_value(message));
       });
   }
@@ -690,6 +695,7 @@ export class Image extends UIElement {
     if (root === undefined) root = document;
 
     const elements: HTMLDatabenchElement[] = [].slice.call(root.getElementsByTagName('IMG'), 0);
+    console.log(elements.forEach(node => console.log(node, UIElement.determineWireSignal(node))));
     elements
       .filter(node => node.databenchUI === undefined)
       .filter(node => node.dataset['signal'] !== undefined)
@@ -699,6 +705,7 @@ export class Image extends UIElement {
         console.log('Wiring image', node, `to signal ${img.wireSignal}.`);
 
         // handle events from backend
+        if (!img.wireSignal) throw Error('Failed to determine action name');
         conn.on(img.wireSignal, message => img.value(message));
       });
   }
