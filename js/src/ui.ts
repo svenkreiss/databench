@@ -36,7 +36,7 @@ export class UIElement {
     this.node = <HTMLDatabenchElement>node;
     this.node.databenchUI = this;
 
-    this.actionName = UIElement.determineActionName(node);;
+    this.actionName = UIElement.determineActionName(node);
     this.wireSignal = UIElement.determineWireSignal(node);
   }
 
@@ -515,7 +515,7 @@ export class TextInput extends UIElement {
         t.changeCB = message => {
           if (!t.actionName) throw Error('Failed to determine action name');
           conn.emit(t.actionName, message);
-        }
+        };
 
         // handle events from backend
         if (!t.wireSignal) throw Error('Failed to determine action name');
@@ -654,7 +654,7 @@ export class Slider extends UIElement {
         slider.changeCB = message => {
           if (!slider.actionName) throw Error('Failed to determine action name');
           conn.emit(slider.actionName, message);
-        }
+        };
 
         // handle events from backend
         if (!slider.wireSignal) throw Error('Failed to determine action name');
