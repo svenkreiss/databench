@@ -17,11 +17,11 @@ class Dummypi(databench.Analysis):
 
     @databench.on('set_state')
     def set_state_action(self, **kwargs):
-        self.data.set_state(kwargs)
+        yield self.data.set_state(kwargs)
 
     @databench.on('connected')
     def connected_action(self):
-        self.data.init({'samples': 100000})
+        yield self.data.init({'samples': 100000})
 
     @databench.on('run')
     def run_action(self):

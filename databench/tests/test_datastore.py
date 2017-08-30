@@ -41,12 +41,6 @@ class Datastore(unittest.TestCase):
         self.d.set('test', 'del-callback2')
         self.assertEqual(self.n_callback2, 1)
 
-    def test_delete(self):
-        self.d.set_state({'test': 'delete'})
-        self.assertEqual(self.after['test'], 'delete')
-        del self.d['test']
-        self.assertNotIn('test', self.d)
-
     def test_list(self):
         self.d.set('test', ['list'])
         self.assertEqual(self.after['test'], ['list'])

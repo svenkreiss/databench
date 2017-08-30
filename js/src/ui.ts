@@ -695,7 +695,6 @@ export class Image extends UIElement {
     if (root === undefined) root = document;
 
     const elements: HTMLDatabenchElement[] = [].slice.call(root.getElementsByTagName('IMG'), 0);
-    console.log(elements.forEach(node => console.log(node, UIElement.determineWireSignal(node))));
     elements
       .filter(node => node.databenchUI === undefined)
       .filter(node => node.dataset['signal'] !== undefined)

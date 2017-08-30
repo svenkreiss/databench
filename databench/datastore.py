@@ -118,7 +118,7 @@ class Datastore(object):
         :param dict key_value_pairs:
             A set of key value pairs to use to initialize the datastore.
 
-        :rtype: databench.Datastore
+        :rtype: Iterable[tornado.concurrent.Future]
         """
         return [self.set(k, v)
                 for k, v in key_value_pairs.items()
@@ -143,14 +143,6 @@ class Datastore(object):
     def __iter__(self):
         """Iterator."""
         return (k for k in self.data.keys())
-
-    def __delitem__(self, key):
-        """Delete the given key."""
-        if key not in self.data:
-            raise IndexError
-
-        del self.data[key]
-        self.trigger_callbacks(key)
 
     def __repr__(self):
         """repr"""
