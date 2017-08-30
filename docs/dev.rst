@@ -14,12 +14,12 @@ steps:
     virtualenv venv
     source venv/bin/activate
     # install this version in editable mode
-    pip install -e .[markup,tests]
+    pip install -e .[tests]
 
     # install JavaScript dependencies
     npm install
     # build the JavaScript
-    npm run build
+    webpack
 
 
 Now you can:
@@ -44,7 +44,7 @@ Now you can:
     html5validator --root _crawled
 
     # create JavaScript docs at docs/jsdoc/index.html
-    npm run jsdoc
+    npm run typedoc
 
     # create Python docs at docs/_build/html/index.html
     cd docs; make html
