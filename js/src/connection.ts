@@ -195,7 +195,7 @@ export class Connection {
 
       const newVersion = message.load.analyses_version;
       if (this.analysesVersion !== null &&
-          this.analysesVersion != newVersion) {
+          this.analysesVersion !== newVersion) {
         location.reload();
       }
       this.analysesVersion = newVersion;

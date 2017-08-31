@@ -35,7 +35,7 @@ class Dummypi(databench.Analysis):
             if r1 ** 2 + r2 ** 2 < 1.0:
                 inside += 1
 
-            # every 100 iterations, update status
+            # every 1000 iterations, update status
             if draws % 1000 != 0:
                 continue
 
