@@ -36,7 +36,7 @@ class Meta(object):
         log.info('Analysis id: {}, port sub: {}, port pub: {}'.format(
                  analysis_id, zmq_port_subscribe, zmq_port_publish))
 
-        databench.Meta.fill_signal_handlers(analysis_class)
+        databench.Meta.fill_action_handlers(analysis_class)
 
         self.analysis = analysis_class()
         self.analysis.init_databench(analysis_id)
@@ -116,8 +116,8 @@ class Meta(object):
 
         fns = [
             functools.partial(class_fn, analysis)
-            for class_fn in (analysis._signal_handlers.get(action_name, []) +
-                             analysis._signal_handlers.get('*', []))
+            for class_fn in (analysis._action_handlers.get(action_name, []) +
+                             analysis._action_handlers.get('*', []))
         ]
         if fns:
             args, kwargs = [], {}

@@ -48,17 +48,27 @@ class Datastore(object):
         self.callbacks.append(callback)
         return self
 
-    def trigger_callbacks(self, key):
-        value = self.get(key)
-        return [callback({key: value})
+    def all_callbacks(self):
+        return [callback
                 for datastore in Datastore.stores[self.domain]
                 for callback in datastore.callbacks]
 
-    def trigger_all_callbacks(self):
-        """Trigger all callbacks that were set with on_change()."""
+    def trigger_callbacks(self, key, callbacks=None):
+        if callbacks is None:
+            callbacks = self.all_callbacks()
+
+        value = self.get(key)
+        return [callback({key: value}) for callback in callbacks]
+
+    def trigger_all_callbacks(self, callbacks=None):
+        """Trigger callbacks for all keys on all or a subset of subscribers.
+
+        :param Iterable callbacks: list of callbacks or none for all subscribed
+        :rtype: Iterable[tornado.concurrent.Future]
+        """
         return [ret
                 for key in self
-                for ret in self.trigger_callbacks(key)]
+                for ret in self.trigger_callbacks(key, callbacks=None)]
 
     def get_encoded(self, key):
         if key not in self.data:
