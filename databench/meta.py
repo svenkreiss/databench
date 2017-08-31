@@ -192,7 +192,11 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
             self.analysis.init_databench(requested_id)
             self.analysis.set_emit_fn(self.emit)
             log.info('Analysis {} instanciated.'.format(self.analysis.id_))
-            yield self.emit('__connect', {'analysis_id': self.analysis.id_})
+            yield self.emit('__connect', {
+                'analysis_id': self.analysis.id_,
+                'databench_backend_version': DATABENCH_VERSION,
+                'analyses_version': self.meta.info['version'],
+            })
 
             yield self.meta.run_process(self.analysis, 'connect')
 
