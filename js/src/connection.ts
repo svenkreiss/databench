@@ -199,8 +199,6 @@ export class Connection {
         location.reload();
       }
       this.analysesVersion = newVersion;
-
-      console.log(`Connected to Databench ${this.databenchBackendVersion} and analyses ${this.analysesVersion}`);
     }
 
     // processes
