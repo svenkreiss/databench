@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, unicode_literals, division
 
+import inspect
 import logging
 import random
 import string
@@ -14,24 +15,28 @@ from .datastore_legacy import DatastoreLegacy
 log = logging.getLogger(__name__)
 
 
-class SignalHandler(object):
-    def __init__(self, signal, f):
-        self.signal = signal
+class ActionHandler(object):
+    def __init__(self, action, f):
+        self.action = action
         self.f = f
 
     @tornado.gen.coroutine
     def __call__(self, *args, **kwargs):
         return self.f(*args, **kwargs)
 
+    def code(self):
+        """Get the source code of the decorated function."""
+        return inspect.getsource(self.f)
 
-def on(signal):
-    """Decorator for signal handlers.
+
+def on(action):
+    """Decorator for action handlers.
 
     This also decorates the method with `tornado.gen.coroutine` so that
     `~tornado.concurrent.Future`s can be `yield`ed.
     """
     def decorated(f):
-        return SignalHandler(signal, f)
+        return ActionHandler(action, f)
 
     return decorated
 
