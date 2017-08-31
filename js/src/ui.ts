@@ -402,22 +402,23 @@ export class Text extends UIElement {
   static wire(conn: Connection, root?: Document|HTMLElement) {
     if (root === undefined) root = document;
 
-    [].concat(
+    const elements: HTMLDatabenchElement[] = [].concat(
       [].slice.call(root.getElementsByTagName('SPAN'), 0),
       [].slice.call(root.getElementsByTagName('P'), 0),
       [].slice.call(root.getElementsByTagName('DIV'), 0),
       [].slice.call(root.getElementsByTagName('I'), 0),
       [].slice.call(root.getElementsByTagName('B'), 0),
-    )
-      .filter(node => (<HTMLDatabenchElement>node).databenchUI === undefined)
-      .filter(node => (<HTMLElement>node).dataset['action'] !== undefined)
+    );
+    elements
+      .filter(node => node.databenchUI === undefined)
+      .filter(node => node.dataset['action'] !== undefined)
       .filter(node => UIElement.determineActionName(node) !== undefined)
       .forEach(node => {
         const t = new Text(node);
         console.log('Wiring text', node, `to action ${t.actionName}.`);
 
         // handle events from backend
-        if (!t.wireSignal) throw Error('Failed to determine action name');
+        if (!t.wireSignal) throw Error('Failed to determine signal name');
         conn.on(t.wireSignal, message => t.set_value(message));
       });
   }
