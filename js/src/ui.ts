@@ -377,10 +377,18 @@ export class Button extends UIElement {
 export class Text extends UIElement {
   /**
    * Format the value.
+   *
+   * The default implementation returns a `JSON.stringify()` version for values
+   * that are `typeof value == 'object'`. Otherwise it passes the value through.
+   *
    * @param  value  Value as represented in the backend.
    * @return Formatted representation of the value.
    */
   formatFn(value: any): string {
+    if (typeof value == 'object') {
+      return JSON.stringify(value, undefined, 2);
+    }
+
     return value;
   }
 
@@ -408,6 +416,7 @@ export class Text extends UIElement {
       [].slice.call(root.getElementsByTagName('DIV'), 0),
       [].slice.call(root.getElementsByTagName('I'), 0),
       [].slice.call(root.getElementsByTagName('B'), 0),
+      [].slice.call(root.getElementsByTagName('PRE'), 0),
     );
     elements
       .filter(node => node.databenchUI === undefined)
