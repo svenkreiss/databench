@@ -6,7 +6,6 @@ from . import __version__ as DATABENCH_VERSION
 from .analysis import ActionHandler
 from .utils import json_encoder_default
 from collections import defaultdict
-import functools
 import json
 import logging
 import tornado.gen
@@ -80,7 +79,7 @@ class Meta(object):
             if action is None:
                 continue
 
-            analysis_class._action_handlers[action].append(attr)
+            analysis_class._action_handlers[action].append(attr_str)
 
     @staticmethod
     @tornado.gen.coroutine
@@ -111,9 +110,9 @@ class Meta(object):
             analysis.emit('__process', {'id': process_id, 'status': 'start'})
 
         fns = [
-            functools.partial(class_fn, analysis)
-            for class_fn in (analysis._action_handlers.get(action_name, []) +
-                             analysis._action_handlers.get('*', []))
+            getattr(analysis, handler)
+            for handler in (analysis._action_handlers.get(action_name, []) +
+                            analysis._action_handlers.get('*', []))
         ]
         if fns:
             args, kwargs = [], {}

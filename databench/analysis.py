@@ -16,13 +16,24 @@ log = logging.getLogger(__name__)
 
 
 class ActionHandler(object):
-    def __init__(self, action, f):
+    def __init__(self, action, f, bound_instance=None):
         self.action = action
         self.f = f
+        self.bound_instance = bound_instance
 
     @tornado.gen.coroutine
     def __call__(self, *args, **kwargs):
+        if self.bound_instance is not None:
+            return self.f(self.bound_instance, *args, **kwargs)
+
         return self.f(*args, **kwargs)
+
+    def __get__(self, obj, objtype):
+        if obj is not None:
+            # return an ActionHandler that is bound to the given instance
+            return ActionHandler(self.action, self.f, obj)
+
+        return self
 
     def code(self):
         """Get the source code of the decorated function."""
@@ -34,11 +45,21 @@ def on(action):
 
     This also decorates the method with `tornado.gen.coroutine` so that
     `~tornado.concurrent.Future`s can be `yield`ed.
+
+    The decorated object will have a :meth:`code` to retrieve its source code.
+
+    The action name can be given explicitely or can be inferred from the
+    function name.
     """
-    def decorated(f):
+    if callable(action):
+        f = action
+        action = f.__name__
         return ActionHandler(action, f)
 
-    return decorated
+    def decorated_with_action_name(f):
+        return ActionHandler(action, f)
+
+    return decorated_with_action_name
 
 
 class Analysis(object):
