@@ -47,6 +47,8 @@ export class Connection {
   wsUrl: string;
   requestArgs: string|null;
   analysisId: string|null;
+  databenchBackendVersion: string|null;
+  analysesVersion: string|null;
 
   errorCB: (message?: string) => void;
   private onCallbacks: {[field: string]: ((message: any) => void)[]};
@@ -71,6 +73,8 @@ export class Connection {
     this.requestArgs = (requestArgs == null && (typeof window !== 'undefined')) ?
                         window.location.search : requestArgs;
     this.analysisId = analysisId;
+    this.databenchBackendVersion = null;
+    this.analysesVersion = null;
 
     this.errorCB = msg => (msg != null ? console.log(`connection error: ${msg}`) : null);
     this.onCallbacks = {};
@@ -187,6 +191,14 @@ export class Connection {
     // connect response
     if (message.signal === '__connect') {
       this.analysisId = message.load.analysis_id;
+      this.databenchBackendVersion = message.load.databench_backend_version;
+
+      const newVersion = message.load.analyses_version;
+      if (this.analysesVersion !== null &&
+          this.analysesVersion !== newVersion) {
+        location.reload();
+      }
+      this.analysesVersion = newVersion;
     }
 
     // processes

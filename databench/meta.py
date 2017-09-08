@@ -3,7 +3,7 @@
 from __future__ import absolute_import, unicode_literals, division
 
 from . import __version__ as DATABENCH_VERSION
-from .analysis import SignalHandler
+from .analysis import ActionHandler
 from .utils import json_encoder_default
 from collections import defaultdict
 import functools
@@ -40,7 +40,7 @@ class Meta(object):
         self.analysis_path = analysis_path
         self.cli_args = cli_args
 
-        self.fill_signal_handlers(analysis_class)
+        self.fill_action_handlers(analysis_class)
 
         self.info = {}
         self.routes = [
@@ -66,21 +66,21 @@ class Meta(object):
         ]
 
     @staticmethod
-    def fill_signal_handlers(analysis_class):
-        analysis_class._signal_handlers = defaultdict(list)
+    def fill_action_handlers(analysis_class):
+        analysis_class._action_handlers = defaultdict(list)
         for attr_str in dir(analysis_class):
             attr = getattr(analysis_class, attr_str)
 
-            signal = None
-            if isinstance(attr, SignalHandler):
-                signal = attr.signal
+            action = None
+            if isinstance(attr, ActionHandler):
+                action = attr.action
             elif attr_str.startswith('on_'):
-                signal = attr_str[3:]
+                action = attr_str[3:]
 
-            if signal is None:
+            if action is None:
                 continue
 
-            analysis_class._signal_handlers[signal].append(attr)
+            analysis_class._action_handlers[action].append(attr)
 
     @staticmethod
     @tornado.gen.coroutine
@@ -111,9 +111,9 @@ class Meta(object):
             analysis.emit('__process', {'id': process_id, 'status': 'start'})
 
         fns = [
-            functools.partial(class_fn, analysis)
-            for class_fn in (analysis._signal_handlers.get(action_name, []) +
-                             analysis._signal_handlers.get('*', []))
+            functools.partial(handler, analysis)
+            for handler in (analysis._action_handlers.get(action_name, []) +
+                            analysis._action_handlers.get('*', []))
         ]
         if fns:
             args, kwargs = [], {}
@@ -192,7 +192,11 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
             self.analysis.init_databench(requested_id)
             self.analysis.set_emit_fn(self.emit)
             log.info('Analysis {} instanciated.'.format(self.analysis.id_))
-            yield self.emit('__connect', {'analysis_id': self.analysis.id_})
+            yield self.emit('__connect', {
+                'analysis_id': self.analysis.id_,
+                'databench_backend_version': DATABENCH_VERSION,
+                'analyses_version': self.meta.info['version'],
+            })
 
             yield self.meta.run_process(self.analysis, 'connect')
 

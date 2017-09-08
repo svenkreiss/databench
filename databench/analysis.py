@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, unicode_literals, division
 
+import inspect
 import logging
 import random
 import string
@@ -14,26 +15,51 @@ from .datastore_legacy import DatastoreLegacy
 log = logging.getLogger(__name__)
 
 
-class SignalHandler(object):
-    def __init__(self, signal, f):
-        self.signal = signal
+class ActionHandler(object):
+    def __init__(self, action, f, bound_instance=None):
+        self.action = action
         self.f = f
+        self.bound_instance = bound_instance
 
     @tornado.gen.coroutine
     def __call__(self, *args, **kwargs):
+        if self.bound_instance is not None:
+            return self.f(self.bound_instance, *args, **kwargs)
+
         return self.f(*args, **kwargs)
 
+    def __get__(self, obj, objtype):
+        if obj is not None:
+            # return an ActionHandler that is bound to the given instance
+            return ActionHandler(self.action, self.f, obj)
 
-def on(signal):
-    """Decorator for signal handlers.
+        return self
+
+    def code(self):
+        """Get the source code of the decorated function."""
+        return inspect.getsource(self.f)
+
+
+def on(action):
+    """Decorator for action handlers.
 
     This also decorates the method with `tornado.gen.coroutine` so that
     `~tornado.concurrent.Future`s can be `yield`ed.
-    """
-    def decorated(f):
-        return SignalHandler(signal, f)
 
-    return decorated
+    The decorated object will have a :meth:`code` to retrieve its source code.
+
+    The action name can be given explicitely or can be inferred from the
+    function name.
+    """
+    if callable(action):
+        f = action
+        action = f.__name__
+        return ActionHandler(action, f)
+
+    def decorated_with_action_name(f):
+        return ActionHandler(action, f)
+
+    return decorated_with_action_name
 
 
 class Analysis(object):
