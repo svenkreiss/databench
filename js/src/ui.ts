@@ -385,7 +385,7 @@ export class Text extends UIElement {
    * @return Formatted representation of the value.
    */
   formatFn(value: any): string {
-    if (typeof value == 'object') {
+    if (typeof value === 'object') {
       return JSON.stringify(value, undefined, 2);
     }
 
