@@ -15,16 +15,16 @@ class Dummypi(databench.Analysis):
         self.data = databench.Datastore(self.id_)
         self.data.subscribe(lambda data: self.emit('data', data))
 
-    @databench.on('set_state')
-    def set_state_action(self, **kwargs):
+    @databench.on
+    def set_state(self, **kwargs):
         yield self.data.set_state(kwargs)
 
-    @databench.on('connected')
-    def connected_action(self):
+    @databench.on
+    def connected(self):
         yield self.data.init({'samples': 100000})
 
-    @databench.on('run')
-    def run_action(self):
+    @databench.on
+    def run(self):
         """Run when button is pressed."""
 
         inside = 0
@@ -50,6 +50,6 @@ class Dummypi(databench.Analysis):
             }
 
             # send status to frontend
-            yield self.data.set_state({'pi': pi})
+            yield self.set_state(pi=pi)
 
         yield self.emit('log', {'action': 'done'})
