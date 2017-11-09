@@ -32,8 +32,8 @@
     "source-map-loader": "^0.1.6",
     "tslint": "^4.5.1",
     "typedoc": "^0.5.10",
-    "typescript": "^2.4.1",
-    "webpack": "^3.1.0"
+    "typescript": "^2.6.1",
+    "webpack": "^3.8.1"
   },
   "eslintConfig": {
     "parser": "babel-eslint"

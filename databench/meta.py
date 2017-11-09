@@ -38,7 +38,7 @@ class Meta(object):
         self.name = name
         self.analysis_class = analysis_class
         self.analysis_path = analysis_path
-        self.cli_args = cli_args
+        self.cli_args = cli_args if cli_args is not None else []
 
         self.fill_action_handlers(analysis_class)
 
@@ -200,9 +200,7 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
 
             yield self.meta.run_process(self.analysis, 'connect')
 
-            args = {'cli_args': None, 'request_args': None}
-            if self.meta.cli_args is not None:
-                args['cli_args'] = self.meta.cli_args
+            args = {'cli_args': self.meta.cli_args, 'request_args': {}}
             if '__request_args' in msg and msg['__request_args']:
                 args['request_args'] = parse_qs(
                     msg['__request_args'].lstrip('?'))

@@ -49,6 +49,15 @@ describe('Echo Tests', () => {
 });
 
 describe('Command Line and Request Arguments', () => {
+  it('valid empty request args', done => {
+    const c = new Databench.Connection('ws://localhost:5000/requestargs/ws');
+    c.on('echo_request_args', request_args => {
+      expect(request_args).to.deep.equal({});
+      done();
+    });
+    c.connect();
+  });
+
   it('can access request args', done => {
     const c = new Databench.Connection('ws://localhost:5000/requestargs/ws', '?data=requestargtest');
     c.on('echo_request_args', request_args => {
