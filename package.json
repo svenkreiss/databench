@@ -10,6 +10,7 @@
     "test": "js/tests"
   },
   "dependencies": {
+    "@types/handlebars": "^4.0.36",
     "@types/websocket": "0.0.34",
     "websocket": "^1.0.22"
   },
@@ -31,9 +32,9 @@
     "mocha": "^2.4.5",
     "source-map-loader": "^0.1.6",
     "tslint": "^4.5.1",
-    "typedoc": "^0.5.10",
-    "typescript": "^2.4.1",
-    "webpack": "^3.1.0"
+    "typedoc": "^0.9.0",
+    "typescript": "^2.6.1",
+    "webpack": "^3.8.1"
   },
   "eslintConfig": {
     "parser": "babel-eslint"
@@ -42,7 +43,7 @@
     "build": "webpack",
     "test": "tsc && mocha -t 5000 --no-colors js/build/commonjs/test.js",
     "lint": "tslint -c tslint.json js/src/*.ts && eslint databench/analyses_packaged/**/*.js",
-    "typedoc": "typedoc --options typedoc.json js/src/"
+    "typedoc": "typedoc --out docs/typedoc/ --excludePrivate --excludeNotExported --excludeExternals --mode file --readme js/docs/index.md js/src/"
   },
   "repository": {
     "type": "git",
