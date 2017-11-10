@@ -32,4 +32,6 @@ deployment:
     branch: master
     commands:
       - coveralls || true
-      - npm run typedoc && cp circle.yml docs/typedoc/ && ghp-import -n -p docs/typedoc
+      - npm run typedoc
+      - cp circle.yml docs/typedoc/
+      - ghp-import --force -n -p docs/typedoc
