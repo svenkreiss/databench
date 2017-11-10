@@ -93,12 +93,12 @@ class Datastore(object):
     def set(self, key, value):
         """Set a value at key and return a Future.
 
-        :rtype: tornado.concurrent.Future
+        :rtype: Iterable[tornado.concurrent.Future]
         """
         value_encoded = encode(value)
 
         if key in self.data and self.data[key] == value_encoded:
-            return self
+            return []
 
         self.data[key] = value_encoded
         return self.trigger_callbacks(key)
@@ -114,7 +114,9 @@ class Datastore(object):
         else:
             state_change = updater
 
-        return [self.set(k, v) for k, v in state_change.items()]
+        return [callback_result
+                for k, v in state_change.items()
+                for callback_result in self.set(k, v)]
 
     def __contains__(self, key):
         """Test whether key is set."""

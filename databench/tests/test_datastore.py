@@ -5,7 +5,6 @@ import unittest
 class Datastore(unittest.TestCase):
     def setUp(self):
         self.n_callbacks = 0
-        self.after = None
         self.d = databench.Datastore('abcdef')
         self.d.subscribe(self.datastore_callback)
         self.after = {}
@@ -128,6 +127,23 @@ class Datastore(unittest.TestCase):
         self.d.set('test', 'setstate')
         self.d.set_state({'test': 'modified'})
         self.assertEqual(self.after['test'], 'modified')
+
+    def test_setstate_multiple(self):
+        self.d.set('test', 'setstate')
+        f = self.d.set_state({'test': 'setstate_m',
+                              'test2': 'setstate_modified2'})
+        self.assertEqual(self.after['test'], 'setstate_m')
+        self.assertEqual(self.after['test2'], 'setstate_modified2')
+        self.assertEqual(f, ['callback return', 'callback return'])
+
+    def test_setstate_modify_multiple(self):
+        self.d.set('test', 'setstate')
+        f1 = self.d.set_state({'test': 'original', 'test2': 'original2'})
+        f2 = self.d.set_state({'test': 'original', 'test2': 'modified2'})
+        self.assertEqual(self.after['test'], 'original')
+        self.assertEqual(self.after['test2'], 'modified2')
+        self.assertEqual(f1, ['callback return', 'callback return'])
+        self.assertEqual(f2, ['callback return'])
 
     def test_setstate_fn(self):
         self.d.set('test', 'setstate')
