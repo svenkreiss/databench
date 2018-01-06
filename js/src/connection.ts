@@ -121,6 +121,10 @@ export class Connection {
     if (this.socket === null) return;
 
     this.socket.onclose = null;
+    if (this.socketCheckOpen !== null) {
+      clearInterval(this.socketCheckOpen);
+      this.socketCheckOpen = null;
+    }
     this.socket.close();
     this.socket = null;
   }
@@ -139,7 +143,10 @@ export class Connection {
       );
     }
 
-    if (this.socketCheckOpen !== null) clearInterval(this.socketCheckOpen);
+    if (this.socketCheckOpen !== null) {
+      clearInterval(this.socketCheckOpen);
+      this.socketCheckOpen = null;
+    }
   }
 
   wsOnOpen() {
@@ -155,7 +162,10 @@ export class Connection {
   }
 
   wsOnClose() {
-    if (this.socketCheckOpen !== null) clearInterval(this.socketCheckOpen);
+    if (this.socketCheckOpen !== null) {
+      clearInterval(this.socketCheckOpen);
+      this.socketCheckOpen = null;
+    }
 
     this.wsReconnectAttempt += 1;
     this.wsReconnectDelay *= 2;
