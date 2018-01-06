@@ -2,7 +2,7 @@
 
 
 {% block head %}
-<link rel="stylesheet" href="/_static/databench.css?version={{ databench_version }}">
+<link rel="stylesheet" href="/_static/databench.css?v={{databench_version}}">
 {% end %}
 
 
@@ -11,13 +11,13 @@
 
 <h1 id="d-list-of-analyses">List of Analyses</h1>
 <div class="d-boxes">
-    {% for a in [aa for aa in analyses if aa['show_in_index']] %}
-    <a class="d-box" href="/{{a['name']}}/">
-    {% if a['thumbnail'] %}
-        <img alt="analysis thumbnail" src="/{{a['name']}}/static/{{a['thumbnail']}}" class="d-analysis-thumbnail" />
-    {% end %}
-    {{a['title']}}{% if a['description'] %}<span class="text-muted">: {{ a['description'] }}</span>{% end %}
-    </a>
+    {% for a in [aa for aa in meta_infos if aa['show_in_index']] %}
+        <a class="d-box" href="/{{a['name']}}/">
+        {% if a['thumbnail'] %}
+            <img alt="analysis thumbnail" src="/{{a['name']}}/static/{{a['thumbnail']}}" class="d-analysis-thumbnail" />
+        {% end %}
+        {{a['title']}}{% if a['description'] %}<span class="text-muted">: {{ a['description'] }}</span>{% end %}
+        </a>
     {% end %}
 </div>
 {% end %}

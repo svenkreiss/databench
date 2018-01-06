@@ -37,6 +37,8 @@ class App(object):
 
     def __init__(self, analyses_path=None, zmq_port=None, cmd_args=None,
                  debug=False):
+        self.cmd_args = cmd_args
+        self.debug = debug
         self.info = {
             'title': 'Databench',
             'description': None,
@@ -45,32 +47,20 @@ class App(object):
             'version': '0.0.0',
         }
         self.metas = []
-        self.cmd_args = cmd_args
-        self.debug = debug
+        self.spawned_analyses = {}
         self.analyses, self.analyses_path = self.get_analyses(analyses_path)
 
-        static_path = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), 'static')
-        node_modules_path = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), 'node_modules')
         self.routes = [
-            (r'/(favicon\.ico)', tornado.web.StaticFileHandler,
-             {'path': 'static/favicon.ico'}),
-
-            (r'/_static/(.*)', tornado.web.StaticFileHandler,
-             {'path': static_path}),
-
-            (r'/_node_modules/(.*)', tornado.web.StaticFileHandler,
-             {'path': node_modules_path}),
-
             (r'/(?:index.html)?', IndexHandler,
              {'info': self.info, 'metas': self.metas}),
-        ]
+        ] + self.static_routes()
 
-        # watch Databench's own static files
-        tornado.autoreload.watch(os.path.join(static_path, 'databench.js'))
-        tornado.autoreload.watch(os.path.join(static_path, 'databench.css'))
+        self.init_zmq(zmq_port)
+        self.analyses_info()
+        self.meta_analyses()
+        self.register_metas()
 
+    def init_zmq(self, zmq_port=None):
         # check whether we have to determine zmq_port ourselves first
         if zmq_port is None:
             context = zmq.Context()
@@ -83,8 +73,6 @@ class App(object):
             log.debug('determined: zmq_port={}'.format(zmq_port))
         self.zmq_port = zmq_port
 
-        self.spawned_analyses = {}
-
         self.zmq_pub_ctx = zmq.Context()
         self.zmq_pub = self.zmq_pub_ctx.socket(zmq.PUB)
         self.zmq_pub.bind('tcp://127.0.0.1:{}'.format(zmq_port))
@@ -95,9 +83,27 @@ class App(object):
             tornado.ioloop.IOLoop.current(),
         )
 
-        self.analyses_info()
-        self.meta_analyses()
-        self.register_metas()
+    @staticmethod
+    def static_routes():
+        static_path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)), 'static')
+        node_modules_path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)), 'node_modules')
+
+        # watch Databench's own static files
+        tornado.autoreload.watch(os.path.join(static_path, 'databench.js'))
+        tornado.autoreload.watch(os.path.join(static_path, 'databench.css'))
+
+        return [
+            (r'/(favicon\.ico)', tornado.web.StaticFileHandler,
+             {'path': 'static/favicon.ico'}),
+
+            (r'/_static/(.*)', tornado.web.StaticFileHandler,
+             {'path': static_path}),
+
+            (r'/_node_modules/(.*)', tornado.web.StaticFileHandler,
+             {'path': node_modules_path}),
+        ]
 
     @staticmethod
     def get_analyses(analyses_path):
@@ -154,11 +160,10 @@ class App(object):
         ), None)
         if static_path is not None:
             log.debug('Making {} available at /static/.'.format(static_path))
-            self.routes.append((
-                r'/static/(.*)',
-                tornado.web.StaticFileHandler,
-                {'path': static_path},
-            ))
+            self.routes.append(
+                (r'/static/(.*)', tornado.web.StaticFileHandler,
+                 {'path': static_path})
+            )
         else:
             log.debug('Did not find a static folder.')
 
@@ -174,11 +179,10 @@ class App(object):
         if node_modules_path is not None:
             log.debug('Making {} available at /node_modules/.'
                       ''.format(node_modules_path))
-            self.routes.append((
-                r'/node_modules/(.*)',
-                tornado.web.StaticFileHandler,
-                {'path': node_modules_path},
-            ))
+            self.routes.append(
+                (r'/node_modules/(.*)', tornado.web.StaticFileHandler,
+                 {'path': node_modules_path})
+            )
         else:
             log.debug('Did not find a node_modules folder.')
 
@@ -191,15 +195,24 @@ class App(object):
             if not os.path.isdir(path):
                 log.warning('directory {} not found'.format(path))
                 continue
+
+            meta = None
             analysis_kernel = analysis_info.get('kernel', None)
             if analysis_kernel is None:
-                self.meta_analysis_nokernel(name, path)
+                meta = self.meta_analysis_nokernel(name, path)
             elif analysis_kernel == 'py':
-                self.meta_analysis_py(name, path)
+                meta = self.meta_analysis_py(name, path)
             elif analysis_kernel == 'pyspark':
-                self.meta_analysis_pyspark(name, path)
+                meta = self.meta_analysis_pyspark(name, path)
             elif analysis_kernel == 'go':
-                self.meta_analysis_go(name, path)
+                meta = self.meta_analysis_go(name, path)
+
+            if meta is None:
+                continue
+            meta.fill_info(version=self.info['version'],
+                           home_link='/',
+                           **analysis_info)
+            self.metas.append(meta)
 
     def meta_analysis_nokernel(self, name, path):
         try:
@@ -218,47 +231,47 @@ class App(object):
             log.warning('no Analysis class found for {}'.format(name))
             return
         log.debug('creating Meta for {}'.format(name))
-        self.metas.append(Meta(
+        return Meta(
             name,
             classes[0],
             path,
             self.extra_routes(name, path),
             self.cmd_args,
-        ))
+        )
 
     def meta_analysis_py(self, name, path):
         log.debug('creating MetaZMQ for {}'.format(name))
-        self.metas.append(MetaZMQ(
+        return MetaZMQ(
             name,
             ['python', os.path.join(path, 'analysis.py'),
              '--zmq-subscribe={}'.format(self.zmq_port)],
             self.zmq_pub_stream,
             path,
             self.extra_routes(name, path),
-        ))
+        )
 
     def meta_analysis_pyspark(self, name, path):
         log.debug('creating MetaZMQ for {}'.format(name))
-        self.metas.append(MetaZMQ(
+        return MetaZMQ(
             name,
             ['pyspark', '{}/analysis.py'.format(path),
              '--zmq-subscribe={}'.format(self.zmq_port)],
             self.zmq_pub_stream,
             path,
             self.extra_routes(name, path),
-        ))
+        )
 
     def meta_analysis_go(self, name, path):
         log.info('installing {}'.format(name))
         os.system('cd {}; go install'.format(path))
         log.debug('creating MetaZMQ for {}'.format(name))
-        self.metas.append(MetaZMQ(
+        return MetaZMQ(
             name,
             [name, '--zmq-subscribe={}'.format(self.zmq_port)],
             self.zmq_pub_stream,
             path,
             self.extra_routes(name, path),
-        ))
+        )
 
     def extra_routes(self, name, path):
         if not os.path.isfile(os.path.join(path, 'routes.py')):
@@ -282,44 +295,13 @@ class App(object):
                 if attribute in info:
                     values.append(info[attribute])
 
-        # distribute info to the metas
-        distribute = ('version',)
-        analysis_infos = {info['name']: info
-                          for info in self.info['analyses']
-                          if 'name' in info}
-        self.info['analyses'] = []  # rewrite self.info['analyses']
         for meta in self.metas:
             log.debug('Registering meta information {}'.format(meta.name))
 
             # grab routes
-            self.routes += meta.routes
-
-            # gathering info
-            # detect whether a thumbnail image is present
-            thumbnail = False
-            thumbnails = glob.glob(os.path.join(meta.analysis_path,
-                                                'thumbnail.*'))
-            if len(thumbnails) >= 1:
-                thumbnail = thumbnails[0]
-            # analysis readme
-            readme = Readme(meta.analysis_path)
-
-            # distribute info
-            info = {
-                'title': meta.name,
-                'readme': readme.html,
-                'description': readme.text.strip(),
-                'show_in_index': True,
-                'thumbnail': thumbnail,
-            }
-            info.update(analysis_infos[meta.name])
-
-            for attribute in distribute:
-                if attribute in self.info and \
-                   attribute not in info:
-                    info[attribute] = self.info[attribute]
-            meta.info.update(info)
-            self.info['analyses'].append(info)
+            self.routes += [(r'/{}/{}'.format(meta.name, route),
+                             handler, data)
+                            for route, handler, data in meta.routes]
 
         # process files to watch for autoreload
         if aggregated['watch']:
@@ -378,10 +360,68 @@ class IndexHandler(tornado.web.RequestHandler):
         self.info = info
         self.metas = metas
 
+    def meta_infos(self):
+        return [{
+            'name': meta.name,
+            'title': meta.info['title'],
+            'description': meta.info['description'],
+            'show_in_index': meta.info['show_in_index'],
+            'thumbnail': meta.info['thumbnail'],
+        } for meta in self.metas]
+
     def get(self):
         """Render the List-of-Analyses overview page."""
         return self.render(
             'index.html',
             databench_version=DATABENCH_VERSION,
-            **self.info
+            meta_infos=self.meta_infos(),
+            **self.info,
+        )
+
+
+class SingleApp(object):
+    def __init__(self, analysis, name=None, title=None, path=None,
+                 cmd_args=None, debug=False, version='0.0.0', **kwargs):
+        if name is None and title is None:
+            name = analysis.__name__.lower()
+            title = analysis.__name__
+        if title is None:
+            title = name
+        if name is None:
+            name = analysis.__name__.lower()
+
+        self.debug = debug
+        self.routes = App.static_routes()
+
+        extra_routes = []
+        try:
+            from routes import ROUTES
+            extra_routes += ROUTES
+        except ImportError:
+            log.warning('no extra routes found')
+
+        self.meta = Meta(
+            name,
+            analysis,
+            os.path.abspath(os.path.dirname(path)),
+            extra_routes,
+            cmd_args,
+            **kwargs
+        )
+        self.meta.fill_info(name=name, title=title, version=version)
+        self.routes += [(r'/{}'.format(route), handler, data)
+                        for route, handler, data in self.meta.routes]
+
+    def tornado_app(self, template_path=None, **kwargs):
+        if template_path is None:
+            template_path = os.path.join(
+                os.path.dirname(os.path.realpath(__file__)),
+                'templates',
+            )
+
+        return tornado.web.Application(
+            self.routes,
+            debug=self.debug,
+            template_loader=Loader([template_path]),
+            **kwargs
         )

@@ -11,7 +11,9 @@
     <label for="samples">Samples:</label>
     <input type="range" id="samples" value="1000" min="100000" max="900000" step="100000" />
 </div>
-<button class="btn btn-primary" data-action="run">Run</button>
+<div>
+    <button class="btn btn-primary" data-action="run">Run</button>
+</div>
 
 <div style="font-size: 400%">
     <em>π = <span id="pi">0.0 ± 1.0</span></em>
@@ -21,5 +23,5 @@
 
 {% block footer %}
 <script src="/_static/databench.js?v={{databench_version}}"></script>
-<script src="/dummypi/static/analysis.js?v={{version}}"></script>
+<script src="/static/analysis.js?v={{version}}"></script>
 {% end %}

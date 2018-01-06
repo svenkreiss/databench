@@ -6,10 +6,6 @@ import random
 
 
 class Dummypi(databench.Analysis):
-    """A dummy analysis.
-
-    :ivar databench.Datastore data: Datastore scoped to the connection.
-    """
 
     @databench.on
     def connected(self):
@@ -45,3 +41,7 @@ class Dummypi(databench.Analysis):
             yield self.set_state(pi=pi)
 
         yield self.emit('log', {'action': 'done'})
+
+
+if __name__ == '__main__':
+    databench.run(Dummypi, 'dummypi', 'Dummy π', __file__)

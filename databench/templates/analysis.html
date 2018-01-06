@@ -2,7 +2,7 @@
 
 
 {% block content %}
-<a class="d-home-link" href="/">Home</a>
+{% if home_link %}<a class="d-home-link" href="{{home_link}}">Home</a>{% end %}
 
 {% raw readme %}
 <div id="databench-alerts"></div>

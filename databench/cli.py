@@ -4,6 +4,7 @@ more info."""
 
 from __future__ import absolute_import, print_function
 
+from . import __version__ as DATABENCH_VERSION
 import argparse
 import logging
 import os
@@ -11,13 +12,8 @@ import ssl
 import sys
 import tornado
 
-from . import __version__ as DATABENCH_VERSION
 
-from zmq.eventloop import ioloop
-ioloop.install()
-
-
-def main():
+def main(**kwargs):
     """Entry point to run databench."""
 
     parser = argparse.ArgumentParser(description=__doc__)
@@ -36,8 +32,9 @@ def main():
     parser.add_argument('--port', dest='port',
                         type=int, default=int(os.environ.get('PORT', 5000)),
                         help='port for webserver')
-    parser.add_argument('--analyses', default=None,
-                        help='import path for analyses')
+    if not kwargs:
+        parser.add_argument('--analyses', default=None,
+                            help='import path for analyses')
     parser.add_argument('--build', default=False, action='store_true',
                         help='run the build command and exit')
     parser.add_argument('--coverage', default=False,
@@ -62,7 +59,7 @@ def main():
         cov.start()
 
     # this is included here so that is included in coverage
-    from .app import App
+    from .app import App, SingleApp
 
     # log
     if args.loglevel != 'INFO':
@@ -80,7 +77,10 @@ def main():
     if analyses_args:
         logging.debug('Arguments passed to analyses: {}'.format(analyses_args))
 
-    app = App(args.analyses, cmd_args=analyses_args, debug=args.watch)
+    if not kwargs:
+        app = App(args.analyses, cmd_args=analyses_args, debug=args.watch)
+    else:
+        app = SingleApp(**kwargs, cmd_args=analyses_args, debug=args.watch)
 
     # check whether this is just a quick build
     if args.build:
@@ -109,6 +109,23 @@ def main():
         if cov:
             cov.stop()
             cov.save()
+
+
+def run(analysis, name=None, title=None, path=None, **kwargs):
+    """Run a single analysis.
+
+    :param Analysis analysis: Analysis to run.
+    :param str name: Name of the analysis.
+    :param str title: Title of the analysis.
+    :param str path: Path of analysis. Can be `__file__`.
+    """
+    kwargs.update({
+        'analysis': analysis,
+        'name': name,
+        'title': title,
+        'path': path,
+    })
+    main(**kwargs)
 
 
 if __name__ == '__main__':

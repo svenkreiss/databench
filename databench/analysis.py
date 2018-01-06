@@ -2,20 +2,21 @@
 
 from __future__ import absolute_import, unicode_literals, division
 
+from . import utils
+from .datastore import Datastore
+from functools import wraps
 import inspect
 import logging
 import random
 import string
 import tornado.gen
-import warnings
-
-from . import utils
-from .datastore_legacy import DatastoreLegacy
 
 log = logging.getLogger(__name__)
 
 
 class ActionHandler(object):
+    """Databench action handler."""
+
     def __init__(self, action, f, bound_instance=None):
         self.action = action
         self.f = f
@@ -40,7 +41,7 @@ class ActionHandler(object):
         return inspect.getsource(self.f)
 
 
-def on(action):
+def on(f):
     """Decorator for action handlers.
 
     This also decorates the method with `tornado.gen.coroutine` so that
@@ -48,16 +49,26 @@ def on(action):
 
     The decorated object will have a :meth:`code` to retrieve its source code.
 
-    The action name can be given explicitely or can be inferred from the
-    function name.
+    The action name is inferred from the function name.
     """
-    if callable(action):
-        f = action
-        action = f.__name__
-        return ActionHandler(action, f)
+    action = f.__name__
+    return wraps(f)(ActionHandler(action, f))
 
+
+def on_action(action):
+    """Decorator for action handlers.
+
+    This also decorates the method with `tornado.gen.coroutine` so that
+    `~tornado.concurrent.Future`s can be `yield`ed.
+
+    The decorated object will have a :meth:`code` to retrieve its source code.
+
+    The action name is given explicitely.
+
+    :param str action: explicit action name
+    """
     def decorated_with_action_name(f):
-        return ActionHandler(action, f)
+        return wraps(f)(ActionHandler(action, f))
 
     return decorated_with_action_name
 
@@ -124,8 +135,8 @@ class Analysis(object):
     method and to methods that modify a value for a key before it is send
     out with ``data_<key>(value)`` methods.
 
-    :ivar DatastoreLegacy data: data scoped for this instance/connection
-    :ivar DatastoreLegacy class_data: data scoped across all instances
+    :ivar Datastore data: data scoped for this instance/connection
+    :ivar Datastore class_data: data scoped across all instances
     :ivar list cli_args: command line arguments
     :ivar dict request_args: request arguments
     """
@@ -159,10 +170,10 @@ class Analysis(object):
 
         Overwrite this method to use other datastore backends.
         """
-        self.data = DatastoreLegacy(self.id_)
-        self.data.subscribe(self.data_change)
-        self.class_data = DatastoreLegacy(type(self).__name__)
-        self.class_data.subscribe(self.class_data_change)
+        self.data = Datastore(self.id_)
+        self.data.subscribe(lambda data: self.emit('data', data))
+        self.class_data = Datastore(type(self).__name__)
+        self.class_data.subscribe(lambda data: self.emit('class_data', data))
 
     @staticmethod
     def __create_id():
@@ -194,23 +205,29 @@ class Analysis(object):
 
     """Events."""
 
-    def on_connect(self):
-        log.debug('on_connect called.')
+    @on
+    def connect(self):
+        pass
 
-    def on_args(self, cli_args, request_args):
+    @on
+    def args(self, cli_args, request_args):
         self.cli_args = cli_args
         self.request_args = request_args
 
-    def on_log(self, *args, **kwargs):
+    @on
+    def log(self, *args, **kwargs):
         self.log_frontend.info(utils.to_string(*args, **kwargs))
 
-    def on_warn(self, *args, **kwargs):
+    @on
+    def warn(self, *args, **kwargs):
         self.log_frontend.warn(utils.to_string(*args, **kwargs))
 
-    def on_error(self, *args, **kwargs):
+    @on
+    def error(self, *args, **kwargs):
         self.log_frontend.error(utils.to_string(*args, **kwargs))
 
-    def on_connected(self):
+    @on
+    def connected(self):
         """Default handlers for the "connected" action.
 
         Overwrite to add behavior.
@@ -218,27 +235,22 @@ class Analysis(object):
         .. versionadded:: 0.7
             Previously, most of this functionality was in ``on_connect()``.
         """
-        log.debug('on_connected called.')
+        pass
 
-    def on_disconnected(self):
+    @on
+    def disconnected(self):
         """Default handler for "disconnected" action.
 
         Overwrite to add behavior.
         """
         log.debug('on_disconnected called.')
 
-    """Data callbacks."""
+    @on
+    def set_state(self, **kwargs):
+        """Set state in Datastore."""
+        yield self.data.set_state(kwargs)
 
-    def data_change(self, key, value):
-        if hasattr(self, 'data_{}'.format(key)):
-            warnings.warn('Do not use data callbacks anymore.',
-                          category=DeprecationWarning)
-            value = getattr(self, 'data_{}'.format(key))(value)
-        self.emit('data', {key: value})
-
-    def class_data_change(self, key, value):
-        if hasattr(self, 'class_data_{}'.format(key)):
-            warnings.warn('Do not use data callbacks anymore.',
-                          category=DeprecationWarning)
-            value = getattr(self, 'class_data_{}'.format(key))(value)
-        self.emit('class_data', {key: value})
+    @on
+    def set_class_state(self, **kwargs):
+        """Set state in class Datastore."""
+        yield self.class_data.set_state(kwargs)
