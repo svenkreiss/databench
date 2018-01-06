@@ -375,7 +375,7 @@ class IndexHandler(tornado.web.RequestHandler):
             'index.html',
             databench_version=DATABENCH_VERSION,
             meta_infos=self.meta_infos(),
-            **self.info,
+            **self.info
         )
 
 
