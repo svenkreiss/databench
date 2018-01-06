@@ -80,7 +80,7 @@ def main(**kwargs):
     if not kwargs:
         app = App(args.analyses, cmd_args=analyses_args, debug=args.watch)
     else:
-        app = SingleApp(**kwargs, cmd_args=analyses_args, debug=args.watch)
+        app = SingleApp(cmd_args=analyses_args, debug=args.watch, **kwargs)
 
     # check whether this is just a quick build
     if args.build:
