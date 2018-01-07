@@ -1,6 +1,6 @@
 {
   "name": "databench",
-  "version": "0.7.0-beta.10",
+  "version": "0.7.0-beta.11",
   "description": "Real-time data analysis tool.",
   "readme": "./js/docs/index.md",
   "main": "./js/build/commonjs/databench.js",
@@ -23,7 +23,7 @@
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.1",
     "chai": "^4.0.2",
-    "eslint": "^4.14.0",
+    "eslint": "^4.15.0",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
