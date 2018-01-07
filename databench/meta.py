@@ -36,13 +36,31 @@ class Meta(object):
     :param list cli_args: Arguments from the command line.
     """
 
-    def __init__(self, name, analysis_class, analysis_path, extra_routes,
-                 cli_args=None, main_template='index.html'):
+    def __init__(self, name, analysis_class, analysis_path, extra_routes=None,
+                 cli_args=None, main_template='index.html', info=None):
         self.name = name
         self.analysis_class = analysis_class
         self.analysis_path = analysis_path
         self.cli_args = cli_args if cli_args is not None else []
-        self.info = {}
+
+        # detect whether a thumbnail image is present
+        thumbnail = False
+        thumbnails = glob.glob(os.path.join(self.analysis_path, 'thumbnail.*'))
+        if len(thumbnails) >= 1:
+            thumbnail = thumbnails[0]
+        # analysis readme
+        readme = Readme(self.analysis_path)
+        self.info = {
+            'title': self.analysis_class.__name__,
+            'readme': readme.html,
+            'description': readme.text.strip(),
+            'show_in_index': True,
+            'thumbnail': thumbnail,
+            'home_link': False,
+            'version': '0.0.0',
+        }
+        if info is not None:
+            self.info.update(info)
 
         self.fill_action_handlers(analysis_class)
 
@@ -59,27 +77,7 @@ class Meta(object):
             (r'', RenderTemplate,
              {'template_name': main_template,
               'info': self.info, 'path': self.analysis_path}),
-        ] + extra_routes
-
-    def fill_info(self, **kwargs):
-        # detect whether a thumbnail image is present
-        thumbnail = False
-        thumbnails = glob.glob(os.path.join(self.analysis_path, 'thumbnail.*'))
-        if len(thumbnails) >= 1:
-            thumbnail = thumbnails[0]
-
-        # analysis readme
-        readme = Readme(self.analysis_path)
-
-        self.info.update({
-            'title': self.name,
-            'readme': readme.html,
-            'description': readme.text.strip(),
-            'show_in_index': True,
-            'thumbnail': thumbnail,
-            'home_link': False,
-        })
-        self.info.update(kwargs)
+        ] + (extra_routes if extra_routes is not None else [])
 
     @staticmethod
     def fill_action_handlers(analysis_class):

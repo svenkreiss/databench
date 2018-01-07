@@ -111,7 +111,7 @@ def main(**kwargs):
             cov.save()
 
 
-def run(analysis, path=None, title=None, name=None, **kwargs):
+def run(analysis, path=None, name=None, **kwargs):
     """Run a single analysis.
 
     :param Analysis analysis: Analysis to run.
@@ -121,9 +121,8 @@ def run(analysis, path=None, title=None, name=None, **kwargs):
     """
     kwargs.update({
         'analysis': analysis,
-        'name': name,
-        'title': title,
         'path': path,
+        'name': name,
     })
     main(**kwargs)
 

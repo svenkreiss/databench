@@ -209,9 +209,9 @@ class App(object):
 
             if meta is None:
                 continue
-            meta.fill_info(version=self.info['version'],
-                           home_link='/',
-                           **analysis_info)
+            meta.info.update({'version': self.info['version'],
+                              'home_link': '/'})
+            meta.info.update(analysis_info)
             self.metas.append(meta)
 
     def meta_analysis_nokernel(self, name, path):
@@ -380,13 +380,8 @@ class IndexHandler(tornado.web.RequestHandler):
 
 
 class SingleApp(object):
-    def __init__(self, analysis, name=None, title=None, path=None,
-                 cli_args=None, debug=False, version='0.0.0', **kwargs):
-        if name is None and title is None:
-            name = analysis.__name__.lower()
-            title = analysis.__name__
-        if title is None:
-            title = name
+    def __init__(self, analysis, name=None, path=None,
+                 cli_args=None, debug=False, extra_routes=None, info=None):
         if name is None:
             name = analysis.__name__.lower()
         if path is None:
@@ -399,11 +394,10 @@ class SingleApp(object):
             name,
             analysis,
             os.path.abspath(os.path.dirname(path)),
-            kwargs.get('extra_routes', []),
+            extra_routes,
             cli_args,
-            **kwargs
+            info=info,
         )
-        self.meta.fill_info(name=name, title=title, version=version)
         self.routes += [(r'/{}'.format(route), handler, data)
                         for route, handler, data in self.meta.routes]
 
