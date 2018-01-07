@@ -39,7 +39,7 @@ setup(
     },
     extras_require={
         'tests': [
-            'coverage>=4.1b2',
+            'coverage>=4.4.2',
             'ghp-import>=0.4.1',
             'hacking>=0.11.0',  # imports a pinned version of flake8
             'html5validator>=0.2.6',
