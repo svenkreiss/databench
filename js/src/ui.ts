@@ -65,7 +65,7 @@ export class UIElement {
   static skipWire(node: HTMLElement): boolean {
     return (node.dataset.skipwire === 'true' ||
             node.dataset.skipwire === 'TRUE' ||
-            node.dataset.skipwire === '1')
+            node.dataset.skipwire === '1');
   }
 
   /**
