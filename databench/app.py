@@ -385,13 +385,15 @@ class SingleApp(object):
         if name is None:
             name = analysis.__name__.lower()
         if path is None:
-            path = __file__
-
+            path = os.path.join(os.getcwd(), '.')
         self.debug = debug
-        self.routes = App.static_routes()
+        if info is None:
+            info = {}
+        if 'version' not in info:
+            info['version'] = '0.0.0'
 
         # add random string to version in debug mode
-        if self.debug and info and 'version' in info:
+        if self.debug:
             info['version'] += '.debug-{:04X}'.format(
                 int(random.random() * 0xffff))
 
@@ -403,8 +405,9 @@ class SingleApp(object):
             cli_args,
             info=info,
         )
-        self.routes += [(r'/{}'.format(route), handler, data)
-                        for route, handler, data in self.meta.routes]
+        self.routes = App.static_routes() + [
+            (r'/{}'.format(route), handler, data)
+            for route, handler, data in self.meta.routes]
 
     def tornado_app(self, template_path=None, **kwargs):
         if template_path is None:
