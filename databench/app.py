@@ -35,9 +35,9 @@ class App(object):
     :param int zmq_port: Force to use the given ZMQ port for publishing.
     """
 
-    def __init__(self, analyses_path=None, zmq_port=None, cmd_args=None,
+    def __init__(self, analyses_path=None, zmq_port=None, cli_args=None,
                  debug=False):
-        self.cmd_args = cmd_args
+        self.cli_args = cli_args
         self.debug = debug
         self.info = {
             'title': 'Databench',
@@ -236,7 +236,7 @@ class App(object):
             classes[0],
             path,
             self.extra_routes(name, path),
-            self.cmd_args,
+            self.cli_args,
         )
 
     def meta_analysis_py(self, name, path):
@@ -381,7 +381,7 @@ class IndexHandler(tornado.web.RequestHandler):
 
 class SingleApp(object):
     def __init__(self, analysis, name=None, title=None, path=None,
-                 cmd_args=None, debug=False, version='0.0.0', **kwargs):
+                 cli_args=None, debug=False, version='0.0.0', **kwargs):
         if name is None and title is None:
             name = analysis.__name__.lower()
             title = analysis.__name__
@@ -389,23 +389,18 @@ class SingleApp(object):
             title = name
         if name is None:
             name = analysis.__name__.lower()
+        if path is None:
+            path = __file__
 
         self.debug = debug
         self.routes = App.static_routes()
-
-        extra_routes = []
-        try:
-            from routes import ROUTES
-            extra_routes += ROUTES
-        except ImportError:
-            log.warning('no extra routes found')
 
         self.meta = Meta(
             name,
             analysis,
             os.path.abspath(os.path.dirname(path)),
-            extra_routes,
-            cmd_args,
+            kwargs.get('extra_routes', []),
+            cli_args,
             **kwargs
         )
         self.meta.fill_info(name=name, title=title, version=version)

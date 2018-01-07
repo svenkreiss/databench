@@ -78,9 +78,9 @@ def main(**kwargs):
         logging.debug('Arguments passed to analyses: {}'.format(analyses_args))
 
     if not kwargs:
-        app = App(args.analyses, cmd_args=analyses_args, debug=args.watch)
+        app = App(args.analyses, cli_args=analyses_args, debug=args.watch)
     else:
-        app = SingleApp(cmd_args=analyses_args, debug=args.watch, **kwargs)
+        app = SingleApp(cli_args=analyses_args, debug=args.watch, **kwargs)
 
     # check whether this is just a quick build
     if args.build:
@@ -111,7 +111,7 @@ def main(**kwargs):
             cov.save()
 
 
-def run(analysis, name=None, title=None, path=None, **kwargs):
+def run(analysis, path=None, title=None, name=None, **kwargs):
     """Run a single analysis.
 
     :param Analysis analysis: Analysis to run.

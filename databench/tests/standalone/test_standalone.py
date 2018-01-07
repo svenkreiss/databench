@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import division
 
 import databench
@@ -7,7 +5,7 @@ import math
 import random
 
 
-class Dummypi(databench.Analysis):
+class DummyPi(databench.Analysis):
 
     @databench.on
     def connected(self):
@@ -46,4 +44,4 @@ class Dummypi(databench.Analysis):
 
 
 if __name__ == '__main__':
-    databench.run(Dummypi, 'dummypi', 'Dummy π', __file__)
+    databench.run(DummyPi, __file__)
