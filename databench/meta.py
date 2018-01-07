@@ -147,10 +147,7 @@ class Meta(object):
                 log.debug('calling {}'.format(fn))
                 yield tornado.gen.maybe_future(fn(*args, **kwargs))
         else:
-            # default is to store action name and data as key and value
-            # in analysis.data
-            value = message if message != '__nomessagetoken__' else None
-            analysis.data.set_state({action_name: value})
+            analysis.emit('warn', 'no handler for {}'.format(action_name))
 
         if process_id:
             analysis.emit('__process', {'id': process_id, 'status': 'end'})

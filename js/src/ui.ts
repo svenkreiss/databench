@@ -26,8 +26,12 @@ export interface HTMLDatabenchElement extends HTMLElement {
  */
 export class UIElement {
   node: HTMLDatabenchElement;
-  actionName?: string;
-  wireSignal?: string | { [x: string]: string; };
+
+  static idCounter: number = 0;
+  idCount: number;
+
+  actionName: string;
+  wireSignal: string | { [x: string]: string; };
 
   /**
    * @param node  An HTML element.
@@ -36,8 +40,9 @@ export class UIElement {
     this.node = <HTMLDatabenchElement>node;
     this.node.databenchUI = this;
 
-    this.actionName = UIElement.determineActionName(node);
-    this.wireSignal = UIElement.determineWireSignal(node);
+    this.idCount = UIElement.idCounter++;
+    this.actionName = this.determineActionName(node);
+    this.wireSignal = this.determineWireSignal(node);
   }
 
   /**
@@ -50,22 +55,29 @@ export class UIElement {
   }
 
   /**
+   * Determine whether to skip this element.
+   *
+   * This can be forced by adding a `data-skipwire=true` attribute
+   * to the HTML tag.
+   *
+   * @param node A HTML element.
+   */
+  static skipWire(node: HTMLElement): boolean {
+    return (node.dataset.skipwire === 'true' ||
+            node.dataset.skipwire === 'TRUE' ||
+            node.dataset.skipwire === '1')
+  }
+
+  /**
    * Determine the name of the action that should be associated with the node.
    *
-   * This can be forced to be `null` by adding a `data-skipwire=true` attribute
-   * to the HTML tag. If that is not found, the action name is determined from
+   * The action name is determined from
    * the tag's `data-action`, `name` or `id` attribute (in that order).
    *
    * @param  node A HTML element.
    * @return      Name of action or null.
    */
-  static determineActionName(node: HTMLElement): string|undefined {
-    if (node.dataset.skipwire === 'true' ||
-      node.dataset.skipwire === 'TRUE' ||
-      node.dataset.skipwire === '1') {
-      return undefined;
-    }
-
+  determineActionName(node: HTMLElement): string {
     const dataAction = node.dataset.action;
     if (dataAction) return dataAction;
 
@@ -75,14 +87,13 @@ export class UIElement {
     const attrId = node.getAttribute('id');
     if (attrId) return attrId;
 
-    return undefined;
+    return 'element' + this.idCount;
   }
 
   /**
    * Determine the name of the signal that should be listened to from the backend.
    *
-   * If the HTML tag as a `data-skipwire=true` attribute, this is forced to be
-   * null. Otherwise the signal name is determined from the `data-signal`,
+   * The signal name is determined from the `data-signal`,
    * `data-action`, `name` or `id` attribute (in that order.)
    * For all attributes apart from `data-signal`, the value is wrapped in an
    * object like `{ data: value-of-attribute }`. The `data-signal` value
@@ -92,13 +103,7 @@ export class UIElement {
    * @param  node A HTML element.
    * @return      Name of a signal or null.
    */
-  static determineWireSignal(node: HTMLElement): string | { [x: string]: string; } | undefined {
-    if (node.dataset.skipwire === 'true' ||
-      node.dataset.skipwire === 'TRUE' ||
-      node.dataset.skipwire === '1') {
-        return undefined;
-    }
-
+  determineWireSignal(node: HTMLElement): string | { [x: string]: string; } {
     const dataSignal = node.dataset.signal;
     if (dataSignal) {
       if (dataSignal.indexOf(':') >= 1) {
@@ -117,7 +122,7 @@ export class UIElement {
     const attrId = node.getAttribute('id');
     if (attrId) return { data: attrId };
 
-    return undefined;
+    return { data: 'element' + this.idCount };
   }
 }
 
@@ -174,8 +179,7 @@ export class Log extends UIElement {
               limitNumber: number = 20,
               limitLength: number = 250) {
     const node = document.getElementById(id);
-    if (node == null) return;
-    if (UIElement.determineActionName(node) == null) return;
+    if (node == null || UIElement.skipWire(node)) return;
 
     const log = new Log(node, limitNumber, limitLength);
     console.log(`Wiring ${wireSignals} to `, node);
@@ -254,7 +258,7 @@ export class StatusLog extends UIElement {
               formatter: (message: string, count: number) => string = StatusLog.defaultAlert) {
     const node = document.getElementById(id);
     if (node == null) return;
-    if (UIElement.determineActionName(node) == null) return;
+    if (UIElement.skipWire(node)) return;
 
     console.log('Wiring status log', node, `to element with id=${id}.`);
     const l = new StatusLog(node, formatter);
@@ -345,7 +349,7 @@ export class Button extends UIElement {
     const elements: HTMLDatabenchElement[] = [].slice.call(root.getElementsByTagName('BUTTON'), 0);
     elements
       .filter(node => node.databenchUI === undefined)
-      .filter(node => UIElement.determineActionName(node) !== undefined)
+      .filter(node => !UIElement.skipWire(node))
       .forEach(node => {
         const b = new Button(node);
         console.log('Wiring button', node, `to action ${b.actionName}.`);
@@ -358,7 +362,6 @@ export class Button extends UIElement {
             { start: ButtonState.Active, end: ButtonState.Idle }[status]
           ));
 
-          if (!b.actionName) throw Error('Failed to determine action name');
           conn.emit(b.actionName, b.actionFormat({
             __process_id: processID,  // eslint-disable-line camelcase
           }));
@@ -421,13 +424,12 @@ export class Text extends UIElement {
     elements
       .filter(node => node.databenchUI === undefined)
       .filter(node => node.dataset['action'] !== undefined)
-      .filter(node => UIElement.determineActionName(node) !== undefined)
+      .filter(node => !UIElement.skipWire(node))
       .forEach(node => {
         const t = new Text(node);
         console.log('Wiring text', node, `to action ${t.actionName}.`);
 
         // handle events from backend
-        if (!t.wireSignal) throw Error('Failed to determine signal name');
         conn.on(t.wireSignal, message => t.set_value(message));
       });
   }
@@ -512,19 +514,15 @@ export class TextInput extends UIElement {
     elements
       .filter(node => node.databenchUI === undefined)
       .filter(node => node.getAttribute('type') === 'text')
-      .filter(node => UIElement.determineActionName(node) !== undefined)
+      .filter(node => !UIElement.skipWire(node))
       .forEach(node => {
         const t = new TextInput(node);
         console.log('Wiring text input', node, `to action ${t.actionName}.`);
 
         // handle events from frontend
-        t.changeCB = message => {
-          if (!t.actionName) throw Error('Failed to determine action name');
-          conn.emit(t.actionName, message);
-        };
+        t.changeCB = message => conn.emit(t.actionName, message);
 
         // handle events from backend
-        if (!t.wireSignal) throw Error('Failed to determine action name');
         conn.on(t.wireSignal, message => t.value(message));
       });
   }
@@ -651,19 +649,15 @@ export class Slider extends UIElement {
     elements
       .filter(node => node.databenchUI === undefined)
       .filter(node => node.getAttribute('type') === 'range')
-      .filter(node => UIElement.determineActionName(node) !== undefined)
+      .filter(node => !UIElement.skipWire(node))
       .forEach(node => {
         const slider = new Slider(node, lfs[node.id]);
         console.log('Wiring slider', node, `to action ${slider.actionName}.`);
 
         // handle events from frontend
-        slider.changeCB = message => {
-          if (!slider.actionName) throw Error('Failed to determine action name');
-          conn.emit(slider.actionName, message);
-        };
+        slider.changeCB = message => conn.emit(slider.actionName, message);
 
         // handle events from backend
-        if (!slider.wireSignal) throw Error('Failed to determine action name');
         conn.on(slider.wireSignal, message => slider.set_value(message));
       });
   }
@@ -708,13 +702,12 @@ export class Image extends UIElement {
     elements
       .filter(node => node.databenchUI === undefined)
       .filter(node => node.dataset['signal'] !== undefined)
-      .filter(node => UIElement.determineWireSignal(node) !== null)
+      .filter(node => !UIElement.skipWire(node))
       .forEach(node => {
         const img = new Image(node);
         console.log('Wiring image', node, `to signal ${img.wireSignal}.`);
 
         // handle events from backend
-        if (!img.wireSignal) throw Error('Failed to determine action name');
         conn.on(img.wireSignal, message => img.value(message));
       });
   }

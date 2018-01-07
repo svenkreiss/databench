@@ -42,6 +42,10 @@ class DummyPi(databench.Analysis):
 
         yield self.emit('log', {'action': 'done'})
 
+    @databench.on
+    def samples(self, value):
+        yield self.set_state(samples=value)
+
 
 if __name__ == '__main__':
     databench.run(DummyPi, __file__)

@@ -390,6 +390,11 @@ class SingleApp(object):
         self.debug = debug
         self.routes = App.static_routes()
 
+        # add random string to version in debug mode
+        if self.debug and info and 'version' in info:
+            info['version'] += '.debug-{:04X}'.format(
+                int(random.random() * 0xffff))
+
         self.meta = Meta(
             name,
             analysis,
