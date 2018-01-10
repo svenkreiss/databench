@@ -123,16 +123,19 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="ui.uielement.html#actionname" class="tsd-kind-icon">action<wbr>Name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="ui.uielement.html#idcount" class="tsd-kind-icon">id<wbr>Count</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="ui.uielement.html#node" class="tsd-kind-icon">node</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="ui.uielement.html#wiresignal" class="tsd-kind-icon">wire<wbr>Signal</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="ui.uielement.html#idcounter" class="tsd-kind-icon">id<wbr>Counter</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ui.uielement.html#actionformat" class="tsd-kind-icon">action<wbr>Format</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="ui.uielement.html#determineactionname" class="tsd-kind-icon">determine<wbr>Action<wbr>Name</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="ui.uielement.html#determinewiresignal" class="tsd-kind-icon">determine<wbr>Wire<wbr>Signal</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ui.uielement.html#determineactionname" class="tsd-kind-icon">determine<wbr>Action<wbr>Name</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ui.uielement.html#determinewiresignal" class="tsd-kind-icon">determine<wbr>Wire<wbr>Signal</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="ui.uielement.html#skipwire" class="tsd-kind-icon">skip<wbr>Wire</a></li>
 							</ul>
 						</section>
 					</div>
@@ -150,7 +153,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/29e8fb9/js/src/ui.ts#L30">ui.ts:30</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L34">ui.ts:34</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -175,11 +178,21 @@
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="actionname" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> action<wbr>Name</h3>
-					<div class="tsd-signature tsd-kind-icon">action<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<h3>action<wbr>Name</h3>
+					<div class="tsd-signature tsd-kind-icon">action<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/29e8fb9/js/src/ui.ts#L29">ui.ts:29</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L33">ui.ts:33</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="idcount" class="tsd-anchor"></a>
+					<h3>id<wbr>Count</h3>
+					<div class="tsd-signature tsd-kind-icon">id<wbr>Count<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L31">ui.ts:31</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -189,17 +202,27 @@
 					<div class="tsd-signature tsd-kind-icon">node<span class="tsd-signature-symbol">:</span> <a href="../interfaces/ui.htmldatabenchelement.html" class="tsd-signature-type">HTMLDatabenchElement</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/29e8fb9/js/src/ui.ts#L28">ui.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L28">ui.ts:28</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="wiresignal" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> wire<wbr>Signal</h3>
+					<h3>wire<wbr>Signal</h3>
 					<div class="tsd-signature tsd-kind-icon">wire<wbr>Signal<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/29e8fb9/js/src/ui.ts#L30">ui.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L34">ui.ts:34</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-static">
+					<a name="idcounter" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> id<wbr>Counter</h3>
+					<div class="tsd-signature tsd-kind-icon">id<wbr>Counter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L30">ui.ts:30</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -216,7 +239,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/29e8fb9/js/src/ui.ts#L48">ui.ts:48</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L53">ui.ts:53</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -238,25 +261,24 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="determineactionname" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> determine<wbr>Action<wbr>Name</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">determine<wbr>Action<wbr>Name<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+					<h3>determine<wbr>Action<wbr>Name</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">determine<wbr>Action<wbr>Name<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/29e8fb9/js/src/ui.ts#L62">ui.ts:62</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L80">ui.ts:80</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Determine the name of the action that should be associated with the node.</p>
 								</div>
-								<p>This can be forced to be <code>null</code> by adding a <code>data-skipwire=true</code> attribute
-									to the HTML tag. If that is not found, the action name is determined from
+								<p>The action name is determined from
 								the tag&#39;s <code>data-action</code>, <code>name</code> or <code>id</code> attribute (in that order).</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -268,33 +290,29 @@
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span>
-								<span class="tsd-signature-symbol"> | </span>
-								<span class="tsd-signature-type">undefined</span>
-							</h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 							<p>Name of action or null.</p>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="determinewiresignal" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> determine<wbr>Wire<wbr>Signal</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">determine<wbr>Wire<wbr>Signal<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+					<h3>determine<wbr>Wire<wbr>Signal</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">determine<wbr>Wire<wbr>Signal<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/29e8fb9/js/src/ui.ts#L95">ui.ts:95</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L106">ui.ts:106</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Determine the name of the signal that should be listened to from the backend.</p>
 								</div>
-								<p>If the HTML tag as a <code>data-skipwire=true</code> attribute, this is forced to be
-									null. Otherwise the signal name is determined from the <code>data-signal</code>,
+								<p>The signal name is determined from the <code>data-signal</code>,
 									<code>data-action</code>, <code>name</code> or <code>id</code> attribute (in that order.)
 									For all attributes apart from <code>data-signal</code>, the value is wrapped in an
 									object like <code>{ data: value-of-attribute }</code>. The <code>data-signal</code> value
@@ -313,10 +331,41 @@
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span>
 								<span class="tsd-signature-symbol"> | </span>
 								<span class="tsd-signature-type">object</span>
-								<span class="tsd-signature-symbol"> | </span>
-								<span class="tsd-signature-type">undefined</span>
 							</h4>
 							<p>Name of a signal or null.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="skipwire" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> skip<wbr>Wire</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">skip<wbr>Wire<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L65">ui.ts:65</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Determine whether to skip this element.</p>
+								</div>
+								<p>This can be forced by adding a <code>data-skipwire=true</code> attribute
+								to the HTML tag.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>node: <span class="tsd-signature-type">HTMLElement</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>A HTML element.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -371,19 +420,28 @@
 								<a href="ui.uielement.html#actionname" class="tsd-kind-icon">action<wbr>Name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="ui.uielement.html#idcount" class="tsd-kind-icon">id<wbr>Count</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="ui.uielement.html#node" class="tsd-kind-icon">node</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="ui.uielement.html#wiresignal" class="tsd-kind-icon">wire<wbr>Signal</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-static">
+								<a href="ui.uielement.html#idcounter" class="tsd-kind-icon">id<wbr>Counter</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="ui.uielement.html#actionformat" class="tsd-kind-icon">action<wbr>Format</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="ui.uielement.html#determineactionname" class="tsd-kind-icon">determine<wbr>Action<wbr>Name</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="ui.uielement.html#determinewiresignal" class="tsd-kind-icon">determine<wbr>Wire<wbr>Signal</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="ui.uielement.html#skipwire" class="tsd-kind-icon">skip<wbr>Wire</a>
 							</li>
 						</ul>
 					</li>

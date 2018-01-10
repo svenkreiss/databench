@@ -101,10 +101,12 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="ui.log.html#_messages" class="tsd-kind-icon">_messages</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="ui.log.html#actionname" class="tsd-kind-icon">action<wbr>Name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="ui.log.html#idcount" class="tsd-kind-icon">id<wbr>Count</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="ui.log.html#limitlength" class="tsd-kind-icon">limit<wbr>Length</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="ui.log.html#limitnumber" class="tsd-kind-icon">limit<wbr>Number</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="ui.log.html#node" class="tsd-kind-icon">node</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="ui.log.html#wiresignal" class="tsd-kind-icon">wire<wbr>Signal</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="ui.log.html#idcounter" class="tsd-kind-icon">id<wbr>Counter</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -112,9 +114,10 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="ui.log.html#actionformat" class="tsd-kind-icon">action<wbr>Format</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ui.log.html#add" class="tsd-kind-icon">add</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="ui.log.html#determineactionname" class="tsd-kind-icon">determine<wbr>Action<wbr>Name</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="ui.log.html#determinewiresignal" class="tsd-kind-icon">determine<wbr>Wire<wbr>Signal</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ui.log.html#render" class="tsd-kind-icon">render</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="ui.log.html#determineactionname" class="tsd-kind-icon">determine<wbr>Action<wbr>Name</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="ui.log.html#determinewiresignal" class="tsd-kind-icon">determine<wbr>Wire<wbr>Signal</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="ui.log.html#skipwire" class="tsd-kind-icon">skip<wbr>Wire</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="ui.log.html#wire" class="tsd-kind-icon">wire</a></li>
 							</ul>
 						</section>
@@ -134,7 +137,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/29e8fb9/js/src/ui.ts#L132">ui.ts:132</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L137">ui.ts:137</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -179,18 +182,29 @@
 					<div class="tsd-signature tsd-kind-icon">_messages<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/29e8fb9/js/src/ui.ts#L132">ui.ts:132</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L137">ui.ts:137</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="actionname" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> action<wbr>Name</h3>
-					<div class="tsd-signature tsd-kind-icon">action<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<h3>action<wbr>Name</h3>
+					<div class="tsd-signature tsd-kind-icon">action<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#actionname">actionName</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/29e8fb9/js/src/ui.ts#L29">ui.ts:29</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L33">ui.ts:33</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+					<a name="idcount" class="tsd-anchor"></a>
+					<h3>id<wbr>Count</h3>
+					<div class="tsd-signature tsd-kind-icon">id<wbr>Count<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#idcount">idCount</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L31">ui.ts:31</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -200,7 +214,7 @@
 					<div class="tsd-signature tsd-kind-icon">limit<wbr>Length<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/29e8fb9/js/src/ui.ts#L131">ui.ts:131</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L136">ui.ts:136</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -210,7 +224,7 @@
 					<div class="tsd-signature tsd-kind-icon">limit<wbr>Number<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/29e8fb9/js/src/ui.ts#L130">ui.ts:130</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L135">ui.ts:135</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -221,18 +235,29 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#node">node</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/29e8fb9/js/src/ui.ts#L28">ui.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L28">ui.ts:28</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="wiresignal" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> wire<wbr>Signal</h3>
+					<h3>wire<wbr>Signal</h3>
 					<div class="tsd-signature tsd-kind-icon">wire<wbr>Signal<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#wiresignal">wireSignal</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/29e8fb9/js/src/ui.ts#L30">ui.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L34">ui.ts:34</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="idcounter" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> id<wbr>Counter</h3>
+					<div class="tsd-signature tsd-kind-icon">id<wbr>Counter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#idcounter">idCounter</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L30">ui.ts:30</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -250,7 +275,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#actionformat">actionFormat</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/29e8fb9/js/src/ui.ts#L48">ui.ts:48</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L53">ui.ts:53</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -282,7 +307,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/29e8fb9/js/src/ui.ts#L162">ui.ts:162</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L167">ui.ts:167</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -298,43 +323,25 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="render" class="tsd-anchor"></a>
-					<h3>render</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">render<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/29e8fb9/js/src/ui.ts#L149">ui.ts:149</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="determineactionname" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> determine<wbr>Action<wbr>Name</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">determine<wbr>Action<wbr>Name<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+					<h3>determine<wbr>Action<wbr>Name</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">determine<wbr>Action<wbr>Name<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#determineactionname">determineActionName</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/29e8fb9/js/src/ui.ts#L62">ui.ts:62</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L80">ui.ts:80</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Determine the name of the action that should be associated with the node.</p>
 								</div>
-								<p>This can be forced to be <code>null</code> by adding a <code>data-skipwire=true</code> attribute
-									to the HTML tag. If that is not found, the action name is determined from
+								<p>The action name is determined from
 								the tag&#39;s <code>data-action</code>, <code>name</code> or <code>id</code> attribute (in that order).</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -346,34 +353,30 @@
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span>
-								<span class="tsd-signature-symbol"> | </span>
-								<span class="tsd-signature-type">undefined</span>
-							</h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 							<p>Name of action or null.</p>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="determinewiresignal" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> determine<wbr>Wire<wbr>Signal</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">determine<wbr>Wire<wbr>Signal<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+					<h3>determine<wbr>Wire<wbr>Signal</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">determine<wbr>Wire<wbr>Signal<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#determinewiresignal">determineWireSignal</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/29e8fb9/js/src/ui.ts#L95">ui.ts:95</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L106">ui.ts:106</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Determine the name of the signal that should be listened to from the backend.</p>
 								</div>
-								<p>If the HTML tag as a <code>data-skipwire=true</code> attribute, this is forced to be
-									null. Otherwise the signal name is determined from the <code>data-signal</code>,
+								<p>The signal name is determined from the <code>data-signal</code>,
 									<code>data-action</code>, <code>name</code> or <code>id</code> attribute (in that order.)
 									For all attributes apart from <code>data-signal</code>, the value is wrapped in an
 									object like <code>{ data: value-of-attribute }</code>. The <code>data-signal</code> value
@@ -392,10 +395,59 @@
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span>
 								<span class="tsd-signature-symbol"> | </span>
 								<span class="tsd-signature-type">object</span>
-								<span class="tsd-signature-symbol"> | </span>
-								<span class="tsd-signature-type">undefined</span>
 							</h4>
 							<p>Name of a signal or null.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="render" class="tsd-anchor"></a>
+					<h3>render</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">render<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L154">ui.ts:154</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="skipwire" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> skip<wbr>Wire</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">skip<wbr>Wire<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#skipwire">skipWire</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L65">ui.ts:65</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Determine whether to skip this element.</p>
+								</div>
+								<p>This can be forced by adding a <code>data-skipwire=true</code> attribute
+								to the HTML tag.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>node: <span class="tsd-signature-type">HTMLElement</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>A HTML element.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -409,7 +461,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/29e8fb9/js/src/ui.ts#L171">ui.ts:171</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/1feb615/js/src/ui.ts#L176">ui.ts:176</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -477,6 +529,9 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="ui.log.html#actionname" class="tsd-kind-icon">action<wbr>Name</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="ui.log.html#idcount" class="tsd-kind-icon">id<wbr>Count</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="ui.log.html#limitlength" class="tsd-kind-icon">limit<wbr>Length</a>
 							</li>
@@ -489,20 +544,26 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="ui.log.html#wiresignal" class="tsd-kind-icon">wire<wbr>Signal</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="ui.log.html#idcounter" class="tsd-kind-icon">id<wbr>Counter</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="ui.log.html#actionformat" class="tsd-kind-icon">action<wbr>Format</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="ui.log.html#add" class="tsd-kind-icon">add</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="ui.log.html#determineactionname" class="tsd-kind-icon">determine<wbr>Action<wbr>Name</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="ui.log.html#determinewiresignal" class="tsd-kind-icon">determine<wbr>Wire<wbr>Signal</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="ui.log.html#render" class="tsd-kind-icon">render</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
-								<a href="ui.log.html#determineactionname" class="tsd-kind-icon">determine<wbr>Action<wbr>Name</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
-								<a href="ui.log.html#determinewiresignal" class="tsd-kind-icon">determine<wbr>Wire<wbr>Signal</a>
+								<a href="ui.log.html#skipwire" class="tsd-kind-icon">skip<wbr>Wire</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="ui.log.html#wire" class="tsd-kind-icon">wire</a>
