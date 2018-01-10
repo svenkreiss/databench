@@ -8,6 +8,7 @@ Analysis
     :members:
 
 .. autofunction:: databench.on
+.. autofunction:: databench.on_action
 
 
 Meta
@@ -19,9 +20,6 @@ Meta
 
 Datastore
 ---------
-
-.. autoclass:: databench.DatastoreLegacy
-   :members:
 
 .. autoclass:: databench.Datastore
    :members:

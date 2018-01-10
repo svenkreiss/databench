@@ -4,11 +4,14 @@ from __future__ import absolute_import, unicode_literals, division
 
 from . import __version__ as DATABENCH_VERSION
 from .analysis import ActionHandler
+from .readme import Readme
 from .utils import json_encoder_default
 from collections import defaultdict
 import functools
+import glob
 import json
 import logging
+import os
 import tornado.gen
 import tornado.web
 import tornado.websocket
@@ -33,37 +36,48 @@ class Meta(object):
     :param list cli_args: Arguments from the command line.
     """
 
-    def __init__(self, name, analysis_class, analysis_path, extra_routes,
-                 cli_args=None):
+    def __init__(self, name, analysis_class, analysis_path, extra_routes=None,
+                 cli_args=None, main_template='index.html', info=None):
         self.name = name
         self.analysis_class = analysis_class
         self.analysis_path = analysis_path
         self.cli_args = cli_args if cli_args is not None else []
 
+        # detect whether a thumbnail image is present
+        thumbnail = False
+        thumbnails = glob.glob(os.path.join(self.analysis_path, 'thumbnail.*'))
+        if len(thumbnails) >= 1:
+            thumbnail = thumbnails[0]
+        # analysis readme
+        readme = Readme(self.analysis_path)
+        self.info = {
+            'title': self.analysis_class.__name__,
+            'readme': readme.html,
+            'description': readme.text.strip(),
+            'show_in_index': True,
+            'thumbnail': thumbnail,
+            'home_link': False,
+            'version': '0.0.0',
+        }
+        if info is not None:
+            self.info.update(info)
+
         self.fill_action_handlers(analysis_class)
 
-        self.info = {}
         self.routes = [
-            (r'/{}/static/(.*)'.format(self.name),
-             tornado.web.StaticFileHandler,
+            (r'static/(.*)', tornado.web.StaticFileHandler,
              {'path': self.analysis_path}),
 
-            (r'/{}/ws'.format(self.name),
-             FrontendHandler,
+            (r'ws', FrontendHandler,
              {'meta': self}),
 
-            (r'/(?P<template_name>{}/.+\.html)'.format(self.name),
-             RenderTemplate,
-             {'info': self.info}),
+            (r'(?P<template_name>.+\.html)', RenderTemplate,
+             {'info': self.info, 'path': self.analysis_path}),
 
-            (r'/{}/'.format(self.name),
-             RenderTemplate,
-             {'template_name': '{}/index.html'.format(self.name),
-              'info': self.info}),
-        ] + [
-            (r'/{}/{}'.format(self.name, route), handler, data)
-            for route, handler, data in extra_routes
-        ]
+            (r'', RenderTemplate,
+             {'template_name': main_template,
+              'info': self.info, 'path': self.analysis_path}),
+        ] + (extra_routes if extra_routes is not None else [])
 
     @staticmethod
     def fill_action_handlers(analysis_class):
@@ -133,18 +147,7 @@ class Meta(object):
                 log.debug('calling {}'.format(fn))
                 yield tornado.gen.maybe_future(fn(*args, **kwargs))
         else:
-            # default is to store action name and data as key and value
-            # in analysis.data
-            #
-            # TODO(sven): deprecate this in favor of set_state() in Analysis
-            # with new Datastore
-            value = message if message != '__nomessagetoken__' else None
-            if hasattr(analysis.data, 'set_state'):
-                # TODO(sven): add deprecation warning here?
-                analysis.data.set_state({action_name: value})
-            else:
-                # TODO(sven): add deprecation warning here?
-                analysis.data[action_name] = value
+            analysis.emit('warn', 'no handler for {}'.format(action_name))
 
         if process_id:
             analysis.emit('__process', {'id': process_id, 'status': 'end'})
@@ -238,13 +241,14 @@ class FrontendHandler(tornado.websocket.WebSocketHandler):
 
 
 class RenderTemplate(tornado.web.RequestHandler):
-    def initialize(self, info, template_name=None):
+    def initialize(self, info, path, template_name=None):
         self.info = info
+        self.path = path
         self.template_name = template_name
 
     def get(self, template_name=None):
         if template_name is None:
             template_name = self.template_name
-        self.render(template_name,
+        self.render(os.path.join(self.path, template_name),
                     databench_version=DATABENCH_VERSION,
                     **self.info)

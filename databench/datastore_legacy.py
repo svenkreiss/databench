@@ -321,3 +321,6 @@ class DatastoreLegacy(object):
             del DatastoreLegacy.store[self.domain]
 
         del self
+
+    def set_state(self, **kwargs):
+        raise NotImplementedError

@@ -81,6 +81,11 @@ class Datastore(object):
             raise IndexError
         return decode(self.data[key])
 
+    def __setitem__(self, key, value):
+        """Set value at given key."""
+        # TODO(sven): Should this be deprecated for set_state()?
+        return self.set_state({key: value})
+
     def get(self, key, default=None):
         """Return entry at key.
 

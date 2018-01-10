@@ -24,9 +24,3 @@ class Parameters(databench.Analysis):
     def on_test_class_data(self, key, value):
         """Store key-value in class data."""
         self.class_data[key] = value
-
-    def data_light2(self, value):
-        return '{}-modified'.format(value)
-
-    def class_data_light2(self, value):
-        return '{}-modified'.format(value)

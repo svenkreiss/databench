@@ -151,6 +151,15 @@ class Datastore(unittest.TestCase):
         self.d.set_state(lambda ds: {'test': 'modified{}'.format(ds['cnt'])})
         self.assertEqual(self.after['test'], 'modified2')
 
+    def test_analysis_datastore(self):
+        a = databench.Analysis().init_databench()
+        a.set_emit_fn(lambda s, pl: None)
+        a.data.subscribe(self.datastore_callback)
+        a.data['test'] = 'analysis_datastore'
+
+        print(self.after)
+        self.assertEqual(self.after['test'], 'analysis_datastore')
+
 
 class DatastoreLegacy(unittest.TestCase):
     def setUp(self):
@@ -282,15 +291,6 @@ class DatastoreLegacy(unittest.TestCase):
         ret = self.d.set('test', 'set_return')
         assert 'test' in self.d
         self.assertEqual(ret, ['callback return'])
-
-    def test_analysis_datastore(self):
-        a = databench.Analysis().init_databench()
-        a.set_emit_fn(lambda s, pl: None)
-        a.data.on_change(self.datastore_callback)
-        a.data['test'] = 'analysis_datastore'
-
-        print(self.after)
-        self.assertEqual(self.after, 'analysis_datastore')
 
 
 if __name__ == '__main__':

@@ -3,13 +3,14 @@
 
 from __future__ import absolute_import
 
-__version__ = '0.7b10'
+__version__ = '0.7b11'
 __all__ = ['Analysis', 'AnalysisZMQ', 'App', 'Datastore', 'Meta', 'MetaZMQ',
-           'on', 'Readme', 'testing', 'utils']
+           'on', 'on_action', 'Readme', 'run', 'testing', 'utils']
 
-from .analysis import Analysis, on
+from .analysis import Analysis, on, on_action
 from .analysis_zmq import AnalysisZMQ
 from .app import App
+from .cli import run
 from .datastore import Datastore
 from .datastore_legacy import DatastoreLegacy
 from .meta import Meta

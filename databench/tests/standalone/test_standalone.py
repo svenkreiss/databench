@@ -5,8 +5,7 @@ import math
 import random
 
 
-class Dummypi(databench.Analysis):
-    """A dummy analysis."""
+class DummyPi(databench.Analysis):
 
     @databench.on
     def connected(self):
@@ -46,3 +45,7 @@ class Dummypi(databench.Analysis):
     @databench.on
     def samples(self, value):
         yield self.set_state(samples=value)
+
+
+if __name__ == '__main__':
+    databench.run(DummyPi, __file__)
