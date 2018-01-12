@@ -106,7 +106,7 @@ class Connection(object):
         :rtype: tornado.concurrent.Future
         """
         self.ws.close()
-        yield tornado.gen.sleep(0.1)
+        yield tornado.gen.sleep(1.0)
 
     @tornado.gen.coroutine
     def emit(self, action, message='__nomessagetoken__'):

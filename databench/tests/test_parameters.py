@@ -74,24 +74,27 @@ class ParametersTestCases(object):
         c = yield self.connect(self.analysis)
         yield c.emit('test_data', ['light', 'red'])
         yield c.read()
-        self.assertEqual({'light': 'red'}, c.data)
         yield c.close()
+
+        self.assertIn({'light': 'red'}, c.messages['data'])
 
     @tornado.testing.gen_test
     def test_set_data(self):
         c = yield self.connect(self.analysis)
         yield c.emit('test_set_data', ['light', 'red'])
         yield c.read()
-        self.assertEqual({'light': 'red'}, c.data)
         yield c.close()
+
+        self.assertIn({'light': 'red'}, c.messages['data'])
 
     @tornado.testing.gen_test
     def test_class_data(self):
         c = yield self.connect(self.analysis)
         yield c.emit('test_class_data', ['light', 'red'])
         yield c.read()
-        self.assertEqual({'light': 'red'}, c.class_data)
         yield c.close()
+
+        self.assertIn({'light': 'red'}, c.messages['class_data'])
 
 
 class Parameters(ParametersTestCases, ConnectionTestCase):
