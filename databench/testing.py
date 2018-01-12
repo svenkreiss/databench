@@ -78,16 +78,7 @@ class Connection(object):
         self.request_args = request_args
 
         self.ws = None
-        self.on_process_callbacks = defaultdict(list)
-        self.on_callbacks = defaultdict(list)
-
-        # emulate behavior of automatically updating data and class_data
-        self.data = {}
-        self.class_data = {}
-        self.on_callbacks['data'].append(
-            lambda d: self.data.update(d))
-        self.on_callbacks['class_data'].append(
-            lambda d: self.class_data.update(d))
+        self.messages = defaultdict(list)
 
     @tornado.gen.coroutine
     def connect(self, compression_options=None):
@@ -115,7 +106,7 @@ class Connection(object):
         :rtype: tornado.concurrent.Future
         """
         self.ws.close()
-        yield tornado.gen.sleep(1.0)
+        yield tornado.gen.sleep(0.1)
 
     @tornado.gen.coroutine
     def emit(self, action, message='__nomessagetoken__'):
@@ -138,31 +129,10 @@ class Connection(object):
         """
         response = yield self.ws.read_message()
         message = json.loads(response)
-
-        # processes
-        if 'signal' in message and message['signal'] == '__process':
-            id_ = message['load']['id']
-            status = message['load']['status']
-            for cb in self.on_process_callbacks[id_]:
-                cb(status)
-
-        # normal message
-        if 'signal' in message:
-            for cb in self.on_callbacks[message['signal']]:
-                if 'load' in message:
-                    cb(message['load'])
-                else:
-                    cb()
+        self.messages[message.get('signal', '__no_signal__')].append(
+            message.get('load', '__no_load__'))
 
         raise tornado.gen.Return(message)
-
-    def on(self, signal, callback):
-        """Register a callback for a signal."""
-        self.on_callbacks[signal].append(callback)
-
-    def on_process(self, process_id, callback):
-        """Register a callback for a process."""
-        self.on_process_callbacks[process_id].append(callback)
 
 
 class ConnectionTestCase(AsyncHTTPTestCase):
@@ -184,16 +154,17 @@ class ConnectionTestCase(AsyncHTTPTestCase):
     def get_app(self):
         return App(self.analyses_path).tornado_app()
 
-    def connection(self, analysis_name, analysis_id=None, request_args=None):
+    def connection(self, analysis_name=None, analysis_id=None,
+                   request_args=None):
         """Create a WebSocket connection to the backend.
 
         :rtype: Connection
         """
-        url = 'ws://127.0.0.1:{}/{}/ws'.format(self.get_http_port(),
-                                               analysis_name)
+        path = '{}/'.format(analysis_name) if analysis_name else ''
+        url = 'ws://127.0.0.1:{}/{}ws'.format(self.get_http_port(), path)
         return Connection(url, analysis_id, request_args)
 
-    def connect(self, analysis_name, analysis_id=None, request_args=None):
+    def connect(self, analysis_name=None, analysis_id=None, request_args=None):
         """Create a WebSocket connection to the backend and connect to it.
 
         :rtype: tornado.concurrent.Future
@@ -210,11 +181,12 @@ class ConnectionTestCaseSSL(AsyncHTTPSTestCase):
     def get_app(self):
         return App(self.analyses_path).tornado_app()
 
-    def connection(self, analysis_name, analysis_id=None, request_args=None):
-        url = 'wss://127.0.0.1:{}/{}/ws'.format(self.get_http_port(),
-                                                analysis_name)
+    def connection(self, analysis_name=None, analysis_id=None,
+                   request_args=None):
+        path = '{}/'.format(analysis_name) if analysis_name else ''
+        url = 'wss://127.0.0.1:{}/{}ws'.format(self.get_http_port(), path)
         return Connection(url, analysis_id, request_args)
 
-    def connect(self, analysis_name, analysis_id=None, request_args=None):
+    def connect(self, analysis_name=None, analysis_id=None, request_args=None):
         return self.connection(analysis_name, analysis_id,
                                request_args).connect()

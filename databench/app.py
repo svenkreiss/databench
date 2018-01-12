@@ -380,12 +380,12 @@ class IndexHandler(tornado.web.RequestHandler):
 
 
 class SingleApp(object):
-    def __init__(self, analysis, name=None, path=None,
+    def __init__(self, analysis, path=None, name=None,
                  cli_args=None, debug=False, extra_routes=None, info=None):
-        if name is None:
-            name = analysis.__name__.lower()
         if path is None:
             path = os.path.join(os.getcwd(), '.')
+        if name is None:
+            name = analysis.__name__.lower()
         self.debug = debug
         if info is None:
             info = {}
