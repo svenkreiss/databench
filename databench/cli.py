@@ -111,13 +111,14 @@ def main(**kwargs):
             cov.save()
 
 
-def run(analysis, path=None, name=None, **kwargs):
+def run(analysis, path=None, name=None, info=None, **kwargs):
     """Run a single analysis.
 
-    :param Analysis analysis: Analysis to run.
-    :param str name: Name of the analysis.
-    :param str title: Title of the analysis.
+    :param Analysis analysis: Analysis class to run.
     :param str path: Path of analysis. Can be `__file__`.
+    :param str name: Name of the analysis.
+    :param dict info: Optional entries are ``version``, ``title``,
+        ``readme``, ...
     """
     kwargs.update({
         'analysis': analysis,

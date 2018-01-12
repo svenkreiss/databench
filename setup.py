@@ -30,6 +30,7 @@ setup(
         'pyyaml>=3.11',
         'pyzmq>=4.3.1',
         'tornado>=4.3',
+        'wrapt>=1.10.11',
     ],
     entry_points={
         'console_scripts': [

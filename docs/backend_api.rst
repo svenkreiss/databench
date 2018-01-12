@@ -1,6 +1,11 @@
 Python API
 ==========
 
+.. automodule:: databench
+
+.. autofunction:: databench.run
+
+
 Analysis
 --------
 
@@ -15,14 +20,14 @@ Meta
 ----
 
 .. autoclass:: databench.Meta
-   :members:
+    :members:
 
 
 Datastore
 ---------
 
 .. autoclass:: databench.Datastore
-   :members:
+    :members:
 
 
 Utils
@@ -38,4 +43,4 @@ Testing
 -------
 
 .. autoclass:: databench.testing.AnalysisTest
-   :members:
+    :members:
