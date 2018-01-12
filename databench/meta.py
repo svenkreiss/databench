@@ -88,6 +88,8 @@ class Meta(object):
             action = None
             if isinstance(attr, ActionHandler):
                 action = attr.action
+            elif hasattr(attr, 'action'):
+                action = attr.action
             elif attr_str.startswith('on_'):
                 action = attr_str[3:]
 

@@ -1,12 +1,15 @@
 Python Backend
 ==============
 
+A single analysis can be run programmatically from Python using :func:`databench.run`.
+
+
 .. _analyses_configurations:
 
-Analyses Configurations
------------------------
+Multiple Analyses Configuration
+-------------------------------
 
-Example ``analyses/index.yaml``:
+Example ``analyses/index.yaml`` file:
 
 .. literalinclude:: ../databench/analyses_packaged/index.yaml
     :language: yaml
