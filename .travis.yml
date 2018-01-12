@@ -17,9 +17,10 @@ install:
  # install Node 6
  - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install 6
  - node -v
- # install Node dependencies
+ # npm update
  - npm install -g npm
  - npm -v
+ # install Node dependencies
  - npm install
  - npm run build
 
