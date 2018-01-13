@@ -73,15 +73,15 @@
 					<p>The signal message is placed directly into the <code>src</code> attribute of the image
 						tag. For matplotlib, that formatting can be done with the utility function
 					<code>fig_to_src()</code> (see example below).</p>
-					<pre><code><span class="hljs-comment">// in index.html, add</span>
-&lt;img alt=<span class="hljs-string">"my plot"</span> <span class="hljs-built_in">data</span><span class="hljs-params">-signal</span>=<span class="hljs-string">"mpl"</span> /&gt;
-
-<span class="hljs-comment">// in analysis.py, add</span>
-<span class="hljs-keyword">import</span> matplotlib.pyplot as plt
-<span class="hljs-params">...</span>
+					<p>In <code>index.html</code>:</p>
+					<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">"my plot"</span> <span class="hljs-attr">data-signal</span>=<span class="hljs-string">"mpl"</span> /&gt;</span>
+</code></pre>
+					<p>In <code>analysis.py</code>:</p>
+					<pre><code class="lang-py"><span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt
+...
 fig = plt.figure()
-<span class="hljs-params">...</span>
-<span class="hljs-built_in">self</span>.emit(<span class="hljs-string">'mpl'</span>, databench.fig_to_src(fig))
+...
+self.emit(<span class="hljs-string">'mpl'</span>, databench.fig_to_src(fig))
 </code></pre>
 				</div>
 			</section>
@@ -124,7 +124,8 @@ fig = plt.figure()
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="ui.image.html#actionformat" class="tsd-kind-icon">action<wbr>Format</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="ui.image.html#determineactionname" class="tsd-kind-icon">determine<wbr>Action<wbr>Name</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="ui.image.html#determinewiresignal" class="tsd-kind-icon">determine<wbr>Wire<wbr>Signal</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ui.image.html#value" class="tsd-kind-icon">value</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ui.image.html#getsrc" class="tsd-kind-icon">get<wbr>Src</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ui.image.html#setsrc" class="tsd-kind-icon">set<wbr>Src</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="ui.image.html#skipwire" class="tsd-kind-icon">skip<wbr>Wire</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="ui.image.html#wire" class="tsd-kind-icon">wire</a></li>
 							</ul>
@@ -145,7 +146,7 @@ fig = plt.figure()
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/71f2998/js/src/ui.ts#L34">ui.ts:34</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/698ea45/js/src/ui.ts#L34">ui.ts:34</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -175,7 +176,7 @@ fig = plt.figure()
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#actionname">actionName</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/71f2998/js/src/ui.ts#L33">ui.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/698ea45/js/src/ui.ts#L33">ui.ts:33</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -186,7 +187,7 @@ fig = plt.figure()
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#idcount">idCount</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/71f2998/js/src/ui.ts#L31">ui.ts:31</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/698ea45/js/src/ui.ts#L31">ui.ts:31</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -197,7 +198,7 @@ fig = plt.figure()
 					<aside class="tsd-sources">
 						<p>Overrides <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#node">node</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/71f2998/js/src/ui.ts#L687">ui.ts:687</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/698ea45/js/src/ui.ts#L692">ui.ts:692</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -208,7 +209,7 @@ fig = plt.figure()
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#wiresignal">wireSignal</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/71f2998/js/src/ui.ts#L34">ui.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/698ea45/js/src/ui.ts#L34">ui.ts:34</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -219,7 +220,7 @@ fig = plt.figure()
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#idcounter">idCounter</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/71f2998/js/src/ui.ts#L30">ui.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/698ea45/js/src/ui.ts#L30">ui.ts:30</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -237,7 +238,7 @@ fig = plt.figure()
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#actionformat">actionFormat</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/71f2998/js/src/ui.ts#L53">ui.ts:53</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/698ea45/js/src/ui.ts#L53">ui.ts:53</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -270,7 +271,7 @@ fig = plt.figure()
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#determineactionname">determineActionName</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/71f2998/js/src/ui.ts#L80">ui.ts:80</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/698ea45/js/src/ui.ts#L80">ui.ts:80</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -305,7 +306,7 @@ fig = plt.figure()
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#determinewiresignal">determineWireSignal</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/71f2998/js/src/ui.ts#L106">ui.ts:106</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/698ea45/js/src/ui.ts#L106">ui.ts:106</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -337,33 +338,47 @@ fig = plt.figure()
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="value" class="tsd-anchor"></a>
-					<h3>value</h3>
+					<a name="getsrc" class="tsd-anchor"></a>
+					<h3>get<wbr>Src</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">value<span class="tsd-signature-symbol">(</span>v<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">this</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Src<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/71f2998/js/src/ui.ts#L690">ui.ts:690</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/698ea45/js/src/ui.ts#L694">ui.ts:694</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="setsrc" class="tsd-anchor"></a>
+					<h3>set<wbr>Src</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Src<span class="tsd-signature-symbol">(</span>v<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ui.image.html" class="tsd-signature-type">Image</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/698ea45/js/src/ui.ts#L699">ui.ts:699</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Reads and sets the value.</p>
+									<p>Sets theSrc.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> v: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+									<h5>v: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span>
-								<span class="tsd-signature-symbol"> | </span>
-								<span class="tsd-signature-type">this</span>
-							</h4>
+							<h4 class="tsd-returns-title">Returns <a href="ui.image.html" class="tsd-signature-type">Image</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -378,7 +393,7 @@ fig = plt.figure()
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ui.uielement.html">UIElement</a>.<a href="ui.uielement.html#skipwire">skipWire</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/71f2998/js/src/ui.ts#L65">ui.ts:65</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/698ea45/js/src/ui.ts#L65">ui.ts:65</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -411,7 +426,7 @@ fig = plt.figure()
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/71f2998/js/src/ui.ts#L698">ui.ts:698</a></li>
+									<li>Defined in <a href="https://github.com/svenkreiss/databench/blob/698ea45/js/src/ui.ts#L705">ui.ts:705</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -486,7 +501,10 @@ fig = plt.figure()
 								<a href="ui.image.html#determinewiresignal" class="tsd-kind-icon">determine<wbr>Wire<wbr>Signal</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="ui.image.html#value" class="tsd-kind-icon">value</a>
+								<a href="ui.image.html#getsrc" class="tsd-kind-icon">get<wbr>Src</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="ui.image.html#setsrc" class="tsd-kind-icon">set<wbr>Src</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="ui.image.html#skipwire" class="tsd-kind-icon">skip<wbr>Wire</a>
