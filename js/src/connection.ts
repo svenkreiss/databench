@@ -51,7 +51,7 @@ export class Connection {
   analysesVersion: string|null;
 
   errorCB: (message?: string) => void;
-  private onCallbacks: {[field: string]: ((message: any) => void)[]};
+  private onCallbacks: {[field: string]: ((message: any, signal?: string) => void)[]};
   private onProcessCallbacks: {[field: string]: ((status: any) => void)[]};
   private preEmitCallbacks: {[field: string]: ((message: any) => any)[]};
 
@@ -192,7 +192,7 @@ export class Connection {
    * @param message Payload for the triggered signal.
    */
   trigger(signal: string, message: any = null) {
-    this.onCallbacks[signal].forEach(cb => cb(message));
+    this.onCallbacks[signal].forEach(cb => cb(message, signal));
   }
 
   wsOnMessage(event: {data: string}) {
@@ -251,7 +251,8 @@ export class Connection {
    * @param  callback  A callback function that takes the attached data.
    * @return           this
    */
-  on(signal: string|{[field: string]: string}, callback: (message: any) => void): Connection {
+  on(signal: string|{[field: string]: string}|{[field: string]: RegExp},
+     callback: (message: any, key?: string) => void): Connection {
     if (typeof signal === 'object') {
       this._on_object(signal, callback);
       return this;
@@ -262,12 +263,15 @@ export class Connection {
     return this;
   }
 
-  _on_object(signal: {[field: string]: string}, callback: (message: any) => void): Connection {
+  _on_object(signal: {[field: string]: string}|{[field: string]: RegExp},
+             callback: (message: any, key?: string) => void): Connection {
     Object.keys(signal).forEach(signalName => {
       const entryName = signal[signalName];
-      const filteredCallback = (data: any) => {
-        if (!data.hasOwnProperty(entryName)) return;
-        callback(data[entryName]);
+      const filteredCallback = (data: any, signalName: string) => {
+        Object.keys(data).forEach(dataKey => {
+          if (dataKey.match(entryName) === null) return;
+          callback(data[dataKey], dataKey);
+        });
       };
       this.on(signalName, filteredCallback);
     });
