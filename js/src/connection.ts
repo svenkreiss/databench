@@ -249,7 +249,6 @@ export class Connection {
    *
    * @param  signal    Signal name to listen for.
    * @param  callback  A callback function that takes the attached data.
-   * @return           this
    */
   on(signal: string|{[field: string]: string}|{[field: string]: RegExp},
      callback: (message: any, key?: string) => void): Connection {
@@ -283,7 +282,6 @@ export class Connection {
    * Set a pre-emit hook.
    * @param signalName  A signal name.
    * @param callback    Callback function.
-   * @return            this
    */
   preEmit(signalName: string, callback: (message: any) => any): Connection {
     if (!(signalName in this.preEmitCallbacks)) this.preEmitCallbacks[signalName] = [];
@@ -295,7 +293,6 @@ export class Connection {
    * Emit a signal/action to the backend.
    * @param  signalName  A signal name. Usually an action name.
    * @param  message     Payload attached to the action.
-   * @return             this
    */
   emit(signalName: string, message?: any): Connection {
     // execute preEmit hooks before sending message to backend
