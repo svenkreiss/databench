@@ -32,7 +32,7 @@ import { w3cwebsocket as WebSocket } from 'websocket';
  * Logging across frontend and backend can be done by emitting `log`,
  * `warn` or `error`, e.g. `emit('log', 'Hello World')`.
  *
- * ~~~
+ * ```js
  * var databench = new Databench.Connection();
  * Databench.ui.wire(databench);
  *
@@ -41,7 +41,7 @@ import { w3cwebsocket as WebSocket } from 'websocket';
  *
  *
  * databench.connect();
- * ~~~
+ * ```
  */
 export class Connection {
   wsUrl: string;

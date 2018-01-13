@@ -151,7 +151,7 @@ export class Log extends UIElement {
     this._messages = [];
   }
 
-  render() {
+  render(): Log {
     while (this._messages.length > this.limitNumber) this._messages.shift();
 
     this.node.innerText = this._messages
@@ -164,7 +164,7 @@ export class Log extends UIElement {
     return this;
   }
 
-  add(message: any, source = 'unknown') {
+  add(message: any, source = 'unknown'): Log {
     const msg = typeof message === 'string' ? message : JSON.stringify(message);
     const paddedSource = Array(Math.max(0, 8 - source.length)).join(' ') + source;
     this._messages.push([`${paddedSource}: ${msg}`]);
@@ -229,14 +229,14 @@ export class StatusLog extends UIElement {
     return `<div class="alert alert-danger">${countFormat}${message}</div>`;
   }
 
-  render() {
+  render(): StatusLog {
     const formatted = Object.getOwnPropertyNames(this._messages)
       .map((m: string) => this.formatter(m, this._messages[m]));
     this.node.innerHTML = formatted.join('\n');
     return this;
   }
 
-  add(message: any) {
+  add(message: any): StatusLog {
     if (message == null) {
       this._messages = {};
       return this;
@@ -279,18 +279,21 @@ export enum ButtonState {
  * backend is processing the action that got started when it was clicked.
  * A simple example is below.
  *
- * ~~~
- * // in index.html, add:
+ * In `index.html`:
+ * ```html
  * <button data-action="run">Run</button>
+ * ```
  *
- * // in analysis.py, add:
- * def on_run(self):
+ * In `analysis.py`:
+ * ```py
+ * @ databench.on
+ * def run(self):
  *     """Run when button is pressed."""
  *     pass
+ * ```
  *
- * // In this form, Databench finds the button automatically and connects it
- * // to the backend. No additional JavaScript code is required.
- * ~~~
+ * In this form, Databench finds the button automatically and connects it
+ * to the backend. No additional JavaScript code is required.
  */
 export class Button extends UIElement {
   _state: ButtonState;
@@ -315,7 +318,7 @@ export class Button extends UIElement {
     return console.log(`click on ${this.node} with ${processID}`);
   }
 
-  render() {
+  render(): Button {
     switch (this._state) {
       case ButtonState.Active:
         this.node.classList.add('disabled');
@@ -326,7 +329,7 @@ export class Button extends UIElement {
     return this;
   }
 
-  click() {
+  click(): Button {
     if (this._state !== ButtonState.Idle) return this;
 
     const processID = Math.floor(Math.random() * 0x100000);
@@ -334,7 +337,7 @@ export class Button extends UIElement {
     return this;
   }
 
-  state(s: ButtonState) {
+  state(s: ButtonState): Button {
     if (s !== ButtonState.Idle && s !== ButtonState.Active) return this;
 
     this._state = s;
@@ -396,12 +399,12 @@ export class Text extends UIElement {
   }
 
   /** Reads the value. */
-  get_value() {
+  getValue() {
     return this.node.innerHTML;
   }
 
   /** Reads the value. */
-  set_value(v?: string) {
+  setValue(v?: string): Text {
     this.node.innerHTML = this.formatFn(v || '');
     return this;
   }
@@ -430,7 +433,7 @@ export class Text extends UIElement {
         console.log('Wiring text', node, `to action ${t.actionName}.`);
 
         // handle events from backend
-        conn.on(t.wireSignal, message => t.set_value(message));
+        conn.on(t.wireSignal, message => t.setValue(message));
       });
   }
 }
@@ -470,7 +473,7 @@ export class TextInput extends UIElement {
   }
 
   change() {
-    return this.changeCB(this.actionFormat(this.get_value()));
+    return this.changeCB(this.actionFormat(this.getValue()));
   }
 
   /**
@@ -496,12 +499,12 @@ export class TextInput extends UIElement {
   }
 
   /** Reads and sets the value. */
-  get_value(): string {
+  getValue(): string {
     return this.node.value;
   }
 
   /** Set value */
-  value(v: string): TextInput {
+  setValue(v: string): TextInput {
     this.node.value = this.formatFn(v || '');
     return this;
   }
@@ -523,7 +526,7 @@ export class TextInput extends UIElement {
         t.changeCB = message => conn.emit(t.actionName, message);
 
         // handle events from backend
-        conn.on(t.wireSignal, message => t.value(message));
+        conn.on(t.wireSignal, message => t.setValue(message));
       });
   }
 }
@@ -532,19 +535,19 @@ export class TextInput extends UIElement {
 /**
  * Make all `<input[type='range']>` with an action name interactive.
  *
- * ~~~
- * // in index.html, add:
+ * In `index.html`:
+ * ```html
  * <label for="samples">Samples:</label>
  * <input type="range" id="samples" value="1000" min="100" max="10000" step="100" />
+ * ```
  *
- * // in analysis.py, add:
- * def on_samples(self, value):
+ * In `analysis.py`:
+ * ```py
+ * @ databench.on
+ * def samples(self, value):
  *     """Sets the number of samples to generate per run."""
- *     self.data['samples'] = value
- *
- * // The Python code is for illustration only and can be left out as this is
- * // the default behavior.
- * ~~~
+ *     yield self.set_state(samples=value)
+ * ```
  */
 export class Slider extends UIElement {
   node: HTMLInputElement & HTMLDatabenchElement;
@@ -602,8 +605,8 @@ export class Slider extends UIElement {
     return value.toString();
   }
 
-  render() {
-    const v = this.get_value();
+  render(): Slider {
+    const v = this.getValue();
     if (this.labelNode) {
       this.labelNode.innerHTML = `${this.labelHtml} ${this.formatFn(v)}`;
     }
@@ -611,12 +614,12 @@ export class Slider extends UIElement {
   }
 
   /** Reads the value. */
-  get_value(): number {
+  getValue(): number {
     return this.sliderToValue(parseFloat(this.node.value));
   }
 
-  /** Reads the value. */
-  set_value(v: number) {
+  /** Set the value. */
+  setValue(v: number): Slider {
     const newSliderValue = this.valueToSlider(v);
     if (this.node.value === newSliderValue) return this;
 
@@ -626,7 +629,7 @@ export class Slider extends UIElement {
   }
 
   change() {
-    return this.changeCB(this.actionFormat(this.get_value()));
+    return this.changeCB(this.actionFormat(this.getValue()));
   }
 
   /** Find all labels for slider elements. */
@@ -658,7 +661,7 @@ export class Slider extends UIElement {
         slider.changeCB = message => conn.emit(slider.actionName, message);
 
         // handle events from backend
-        conn.on(slider.wireSignal, message => slider.set_value(message));
+        conn.on(slider.wireSignal, message => slider.setValue(message));
       });
   }
 }
@@ -671,26 +674,30 @@ export class Slider extends UIElement {
  * tag. For matplotlib, that formatting can be done with the utility function
  * `fig_to_src()` (see example below).
  *
- * ~~~
- * // in index.html, add
+ * In `index.html`:
+ * ```html
  * <img alt="my plot" data-signal="mpl" />
+ * ```
  *
- * // in analysis.py, add
+ * In `analysis.py`:
+ * ```py
  * import matplotlib.pyplot as plt
  * ...
  * fig = plt.figure()
  * ...
  * self.emit('mpl', databench.fig_to_src(fig))
- * ~~~
+ * ```
  */
 export class Image extends UIElement {
   node: HTMLImageElement & HTMLDatabenchElement;
 
-  /** Reads and sets the value. */
-  value(v?: string) {
-    if (v === undefined) return this.node.src;
+  getSrc(): string {
+    return this.node.src;
+  }
 
-    this.node.src = v || '';
+  /** Sets theSrc. */
+  setSrc(v: string): Image {
+    this.node.src = v;
     return this;
   }
 
@@ -708,7 +715,7 @@ export class Image extends UIElement {
         console.log('Wiring image', node, `to signal ${img.wireSignal}.`);
 
         // handle events from backend
-        conn.on(img.wireSignal, message => img.value(message));
+        conn.on(img.wireSignal, message => img.setSrc(message));
       });
   }
 }
