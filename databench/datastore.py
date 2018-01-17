@@ -108,7 +108,7 @@ class Datastore(object):
         self.data[key] = value_encoded
         return self.trigger_callbacks(key)
 
-    def set_state(self, updater):
+    def set_state(self, updater=None, **kwargs):
         """Update the datastore.
 
         :param func|dict updater: (state) => state_change or dict state_change
@@ -116,8 +116,10 @@ class Datastore(object):
         """
         if callable(updater):
             state_change = updater(self)
-        else:
+        elif updater is not None:
             state_change = updater
+        else:
+            state_change = kwargs
 
         return [callback_result
                 for k, v in state_change.items()
@@ -127,7 +129,7 @@ class Datastore(object):
         """Test whether key is set."""
         return key in self.data
 
-    def init(self, key_value_pairs):
+    def init(self, key_value_pairs=None, **kwargs):
         """Initialize datastore.
 
         Only sets values for keys that are not in the datastore already.
@@ -137,6 +139,8 @@ class Datastore(object):
 
         :rtype: Iterable[tornado.concurrent.Future]
         """
+        if key_value_pairs is None:
+            key_value_pairs = kwargs
         return [self.set(k, v)
                 for k, v in key_value_pairs.items()
                 if k not in self]
