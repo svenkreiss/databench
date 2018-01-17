@@ -244,11 +244,17 @@ class Analysis(object):
         log.debug('on_disconnected called.')
 
     @on
-    def set_state(self, **kwargs):
+    def set_state(self, update_dict=None, **kwargs):
         """Set state in Datastore."""
-        yield self.data.set_state(kwargs)
+        if update_dict is not None:
+            yield self.data.set_state(update_dict)
+        if kwargs:
+            yield self.data.set_state(kwargs)
 
     @on
-    def set_class_state(self, **kwargs):
+    def set_class_state(self, update_dict=None, **kwargs):
         """Set state in class Datastore."""
-        yield self.class_data.set_state(kwargs)
+        if update_dict is not None:
+            yield self.class_data.set_state(update_dict)
+        if kwargs:
+            yield self.class_data.set_state(kwargs)

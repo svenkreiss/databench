@@ -7,13 +7,13 @@ import tornado.testing
 class Example(tornado.testing.AsyncTestCase):
     @tornado.testing.gen_test
     def test_data(self):
-        test = AnalysisTest(Parameters())
+        test = AnalysisTest(Parameters)
         yield test.trigger('test_data', ['light', 'red'])
         self.assertIn(('data', {'light': 'red'}), test.emitted_messages)
 
     @tornado.testing.gen_test
     def test_process(self):
-        test = AnalysisTest(Parameters())
+        test = AnalysisTest(Parameters)
         yield test.trigger('test_data', {'key': 'light',
                                          'value': 'red',
                                          '__process_id': 3})
@@ -25,6 +25,6 @@ class Example(tornado.testing.AsyncTestCase):
 
     @tornado.testing.gen_test
     def test_multiple_emits(self):
-        test = AnalysisTest(Dummypi())
+        test = AnalysisTest(Dummypi)
         yield test.trigger('run')
         self.assertIn(('log', {'action': 'done'}), test.emitted_messages)

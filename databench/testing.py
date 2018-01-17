@@ -14,7 +14,7 @@ class AnalysisTest(object):
     :param str request_args: Request arguments.
     :param meta: An object with a `run_process` attribute.
 
-    Trigger actions using the `~databench.testing.AnalysisTest.trigger` method.
+    Trigger actions using the `~.trigger` method.
     All outgoing messages to the frontend are captured in `emitted_messages`.
 
     There are two main options for constructing tests: decorating with
@@ -31,16 +31,17 @@ class AnalysisTest(object):
     """
     def __init__(self, analysis, cli_args=None, request_args=None, meta=None):
         self.analysis = analysis
+        self.analysis_instance = analysis()
         self.cli_args = cli_args
         self.request_args = request_args
         self.meta = meta or Meta
         self.emitted_messages = []
 
-        Meta.fill_action_handlers(analysis.__class__)
+        Meta.fill_action_handlers(analysis)
 
         # initialize
-        self.analysis.init_databench()
-        self.analysis.set_emit_fn(self.emulate_emit_to_frontend)
+        self.analysis_instance.init_databench()
+        self.analysis_instance.set_emit_fn(self.emulate_emit_to_frontend)
         self.trigger('connect')
         self.trigger('args', [cli_args, request_args])
         self.trigger('connected')
@@ -55,11 +56,11 @@ class AnalysisTest(object):
         :param message: Message.
         :param callback:
             A callback function when done (e.g.
-            `stop <tornado.testing.AsyncTestCase.stop>` in tests).
+            `~tornado.testing.AsyncTestCase.stop` in tests).
         :rtype: tornado.concurrent.Future
         """
         return self.meta.run_process(
-            self.analysis, action_name, message, **kwargs)
+            self.analysis_instance, action_name, message, **kwargs)
 
 
 class Connection(object):
