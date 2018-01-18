@@ -53,7 +53,7 @@ class App(object):
         self.routes = [
             (r'/(?:index.html)?', IndexHandler,
              {'info': self.info, 'metas': self.metas}),
-        ] + self.static_routes()
+        ] + self.static_routes(self.analyses_path)
 
         self.init_zmq(zmq_port)
         self.analyses_info()
@@ -84,25 +84,60 @@ class App(object):
         )
 
     @staticmethod
-    def static_routes():
-        static_path = os.path.join(
+    def first_valid_directory(paths, default=None):
+        return next((p for p in paths if os.path.isdir(p)), default)
+
+    @classmethod
+    def static_routes(cls, analyses_path):
+        _static_path = os.path.join(
             os.path.dirname(os.path.realpath(__file__)), 'static')
-        node_modules_path = os.path.join(
+        _node_modules_path = os.path.join(
             os.path.dirname(os.path.realpath(__file__)), 'node_modules')
 
         # watch Databench's own static files
-        tornado.autoreload.watch(os.path.join(static_path, 'databench.js'))
-        tornado.autoreload.watch(os.path.join(static_path, 'databench.css'))
+        tornado.autoreload.watch(os.path.join(_static_path, 'databench.js'))
+        tornado.autoreload.watch(os.path.join(_static_path, 'databench.css'))
 
-        return [
+        routes = []
+
+        # If 'analyses', 'analyses/..' or current directory contains a
+        # 'static' folder, make it available.
+        static_path = cls.first_valid_directory(
+            (os.path.join(analyses_path, 'static'),
+             os.path.join(os.getcwd(), 'static')))
+        if static_path is not None:
+            log.debug('Making {} available at /static/.'.format(static_path))
+            routes.append(
+                (r'/static/(.*)', tornado.web.StaticFileHandler,
+                 {'path': static_path})
+            )
+        else:
+            log.debug('Did not find a static folder.')
+
+        # If 'analyses', 'analyses/..' or current directory contains a
+        # 'node_modules' folder, make it available.
+        node_modules_path = cls.first_valid_directory(
+            (os.path.join(analyses_path, 'node_modules'),
+             os.path.join(os.getcwd(), 'node_modules')))
+        if node_modules_path is not None:
+            log.debug('Making {} available at /node_modules/.'
+                      ''.format(node_modules_path))
+            routes.append(
+                (r'/node_modules/(.*)', tornado.web.StaticFileHandler,
+                 {'path': node_modules_path})
+            )
+        else:
+            log.debug('Did not find a node_modules folder.')
+
+        return routes + [
             (r'/(favicon\.ico)', tornado.web.StaticFileHandler,
              {'path': 'static/favicon.ico'}),
 
             (r'/_static/(.*)', tornado.web.StaticFileHandler,
-             {'path': static_path}),
+             {'path': _static_path}),
 
             (r'/_node_modules/(.*)', tornado.web.StaticFileHandler,
-             {'path': node_modules_path}),
+             {'path': _node_modules_path}),
         ]
 
     @staticmethod
@@ -148,43 +183,6 @@ class App(object):
         if self.info['description'] is None:
             self.info['description'] = readme.text.strip()
         self.info['description_html'] = readme.html
-
-        # If 'analyses', 'analyses/..' or current directory contains a
-        # 'static' folder, make it available.
-        static_path = next((
-            p
-            for p in (os.path.join(self.analyses_path, 'static'),
-                      os.path.join(self.analyses_path, '..', 'static'),
-                      os.path.join(os.getcwd(), 'static'))
-            if os.path.isdir(p)
-        ), None)
-        if static_path is not None:
-            log.debug('Making {} available at /static/.'.format(static_path))
-            self.routes.append(
-                (r'/static/(.*)', tornado.web.StaticFileHandler,
-                 {'path': static_path})
-            )
-        else:
-            log.debug('Did not find a static folder.')
-
-        # If 'analyses', 'analyses/..' or current directory contains a
-        # 'node_modules' folder, make it available.
-        node_modules_path = next((
-            p
-            for p in (os.path.join(self.analyses_path, 'node_modules'),
-                      os.path.join(self.analyses_path, '..', 'node_modules'),
-                      os.path.join(os.getcwd(), 'node_modules'))
-            if os.path.isdir(p)
-        ), None)
-        if node_modules_path is not None:
-            log.debug('Making {} available at /node_modules/.'
-                      ''.format(node_modules_path))
-            self.routes.append(
-                (r'/node_modules/(.*)', tornado.web.StaticFileHandler,
-                 {'path': node_modules_path})
-            )
-        else:
-            log.debug('Did not find a node_modules folder.')
 
     def meta_analyses(self):
         for analysis_info in self.info['analyses']:
@@ -384,6 +382,7 @@ class SingleApp(object):
                  cli_args=None, debug=False, extra_routes=None, info=None):
         if path is None:
             path = os.path.join(os.getcwd(), '.')
+        path = os.path.abspath(os.path.dirname(path))
         if name is None:
             name = analysis.__name__.lower()
         self.debug = debug
@@ -400,12 +399,12 @@ class SingleApp(object):
         self.meta = Meta(
             name,
             analysis,
-            os.path.abspath(os.path.dirname(path)),
+            path,
             extra_routes,
             cli_args,
             info=info,
         )
-        self.routes = App.static_routes() + [
+        self.routes = App.static_routes(path) + [
             (r'/{}'.format(route), handler, data)
             for route, handler, data in self.meta.routes]
 

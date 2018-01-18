@@ -17,11 +17,12 @@ def json_encoder_default(obj):
 
     Example usage: ``json.dumps(obj, default=json_encoder_default)``
     """
-    if np is not None:
-        if isinstance(obj, np.integer):
-            return int(obj)
-        elif isinstance(obj, np.float):
-            return float(obj)
+    if np is not None and hasattr(obj, 'size') and hasattr(obj, 'dtype'):
+        if obj.size == 1:
+            if np.issubdtype(obj.dtype, np.integer):
+                return int(obj)
+            elif np.issubdtype(obj.dtype, np.floating):
+                return float(obj)
 
     if isinstance(obj, set):
         return list(obj)
