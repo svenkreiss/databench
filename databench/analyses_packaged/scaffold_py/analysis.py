@@ -1,12 +1,13 @@
-import databench_py
+import databench
 import databench_py.singlethread
 
 
-class Scaffold_Py(databench_py.Analysis):
+class Scaffold_Py(databench.Analysis):
 
-    def on_connect(self):
+    @databench.on
+    def connected(self):
         """Run as soon as a browser connects to this."""
-        self.data['status'] = 'Hello World'
+        yield self.set_state(status='Hello World')
 
 
 if __name__ == '__main__':

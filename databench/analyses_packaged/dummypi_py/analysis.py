@@ -4,30 +4,18 @@ import math
 from random import random
 
 import databench
-import databench_py
 import databench_py.singlethread
 
 import logging
 logging.basicConfig(level='DEBUG')
 
 
-class Dummypi_Py(databench_py.Analysis):
-    """A dummy analysis.
-
-    :ivar databench.Datastore data: Datastore scoped to the connection.
-    """
-
-    def init_datastores(self):
-        self.data = databench.Datastore(self.id_)
-        self.data.subscribe(lambda data: self.emit('data', data))
-
-    @databench.on
-    def set_state(self, **kwargs):
-        self.data.set_state(kwargs)
+class Dummypi_Py(databench.Analysis):
+    """A dummy analysis."""
 
     @databench.on
     def connected(self):
-        self.data.init({'samples': 100000})
+        yield self.data.init({'samples': 100000})
 
     @databench.on
     def run(self):
@@ -44,7 +32,7 @@ class Dummypi_Py(databench_py.Analysis):
                 continue
 
             # debug
-            self.emit('log', {'draws': draws, 'inside': inside})
+            yield self.emit('log', {'draws': draws, 'inside': inside})
 
             # calculate pi and its uncertainty given the current draws
             p = inside / draws
@@ -54,9 +42,9 @@ class Dummypi_Py(databench_py.Analysis):
             }
 
             # send status to frontend
-            self.set_state(pi=pi)
+            yield self.set_state(pi=pi)
 
-        self.emit('log', {'action': 'done'})
+        yield self.emit('log', {'action': 'done'})
 
 
 if __name__ == "__main__":

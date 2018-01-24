@@ -1,9 +1,8 @@
-import databench_py
+import databench
 import databench_py.singlethread
-import tornado.gen
 
 
-class Parameters_Py(databench_py.Analysis):
+class Parameters_Py(databench.Analysis):
 
     def on_test_fn(self, first_param, second_param=100):
         """Echo params."""
@@ -13,12 +12,13 @@ class Parameters_Py(databench_py.Analysis):
         """process an action without a message"""
         self.emit('test_action_ack')
 
-    def on_test_data(self, key, value):
+    @databench.on
+    def test_data(self, key, value):
         """Store some test data."""
         self.data[key] = value
 
-    @tornado.gen.coroutine
-    def on_test_set_data(self, key, value):
+    @databench.on
+    def test_set_data(self, key, value):
         """Store some test data."""
         yield self.data.set(key, value)
 
