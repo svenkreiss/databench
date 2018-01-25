@@ -3,8 +3,7 @@ from tornado.web import RequestHandler
 
 class PostHandler(RequestHandler):
     def post(self):
-        print(self.get_argument('data', 'No data received'))
-        self.write('done')
+        self.write(self.get_argument('data', 'No data received'))
 
 
 class GetHandler(RequestHandler):

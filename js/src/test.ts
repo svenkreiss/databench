@@ -96,6 +96,7 @@ describe('Server Process', () => {
     it('creates good routes for POST', done => {
       request.post({url: 'http://localhost:5000/simple2/post', form: {data: 'test data'}}, (error, response, body) => {
         expect(response.statusCode).to.equal(200);
+        expect(body).to.equal('test data');
         done();
       });
     });
