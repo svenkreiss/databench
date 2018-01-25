@@ -11,7 +11,6 @@ import os
 import ssl
 import sys
 import tornado
-from tornado.testing import AsyncHTTPSTestCase  # self-signed SSL certificate
 
 
 def main(**kwargs):
@@ -102,7 +101,13 @@ def main(**kwargs):
             ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
             ssl_ctx.load_cert_chain(args.ssl_certfile, args.ssl_keyfile)
         else:
-            ssl_ctx = AsyncHTTPSTestCase.get_ssl_options(None)
+            # use Tornado's self signed certificates
+            module_dir = os.path.dirname(tornado.__file__)
+            ssl_ctx = {
+                'certfile': os.path.join(module_dir, 'test', 'test.crt'),
+                'keyfile': os.path.join(module_dir, 'test', 'test.key'),
+            }
+
         logging.info('Open https://{}:{} in a web browser.'
                      ''.format(args.host, args.ssl_port))
         tornado_app.listen(args.ssl_port, ssl_options=ssl_ctx)
