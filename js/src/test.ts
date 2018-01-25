@@ -5,6 +5,8 @@
 import * as child_process from 'child_process';
 import { expect } from 'chai';
 import * as Databench from '.';
+import * as https from 'https';
+import * as request from 'request';
 
 
 describe('Server Process', () => {
@@ -13,6 +15,7 @@ describe('Server Process', () => {
     '--log', 'WARNING',
     '--analyses', 'databench.tests.analyses',
     '--coverage', '.coverage',
+    '--ssl-port', '5001',
     '--some-test-flag',
   ]);
   databench_process.stdout.on('data', data => console.log('databench stdout: ' + data));
@@ -26,10 +29,77 @@ describe('Server Process', () => {
     setTimeout(() => {
       expect(databench_process_return_code).to.equal(-42);
       done();
-    }, 1000);
+    }, 2000);
   });
 
-  after(() => databench_process.kill());
+  after(done => {
+    setTimeout(() => {
+      databench_process.kill('SIGINT');
+      done();
+    }, 2000);
+  });
+
+  describe('App test', () => {
+    it('has a working index page', done => {
+      request.get('http://localhost:5000', (error, response, body) => {
+        expect(response.statusCode).to.equal(200);
+        done();
+      });
+    });
+
+    it('has a working analysis page', done => {
+      request.get('http://localhost:5000/parameters/', (error, response, body) => {
+        expect(response.statusCode).to.equal(200);
+        done();
+      });
+    });
+
+    it('has a working index page with SSL', done => {
+      request.get({url: 'https://localhost:5001', rejectUnauthorized: false}, (error, response, body) => {
+        expect(response.statusCode).to.equal(200);
+        done();
+      });
+    });
+
+    it('has an invalid SSL certificate', done => {
+      request.get('https://localhost:5001', (error, response, body) => {
+        expect(error.code).to.equal('DEPTH_ZERO_SELF_SIGNED_CERT');
+        done();
+      });
+    });
+
+    it('can access the static folder', done => {
+      request.get('http://localhost:5000/static/test_file.txt', (error, response, body) => {
+        expect(response.statusCode).to.equal(200);
+        expect(body).to.contain('placeholder');
+        done();
+      });
+    });
+
+    it('can access the node_modules folder', done => {
+      request.get('http://localhost:5000/node_modules/test_file.txt', (error, response, body) => {
+        expect(response.statusCode).to.equal(200);
+        expect(body).to.contain('placeholder');
+        done();
+      });
+    });
+  });
+
+  describe('Routes Tests', () => {
+    it('creates good routes for GET', done => {
+      request.get('http://localhost:5000/simple2/get', (error, response, body) => {
+        expect(response.statusCode).to.equal(200);
+        done();
+      });
+    });
+
+    it('creates good routes for POST', done => {
+      request.post({url: 'http://localhost:5000/simple2/post', form: {data: 'test data'}}, (error, response, body) => {
+        expect(response.statusCode).to.equal(200);
+        done();
+      });
+    });
+  });
 
   describe('Echo Tests', () => {
     let c = new Databench.Connection();
@@ -123,6 +193,23 @@ describe('Server Process', () => {
     });
   });
 
+  describe('Connection Interruption', () => {
+    it('keeps analysis id', done => {
+      const client1 = Databench.connect('ws://localhost:5000/connection_interruption/ws', null, null, () => {
+        const id1 = client1.analysisId;
+        client1.disconnect();
+        expect(id1).to.have.length(8);
+
+        const client2 = Databench.connect('ws://localhost:5000/connection_interruption/ws', null, id1, () => {
+          const id2 = client2.analysisId;
+          client2.disconnect();
+          expect(id2).to.equal(id1);
+          done();
+        });
+      });
+    });
+  });
+
   describe('Analysis Test', () => {
     let c: Databench.Connection = new Databench.Connection();
     beforeEach(() => { c.disconnect(); c = new Databench.Connection(); });
@@ -191,12 +278,12 @@ describe('Server Process', () => {
         databench.emit('test_fn', {first_param: 1, second_param: 2});
       });
 
-      it('calls an action that sets data', done => {
+      it('calls an action that sets state', done => {
         databench.on({data: 'light'}, data => {
           expect(data).to.equal('red');
           done();
         });
-        databench.emit('test_data', ['light', 'red']);
+        databench.emit('test_state', ['light', 'red']);
       });
 
       it('calls an action that sets state', done => {
@@ -219,9 +306,29 @@ describe('Server Process', () => {
         databench.on('test_fn', data => expect(data).to.deep.equal([1, 100]));
         databench.onProcess(123, data => {
           expect(data).to.be.oneOf(['start', 'end']);
-          if (data == 'end') done();
+          if (data === 'end') done();
         });
         databench.emit('test_fn', {first_param: 1, __process_id: 123});
+      });
+
+      it('creates multiple connections', done => {
+        let done_counter = 0;
+
+        [1, 2, 3, 4].map(
+          () => Databench.connect(`ws://localhost:5000/${analysis}/ws`, null, null, (connection: Databench.Connection) => {
+            // connection established, now check analysis id
+            expect(connection.analysisId).to.have.length(8);
+
+            // listen for a response
+            connection.on('test_action_ack', () => {
+              connection.disconnect();
+              done_counter += 1;
+              if (done_counter >= 4) done();
+            });
+
+            // execute an action that will trigger a response
+            connection.emit('test_action');
+          }));
       });
     });
   });

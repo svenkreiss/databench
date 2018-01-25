@@ -1,7 +1,13 @@
+import databench
 from databench.analyses_packaged.dummypi.analysis import Dummypi
 from databench.testing import AnalysisTest
-from databench.tests.analyses.parameters.analysis import Parameters
 import tornado.testing
+
+
+class Parameters(databench.Analysis):
+    @databench.on
+    def test_data(self, key, value):
+        yield self.set_state({key: value})
 
 
 class Example(tornado.testing.AsyncTestCase):
