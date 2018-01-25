@@ -148,14 +148,81 @@ describe('Server Process', () => {
     });
   });
 
-  describe('Parameter Tests', () => {
-    let databench = new Databench.Connection();
-    beforeEach(() => { databench.disconnect(); databench = Databench.connect('ws://localhost:5000/parameters/ws'); });
-    after(() => databench.disconnect());
+  ['parameters', 'parameters_py'].forEach(analysis => {
+    describe(`Parameter Tests for ${analysis}`, () => {
+      let databench = new Databench.Connection();
+      beforeEach(() => { databench.disconnect(); databench = Databench.connect(`ws://localhost:5000/${analysis}/ws`); });
+      after(() => databench.disconnect());
 
-    it('calls an action without parameter', done => {
-      databench.on('test_action_ack', () => done());
-      databench.emit('test_action');
+      it('calls an action without parameter', done => {
+        databench.on('test_action_ack', () => done());
+        databench.emit('test_action');
+      });
+
+      it('calls an action with an empty string', done => {
+        databench.on('test_fn', data => {
+          expect(data).to.deep.equal(['', 100]);
+          done();
+        });
+        databench.emit('test_fn', '');
+      });
+
+      it('calls an action with a single int', done => {
+        databench.on('test_fn', data => {
+          expect(data).to.deep.equal([1, 100]);
+          done();
+        });
+        databench.emit('test_fn', 1);
+      });
+
+      it('calls an action with a list', done => {
+        databench.on('test_fn', data => {
+          expect(data).to.deep.equal([1, 2]);
+          done();
+        });
+        databench.emit('test_fn', [1, 2]);
+      });
+
+      it('calls an action with a dictionary', done => {
+        databench.on('test_fn', data => {
+          expect(data).to.deep.equal([1, 2]);
+          done();
+        });
+        databench.emit('test_fn', {first_param: 1, second_param: 2});
+      });
+
+      it('calls an action that sets data', done => {
+        databench.on({data: 'light'}, data => {
+          expect(data).to.equal('red');
+          done();
+        });
+        databench.emit('test_data', ['light', 'red']);
+      });
+
+      it('calls an action that sets state', done => {
+        databench.on({data: 'light'}, data => {
+          expect(data).to.equal('red');
+          done();
+        });
+        databench.emit('test_set_data', ['light', 'red']);
+      });
+
+      it('calls an action that sets class data', done => {
+        databench.on({class_data: 'light'}, data => {
+          expect(data).to.equal('red');
+          done();
+        });
+        databench.emit('test_class_data', ['light', 'red']);
+      });
+
+      it('calls an action that well emit process states', done => {
+        databench.on('test_fn', data => expect(data).to.deep.equal([1, 100]));
+        databench.onProcess(123, data => {
+          expect(data).to.be.oneOf(['start', 'end']);
+          if (data == 'end') done();
+        });
+        databench.emit('test_fn', {first_param: 1, __process_id: 123});
+      });
     });
   });
 
