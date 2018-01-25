@@ -41,7 +41,7 @@
   },
   "scripts": {
     "build": "webpack",
-    "test": "tsc && mocha -t 5000 --no-colors js/build/commonjs/test.js",
+    "test": "tsc && mocha -t 5000 js/build/commonjs/test.js",
     "lint": "tslint -c tslint.json js/src/*.ts && eslint databench/analyses_packaged/**/*.js",
     "typedoc": "typedoc --out docs/typedoc/ --excludePrivate --excludeNotExported --excludeExternals --mode file --readme js/docs/index.md js/src/"
   },
