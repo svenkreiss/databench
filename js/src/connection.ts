@@ -54,6 +54,7 @@ export class Connection {
   private onCallbacks: {[field: string]: ((message: any, signal?: string) => void)[]};
   private onProcessCallbacks: {[field: string]: ((status: any) => void)[]};
   private preEmitCallbacks: {[field: string]: ((message: any) => any)[]};
+  private connectCallback: (connection: Connection) => void;
 
   private wsReconnectAttempt: number;
   private wsReconnectDelay: number;
@@ -80,6 +81,7 @@ export class Connection {
     this.onCallbacks = {};
     this.onProcessCallbacks = {};
     this.preEmitCallbacks = {};
+    this.connectCallback = connection => {};
 
     this.wsReconnectAttempt = 0;
     this.wsReconnectDelay = 100.0;
@@ -105,8 +107,9 @@ export class Connection {
   }
 
   /** initialize connection */
-  connect(): Connection {
+  connect(callback?: (connection: Connection) => void): Connection {
     if (!this.wsUrl) throw Error('Need a wsUrl.');
+    this.connectCallback = callback ? callback : () => this;
 
     this.socket = new WebSocket(this.wsUrl);
     this.socketCheckOpen = setInterval(this.wsCheckOpen.bind(this), 2000);
@@ -209,6 +212,7 @@ export class Connection {
         location.reload();
       }
       this.analysesVersion = newVersion;
+      this.connectCallback(this);
     }
 
     // processes
@@ -346,6 +350,6 @@ export class Connection {
  *                      The connection will try to connect to a previously created
  *                      analysis with that id.
  */
-export function connect(wsUrl: string|null = null, requestArgs: string|null = null, analysisId: string|null = null) {
-  return new Connection(wsUrl, requestArgs, analysisId).connect();
+export function connect(wsUrl: string|null = null, requestArgs: string|null = null, analysisId: string|null = null, callback?: (connection: Connection) => void) {
+  return new Connection(wsUrl, requestArgs, analysisId).connect(callback);
 }

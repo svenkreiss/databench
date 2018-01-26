@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "@types/handlebars": "^4.0.36",
+    "@types/request": "^2.0.13",
     "@types/websocket": "0.0.35",
+    "request": "^2.83.0",
     "websocket": "^1.0.22"
   },
   "devDependencies": {
@@ -41,7 +43,7 @@
   },
   "scripts": {
     "build": "webpack",
-    "test": "tsc && mocha -t 5000 --no-colors js/build/commonjs/test.js",
+    "test": "tsc && mocha -t 5000 js/build/commonjs/test.js",
     "lint": "tslint -c tslint.json js/src/*.ts && eslint databench/analyses_packaged/**/*.js",
     "typedoc": "typedoc --out docs/typedoc/ --excludePrivate --excludeNotExported --excludeExternals --mode file --readme js/docs/index.md js/src/"
   },
