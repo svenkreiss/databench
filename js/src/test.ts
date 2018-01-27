@@ -201,7 +201,7 @@ describe('Server Process', () => {
       client1.disconnect();
       expect(id1).to.have.length(8);
 
-      const client2 = await Databench.attach('ws://localhost:5000/connection_interruption/ws', null, id1);
+      const client2 = await Databench.attach('ws://localhost:5000/connection_interruption/ws', undefined, id1);
       const id2 = client2.analysisId;
       client2.disconnect();
       expect(id2).to.equal(id1);
