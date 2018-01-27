@@ -195,19 +195,16 @@ describe('Server Process', () => {
   });
 
   describe('Connection Interruption', () => {
-    it('keeps analysis id', done => {
-      const client1 = Databench.connect('ws://localhost:5000/connection_interruption/ws', null, null, () => {
-        const id1 = client1.analysisId;
-        client1.disconnect();
-        expect(id1).to.have.length(8);
+    it('keeps analysis id', async () => {
+      const client1 = await Databench.attach('ws://localhost:5000/connection_interruption/ws');
+      const id1 = client1.analysisId;
+      client1.disconnect();
+      expect(id1).to.have.length(8);
 
-        const client2 = Databench.connect('ws://localhost:5000/connection_interruption/ws', null, id1, () => {
-          const id2 = client2.analysisId;
-          client2.disconnect();
-          expect(id2).to.equal(id1);
-          done();
-        });
-      });
+      const client2 = await Databench.attach('ws://localhost:5000/connection_interruption/ws', undefined, id1);
+      const id2 = client2.analysisId;
+      client2.disconnect();
+      expect(id2).to.equal(id1);
     });
   });
 
@@ -312,24 +309,22 @@ describe('Server Process', () => {
         databench.emit('test_fn', {first_param: 1, __process_id: 123});
       });
 
-      it('creates multiple connections', done => {
-        let done_counter = 0;
+      it('creates multiple connections', async () => {
+        const connections = await Promise.all([1, 2, 3, 4].map(
+          () => Databench.attach(`ws://localhost:5000/${analysis}/ws`)));
 
-        [1, 2, 3, 4].map(
-          () => Databench.connect(`ws://localhost:5000/${analysis}/ws`, null, null, (connection: Databench.Connection) => {
-            // connection established, now check analysis id
-            expect(connection.analysisId).to.have.length(8);
+        // connection established, now check analysis id
+        connections.forEach(connection => expect(connection.analysisId).to.have.length(8));
 
-            // listen for a response
-            connection.on('test_action_ack', () => {
-              connection.disconnect();
-              done_counter += 1;
-              if (done_counter >= 4) done();
-            });
+        // listen for responses
+        const responses = connections.map(connection => connection.once('test_action_ack'));
 
-            // execute an action that will trigger a response
-            connection.emit('test_action');
-          }));
+        // execute an actions that will trigger a responses
+        connections.forEach(connection => connection.emit('test_action'));
+
+        await Promise.all(responses);
+
+        connections.forEach(connection => connection.disconnect());
       });
     });
   });

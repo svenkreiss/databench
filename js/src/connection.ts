@@ -45,10 +45,10 @@ import { w3cwebsocket as WebSocket } from 'websocket';
  */
 export class Connection {
   wsUrl: string;
-  requestArgs: string|null;
-  analysisId: string|null;
-  databenchBackendVersion: string|null;
-  analysesVersion: string|null;
+  requestArgs?: string;
+  analysisId?: string;
+  databenchBackendVersion?: string;
+  analysesVersion?: string;
 
   errorCB: (message?: string) => void;
   private onCallbacks: {[field: string]: ((message: any, signal?: string) => void)[]};
@@ -58,24 +58,22 @@ export class Connection {
 
   private wsReconnectAttempt: number;
   private wsReconnectDelay: number;
-  private socket: WebSocket|null;
-  private socketCheckOpen: number|null;
+  private socket?: WebSocket;
+  private socketCheckOpen?: number;
 
   /**
-   * @param  wsUrl        URL of WebSocket endpoint or null to guess it.
-   * @param  requestArgs  `search` part of request url or null to take from
+   * @param  wsUrl        URL of WebSocket endpoint or undefined to guess it.
+   * @param  requestArgs  `search` part of request url or undefined to take from
    *                      `window.location.search`.
-   * @param  analysisId   Specify an analysis id or null to have one generated.
+   * @param  analysisId   Specify an analysis id or undefined to have one generated.
    *                      The connection will try to connect to a previously created
    *                      analysis with that id.
    */
-  constructor(wsUrl: string|null = null, requestArgs: string|null = null, analysisId: string|null = null) {
+  constructor(wsUrl?: string, requestArgs?: string, analysisId?: string) {
     this.wsUrl = wsUrl || Connection.guessWSUrl();
-    this.requestArgs = (requestArgs == null && (typeof window !== 'undefined')) ?
+    this.requestArgs = (!requestArgs && (typeof window !== 'undefined')) ?
                         window.location.search : requestArgs;
     this.analysisId = analysisId;
-    this.databenchBackendVersion = null;
-    this.analysesVersion = null;
 
     this.errorCB = msg => (msg != null ? console.log(`connection error: ${msg}`) : null);
     this.onCallbacks = {};
@@ -85,9 +83,6 @@ export class Connection {
 
     this.wsReconnectAttempt = 0;
     this.wsReconnectDelay = 100.0;
-
-    this.socket = null;
-    this.socketCheckOpen = null;
 
     // wire log, warn, error messages into console outputs
     ['log', 'warn', 'error'].forEach(wireSignal => {
@@ -121,19 +116,19 @@ export class Connection {
 
   /** close connection */
   disconnect() {
-    if (this.socket === null) return;
-
-    this.socket.onclose = null;
-    if (this.socketCheckOpen !== null) {
+    if (this.socketCheckOpen) {
       clearInterval(this.socketCheckOpen);
-      this.socketCheckOpen = null;
+      this.socketCheckOpen = undefined;
     }
-    this.socket.close();
-    this.socket = null;
+    if (this.socket) {
+      this.socket.onclose = null;
+      this.socket.close();
+      this.socket = undefined;
+    }
   }
 
   wsCheckOpen() {
-    if (this.socket === null) return;
+    if (!this.socket) return;
 
     if (this.socket.readyState === this.socket.CONNECTING) {
       return;
@@ -146,28 +141,28 @@ export class Connection {
       );
     }
 
-    if (this.socketCheckOpen !== null) {
+    if (this.socketCheckOpen) {
       clearInterval(this.socketCheckOpen);
-      this.socketCheckOpen = null;
+      this.socketCheckOpen = undefined;
     }
   }
 
   wsOnOpen() {
-    if (this.socket === null) return;
+    if (!this.socket) return;
 
     this.wsReconnectAttempt = 0;
     this.wsReconnectDelay = 100.0;
     this.errorCB();  // clear errors
     this.socket.send(JSON.stringify({
-      __connect: this.analysisId,
+      __connect: this.analysisId ? this.analysisId : null,
       __request_args: this.requestArgs,  // eslint-disable-line camelcase
     }));
   }
 
   wsOnClose() {
-    if (this.socketCheckOpen !== null) {
+    if (this.socketCheckOpen) {
       clearInterval(this.socketCheckOpen);
-      this.socketCheckOpen = null;
+      this.socketCheckOpen = undefined;
     }
 
     this.wsReconnectAttempt += 1;
@@ -194,7 +189,7 @@ export class Connection {
    * @param signal  Name of the signal to trigger.
    * @param message Payload for the triggered signal.
    */
-  trigger(signal: string, message: any = null) {
+  trigger(signal: string, message?: any) {
     this.onCallbacks[signal].forEach(cb => cb(message, signal));
   }
 
@@ -207,8 +202,7 @@ export class Connection {
       this.databenchBackendVersion = message.load.databench_backend_version;
 
       const newVersion = message.load.analyses_version;
-      if (this.analysesVersion !== null &&
-          this.analysesVersion !== newVersion) {
+      if (this.analysesVersion && this.analysesVersion !== newVersion) {
         location.reload();
       }
       this.analysesVersion = newVersion;
@@ -266,6 +260,20 @@ export class Connection {
     return this;
   }
 
+  /**
+   * Listen for a signal once.
+   *
+   * Similar to [on] but returns a `Promise` instead of taking a callback.
+   * This is mostly useful for unit tests.
+   *
+   * @param signal Signal name to listen for.
+   */
+  once(signal: string|{[field: string]: string}|{[field: string]: RegExp}): Promise<{message: any, key?: string}> {
+    return new Promise(resolve => {
+      this.on(signal, resolve);
+    });
+  }
+
   _on_object(signal: {[field: string]: string}|{[field: string]: RegExp},
              callback: (message: any, key?: string) => void): Connection {
     Object.keys(signal).forEach(signalName => {
@@ -307,7 +315,7 @@ export class Connection {
     }
 
     // socket will never be open
-    if (this.socket == null) return this;
+    if (!this.socket) return this;
 
     // socket is not open yet
     if (this.socket.readyState !== this.socket.OPEN) {
@@ -343,13 +351,33 @@ export class Connection {
  * to define all `on` callbacks before calling `connect()` and so this
  * shorthand should not be used.
  *
- * @param  wsUrl        URL of WebSocket endpoint or null to guess it.
- * @param  requestArgs  `search` part of request url or null to take from
- *                      `window.location.search`.
- * @param  analysisId   Specify an analysis id or null to have one generated.
- *                      The connection will try to connect to a previously created
- *                      analysis with that id.
+ * @param wsUrl       URL of WebSocket endpoint or undefined to guess it.
+ * @param requestArgs `search` part of request url or undefined to take from
+ *                     `window.location.search`.
+ * @param analysisId  Specify an analysis id or undefined to have one generated.
+ *                    The connection will try to connect to a previously created
+ *                    analysis with that id.
+ * @param callback    Called when connection is established.
  */
-export function connect(wsUrl: string|null = null, requestArgs: string|null = null, analysisId: string|null = null, callback?: (connection: Connection) => void) {
+export function connect(wsUrl?: string, requestArgs?: string, analysisId?: string, callback?: (connection: Connection) => void) {
   return new Connection(wsUrl, requestArgs, analysisId).connect(callback);
+}
+
+/**
+ * Attach to a backend.
+ *
+ * Similar to [connect](globals.html#connect). Instead of a callback parameter, it
+ * returns a Promise that resolves to a [[Connection]] instance once the connection is
+ * established.
+ *
+ * @param wsUrl       URL of WebSocket endpoint or undefined to guess it.
+ * @param requestArgs `search` part of request url or undefined to take from
+ *                    `window.location.search`.
+ * @param analysisId  Specify an analysis id or undefined to have one generated.
+ *                    The connection will try to connect to a previously created
+ *                    analysis with that id.
+ */
+export function attach(wsUrl?: string, requestArgs?: string, analysisId?: string): Promise<Connection> {
+  const connection = new Connection(wsUrl, requestArgs, analysisId);
+  return new Promise((resolve) => connection.connect(resolve));
 }
