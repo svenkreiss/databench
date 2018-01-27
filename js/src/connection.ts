@@ -266,6 +266,19 @@ export class Connection {
     return this;
   }
 
+  /**
+   * Listen for a signal once.
+   *
+   * Similar to [on] but returns a `Promise` instead of taking a callback.
+   *
+   * @param signal Signal name to listen for.
+   */
+  once(signal: string|{[field: string]: string}|{[field: string]: RegExp}): Promise<{message: any, key?: string}> {
+    return new Promise(resolve => {
+      this.on(signal, resolve);
+    });
+  }
+
   _on_object(signal: {[field: string]: string}|{[field: string]: RegExp},
              callback: (message: any, key?: string) => void): Connection {
     Object.keys(signal).forEach(signalName => {
@@ -343,13 +356,31 @@ export class Connection {
  * to define all `on` callbacks before calling `connect()` and so this
  * shorthand should not be used.
  *
- * @param  wsUrl        URL of WebSocket endpoint or null to guess it.
- * @param  requestArgs  `search` part of request url or null to take from
- *                      `window.location.search`.
- * @param  analysisId   Specify an analysis id or null to have one generated.
- *                      The connection will try to connect to a previously created
- *                      analysis with that id.
+ * @param wsUrl       URL of WebSocket endpoint or null to guess it.
+ * @param requestArgs `search` part of request url or null to take from
+ *                     `window.location.search`.
+ * @param analysisId  Specify an analysis id or null to have one generated.
+ *                    The connection will try to connect to a previously created
+ *                    analysis with that id.
  */
 export function connect(wsUrl: string|null = null, requestArgs: string|null = null, analysisId: string|null = null, callback?: (connection: Connection) => void) {
   return new Connection(wsUrl, requestArgs, analysisId).connect(callback);
+}
+
+/**
+ * Attach to a backend.
+ *
+ * Similar to connect, but does not take a callback but returns a Promise that
+ * resolves to a [Connection] instance once the connection is established.
+ *
+ * @param wsUrl       URL of WebSocket endpoint or null to guess it.
+ * @param requestArgs `search` part of request url or null to take from
+ *                    `window.location.search`.
+ * @param analysisId  Specify an analysis id or null to have one generated.
+ *                    The connection will try to connect to a previously created
+ *                    analysis with that id.
+ */
+export function attach(wsUrl: string|null = null, requestArgs: string|null = null, analysisId: string|null = null): Promise<Connection> {
+  const connection = new Connection(wsUrl, requestArgs, analysisId);
+  return new Promise((resolve) => connection.connect(resolve));
 }
