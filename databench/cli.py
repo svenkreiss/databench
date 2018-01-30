@@ -62,9 +62,9 @@ def main(**kwargs):
     from .app import App, SingleApp
 
     # log
-    if args.loglevel != 'INFO':
-        print('Setting loglevel to {}.'.format(args.loglevel))
     logging.basicConfig(level=getattr(logging, args.loglevel))
+    if args.loglevel != 'INFO':
+        logging.info('Set loglevel to {}.'.format(args.loglevel))
 
     # show versions and setup
     logging.info('Databench {}'.format(DATABENCH_VERSION))
