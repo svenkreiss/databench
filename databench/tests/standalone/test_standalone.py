@@ -1,8 +1,10 @@
 from __future__ import division
 
 import databench
+from databench.testing import AnalysisTest
 import math
 import random
+import tornado.testing
 
 
 class DummyPi(databench.Analysis):
@@ -45,6 +47,14 @@ class DummyPi(databench.Analysis):
     @databench.on
     def samples(self, value):
         yield self.set_state(samples=value)
+
+
+class Example(tornado.testing.AsyncTestCase):
+    @tornado.testing.gen_test
+    def test_data(self):
+        test = AnalysisTest(DummyPi)
+        yield test.trigger('run')
+        self.assertIn(('log', {'action': 'done'}), test.emitted_messages)
 
 
 if __name__ == '__main__':
