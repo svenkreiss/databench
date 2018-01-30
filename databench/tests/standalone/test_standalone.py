@@ -56,6 +56,11 @@ class Example(tornado.testing.AsyncTestCase):
         yield test.trigger('run')
         self.assertIn(('log', {'action': 'done'}), test.emitted_messages)
 
+    def test_run(self):
+        ioloop = tornado.ioloop.IOLoop.current()
+        ioloop.call_later(2.0, ioloop.stop)
+        databench.run(DummyPi, __file__)
+
 
 if __name__ == '__main__':
     databench.run(DummyPi, __file__)
