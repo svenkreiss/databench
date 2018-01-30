@@ -29,6 +29,6 @@ script:
  - npm run lint
  - localcrawl --start http://localhost:5000 --run databench --log DEBUG
  - html5validator --root _crawled/
- - nosetests -vv --with-coverage --cover-erase --cover-inclusive
+ - nosetests -vv --with-coverage --cover-inclusive
 after_success:
  - coveralls || true
