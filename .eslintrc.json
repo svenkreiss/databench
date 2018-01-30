@@ -1,8 +1,5 @@
 {
-    "extends": "airbnb",
-    "plugins": [
-        "react"
-    ],
+    "extends": "airbnb-base",
     "rules": {
         "no-underscore-dangle": "off",
         "camelcase": ["error", {"properties": "always"}],
