@@ -14,7 +14,7 @@ describe('Server Process', () => {
   const databench_process = child_process.spawn('databench', [
     '--log', 'WARNING',
     '--analyses', 'databench.tests.analyses',
-    '--coverage', '.coverage',
+    '--coverage', '.coverage.js',
     '--ssl-port', '5001',
     '--some-test-flag',
   ]);
