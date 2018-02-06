@@ -48,7 +48,20 @@ Also see :ref:`frontend_logging` in the JavaScript section.
 Routes
 ------
 
-Add a ``routes.py`` file to your analysis with extra Tornado request handlers
+Add to the ``static`` map in ``index.yaml`` to serve static files. The ``static``
+map is a regular expression to match the url against which contains a single capture
+bracket and the root folder. In the default configuration
+
+.. code-block:: yaml
+
+    static:
+      static/(.*): folder_with_static_files/
+
+any url starting with ``static/`` followed by any character sequence ``.*`` which is
+captured by the surrounding ``()`` is matched to that file in ``folder_with_static_files/``.
+
+For more specialized routes, add a ``routes.py`` file to your analysis with extra
+`tornado.web.RequestHandler` s
 and register them in a ``ROUTES`` variable. This is an example of a
 ``routes.py`` file:
 
@@ -77,7 +90,8 @@ Provide ``--ssl-certfile``, ``--ssl-keyfile`` and ``--ssl-port``.
 Command Line and Request Arguments
 ----------------------------------
 
-Command line parameters are in ``self.cli_args`` and the arguments from the
+Command line parameters are in available in `.Analysis` instances as
+``self.cli_args`` and the arguments from the
 http request are in ``self.request_args``.
 
 .. versionchanged:: 0.7

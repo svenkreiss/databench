@@ -19,7 +19,7 @@ class Datastore(object):
 
     An in-memory and in-process (not persistent) key-value store.
 
-    :param domain:
+    :param str domain:
         A namespace for the key values. This can be an analysis instance id for
         data local to an analysis instance or the name of an analysis class
         for data that is shared across instances of the same analysis.

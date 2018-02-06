@@ -47,7 +47,7 @@ def on(f):
     The action name is inferred from the function name.
 
     This also decorates the method with `tornado.gen.coroutine` so that
-    `tornado.concurrent.Future` s can be `yield` ed.
+    `~tornado.concurrent.Future` can be yielded.
     """
     action = f.__name__
     f.action = action
@@ -66,7 +66,7 @@ def on_action(action):
     :param str action: explicit action name
 
     This also decorates the method with `tornado.gen.coroutine` so that
-    `tornado.concurrent.Future` s can be `yield` ed.
+    `~tornado.concurrent.Future` can be yielded.
     """
     @wrapt.decorator
     @tornado.gen.coroutine
@@ -84,19 +84,19 @@ class Analysis(object):
     an instance of this class.
 
     **Initialization**: All initializations should be done in
-    :meth:`~.connected`. Instance variables (which should be avoided in favor
+    :meth:`.connected`. Instance variables (which should be avoided in favor
     of state) should be initialized in the constructor. Some cleanup
     can be done in :meth:`.disconnected`.
 
     **Arguments/Parameters**: Command line arguments are available
-    at `.cli_args` and the parameters of the HTTP GET request at
-    `.request_args`. `.request_args` is a dictionary of all
+    at ``cli_args`` and the parameters of the HTTP GET request at
+    ``request_args``. ``request_args`` is a dictionary of all
     arguments. Each value of the dictionary is a list of given values for this
     key even if this key only appeared once in the url
     (see `urllib.parse.parse_qs`).
 
     **Actions**: are captured by class method decorated
-    with `databench.on` followed by the action name. To capture the action
+    with `databench.on`. To capture the action
     ``run`` that is emitted with the JavaScript code
 
     .. code-block:: js
@@ -121,14 +121,14 @@ class Analysis(object):
 
     **Writing to a datastore**: By default, a :class:`Datastore`
     scoped to the current analysis instance is created at
-    `.data`. You can write state updates to it with
+    ``data``. You can write state updates to it with
 
     .. code-block:: python
 
         yield self.set_state(key1=value1)
 
     Similarly, there is a :class:`Datastore` instance at
-    `~.class_data` which is
+    ``class_data`` which is
     scoped to all instances of this analysis by its class name and state
     updates are supported with :meth:`.set_class_state`.
 
@@ -166,8 +166,8 @@ class Analysis(object):
     def init_datastores(self):
         """Initialize datastores for this analysis instance.
 
-        This creates instances of :class:`.Datastore` at `.data` and
-        `.class_data` with the datastore domains being the current id
+        This creates instances of :class:`.Datastore` at ``data`` and
+        ``class_data`` with the datastore domains being the current id
         and the class name of this analysis respectively.
 
         Overwrite this method to use other datastore backends.

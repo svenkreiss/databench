@@ -129,6 +129,7 @@ def run(analysis, path=None, name=None, info=None, **kwargs):
     :param str name: Name of the analysis.
     :param dict info: Optional entries are ``version``, ``title``,
         ``readme``, ...
+    :param dict static: Map[url regex, root-folder] to serve static content.
     """
     kwargs.update({
         'analysis': analysis,

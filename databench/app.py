@@ -33,18 +33,22 @@ class App(object):
 
     :param str analyses_path: An import path of the analyses.
     :param int zmq_port: Force to use the given ZMQ port for publishing.
+    :param list cli_args: Command line arguments.
+    :param bool debug: Switch on debugging.
     """
 
     def __init__(self, analyses_path=None, zmq_port=None, cli_args=None,
                  debug=False):
         self.cli_args = cli_args
         self.debug = debug
+
         self.info = {
             'title': 'Databench',
             'description': None,
             'description_html': None,
             'author': None,
             'version': '0.0.0',
+            'static': {},
         }
         self.metas = []
         self.spawned_analyses = {}
@@ -53,12 +57,14 @@ class App(object):
         self.routes = [
             (r'/(?:index.html)?', IndexHandler,
              {'info': self.info, 'metas': self.metas}),
-        ] + self.static_routes(self.analyses_path)
+        ]
 
         self.init_zmq(zmq_port)
         self.analyses_info()
         self.meta_analyses()
         self.register_metas()
+        self.routes += self.static_routes(self.analyses_path,
+                                          self.info['static'])
 
     def init_zmq(self, zmq_port=None):
         # check whether we have to determine zmq_port ourselves first
@@ -87,58 +93,49 @@ class App(object):
     def first_valid_directory(paths, default=None):
         return next((p for p in paths if os.path.isdir(p)), default)
 
+    @staticmethod
+    def first_valid(paths, default=None):
+        return next((p for p in paths if os.path.exists(p)), default)
+
     @classmethod
-    def static_routes(cls, analyses_path):
+    def static_routes(cls, analyses_path, static=None):
         _static_path = os.path.join(
             os.path.dirname(os.path.realpath(__file__)), 'static')
-        _node_modules_path = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), 'node_modules')
 
-        # watch Databench's own static files
-        tornado.autoreload.watch(os.path.join(_static_path, 'databench.js'))
-        tornado.autoreload.watch(os.path.join(_static_path, 'databench.css'))
-
-        routes = []
-
-        # If 'analyses', 'analyses/..' or current directory contains a
-        # 'static' folder, make it available.
-        static_path = cls.first_valid_directory(
-            (os.path.join(analyses_path, 'static'),
-             os.path.join(os.getcwd(), 'static')))
-        if static_path is not None:
-            log.debug('Making {} available at /static/.'.format(static_path))
-            routes.append(
-                (r'/static/(.*)', tornado.web.StaticFileHandler,
-                 {'path': static_path})
-            )
-        else:
-            log.debug('Did not find a static folder.')
-
-        # If 'analyses', 'analyses/..' or current directory contains a
-        # 'node_modules' folder, make it available.
-        node_modules_path = cls.first_valid_directory(
-            (os.path.join(analyses_path, 'node_modules'),
-             os.path.join(os.getcwd(), 'node_modules')))
-        if node_modules_path is not None:
-            log.debug('Making {} available at /node_modules/.'
-                      ''.format(node_modules_path))
-            routes.append(
-                (r'/node_modules/(.*)', tornado.web.StaticFileHandler,
-                 {'path': node_modules_path})
-            )
-        else:
-            log.debug('Did not find a node_modules folder.')
-
-        return routes + [
+        routes = [
             (r'/(favicon\.ico)', tornado.web.StaticFileHandler,
              {'path': 'static/favicon.ico'}),
 
             (r'/_static/(.*)', tornado.web.StaticFileHandler,
              {'path': _static_path}),
-
-            (r'/_node_modules/(.*)', tornado.web.StaticFileHandler,
-             {'path': _node_modules_path}),
         ]
+
+        # watch Databench's own static files
+        tornado.autoreload.watch(os.path.join(_static_path, 'databench.js'))
+        tornado.autoreload.watch(os.path.join(_static_path, 'databench.css'))
+
+        # extra static files
+        if static is None:
+            static = {}
+        for extra_url, extra_path in static.items():
+            static_path = cls.first_valid(
+                (os.path.join(analyses_path, extra_path),
+                 os.path.join(os.getcwd(), extra_path)))
+            if static_path is None:
+                log.warn('Did not find static root {}'.format(extra_path))
+                continue
+
+            log.debug('Serve /{} statically from {}'
+                      ''.format(extra_url, static_path))
+
+            # empty capture group
+            static_regex = r'/{}'.format(extra_url)
+            routes.append(
+                (static_regex, tornado.web.StaticFileHandler,
+                 {'path': static_path})
+            )
+
+        return routes
 
     @staticmethod
     def get_analyses(analyses_path):
@@ -379,7 +376,8 @@ class IndexHandler(tornado.web.RequestHandler):
 
 class SingleApp(object):
     def __init__(self, analysis, path=None, name=None,
-                 cli_args=None, debug=False, extra_routes=None, info=None):
+                 cli_args=None, debug=False, extra_routes=None, info=None,
+                 static=None):
         if path is None:
             path = os.path.join(os.getcwd(), '.')
         path = os.path.abspath(os.path.dirname(path))
@@ -404,7 +402,7 @@ class SingleApp(object):
             cli_args,
             info=info,
         )
-        self.routes = App.static_routes(path) + [
+        self.routes = App.static_routes(path, static) + [
             (r'/{}'.format(route), handler, data)
             for route, handler, data in self.meta.routes]
 
