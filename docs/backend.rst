@@ -35,12 +35,10 @@ Defaults at the global level for ``index.yaml``:
 Logging
 -------
 
-.. versionchanged:: 0.7
-
-Use Python's ``logging`` as usual. To log to ``logging`` and
+Use Python's `logging` as usual. To log to `logging` and
 send a message to the frontend about the log message, use
 ``self.emit('log', ...)``. Similarly, if the frontend emits a ``log`` action,
-a backend ``logging`` message will also be emitted. Similarly to
+a backend `logging` message will also be emitted. Similarly to
 ``log``, this also works for ``warn`` and ``error``.
 Also see :ref:`frontend_logging` in the JavaScript section.
 
@@ -50,7 +48,7 @@ Routes
 
 Add to the ``static`` map in ``index.yaml`` to serve static files. The ``static``
 map is a regular expression to match the url against which contains a single capture
-bracket and the root folder. In the default configuration
+bracket and the root folder. In this example configuration
 
 .. code-block:: yaml
 
@@ -93,5 +91,3 @@ Command Line and Request Arguments
 Command line parameters are in available in `.Analysis` instances as
 ``self.cli_args`` and the arguments from the
 http request are in ``self.request_args``.
-
-.. versionchanged:: 0.7

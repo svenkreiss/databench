@@ -221,7 +221,7 @@ class App(object):
                  for item in dir(analysis_file)
                  if not item.startswith('__')]
         classes = [ac for ac in items
-                   if hasattr(ac, '_databench_analysis')]
+                   if getattr(ac, '_databench_analysis', False)]
         if not classes:
             log.warning('no Analysis class found for {}'.format(name))
             return

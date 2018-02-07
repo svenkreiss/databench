@@ -41,7 +41,7 @@ describe('Standalone Process', () => {
   });
 
   describe('App test', () => {
-    it('has a working index page', done => {
+    it('has a working page', done => {
       request.get('http://localhost:5002', (error, response, body) => {
         expect(response.statusCode).to.equal(200);
         done();
@@ -50,6 +50,13 @@ describe('Standalone Process', () => {
 
     it('can serve a custom static location', done => {
       request.get('http://localhost:5002/special/analysis.js', (error, response, body) => {
+        expect(response.statusCode).to.equal(200);
+        done();
+      });
+    });
+
+    it('serves all files from the same directory', done => {
+      request.get('http://localhost:5002/static/analysis.js', (error, response, body) => {
         expect(response.statusCode).to.equal(200);
         done();
       });
