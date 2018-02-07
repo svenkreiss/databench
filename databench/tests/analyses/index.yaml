@@ -1,5 +1,8 @@
 description: Analyses for unit tests.
 build: touch build_test.txt
+static:
+  static/(.*): static/
+  node_modules/(test_file\.txt): node_modules/
 
 analyses:
   - name: parameters

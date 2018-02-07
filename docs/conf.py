@@ -52,6 +52,8 @@ intersphinx_mapping = {
     'flask': ('http://flask.pocoo.org/docs/', None),
     'tornado': ('http://www.tornadoweb.org/en/stable/', None),
     'python': ('https://docs.python.org/3.6', None),
+    'matplotlib': ('https://matplotlib.org/', None),
+    'numpy': ('https://docs.scipy.org/doc/numpy-dev/', None),
 }
 
 # Add any paths that contain templates here, relative to this directory.

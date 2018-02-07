@@ -13,7 +13,7 @@ except ImportError:
 def json_encoder_default(obj):
     """Handle more data types than the default JSON encoder.
 
-    Specifically, it treats a ``set`` and a numpy array like a ``list``.
+    Specifically, it treats a `set` and a `numpy.array` like a `list`.
 
     Example usage: ``json.dumps(obj, default=json_encoder_default)``
     """
@@ -39,7 +39,7 @@ def json_encoder_default(obj):
 def fig_to_src(figure, image_format='png', dpi=80):
     """Convert a matplotlib figure to an inline HTML image.
 
-    :param matplotlib.Figure figure: Figure to display.
+    :param matplotlib.figure.Figure figure: Figure to display.
     :param str image_format: png (default) or svg
     :param int dpi: dots-per-inch for raster graphics.
     :rtype: str

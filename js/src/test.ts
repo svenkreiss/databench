@@ -9,6 +9,62 @@ import * as https from 'https';
 import * as request from 'request';
 
 
+describe('Standalone Process', () => {
+  let databench_process_return_code = -42;
+  const databench_process = child_process.spawn('python', [
+    'databench/tests/standalone/test_standalone.py',
+    '--log', 'WARNING',
+    '--coverage', '.coverage.js.standalone',
+    '--port', '5002',
+    '--ssl-port', '5003',
+    '--some-test-flag',
+  ]);
+  databench_process.stdout.on('data', data => console.log('databench stdout: ' + data));
+  databench_process.stderr.on('data', data => console.log('databench stderr: ' + data));
+  databench_process.on('exit', code => {
+    databench_process_return_code = code;
+    console.log('databench process exited with code ' + code);
+  });
+
+  before(done => {
+    setTimeout(() => {
+      expect(databench_process_return_code).to.equal(-42);
+      done();
+    }, 2000);
+  });
+
+  after(done => {
+    setTimeout(() => {
+      databench_process.kill('SIGINT');
+      done();
+    }, 2000);
+  });
+
+  describe('App test', () => {
+    it('has a working page', done => {
+      request.get('http://localhost:5002', (error, response, body) => {
+        expect(response.statusCode).to.equal(200);
+        done();
+      });
+    });
+
+    it('can serve a custom static location', done => {
+      request.get('http://localhost:5002/special/analysis.js', (error, response, body) => {
+        expect(response.statusCode).to.equal(200);
+        done();
+      });
+    });
+
+    it('serves all files from the same directory', done => {
+      request.get('http://localhost:5002/static/analysis.js', (error, response, body) => {
+        expect(response.statusCode).to.equal(200);
+        done();
+      });
+    });
+  });
+});
+
+
 describe('Server Process', () => {
   let databench_process_return_code = -42;
   const databench_process = child_process.spawn('databench', [

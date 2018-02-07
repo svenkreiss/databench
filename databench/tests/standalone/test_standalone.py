@@ -61,6 +61,15 @@ class Example(tornado.testing.AsyncTestCase):
         ioloop.call_later(2.0, ioloop.stop)
         databench.run(DummyPi, __file__)
 
+    def test_static_file_serving(self):
+        ioloop = tornado.ioloop.IOLoop.current()
+
+        def test_and_stop():
+            ioloop.stop()
+
+        ioloop.call_later(2.0, test_and_stop)
+        databench.run(DummyPi, __file__, static={'(analysis\.js)': '.'})
+
 
 if __name__ == '__main__':
-    databench.run(DummyPi, __file__)
+    databench.run(DummyPi, __file__, static={'special/(analysis\.js)': '.'})
