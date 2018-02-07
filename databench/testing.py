@@ -13,8 +13,8 @@ class AnalysisTest(object):
     All outgoing messages to the frontend are captured in `emitted_messages`.
 
     There are two main options for constructing tests: decorating with
-    `tornado.testing.gen_test` and yielding `~tornado.concurrent.Future` objects
-    (block until
+    `tornado.testing.gen_test` and yielding `~tornado.concurrent.Future`
+    objects (block until
     future is done) or to use :meth:`~tornado.testing.AsyncTestCase.wait` and
     :meth:`~tornado.testing.AsyncTestCase.stop` in callbacks.
     For detailed information on ioloops within the Tornado testing framework,
