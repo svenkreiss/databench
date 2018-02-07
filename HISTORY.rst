@@ -16,6 +16,7 @@ Changelog
     * allow regular expressions in frontend listener
     * JS based client tests
     * fixed coveralls reporting
+    * static file handling has changed, see: `Routes <http://databench.trivial.io/en/latest/backend.html#routes>`_
 * `0.6.2 <https://github.com/svenkreiss/databench/compare/v0.6.0...v0.6.2>`_ (2017-05-26)
     * TypeScript improvements
     * documentation updates
