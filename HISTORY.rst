@@ -1,7 +1,21 @@
 Changelog
 ---------
 
-* `master <https://github.com/svenkreiss/databench/compare/v0.6.2...master>`_
+* `master <https://github.com/svenkreiss/databench/compare/v0.7.0...master>`_
+* `0.7.0 <https://github.com/svenkreiss/databench/compare/v0.6.2...v0.7.0>`_ (2018-02-06)
+    * typedoc updates
+    * `testing.AnalysisTest`
+    * updated Tornado and made use of more Futures
+    * new `Datastore` with `set_state()`
+    * update docstrings
+    * `on()` decorator
+    * unified py kernel: use `databench.Analysis` now instead of `databench_py.Analysis`
+    * autoreload browser
+    * new standalone mode with `databench.run()`
+    * backend exceptions are signaled to the frontend
+    * allow regular expressions in frontend listener
+    * JS based client tests
+    * fixed coveralls reporting
 * `0.6.2 <https://github.com/svenkreiss/databench/compare/v0.6.0...v0.6.2>`_ (2017-05-26)
     * TypeScript improvements
     * documentation updates
