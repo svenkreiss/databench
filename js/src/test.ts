@@ -117,6 +117,13 @@ describe('Server Process', () => {
       });
     });
 
+    it('responds to HEAD requests for an analysis page', done => {
+      request.head('http://localhost:5000/parameters/', (error, response, body) => {
+        expect(response.statusCode).to.equal(200);
+        done();
+      });
+    });
+
     it('has a working index page with SSL', done => {
       request.get({url: 'https://localhost:5001', rejectUnauthorized: false}, (error, response, body) => {
         expect(response.statusCode).to.equal(200);

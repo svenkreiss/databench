@@ -267,3 +267,6 @@ class RenderTemplate(tornado.web.RequestHandler):
         self.render(os.path.join(self.path, template_name),
                     databench_version=DATABENCH_VERSION,
                     **self.info)
+
+    def head(self):
+        pass
