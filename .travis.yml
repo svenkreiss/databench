@@ -7,7 +7,7 @@ python:
 addons:
   apt:
     packages:
-      - oracle-java8-set-default
+      - openjdk-8-jre
 install:
  # install Python dependencies
  - pip install --upgrade pip

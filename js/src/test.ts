@@ -56,7 +56,7 @@ describe('Standalone Process', () => {
     });
 
     it('serves all files from the same directory', done => {
-      request.get('http://localhost:5002/static/analysis.js', (error, response, body) => {
+      request.get('http://localhost:5002/analysis.js', (error, response, body) => {
         expect(response.statusCode).to.equal(200);
         done();
       });
@@ -103,8 +103,22 @@ describe('Server Process', () => {
       });
     });
 
+    it('responds to HEAD requests for index page', done => {
+      request.head('http://localhost:5000', (error, response, body) => {
+        expect(response.statusCode).to.equal(200);
+        done();
+      });
+    });
+
     it('has a working analysis page', done => {
       request.get('http://localhost:5000/parameters/', (error, response, body) => {
+        expect(response.statusCode).to.equal(200);
+        done();
+      });
+    });
+
+    it('responds to HEAD requests for an analysis page', done => {
+      request.head('http://localhost:5000/parameters/', (error, response, body) => {
         expect(response.statusCode).to.equal(200);
         done();
       });

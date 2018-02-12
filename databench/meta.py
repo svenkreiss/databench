@@ -47,7 +47,7 @@ class Meta(object):
         thumbnail = False
         thumbnails = glob.glob(os.path.join(self.analysis_path, 'thumbnail.*'))
         if len(thumbnails) >= 1:
-            thumbnail = thumbnails[0]
+            thumbnail = os.path.basename(thumbnails[0])
         # analysis readme
         readme = Readme(self.analysis_path)
         self.info = {
@@ -65,7 +65,13 @@ class Meta(object):
         self.fill_action_handlers(analysis_class)
 
         self.routes = [
-            (r'static/(.*)', tornado.web.StaticFileHandler,
+            (r'static/(.+)', tornado.web.StaticFileHandler,
+             {'path': os.path.join(self.analysis_path, 'static')}),
+
+            (r'(analysis\.(?:js|css)).*', tornado.web.StaticFileHandler,
+             {'path': self.analysis_path}),
+
+            (r'(thumbnail\.(?:png|jpg|jpeg)).*', tornado.web.StaticFileHandler,
              {'path': self.analysis_path}),
 
             (r'ws', FrontendHandler,
@@ -261,3 +267,6 @@ class RenderTemplate(tornado.web.RequestHandler):
         self.render(os.path.join(self.path, template_name),
                     databench_version=DATABENCH_VERSION,
                     **self.info)
+
+    def head(self):
+        pass
