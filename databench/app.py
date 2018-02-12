@@ -373,6 +373,9 @@ class IndexHandler(tornado.web.RequestHandler):
             **self.info
         )
 
+    def head(self):
+        pass
+
 
 class SingleApp(object):
     def __init__(self, analysis, path=None, name=None,

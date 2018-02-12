@@ -65,7 +65,10 @@ class Meta(object):
         self.fill_action_handlers(analysis_class)
 
         self.routes = [
-            (r'static/(.*)', tornado.web.StaticFileHandler,
+            (r'static/(.+)', tornado.web.StaticFileHandler,
+             {'path': os.path.join(self.analysis_path, 'static')}),
+
+            (r'(analysis\.(?:js|css)).*', tornado.web.StaticFileHandler,
              {'path': self.analysis_path}),
 
             (r'ws', FrontendHandler,

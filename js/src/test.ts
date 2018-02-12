@@ -103,6 +103,13 @@ describe('Server Process', () => {
       });
     });
 
+    it('responds to HEAD requests for index page', done => {
+      request.head('http://localhost:5000', (error, response, body) => {
+        expect(response.statusCode).to.equal(200);
+        done();
+      });
+    });
+
     it('has a working analysis page', done => {
       request.get('http://localhost:5000/parameters/', (error, response, body) => {
         expect(response.statusCode).to.equal(200);
