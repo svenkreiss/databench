@@ -47,7 +47,7 @@ class Meta(object):
         thumbnail = False
         thumbnails = glob.glob(os.path.join(self.analysis_path, 'thumbnail.*'))
         if len(thumbnails) >= 1:
-            thumbnail = thumbnails[0]
+            thumbnail = os.path.basename(thumbnails[0])
         # analysis readme
         readme = Readme(self.analysis_path)
         self.info = {
@@ -69,6 +69,9 @@ class Meta(object):
              {'path': os.path.join(self.analysis_path, 'static')}),
 
             (r'(analysis\.(?:js|css)).*', tornado.web.StaticFileHandler,
+             {'path': self.analysis_path}),
+
+            (r'(thumbnail\.(?:png|jpg|jpeg)).*', tornado.web.StaticFileHandler,
              {'path': self.analysis_path}),
 
             (r'ws', FrontendHandler,

@@ -14,7 +14,7 @@
     {% for a in [aa for aa in meta_infos if aa['show_in_index']] %}
         <a class="d-box" href="/{{a['name']}}/">
         {% if a['thumbnail'] %}
-            <img alt="analysis thumbnail" src="/{{a['name']}}/static/{{a['thumbnail']}}" class="d-analysis-thumbnail" />
+            <img alt="analysis thumbnail" src="/{{a['name']}}/{{a['thumbnail']}}" class="d-analysis-thumbnail" />
         {% end %}
         {{a['title']}}{% if a['description'] %}<span class="text-muted">: {{ a['description'] }}</span>{% end %}
         </a>
