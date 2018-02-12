@@ -2,7 +2,7 @@ Changelog
 ---------
 
 * `master <https://github.com/svenkreiss/databench/compare/v0.7.0...master>`_
-* `0.7.0 <https://github.com/svenkreiss/databench/compare/v0.6.2...v0.7.0>`_ (2018-02-06)
+* `0.7.1 <https://github.com/svenkreiss/databench/compare/v0.6.2...v0.7.0>`_ (2018-02-11)
     * typedoc updates
     * `testing.AnalysisTest`
     * updated Tornado and made use of more Futures
