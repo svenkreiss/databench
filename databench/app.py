@@ -97,6 +97,26 @@ class App(object):
     def first_valid(paths, default=None):
         return next((p for p in paths if os.path.exists(p)), default)
 
+    @staticmethod
+    def static_parser(static):
+        """Parse object describing static routes.
+
+        Might be a list, a dict or a list of dicts.
+        """
+        if static is None:
+            return
+
+        if isinstance(static, dict):
+            static = static.items()
+
+        for group in static:
+            if not isinstance(group, dict):
+                yield group
+                continue
+
+            for item in group.items():
+                yield item
+
     @classmethod
     def static_routes(cls, analyses_path, static=None):
         _static_path = os.path.join(
@@ -115,9 +135,7 @@ class App(object):
         tornado.autoreload.watch(os.path.join(_static_path, 'databench.css'))
 
         # extra static files
-        if static is None:
-            static = {}
-        for extra_url, extra_path in static.items():
+        for extra_url, extra_path in cls.static_parser(static):
             static_path = cls.first_valid(
                 (os.path.join(analyses_path, extra_path),
                  os.path.join(os.getcwd(), extra_path)))
