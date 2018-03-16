@@ -53,7 +53,7 @@ bracket and the root folder. In this example configuration
 .. code-block:: yaml
 
     static:
-      static/(.*): folder_with_static_files/
+      - static/(.*): folder_with_static_files/
 
 any url starting with ``static/`` followed by any character sequence ``.*`` which is
 captured by the surrounding ``()`` is matched to that file in ``folder_with_static_files/``.
