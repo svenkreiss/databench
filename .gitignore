@@ -39,6 +39,7 @@ var/
 .eggs
 venv*/
 .coverage*
+.pytest_cache
 
 # Installer logs
 pip-log.txt
