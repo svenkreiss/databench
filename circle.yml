@@ -54,6 +54,16 @@ jobs:
     steps:
       - checkout
       - run:
+          name: install nodejs
+          command: |
+            apt-get update
+            apt-get install -y curl gnupg
+            curl -sL https://deb.nodesource.com/setup_10.x | bash
+            apt-get install -y nodejs
+      - run:
+          name: install ghp-import
+          command: pip install ghp-import
+      - run:
           name: typedoc update
           command: |
             # - coveralls || true  disabled because js test coverage collection not working on circleci
