@@ -27,8 +27,8 @@ def main(**kwargs):
                         action='store_false',
                         help='do not watch and restart when files change')
     parser.add_argument('--host', dest='host',
-                        default=os.environ.get('HOST', 'localhost'),
-                        help='host address for webserver (default localhost)')
+                        default=os.environ.get('HOST', '127.0.0.1'),
+                        help='host address for webserver (default 127.0.0.1)')
     parser.add_argument('--port', dest='port',
                         type=int, default=int(os.environ.get('PORT', 5000)),
                         help='port for webserver')
