@@ -9,17 +9,18 @@ jobs:
           name: install openjdk8 and Python
           command: |
             apt-get update
-            apt-get install -y openjdk-8-jdk python3-venv curl gnupg libfontconfig
+            apt-get install -y openjdk-8-jre python3-venv curl gnupg libfontconfig chromium-chromedriver
+            ln -s /usr/lib/chromium-browser/chromedriver /usr/local/bin/chromedriver
       - run:
           name: install nodejs
           command: |
             curl -sL https://deb.nodesource.com/setup_10.x | bash
             apt-get install -y nodejs
-      - run:
-          name: install Phantomjs
-          command: |
-            npm install phantomjs-prebuilt
-            cp node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs /usr/local/bin/
+      # - run:
+      #     name: install Phantomjs
+      #     command: |
+      #       npm install phantomjs-prebuilt
+      #       cp node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs /usr/local/bin/
       - run:
           name: virtualenv
           command: python3 -m venv venv3
@@ -46,7 +47,7 @@ jobs:
             QT_QPA_PLATFORM: offscreen
           command: |
             . venv3/bin/activate
-            localcrawl --start http://localhost:5000 --output-encoding utf8 --run databench --log DEBUG
+            localcrawl --start http://localhost:5000 --output-encoding utf8 --chrome --run databench --log DEBUG
             html5validator --root _crawled/
       - run:
           name: test
