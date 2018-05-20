@@ -9,7 +9,7 @@ jobs:
           name: install openjdk8 and Python
           command: |
             apt-get update
-            apt-get install -y openjdk-8-jre python3-venv curl gnupg libfontconfig chromium-chromedriver
+            apt-get install -y openjdk-8-jre python3-venv curl chromium-chromedriver
             ln -s /usr/lib/chromium-browser/chromedriver /usr/local/bin/chromedriver
       - run:
           name: install nodejs
@@ -47,7 +47,7 @@ jobs:
             QT_QPA_PLATFORM: offscreen
           command: |
             . venv3/bin/activate
-            localcrawl --start http://localhost:5000 --output-encoding utf8 --chrome --run databench --log DEBUG
+            localcrawl --start http://localhost:5000 --output-encoding utf8 --chrome --no-sandbox --run databench --log DEBUG
             html5validator --root _crawled/
       - run:
           name: test

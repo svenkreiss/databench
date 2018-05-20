@@ -44,7 +44,7 @@ setup(
             'ghp-import>=0.4.1',
             'hacking>=0.11.0',  # imports a pinned version of flake8
             'html5validator>=0.2.6',
-            'localcrawl>=0.2.2',
+            'localcrawl>=0.2.3',
             'matplotlib>=1.5.1',
             'nose>=1.3.4',
             'requests>=2.9.1',
