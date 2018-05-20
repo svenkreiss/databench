@@ -14,7 +14,7 @@ general:
 dependencies:
   pre:
     - pip install --upgrade pip
-    - "pip install -e .[tests]"
+    - pip install -e ".[tests]"
     - pip install python-coveralls
     - npm install
     - npm run build
