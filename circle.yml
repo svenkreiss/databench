@@ -37,6 +37,8 @@ jobs:
           command: npm run lint
       - run:
           name: lint HTML
+          environment:
+            QT_QPA_PLATFORM: offscreen
           command: |
             . venv3/bin/activate
             localcrawl --start http://localhost:5000 --run databench --log DEBUG
