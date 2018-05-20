@@ -9,12 +9,15 @@ jobs:
           name: install openjdk8 and Python
           command: |
             apt-get update
-            apt-get install -y openjdk-8-jdk python3-venv curl gnupg phantomjs libfontconfig
+            apt-get install -y openjdk-8-jdk python3-venv curl gnupg libfontconfig
       - run:
           name: install nodejs
           command: |
             curl -sL https://deb.nodesource.com/setup_10.x | bash
             apt-get install -y nodejs
+      - run:
+          name: install Phantomjs
+          command: npm install phantomjs-prebuilt
       - run:
           name: virtualenv
           command: python3 -m venv venv3
