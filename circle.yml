@@ -38,6 +38,7 @@ jobs:
       - run:
           name: lint HTML
           command: |
+            . venv3/bin/activate
             localcrawl --start http://localhost:5000 --run databench --log DEBUG
             html5validator --root _crawled/
       - run:
