@@ -37,7 +37,7 @@ import { w3cwebsocket as WebSocket } from 'websocket';
  * Databench.ui.wire(databench);
  *
  *
- * // put custom d.on() methods here
+ * // put custom databench.on() methods here
  *
  *
  * databench.connect();
