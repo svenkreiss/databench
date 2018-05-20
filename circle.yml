@@ -14,7 +14,7 @@ jobs:
           name: install nodejs
           command: |
             curl -sL https://deb.nodesource.com/setup_10.x | bash
-            apt-get install -y nodejs npm
+            apt-get install -y nodejs
       - run:
           name: virtualenv
           command: python3 -m venv venv3
