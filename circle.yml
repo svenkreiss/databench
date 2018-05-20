@@ -3,9 +3,6 @@ jobs:
   build:
     docker:
       - image: ubuntu:18.04
-    branches:
-      ignore:
-        - gh-pages
     steps:
       - checkout
       - run:
@@ -40,9 +37,6 @@ jobs:
   deploy-prod:
     docker:
       - image: ubuntu:18.04
-    branches:
-      only:
-        - master
     steps:
       - checkout
       - run:
@@ -57,7 +51,10 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              ignore: gh-pages
       - deploy-prod:
           requires:
             - build
