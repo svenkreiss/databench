@@ -9,11 +9,11 @@ jobs:
           name: install openjdk8 and Python
           command: |
             apt-get update
-            apt-get install -y openjdk-8-jdk python3-venv curl
+            apt-get install -y openjdk-8-jdk python3-venv curl gnupg
       - run:
           name: install nodejs
           command: |
-            curl -sL https://deb.nodesource.com/setup_10.x | bash -
+            curl -sL https://deb.nodesource.com/setup_10.x | bash
             apt-get install -y nodejs npm
       - run:
           name: virtualenv
