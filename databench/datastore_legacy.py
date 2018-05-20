@@ -99,7 +99,7 @@ class DatastoreDict(object):
         if data is None:
             data = {}
         if change_callback is None:
-            change_callback = lambda k: None
+            change_callback = lambda k: None  # noqa: E731
 
         self._change_callback = change_callback
         self.data = {k: encode(v, self.get_change_trigger(k))
