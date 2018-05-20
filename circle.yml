@@ -12,6 +12,7 @@ jobs:
             apt-get install -y openjdk-8-jdk python3-venv curl
       - run:
           name: install nodejs
+          command: |
             curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
             apt-get install -y nodejs npm
       - run:
