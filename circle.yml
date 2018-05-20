@@ -41,7 +41,7 @@ jobs:
             QT_QPA_PLATFORM: offscreen
           command: |
             . venv3/bin/activate
-            localcrawl --start http://localhost:5000 --run databench --log DEBUG
+            localcrawl --start http://localhost:5000 --run databench --log DEBUG --output-encoding utf8
             html5validator --root _crawled/
       - run:
           name: test
