@@ -1,37 +1,90 @@
-machine:
-  python:
-    version: 3.5.1
-  node:
-    version: 8.2.0
-  java:
-    version: openjdk8
+version: 2
+jobs:
+  build:
+    docker:
+      - image: ubuntu:18.04
+    steps:
+      - checkout
+      - run:
+          name: install openjdk8 and Python
+          command: |
+            apt-get update
+            apt-get install -y openjdk-8-jre python3-venv curl gnupg chromium-chromedriver
+            ln -s /usr/lib/chromium-browser/chromedriver /usr/local/bin/chromedriver
+      - run:
+          name: install nodejs
+          command: |
+            curl -sL https://deb.nodesource.com/setup_10.x | bash
+            apt-get install -y nodejs
+      - run:
+          name: virtualenv
+          command: python3 -m venv venv3
+      - run:
+          name: dependencies
+          command: |
+            . venv3/bin/activate
+            pip install --upgrade pip
+            pip install -e ".[tests]"
+            pip install python-coveralls
+            npm install
+            npm run build
+      - run:
+          name: lint Python
+          command: |
+            . venv3/bin/activate
+            flake8
+      - run:
+          name: lint JS
+          command: npm run lint
+      - run:
+          name: lint HTML
+          command: |
+            . venv3/bin/activate
+            localcrawl --start http://localhost:5000 --output-encoding utf8 --chrome --no-sandbox --run databench --log DEBUG
+            html5validator --root _crawled/
+      - run:
+          name: test
+          command: |
+            . venv3/bin/activate
+            nosetests -vv --with-coverage --cover-inclusive
 
-general:
-  branches:
-    ignore:
-      - gh-pages
+  deploy-prod:
+    docker:
+      - image: ubuntu:18.04
+    steps:
+      - checkout
+      - run:
+          name: install nodejs
+          command: |
+            apt-get update
+            apt-get install -y curl gnupg python-pip git
+            curl -sL https://deb.nodesource.com/setup_10.x | bash
+            apt-get install -y nodejs
+            npm i
+      - run:
+          name: install ghp-import
+          command: pip install ghp-import
+      - run:
+          name: typedoc update
+          command: |
+            # - coveralls || true  disabled because js test coverage collection not working on circleci
+            npm run typedoc
+            cp circle.yml docs/typedoc/
+            mkdir ~/.ssh
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
+            ghp-import --force -n -p docs/typedoc
 
-dependencies:
-  pre:
-    - pip install --upgrade pip
-    - "pip install -e .[tests]"
-    - pip install python-coveralls
-    - npm install
-    - npm run build
-
-test:
-  override:
-    - flake8
-    - npm run lint
-    - localcrawl --start http://localhost:5000 --run databench --log DEBUG
-    - html5validator --root _crawled/
-    - nosetests -vv --with-coverage --cover-inclusive
-
-deployment:
-  production:
-    branch: master
-    commands:
-      # - coveralls || true  disabled because js test coverage collection not working on circleci
-      - npm run typedoc
-      - cp circle.yml docs/typedoc/
-      - ghp-import --force -n -p docs/typedoc
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore: gh-pages
+      - deploy-prod:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
