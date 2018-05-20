@@ -70,6 +70,7 @@ jobs:
             # - coveralls || true  disabled because js test coverage collection not working on circleci
             npm run typedoc
             cp circle.yml docs/typedoc/
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
             ghp-import --force -n -p docs/typedoc
 
 workflows:
