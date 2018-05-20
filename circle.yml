@@ -6,11 +6,10 @@ jobs:
     steps:
       - checkout
       - run:
-          name: install openjdk8
-          command: apt-get install -y openjdk-8-jdk
-      - run:
-          name: install node
-          command: apt-get install -y nodejs
+          name: install openjdk8 and nodejs
+          command: |
+            apt-get update
+            apt-get install -y openjdk-8-jdk nodejs
       - run:
           name: dependencies
           command: |
