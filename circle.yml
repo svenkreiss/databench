@@ -9,7 +9,7 @@ jobs:
           name: install openjdk8 and nodejs
           command: |
             apt-get update
-            apt-get install -y openjdk-8-jdk nodejs python3-venv
+            apt-get install -y openjdk-8-jdk nodejs npm python3-venv
       - run:
           name: virtualenv
           command: python3 -m venv venv3
