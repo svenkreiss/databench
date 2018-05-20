@@ -9,7 +9,7 @@ jobs:
           name: install openjdk8 and Python
           command: |
             apt-get update
-            apt-get install -y openjdk-8-jre python3-venv curl chromium-chromedriver
+            apt-get install -y openjdk-8-jre python3-venv curl gnupg chromium-chromedriver
             ln -s /usr/lib/chromium-browser/chromedriver /usr/local/bin/chromedriver
       - run:
           name: install nodejs
