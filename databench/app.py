@@ -9,6 +9,7 @@ from .readme import Readme
 from .template import Loader
 import glob
 import importlib
+import io
 import logging
 import os
 import random
@@ -187,7 +188,7 @@ class App(object):
         """Add analyses from the analyses folder."""
         f_config = os.path.join(self.analyses_path, 'index.yaml')
         tornado.autoreload.watch(f_config)
-        with open(f_config, 'r') as f:
+        with io.open(f_config, 'r', encoding='utf8') as f:
             config = yaml.safe_load(f)
             self.info.update(config)
         if self.debug:

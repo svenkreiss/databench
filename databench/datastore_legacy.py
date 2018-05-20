@@ -1,3 +1,5 @@
+# flake8: noqa
+
 from .utils import json_encoder_default
 from collections import defaultdict
 from future.builtins import zip
