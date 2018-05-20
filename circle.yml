@@ -8,7 +8,7 @@ jobs:
       - run:
           name: install openjdk8 and nodejs
           command: |
-            apt-get update
+            curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
             apt-get install -y openjdk-8-jdk nodejs npm python3-venv
       - run:
           name: virtualenv
