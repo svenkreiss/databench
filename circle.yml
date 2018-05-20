@@ -1,37 +1,66 @@
-machine:
-  python:
-    version: 3.5.1
-  node:
-    version: 8.2.0
-  java:
-    version: openjdk8
+version: 2.0
+jobs:
+  build:
+    docker:
+      - image: ubuntu:18.04
+    branches:
+      ignore:
+        - gh-pages
+    steps:
+      - checkout
+      - run:
+          name: install openjdk8
+          command: apt-get install -y openjdk8
+      - run:
+          name: install node
+          command: apt-get install -y nodejs
+      - run:
+          name: dependencies
+          command: |
+            pip install --upgrade pip
+            pip install -e ".[tests]"
+            pip install python-coveralls
+            npm install
+            npm run build
+      - run:
+          name: lint Python
+          command: flake8
+      - run:
+          name: lint JS
+          command: npm run lint
+      - run:
+          name: lint HTML
+          command: |
+            localcrawl --start http://localhost:5000 --run databench --log DEBUG
+            html5validator --root _crawled/
+      - run:
+          name: test
+          command: nosetests -vv --with-coverage --cover-inclusive
 
-general:
-  branches:
-    ignore:
-      - gh-pages
+  deploy-prod:
+    docker:
+      - image: ubuntu:18.04
+    branches:
+      only:
+        - master
+    steps:
+      - checkout
+      - run:
+          name: typedoc update
+          command: |
+            # - coveralls || true  disabled because js test coverage collection not working on circleci
+            npm run typedoc
+            cp circle.yml docs/typedoc/
+            ghp-import --force -n -p docs/typedoc
 
-dependencies:
-  pre:
-    - pip install --upgrade pip
-    - pip install -e ".[tests]"
-    - pip install python-coveralls
-    - npm install
-    - npm run build
-
-test:
-  override:
-    - flake8
-    - npm run lint
-    - localcrawl --start http://localhost:5000 --run databench --log DEBUG
-    - html5validator --root _crawled/
-    - nosetests -vv --with-coverage --cover-inclusive
-
-deployment:
-  production:
-    branch: master
-    commands:
-      # - coveralls || true  disabled because js test coverage collection not working on circleci
-      - npm run typedoc
-      - cp circle.yml docs/typedoc/
-      - ghp-import --force -n -p docs/typedoc
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
+      - deploy-prod:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
