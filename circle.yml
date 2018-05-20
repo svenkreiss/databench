@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run:
           name: install openjdk8
-          command: apt-get install -y openjdk8
+          command: apt-get install -y openjdk-8-jdk
       - run:
           name: install node
           command: apt-get install -y nodejs
