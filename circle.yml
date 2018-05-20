@@ -9,10 +9,14 @@ jobs:
           name: install openjdk8 and nodejs
           command: |
             apt-get update
-            apt-get install -y openjdk-8-jdk nodejs
+            apt-get install -y openjdk-8-jdk nodejs python3
+      - run:
+          name: virtualenv
+          command: python3 -m venv venv3
       - run:
           name: dependencies
           command: |
+            . venv3/bin/activate
             pip install --upgrade pip
             pip install -e ".[tests]"
             pip install python-coveralls
@@ -20,7 +24,9 @@ jobs:
             npm run build
       - run:
           name: lint Python
-          command: flake8
+          command: |
+            . venv3/bin/activate
+            flake8
       - run:
           name: lint JS
           command: npm run lint
@@ -31,7 +37,9 @@ jobs:
             html5validator --root _crawled/
       - run:
           name: test
-          command: nosetests -vv --with-coverage --cover-inclusive
+          command: |
+            . venv3/bin/activate
+            nosetests -vv --with-coverage --cover-inclusive
 
   deploy-prod:
     docker:
