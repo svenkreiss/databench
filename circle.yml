@@ -23,7 +23,7 @@ jobs:
           name: dependencies
           command: |
             . venv3/bin/activate
-            pip install --progress-bar ascii --upgrade pip setuptools
+            pip install --upgrade pip setuptools
             pip install --progress-bar ascii -e ".[tests]"
             pip install --progress-bar ascii python-coveralls
             npm install
