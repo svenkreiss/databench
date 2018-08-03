@@ -139,7 +139,7 @@ html_theme_options = {
     'github_button': True,
     'github_type': 'star',
     'travis_button': False,
-    'analytics_id': 'UA-4070485-2',
+    # 'analytics_id': 'UA-4070485-2',
     'extra_nav_links': {
         'Live Demos': 'http://databench-examples.trivial.io',
         'Examples': 'https://github.com/svenkreiss/databench_examples',
