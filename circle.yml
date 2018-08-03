@@ -20,12 +20,15 @@ jobs:
           name: virtualenv
           command: python3 -m venv venv3
       - run:
-          name: dependencies
+          name: Python dependencies
           command: |
             . venv3/bin/activate
             pip install --upgrade pip setuptools
-            pip install --progress-bar ascii -e ".[tests]"
-            pip install --progress-bar ascii python-coveralls
+            pip install --progress-bar off -e ".[tests]"
+            pip install --progress-bar off python-coveralls
+      - run:
+          name: JS dependencies
+          command: |
             npm install
             npm run build
       - run:
