@@ -135,6 +135,7 @@ def run(analysis, path=None, name=None, info=None, **kwargs):
         'analysis': analysis,
         'path': path,
         'name': name,
+        'info': info,
     })
     main(**kwargs)
 
