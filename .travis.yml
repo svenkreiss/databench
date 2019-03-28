@@ -52,16 +52,16 @@ install:
   fi
 
 script:
- - flake8
  - |
   if [ "${TRAVIS_OS_NAME}" == "linux" ]; then
+    flake8
     npm run lint
     localcrawl --start http://localhost:5000 --run databench --log DEBUG
     html5validator --root _crawled/
     nosetests -vv --with-coverage --cover-inclusive
   fi
   -|
-  if [ "${TRAVIS_OS_NAME}" == "linux" ]; then
+  if [ "${TRAVIS_OS_NAME}" == "windows" ]; then
     databench &
     http-ping.exe -n 1 http://localhost:5000 -f databench_index.html
     cat databench_index.html
