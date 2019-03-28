@@ -32,21 +32,39 @@ install:
  - pip -V
  - "pip install -e .[tests]"
  - pip install python-coveralls
- # install Node 6
- - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install 6
- - node -v
- # npm update
- - npm install -g npm
- - npm -v
- # install Node dependencies
- - npm install
- - npm run build
+ - |
+    if [ "${TRAVIS_OS_NAME}" == "linux" ]; then
+      # install Node 6
+      rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install 6
+      node -v
+    fi
+ - |
+    if [ "${TRAVIS_OS_NAME}" == "linux" ]; then
+      # npm update
+      npm install -g npm
+      npm -v
+    fi
+ - |
+    if [ "${TRAVIS_OS_NAME}" == "linux" ]; then
+      # install Node dependencies
+      npm install
+      npm run build
+    fi
 
 script:
  - flake8
- - npm run lint
- - localcrawl --start http://localhost:5000 --run databench --log DEBUG
- - html5validator --root _crawled/
- - nosetests -vv --with-coverage --cover-inclusive
+ - |
+    if [ "${TRAVIS_OS_NAME}" == "linux" ]; then
+      npm run lint
+      localcrawl --start http://localhost:5000 --run databench --log DEBUG
+      html5validator --root _crawled/
+      nosetests -vv --with-coverage --cover-inclusive
+    fi
+  -|
+    if [ "${TRAVIS_OS_NAME}" == "linux" ]; then
+      databench &
+      http-ping.exe -n 1 http://localhost:5000 -f databench_index.html
+      cat databench_index.html
+    fi
 after_success:
  - coveralls || true
