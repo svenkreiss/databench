@@ -1,16 +1,31 @@
 language: python
-os:
- - linux
- - windows
-python:
- - "2.7"
- - "3.4"
- - "3.5"
- - "3.6"
+matrix:
+  include:
+  - os: windows
+    language: sh
+    python: "3.6"
+  - os: linux
+    language: python
+    python: "2.7"
+  - os: linux
+    language: python
+    python: "3.4"
+  - os: linux
+    language: python
+    python: "3.5"
+  - os: linux
+    language: python
+    python: "3.6"
 addons:
   apt:
     packages:
       - openjdk-8-jre
+before_install: |
+  if [ "${TRAVIS_OS_NAME}" == "windows" ]; then
+    choco install python3 --version 3.6.8
+    export PATH="/c/Python36:/c/Python36/Scripts:$PATH"
+    python -m pip install --upgrade pip wheel
+  fi
 install:
  # install Python dependencies
  - pip install --upgrade pip
