@@ -21,8 +21,8 @@ class Loader(tornado.template.BaseLoader):
                not parent_path.startswith('<') and \
                not parent_path.startswith('/') and \
                not name.startswith('/') and \
-               name[1:3] != ':\\':
-                logging.error('mergeing %s %s', root, parent_path)
+               parent_path[1:3] != ':\\':
+                logging.error('merging %s %s %s', root, parent_path, name)
                 root = os.path.join(root, parent_path)
             path = os.path.join(root, name)
             if os.path.exists(path):
