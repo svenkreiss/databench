@@ -62,7 +62,7 @@ script:
   fi
   -|
   if [ "${TRAVIS_OS_NAME}" == "windows" ]; then
-    databench &
+    timeout 10 databench &
     sleep 2
     powershell -Command "(new-object System.Net.WebClient).DownloadFile('http://localhost:5000', 'databench_index.html')"
     cat databench_index.html
