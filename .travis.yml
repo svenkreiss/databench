@@ -64,7 +64,7 @@ script:
   if [ "${TRAVIS_OS_NAME}" == "windows" ]; then
     databench &
     timeout /t 3
-    (new-object System.Net.WebClient).DownloadFile('http://localhost:5000', 'databench_index.html')
+    "(new-object System.Net.WebClient).DownloadFile('http://localhost:5000', 'databench_index.html')"
     cat databench_index.html
   fi
 after_success:
