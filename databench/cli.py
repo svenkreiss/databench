@@ -42,8 +42,10 @@ def main(**kwargs):
 
     ssl_args = parser.add_argument_group('SSL')
     ssl_args.add_argument('--ssl-certfile', dest='ssl_certfile',
+                          default=os.environ.get('SSLCERTFILE'),
                           help='SSL certificate file')
     ssl_args.add_argument('--ssl-keyfile', dest='ssl_keyfile',
+                          default=os.environ.get('SSLKEYFILE'),
                           help='SSL key file')
     ssl_args.add_argument('--ssl-port', dest='ssl_port', type=int,
                           default=int(os.environ.get('SSLPORT', 0)),
