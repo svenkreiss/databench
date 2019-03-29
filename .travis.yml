@@ -63,7 +63,7 @@ script:
   -|
   if [ "${TRAVIS_OS_NAME}" == "windows" ]; then
     databench &
-    ping -n 1 http://localhost:5000 -f databench_index.html
+    (new-object System.Net.WebClient).DownloadFile('http://localhost:5000', 'databench_index.html')
     cat databench_index.html
   fi
 after_success:
