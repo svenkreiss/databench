@@ -60,7 +60,7 @@ script:
     html5validator --root _crawled/
     nosetests -vv --with-coverage --cover-inclusive
   fi
-  -|
+ - |
   if [ "${TRAVIS_OS_NAME}" == "windows" ]; then
     timeout 10 databench &
     sleep 2
