@@ -3,7 +3,7 @@
 
 from __future__ import absolute_import
 
-__version__ = '0.7.2'
+__version__ = '0.7.3'
 __all__ = ['Analysis', 'AnalysisZMQ', 'App', 'Datastore', 'Meta', 'MetaZMQ',
            'on', 'on_action', 'Readme', 'run', 'testing', 'utils']
 
