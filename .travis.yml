@@ -67,7 +67,8 @@ script:
     echo "cd /d %~dp0; (new-object System.Net.WebClient).DownloadFile('http://localhost:5000', 'databench_index.html')" > get_index.bat
     dir
     cat get_index.bat
-    c:\\Users\\travis\\.travis\\functions\\get_index.bat
+    echo ${CWD}
+    sh get_index.bat
     cat databench_index.html
   fi
 after_success:
