@@ -14,13 +14,17 @@ class Loader(tornado.template.BaseLoader):
 
     def resolve_path(self, name, parent_path=None):
         for root in self.roots:
-            if parent_path and not parent_path.startswith('<') and \
-                not parent_path.startswith('/') and \
-                    not name.startswith('/'):
+            if parent_path and \
+               not parent_path.startswith('<') and \
+               not parent_path.startswith('/') and \
+               parent_path[1:3] != ':\\' and \
+               not name.startswith('/'):
                 root = os.path.join(root, parent_path)
+
             path = os.path.join(root, name)
             if os.path.exists(path):
                 return path
+
         return name
 
     def _create_template(self, name):
