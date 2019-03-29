@@ -14,13 +14,14 @@ class Loader(tornado.template.BaseLoader):
                       for root_directory in root_directories]
 
     def resolve_path(self, name, parent_path=None):
-        logging.error(name, parent_path)
+        logging.error('name %s, p %s', name, parent_path)
         for root in self.roots:
             logging.error('root %s', root)
             if parent_path and \
                not parent_path.startswith('<') and \
                not parent_path.startswith('/') and \
                not name.startswith('/'):
+                logging.error('mergeing %s %s', root, parent_path)
                 root = os.path.join(root, parent_path)
             path = os.path.join(root, name)
             if os.path.exists(path):
