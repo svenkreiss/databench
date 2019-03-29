@@ -63,12 +63,11 @@ script:
   -|
   if [ "${TRAVIS_OS_NAME}" == "windows" ]; then
     databench &
-    sleep --help
-    sleep 3
+    sleep 2
     echo "cd /d %~dp0; (new-object System.Net.WebClient).DownloadFile('http://localhost:5000', 'databench_index.html')" > get_index.bat
     dir
     cat get_index.bat
-    /c/Users/travis/.travis/functions/get_index.bat
+    c:\Users\travis\.travis\functions\get_index.bat
     cat databench_index.html
   fi
 after_success:
