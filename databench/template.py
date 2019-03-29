@@ -1,3 +1,4 @@
+import logging
 import os
 import tornado.template
 
@@ -13,9 +14,9 @@ class Loader(tornado.template.BaseLoader):
                       for root_directory in root_directories]
 
     def resolve_path(self, name, parent_path=None):
-        print(name, parent_path)
+        logging.error(name, parent_path)
         for root in self.roots:
-            print('root', root)
+            logging.error('root %s', root)
             if parent_path and \
                not parent_path.startswith('<') and \
                not parent_path.startswith('/') and \
@@ -23,13 +24,13 @@ class Loader(tornado.template.BaseLoader):
                 root = os.path.join(root, parent_path)
             path = os.path.join(root, name)
             if os.path.exists(path):
-                print('path', path)
+                logging.error('path %s', path)
                 return path
-        print('name', name)
+        logging.error('name %s', name)
         return name
 
     def _create_template(self, name):
-        print('before open', name)
+        logging.error('before open %s', name)
         with open(name, 'rb') as f:
             template = tornado.template.Template(
                 f.read(), name=name, loader=self)
